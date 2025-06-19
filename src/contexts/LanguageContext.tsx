@@ -17,7 +17,7 @@ const translations = {
     'login': 'Login',
     
     // Hero
-    'hero.badge': '🚀 Revolutionize your LLM evaluations',
+    'hero.badge': 'Revolutionize your LLM evaluations',
     'hero.title': 'Evaluate LLMs with Precision and Scale',
     'hero.subtitle': 'Complete platform to compare, rank, and optimize language models with advanced metrics and actionable insights.',
     'hero.cta': 'Join Waitlist',
@@ -95,7 +95,7 @@ const translations = {
     'login': 'Entrar',
     
     // Hero
-    'hero.badge': '🚀 Revolucione suas avaliações de LLM',
+    'hero.badge': 'Revolucione suas avaliações de LLM',
     'hero.title': 'Avalie LLMs com Precisão e Escala',
     'hero.subtitle': 'Plataforma completa para comparar, ranquear e otimizar modelos de linguagem com métricas avançadas e insights acionáveis.',
     'hero.cta': 'Entre na Lista de Espera',
