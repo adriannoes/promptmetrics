@@ -1,29 +1,33 @@
 
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Check, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
+import { PricingAdvanced } from './ui/pricing-advanced';
 
 const Pricing = () => {
   const { t } = useLanguage();
 
   const plans = [
     {
-      name: t('pricing.starter.title'),
-      price: t('pricing.starter.price'),
-      period: '',
-      description: t('pricing.starter.desc'),
+      name: t('pricing.trial.title'),
+      price: t('pricing.trial.price'),
+      yearlyPrice: t('pricing.trial.price'),
+      period: t('pricing.trial.period'),
+      description: t('pricing.trial.desc'),
       features: [
-        t('pricing.starter.feature1'),
-        t('pricing.starter.feature2'),
-        t('pricing.starter.feature3'),
-        t('pricing.starter.feature4'),
+        t('pricing.trial.feature1'),
+        t('pricing.trial.feature2'),
+        t('pricing.trial.feature3'),
+        t('pricing.trial.feature4'),
       ],
-      cta: t('pricing.choose'),
-      popular: false,
+      buttonText: t('pricing.choose'),
+      href: '#form',
+      isPopular: false,
     },
     {
       name: t('pricing.pro.title'),
       price: t('pricing.pro.price'),
+      yearlyPrice: t('pricing.pro.yearlyPrice'),
       period: t('pricing.pro.period'),
       description: t('pricing.pro.desc'),
       features: [
@@ -33,12 +37,14 @@ const Pricing = () => {
         t('pricing.pro.feature4'),
         t('pricing.pro.feature5'),
       ],
-      cta: t('pricing.choose'),
-      popular: true,
+      buttonText: t('pricing.choose'),
+      href: '#form',
+      isPopular: true,
     },
     {
       name: t('pricing.enterprise.title'),
       price: t('pricing.enterprise.price'),
+      yearlyPrice: t('pricing.enterprise.yearlyPrice'),
       period: '',
       description: t('pricing.enterprise.desc'),
       features: [
@@ -47,8 +53,9 @@ const Pricing = () => {
         t('pricing.enterprise.feature3'),
         t('pricing.enterprise.feature4'),
       ],
-      cta: t('pricing.contact'),
-      popular: false,
+      buttonText: t('pricing.contact'),
+      href: '#form',
+      isPopular: false,
     }
   ];
 
@@ -63,64 +70,13 @@ const Pricing = () => {
             <Star className="w-4 h-4" />
             Planos e Preços
           </div>
-          <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 tracking-tight leading-tight">
-            {t('pricing.title')}
-          </h2>
-          <p className="text-xl text-slate-600 font-light leading-relaxed">
-            {t('pricing.subtitle')}
-          </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
-            <div 
-              key={index} 
-              className={`relative bg-white/70 backdrop-blur-xl rounded-3xl p-10 border transition-all duration-500 hover:shadow-2xl group animate-fade-in ${
-                plan.popular 
-                  ? 'border-blue-200/60 shadow-2xl shadow-blue-500/10 scale-105' 
-                  : 'border-white/50 shadow-xl hover:border-slate-200/60 hover:shadow-slate-300/20'
-              }`}
-              style={{ animationDelay: `${index * 150}ms` }}
-            >
-              {plan.popular && (
-                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
-                  <div className="flex items-center gap-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-xl backdrop-blur-sm">
-                    <Star className="w-4 h-4" />
-                    Popular
-                  </div>
-                </div>
-              )}
-              
-              <div className="text-center mb-10">
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">{plan.name}</h3>
-                <div className="flex items-baseline justify-center mb-4">
-                  <span className="text-6xl font-bold text-slate-900 tracking-tight">{plan.price}</span>
-                  {plan.period && <span className="text-slate-600 ml-2 font-medium text-lg">{plan.period}</span>}
-                </div>
-                <p className="text-slate-600 font-light text-lg">{plan.description}</p>
-              </div>
-              
-              <ul className="space-y-5 mb-10">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-start gap-4">
-                    <div className="w-6 h-6 bg-green-100/80 backdrop-blur-sm rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 shadow-sm">
-                      <Check className="w-3.5 h-3.5 text-green-600" />
-                    </div>
-                    <span className="text-slate-700 leading-relaxed">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <button className={`w-full py-5 px-6 rounded-2xl font-semibold transition-all duration-300 group-hover:scale-[1.02] shadow-lg hover:shadow-xl ${
-                plan.popular 
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/20 hover:shadow-blue-500/30'
-                  : 'bg-white/80 backdrop-blur-sm text-slate-900 hover:bg-white border border-slate-200/60 hover:border-slate-300'
-              }`}>
-                {plan.cta}
-              </button>
-            </div>
-          ))}
-        </div>
+        <PricingAdvanced 
+          plans={plans}
+          title={t('pricing.title')}
+          description={t('pricing.subtitle')}
+        />
       </div>
     </section>
   );

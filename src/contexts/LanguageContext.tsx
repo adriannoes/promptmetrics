@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Language = 'pt-BR' | 'en';
@@ -48,17 +47,19 @@ const translations = {
     'pricing.choose': 'Escolher Plano',
     'pricing.contact': 'Falar com Vendas',
     
-    'pricing.starter.title': 'Starter',
-    'pricing.starter.price': 'Gratuito',
-    'pricing.starter.desc': 'Perfeito para começar',
-    'pricing.starter.feature1': 'Até 100 avaliações/mês',
-    'pricing.starter.feature2': '3 modelos de comparação',
-    'pricing.starter.feature3': 'Métricas básicas',
-    'pricing.starter.feature4': 'Suporte por email',
+    'pricing.trial.title': 'Trial',
+    'pricing.trial.price': '5.99',
+    'pricing.trial.period': 'por 3 meses',
+    'pricing.trial.desc': 'Perfeito para testar',
+    'pricing.trial.feature1': 'Até 50 avaliações',
+    'pricing.trial.feature2': '3 modelos de comparação',
+    'pricing.trial.feature3': 'Métricas básicas',
+    'pricing.trial.feature4': 'Suporte por email',
     
     'pricing.pro.title': 'Pro',
-    'pricing.pro.price': 'R$ 299',
-    'pricing.pro.period': '/mês',
+    'pricing.pro.price': '29',
+    'pricing.pro.yearlyPrice': '190',
+    'pricing.pro.period': 'mês',
     'pricing.pro.desc': 'Para equipes em crescimento',
     'pricing.pro.feature1': 'Avaliações ilimitadas',
     'pricing.pro.feature2': 'Todos os modelos disponíveis',
@@ -68,6 +69,7 @@ const translations = {
     
     'pricing.enterprise.title': 'Enterprise',
     'pricing.enterprise.price': 'Customizado',
+    'pricing.enterprise.yearlyPrice': 'Customizado',
     'pricing.enterprise.desc': 'Para grandes organizações',
     'pricing.enterprise.feature1': 'Volume enterprise',
     'pricing.enterprise.feature2': 'Modelos privados',
@@ -123,17 +125,19 @@ const translations = {
     'pricing.choose': 'Choose Plan',
     'pricing.contact': 'Contact Sales',
     
-    'pricing.starter.title': 'Starter',
-    'pricing.starter.price': 'Free',
-    'pricing.starter.desc': 'Perfect to get started',
-    'pricing.starter.feature1': 'Up to 100 evaluations/month',
-    'pricing.starter.feature2': '3 comparison models',
-    'pricing.starter.feature3': 'Basic metrics',
-    'pricing.starter.feature4': 'Email support',
+    'pricing.trial.title': 'Trial',
+    'pricing.trial.price': '5.99',
+    'pricing.trial.period': 'for 3 months',
+    'pricing.trial.desc': 'Perfect for testing',
+    'pricing.trial.feature1': 'Up to 50 evaluations',
+    'pricing.trial.feature2': '3 comparison models',
+    'pricing.trial.feature3': 'Basic metrics',
+    'pricing.trial.feature4': 'Email support',
     
     'pricing.pro.title': 'Pro',
-    'pricing.pro.price': '$99',
-    'pricing.pro.period': '/month',
+    'pricing.pro.price': '29',
+    'pricing.pro.yearlyPrice': '190',
+    'pricing.pro.period': 'month',
     'pricing.pro.desc': 'For growing teams',
     'pricing.pro.feature1': 'Unlimited evaluations',
     'pricing.pro.feature2': 'All available models',
@@ -143,6 +147,7 @@ const translations = {
     
     'pricing.enterprise.title': 'Enterprise',
     'pricing.enterprise.price': 'Custom',
+    'pricing.enterprise.yearlyPrice': 'Custom',
     'pricing.enterprise.desc': 'For large organizations',
     'pricing.enterprise.feature1': 'Enterprise volume',
     'pricing.enterprise.feature2': 'Private models',
