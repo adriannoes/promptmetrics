@@ -1,3 +1,14 @@
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://rankme-landing-launchpad.lovable.app/sitemap.xml
+
+# Crawl-delay for politeness
+Crawl-delay: 1
+
+# Allow common crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +21,12 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Block common scraping bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

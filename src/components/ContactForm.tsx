@@ -12,9 +12,61 @@ const ContactForm = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [submitError, setSubmitError] = useState('');
+
+  const validateField = (name: string, value: string) => {
+    const newErrors = { ...errors };
+    
+    switch (name) {
+      case 'name':
+        if (!value.trim()) {
+          newErrors.name = 'Nome é obrigatório';
+        } else if (value.trim().length < 2) {
+          newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
+        } else {
+          delete newErrors.name;
+        }
+        break;
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value.trim()) {
+          newErrors.email = 'Email é obrigatório';
+        } else if (!emailRegex.test(value)) {
+          newErrors.email = 'Email inválido';
+        } else {
+          delete newErrors.email;
+        }
+        break;
+      case 'phone':
+        const phoneRegex = /^(\+55\s?)?(\(?\d{2}\)?[\s-]?)?\d{4,5}[\s-]?\d{4}$/;
+        if (!value.trim()) {
+          newErrors.phone = 'Telefone é obrigatório';
+        } else if (!phoneRegex.test(value)) {
+          newErrors.phone = 'Telefone inválido (ex: (11) 99999-9999)';
+        } else {
+          delete newErrors.phone;
+        }
+        break;
+    }
+    
+    setErrors(newErrors);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
+    
+    // Validate all fields
+    Object.keys(formData).forEach(key => {
+      validateField(key, formData[key as keyof typeof formData]);
+    });
+    
+    // Check if there are any validation errors
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -23,25 +75,41 @@ const ContactForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim()
+        }),
       });
 
       if (response.ok) {
         setSubmitted(true);
         setFormData({ name: '', email: '', phone: '' });
+      } else {
+        throw new Error('Network response was not ok');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+      setSubmitError('Algo deu errado. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+    
+    // Clear submit error when user starts typing
+    if (submitError) {
+      setSubmitError('');
+    }
+    
+    // Validate field on change
+    validateField(name, value);
   };
 
   if (submitted) {
@@ -53,7 +121,7 @@ const ContactForm = () => {
               <Send className="w-10 h-10 text-white" />
             </div>
             <h3 className="text-3xl font-bold text-slate-900 mb-4">Obrigado!</h3>
-            <p className="text-lg text-slate-600">Recebemos suas informações e entraremos em contato em breve.</p>
+            <p className="text-lg text-slate-600">Em breve entraremos em contato.</p>
           </div>
         </div>
       </section>
@@ -78,6 +146,12 @@ const ContactForm = () => {
 
         <div className="bg-white rounded-3xl p-8 shadow-lg border border-blue-100">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {submitError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm">
+                {submitError}
+              </div>
+            )}
+            
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <User className="w-5 h-5 text-slate-400" />
@@ -89,8 +163,13 @@ const ContactForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full pl-12 pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200"
+                className={`w-full pl-12 pr-4 py-4 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200 ${
+                  errors.name ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                }`}
               />
+              {errors.name && (
+                <p className="mt-2 text-sm text-red-600">{errors.name}</p>
+              )}
             </div>
 
             <div className="relative">
@@ -104,8 +183,13 @@ const ContactForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full pl-12 pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200"
+                className={`w-full pl-12 pr-4 py-4 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200 ${
+                  errors.email ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                }`}
               />
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
 
             <div className="relative">
@@ -119,14 +203,19 @@ const ContactForm = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full pl-12 pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200"
+                className={`w-full pl-12 pr-4 py-4 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200 ${
+                  errors.phone ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                }`}
               />
+              {errors.phone && (
+                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 px-8 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              disabled={isSubmitting || Object.keys(errors).length > 0}
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 px-8 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
             >
               {isSubmitting ? (
                 <>
