@@ -15,33 +15,33 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-sm">
               <Zap className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">RankMeLLM</span>
+            <span className="text-xl font-bold text-slate-900 tracking-tight">RankMeLLM</span>
           </div>
           
           <nav className="hidden md:flex items-center gap-8">
             <button 
               onClick={() => scrollTo('pricing')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-slate-600 hover:text-slate-900 transition-colors font-medium text-sm"
             >
               {t('pricing')}
             </button>
             <button 
               onClick={() => scrollTo('faq')}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-slate-600 hover:text-slate-900 transition-colors font-medium text-sm"
             >
               {t('faq')}
             </button>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <LanguageSelector />
-              <button className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
+              <button className="px-4 py-2 text-slate-600 hover:text-slate-900 transition-colors font-medium text-sm">
                 {t('login')}
               </button>
             </div>
