@@ -9,8 +9,10 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Check, Star } from "lucide-react";
 import { useState, useRef } from "react";
-import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
+
+// Import canvas-confetti dinamicamente para evitar problemas de build
+const confetti = typeof window !== 'undefined' ? require('canvas-confetti') : null;
 
 interface PricingPlan {
   name: string;
@@ -41,7 +43,7 @@ export function PricingAdvanced({
 
   const handleToggle = (checked: boolean) => {
     setIsMonthly(!checked);
-    if (checked && switchRef.current) {
+    if (checked && switchRef.current && confetti) {
       const rect = switchRef.current.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
