@@ -9,180 +9,164 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
 const translations = {
   'pt-BR': {
     // Header
+    'pricing': 'Preços',
+    'faq': 'FAQ',
     'login': 'Entrar',
-    'hero.title': 'Avalie e compare LLMs com precisão científica',
-    'hero.subtitle': 'A plataforma definitiva para benchmarking de modelos de linguagem. Compare performance, custos e qualidade em tempo real.',
-    'hero.cta': 'Entre na lista de espera',
-    'pricing': 'Planos e Preços',
-    'faq': 'Perguntas Frequentes',
     
-    // Problem Section
-    'problem.title': 'O Desafio da Escolha Certa',
-    'problem.subtitle': 'Escolher o LLM ideal para seu projeto não deveria ser um jogo de tentativa e erro',
-    'problem.point1.title': 'Falta de Transparência',
-    'problem.point1.desc': 'Benchmarks públicos não refletem casos de uso reais',
-    'problem.point2.title': 'Custos Ocultos',
-    'problem.point2.desc': 'Preços por token não mostram o custo real de produção',
-    'problem.point3.title': 'Performance Inconsistente',
-    'problem.point3.desc': 'Resultados variam drasticamente entre diferentes tarefas',
+    // Hero
+    'hero.badge': '🚀 Revolucione suas avaliações de LLM',
+    'hero.title': 'Avalie LLMs com Precisão e Escala',
+    'hero.subtitle': 'Plataforma completa para comparar, ranquear e otimizar modelos de linguagem com métricas avançadas e insights acionáveis.',
+    'hero.cta': 'Entre na Lista de Espera',
     
-    // Transformation Section
-    'transformation.title': 'A Solução que Você Precisa',
-    'transformation.subtitle': 'RankMeLLM transforma a avaliação de LLMs em uma ciência exata',
-    'transformation.feature1.title': 'Benchmarks Personalizados',
-    'transformation.feature1.desc': 'Teste modelos com seus próprios dados e casos de uso',
-    'transformation.feature2.title': 'Análise de Custo Real',
-    'transformation.feature2.desc': 'Calcule custos totais incluindo latência e re-tentativas',
-    'transformation.feature3.title': 'Comparação Lado a Lado',
-    'transformation.feature3.desc': 'Visualize performance em dashboards interativos',
+    // Problem
+    'problem.title': 'O Desafio que Você Enfrenta',
+    'problem.subtitle': 'Avaliar modelos de linguagem é complexo, demorado e frequentemente impreciso sem as ferramentas certas.',
+    'problem.point1.title': 'Avaliação Manual e Subjetiva',
+    'problem.point1.desc': 'Comparar modelos manualmente leva horas e é propenso a viés humano, resultando em decisões inconsistentes.',
+    'problem.point2.title': 'Custos Crescentes de Teste',
+    'problem.point2.desc': 'Testar múltiplos modelos sem uma estratégia clara desperdiça recursos e aumenta custos operacionais.',
+    'problem.point3.title': 'Falta de Métricas Padronizadas',
+    'problem.point3.desc': 'Sem benchmarks consistentes, é impossível tomar decisões fundamentadas sobre qual modelo usar.',
     
-    // Pricing Section
-    'pricing.title': 'Planos e Preços',
-    'pricing.subtitle': 'Escolha o plano ideal para suas necessidades',
-    'pricing.starter.title': 'Starter',
-    'pricing.starter.price': 'Gratuito',
-    'pricing.starter.desc': 'Para desenvolvedores e pequenos projetos',
-    'pricing.starter.feature1': 'Até 5 modelos comparados',
-    'pricing.starter.feature2': '1.000 avaliações por mês',
-    'pricing.starter.feature3': 'Benchmarks básicos',
-    'pricing.starter.feature4': 'Suporte por email',
-    'pricing.pro.title': 'Pro',
-    'pricing.pro.price': 'R$ 297',
-    'pricing.pro.period': '/mês',
-    'pricing.pro.desc': 'Para equipes e projetos profissionais',
-    'pricing.pro.feature1': 'Modelos ilimitados',
-    'pricing.pro.feature2': '50.000 avaliações por mês',
-    'pricing.pro.feature3': 'Benchmarks personalizados',
-    'pricing.pro.feature4': 'API completa',
-    'pricing.pro.feature5': 'Suporte prioritário',
-    'pricing.enterprise.title': 'Enterprise',
-    'pricing.enterprise.price': 'Personalizado',
-    'pricing.enterprise.desc': 'Para grandes organizações',
-    'pricing.enterprise.feature1': 'Volume ilimitado',
-    'pricing.enterprise.feature2': 'Deploy on-premise',
-    'pricing.enterprise.feature3': 'SLA dedicado',
-    'pricing.enterprise.feature4': 'Treinamento personalizado',
+    // Transformation
+    'transformation.title': 'A Transformação que Oferecemos',
+    'transformation.subtitle': 'Automatize, padronize e acelere suas avaliações de LLM com nossa plataforma inteligente.',
+    'transformation.feature1.title': 'Benchmarks Automatizados',
+    'transformation.feature1.desc': 'Execute testes padronizados em múltiplos modelos simultaneamente com métricas precisas e comparáveis.',
+    'transformation.feature2.title': 'Análise de Custo-Benefício',
+    'transformation.feature2.desc': 'Compare performance vs. custo para tomar decisões inteligentes sobre qual modelo usar em cada caso.',
+    'transformation.feature3.title': 'Insights Acionáveis',
+    'transformation.feature3.desc': 'Relatórios detalhados com recomendações específicas para otimizar sua estratégia de LLM.',
+    
+    // Pricing
+    'pricing.title': 'Planos Sob Medida para Sua Necessidade',
+    'pricing.subtitle': 'Escolha o plano ideal para começar a otimizar seus modelos de linguagem hoje.',
     'pricing.choose': 'Escolher Plano',
     'pricing.contact': 'Falar com Vendas',
     
-    // FAQ Section
+    'pricing.starter.title': 'Starter',
+    'pricing.starter.price': 'Gratuito',
+    'pricing.starter.desc': 'Perfeito para começar',
+    'pricing.starter.feature1': 'Até 100 avaliações/mês',
+    'pricing.starter.feature2': '3 modelos de comparação',
+    'pricing.starter.feature3': 'Métricas básicas',
+    'pricing.starter.feature4': 'Suporte por email',
+    
+    'pricing.pro.title': 'Pro',
+    'pricing.pro.price': 'R$ 299',
+    'pricing.pro.period': '/mês',
+    'pricing.pro.desc': 'Para equipes em crescimento',
+    'pricing.pro.feature1': 'Avaliações ilimitadas',
+    'pricing.pro.feature2': 'Todos os modelos disponíveis',
+    'pricing.pro.feature3': 'Métricas avançadas + custom',
+    'pricing.pro.feature4': 'API completa',
+    'pricing.pro.feature5': 'Suporte prioritário',
+    
+    'pricing.enterprise.title': 'Enterprise',
+    'pricing.enterprise.price': 'Customizado',
+    'pricing.enterprise.desc': 'Para grandes organizações',
+    'pricing.enterprise.feature1': 'Volume enterprise',
+    'pricing.enterprise.feature2': 'Modelos privados',
+    'pricing.enterprise.feature3': 'SLA garantido',
+    'pricing.enterprise.feature4': 'Suporte dedicado',
+    
+    // FAQ
     'faq.title': 'Perguntas Frequentes',
-    'faq.q1': 'Como funciona a avaliação de modelos?',
-    'faq.a1': 'Nossa plataforma executa testes padronizados e personalizados nos modelos selecionados, coletando métricas de performance, latência e custo em tempo real.',
-    'faq.q2': 'Posso usar meus próprios dados para teste?',
-    'faq.a2': 'Sim! Você pode criar benchmarks personalizados usando seus próprios datasets e casos de uso específicos.',
-    'faq.q3': 'Quais modelos são suportados?',
-    'faq.a3': 'Suportamos todos os principais LLMs: GPT-4, Claude, Gemini, Llama, e muitos outros. A lista é atualizada constantemente.',
-    'faq.q4': 'Como é calculado o custo real?',
-    'faq.a4': 'Consideramos não apenas o preço por token, mas também latência, taxa de sucesso, e custos de infraestrutura para fornecer o TCO real.',
-    
-    // Form Section
-    'form.title': 'Entre na Lista de Espera',
-    'form.subtitle': 'Seja um dos primeiros a testar a plataforma',
-    'form.name': 'Nome completo',
-    'form.email': 'Email',
-    'form.phone': 'Telefone',
-    'form.submit': 'Entrar na Lista',
-    'form.success': 'Obrigado! Você foi adicionado à nossa lista de espera.',
-    'form.error': 'Erro ao enviar formulário. Tente novamente.',
-    
-    // Footer
-    'footer.terms': 'Termos de Uso',
-    'footer.privacy': 'Política de Privacidade',
+    'faq.q1': 'Como funciona a avaliação automatizada?',
+    'faq.a1': 'Nossa plataforma executa testes padronizados em múltiplos modelos simultaneamente, coletando métricas de performance, latência, custo e qualidade de resposta para gerar comparações objetivas.',
+    'faq.q2': 'Quais modelos de LLM são suportados?',
+    'faq.a2': 'Suportamos todos os principais modelos como GPT-4, Claude, Gemini, Llama, e muitos outros. Também oferecemos integração com modelos customizados para clientes Enterprise.',
+    'faq.q3': 'Os dados enviados são seguros?',
+    'faq.a3': 'Sim, utilizamos criptografia end-to-end e seguimos rigorosos padrões de segurança. Seus dados nunca são armazenados permanentemente ou usados para treinar outros modelos.',
+    'faq.q4': 'Posso cancelar a qualquer momento?',
+    'faq.a4': 'Absolutamente. Todos os planos podem ser cancelados a qualquer momento sem taxas adicionais. Você mantém acesso aos dados exportados.'
   },
   'en': {
     // Header
-    'login': 'Login',
-    'hero.title': 'Evaluate and compare LLMs with scientific precision',
-    'hero.subtitle': 'The definitive platform for language model benchmarking. Compare performance, costs, and quality in real-time.',
-    'hero.cta': 'Join Waitlist',
     'pricing': 'Pricing',
     'faq': 'FAQ',
+    'login': 'Login',
     
-    // Problem Section
-    'problem.title': 'The Challenge of Making the Right Choice',
-    'problem.subtitle': 'Choosing the ideal LLM for your project shouldn\'t be a trial and error game',
-    'problem.point1.title': 'Lack of Transparency',
-    'problem.point1.desc': 'Public benchmarks don\'t reflect real-world use cases',
-    'problem.point2.title': 'Hidden Costs',
-    'problem.point2.desc': 'Token pricing doesn\'t show the real production cost',
-    'problem.point3.title': 'Inconsistent Performance',
-    'problem.point3.desc': 'Results vary drastically between different tasks',
+    // Hero
+    'hero.badge': '🚀 Revolutionize your LLM evaluations',
+    'hero.title': 'Evaluate LLMs with Precision and Scale',
+    'hero.subtitle': 'Complete platform to compare, rank, and optimize language models with advanced metrics and actionable insights.',
+    'hero.cta': 'Join Waitlist',
     
-    // Transformation Section
-    'transformation.title': 'The Solution You Need',
-    'transformation.subtitle': 'RankMeLLM transforms LLM evaluation into an exact science',
-    'transformation.feature1.title': 'Custom Benchmarks',
-    'transformation.feature1.desc': 'Test models with your own data and use cases',
-    'transformation.feature2.title': 'Real Cost Analysis',
-    'transformation.feature2.desc': 'Calculate total costs including latency and retries',
-    'transformation.feature3.title': 'Side-by-Side Comparison',
-    'transformation.feature3.desc': 'Visualize performance in interactive dashboards',
+    // Problem
+    'problem.title': 'The Challenge You Face',
+    'problem.subtitle': 'Evaluating language models is complex, time-consuming, and often inaccurate without the right tools.',
+    'problem.point1.title': 'Manual and Subjective Evaluation',
+    'problem.point1.desc': 'Comparing models manually takes hours and is prone to human bias, resulting in inconsistent decisions.',
+    'problem.point2.title': 'Rising Testing Costs',
+    'problem.point2.desc': 'Testing multiple models without a clear strategy wastes resources and increases operational costs.',
+    'problem.point3.title': 'Lack of Standardized Metrics',
+    'problem.point3.desc': 'Without consistent benchmarks, it\'s impossible to make informed decisions about which model to use.',
     
-    // Pricing Section
-    'pricing.title': 'Pricing Plans',
-    'pricing.subtitle': 'Choose the perfect plan for your needs',
-    'pricing.starter.title': 'Starter',
-    'pricing.starter.price': 'Free',
-    'pricing.starter.desc': 'For developers and small projects',
-    'pricing.starter.feature1': 'Up to 5 models compared',
-    'pricing.starter.feature2': '1,000 evaluations per month',
-    'pricing.starter.feature3': 'Basic benchmarks',
-    'pricing.starter.feature4': 'Email support',
-    'pricing.pro.title': 'Pro',
-    'pricing.pro.price': '$67',
-    'pricing.pro.period': '/month',
-    'pricing.pro.desc': 'For teams and professional projects',
-    'pricing.pro.feature1': 'Unlimited models',
-    'pricing.pro.feature2': '50,000 evaluations per month',
-    'pricing.pro.feature3': 'Custom benchmarks',
-    'pricing.pro.feature4': 'Full API access',
-    'pricing.pro.feature5': 'Priority support',
-    'pricing.enterprise.title': 'Enterprise',
-    'pricing.enterprise.price': 'Custom',
-    'pricing.enterprise.desc': 'For large organizations',
-    'pricing.enterprise.feature1': 'Unlimited volume',
-    'pricing.enterprise.feature2': 'On-premise deployment',
-    'pricing.enterprise.feature3': 'Dedicated SLA',
-    'pricing.enterprise.feature4': 'Custom training',
+    // Transformation
+    'transformation.title': 'The Transformation We Offer',
+    'transformation.subtitle': 'Automate, standardize, and accelerate your LLM evaluations with our intelligent platform.',
+    'transformation.feature1.title': 'Automated Benchmarks',
+    'transformation.feature1.desc': 'Run standardized tests on multiple models simultaneously with precise and comparable metrics.',
+    'transformation.feature2.title': 'Cost-Benefit Analysis',
+    'transformation.feature2.desc': 'Compare performance vs. cost to make smart decisions about which model to use in each case.',
+    'transformation.feature3.title': 'Actionable Insights',
+    'transformation.feature3.desc': 'Detailed reports with specific recommendations to optimize your LLM strategy.',
+    
+    // Pricing
+    'pricing.title': 'Plans Tailored to Your Needs',
+    'pricing.subtitle': 'Choose the ideal plan to start optimizing your language models today.',
     'pricing.choose': 'Choose Plan',
     'pricing.contact': 'Contact Sales',
     
-    // FAQ Section
+    'pricing.starter.title': 'Starter',
+    'pricing.starter.price': 'Free',
+    'pricing.starter.desc': 'Perfect to get started',
+    'pricing.starter.feature1': 'Up to 100 evaluations/month',
+    'pricing.starter.feature2': '3 comparison models',
+    'pricing.starter.feature3': 'Basic metrics',
+    'pricing.starter.feature4': 'Email support',
+    
+    'pricing.pro.title': 'Pro',
+    'pricing.pro.price': '$99',
+    'pricing.pro.period': '/month',
+    'pricing.pro.desc': 'For growing teams',
+    'pricing.pro.feature1': 'Unlimited evaluations',
+    'pricing.pro.feature2': 'All available models',
+    'pricing.pro.feature3': 'Advanced + custom metrics',
+    'pricing.pro.feature4': 'Full API',
+    'pricing.pro.feature5': 'Priority support',
+    
+    'pricing.enterprise.title': 'Enterprise',
+    'pricing.enterprise.price': 'Custom',
+    'pricing.enterprise.desc': 'For large organizations',
+    'pricing.enterprise.feature1': 'Enterprise volume',
+    'pricing.enterprise.feature2': 'Private models',
+    'pricing.enterprise.feature3': 'Guaranteed SLA',
+    'pricing.enterprise.feature4': 'Dedicated support',
+    
+    // FAQ
     'faq.title': 'Frequently Asked Questions',
-    'faq.q1': 'How does model evaluation work?',
-    'faq.a1': 'Our platform runs standardized and custom tests on selected models, collecting performance, latency, and cost metrics in real-time.',
-    'faq.q2': 'Can I use my own data for testing?',
-    'faq.a2': 'Yes! You can create custom benchmarks using your own datasets and specific use cases.',
-    'faq.q3': 'Which models are supported?',
-    'faq.a3': 'We support all major LLMs: GPT-4, Claude, Gemini, Llama, and many others. The list is constantly updated.',
-    'faq.q4': 'How is the real cost calculated?',
-    'faq.a4': 'We consider not just token pricing, but also latency, success rate, and infrastructure costs to provide the real TCO.',
-    
-    // Form Section
-    'form.title': 'Join the Waitlist',
-    'form.subtitle': 'Be among the first to test the platform',
-    'form.name': 'Full name',
-    'form.email': 'Email',
-    'form.phone': 'Phone',
-    'form.submit': 'Join Waitlist',
-    'form.success': 'Thank you! You have been added to our waitlist.',
-    'form.error': 'Error submitting form. Please try again.',
-    
-    // Footer
-    'footer.terms': 'Terms of Service',
-    'footer.privacy': 'Privacy Policy',
+    'faq.q1': 'How does automated evaluation work?',
+    'faq.a1': 'Our platform runs standardized tests on multiple models simultaneously, collecting performance, latency, cost, and response quality metrics to generate objective comparisons.',
+    'faq.q2': 'Which LLM models are supported?',
+    'faq.a2': 'We support all major models like GPT-4, Claude, Gemini, Llama, and many others. We also offer integration with custom models for Enterprise customers.',
+    'faq.q3': 'Is the data sent secure?',
+    'faq.a3': 'Yes, we use end-to-end encryption and follow strict security standards. Your data is never permanently stored or used to train other models.',
+    'faq.q4': 'Can I cancel anytime?',
+    'faq.a4': 'Absolutely. All plans can be canceled at any time without additional fees. You keep access to exported data.'
   }
 };
 
-export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('pt-BR');
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [language, setLanguage] = useState<Language>('pt-BR');
+  
   const t = (key: string): string => {
     return translations[language][key] || key;
   };
