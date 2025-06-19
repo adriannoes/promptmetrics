@@ -80,18 +80,18 @@ export function PricingAdvanced({
   };
 
   return (
-    <div className="container py-20">
-      <div className="text-center space-y-4 mb-12">
-        <h2 className="text-4xl font-bold tracking-tight sm:text-5xl text-slate-900">
+    <div className="container py-12 sm:py-16 md:py-20">
+      <div className="text-center space-y-4 mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
           {title}
         </h2>
-        <p className="text-slate-600 text-lg whitespace-pre-line">
+        <p className="text-slate-600 text-sm sm:text-base md:text-lg whitespace-pre-line">
           {description}
         </p>
       </div>
 
-      <div className="flex justify-center items-center gap-4 mb-10">
-        <span className="font-semibold text-slate-700">Monthly</span>
+      <div className="flex justify-center items-center gap-4 mb-12 sm:mb-14 md:mb-16">
+        <span className="font-semibold text-slate-700 text-sm sm:text-base">Monthly</span>
         <Label>
           <Switch
             ref={switchRef as any}
@@ -100,12 +100,12 @@ export function PricingAdvanced({
             className="relative"
           />
         </Label>
-        <span className="font-semibold text-slate-700">
+        <span className="font-semibold text-slate-700 text-sm sm:text-base">
           Annual <span className="text-blue-600">(Save 45%)</span>
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10 lg:gap-12 max-w-6xl mx-auto">
         {plans.map((plan, index) => (
           <motion.div
             key={index}
@@ -113,10 +113,10 @@ export function PricingAdvanced({
             whileInView={
               isDesktop
                 ? {
-                    y: plan.isPopular ? -20 : 0,
+                    y: plan.isPopular ? -10 : 0,
                     opacity: 1,
-                    x: index === 2 ? -30 : index === 0 ? 30 : 0,
-                    scale: index === 0 || index === 2 ? 0.94 : 1.0,
+                    x: index === 2 ? -15 : index === 0 ? 15 : 0,
+                    scale: index === 0 || index === 2 ? 0.97 : 1.0,
                   }
                 : { y: 0, opacity: 1 }
             }
@@ -130,30 +130,30 @@ export function PricingAdvanced({
               opacity: { duration: 0.5 },
             }}
             className={cn(
-              `relative bg-white/70 backdrop-blur-xl rounded-3xl p-10 border transition-all duration-500 hover:shadow-2xl group`,
+              `relative bg-white/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 border transition-all duration-500 hover:shadow-2xl group`,
               plan.isPopular 
                 ? 'border-blue-200/60 shadow-2xl shadow-blue-500/10 scale-105' 
                 : 'border-white/50 shadow-xl hover:border-slate-200/60 hover:shadow-slate-300/20',
               "flex flex-col",
-              !plan.isPopular && "mt-5",
+              !plan.isPopular && "mt-0 md:mt-5",
               index === 0 || index === 2
                 ? "z-0 transform translate-x-0 translate-y-0"
                 : "z-10",
             )}
           >
             {plan.isPopular && (
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
-                <div className="flex items-center gap-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-xl backdrop-blur-sm">
-                  <Star className="w-4 h-4" />
+              <div className="absolute -top-3 sm:-top-5 left-1/2 transform -translate-x-1/2">
+                <div className="flex items-center gap-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-semibold shadow-xl backdrop-blur-sm">
+                  <Star className="w-3 h-3 sm:w-4 sm:h-4" />
                   Popular
                 </div>
               </div>
             )}
             
-            <div className="text-center mb-10">
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">{plan.name}</h3>
-              <div className="flex items-baseline justify-center mb-4">
-                <span className="text-6xl font-bold text-slate-900 tracking-tight">
+            <div className="text-center mb-8 sm:mb-10">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">{plan.name}</h3>
+              <div className="flex items-baseline justify-center mb-3 sm:mb-4">
+                <span className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 tracking-tight">
                   <NumberFlow
                     value={
                       isMonthly ? Number(plan.price) : Number(plan.yearlyPrice)
@@ -172,21 +172,21 @@ export function PricingAdvanced({
                   />
                 </span>
                 {plan.period !== "Next 3 months" && (
-                  <span className="text-slate-600 ml-2 font-medium text-lg">
+                  <span className="text-slate-600 ml-2 font-medium text-sm sm:text-base md:text-lg">
                     / {plan.period}
                   </span>
                 )}
               </div>
-              <p className="text-slate-600 font-light text-lg">{plan.description}</p>
+              <p className="text-slate-600 font-light text-sm sm:text-base md:text-lg">{plan.description}</p>
             </div>
             
-            <ul className="space-y-5 mb-10 flex-1">
+            <ul className="space-y-4 sm:space-y-5 mb-8 sm:mb-10 flex-1">
               {plan.features.map((feature, featureIndex) => (
-                <li key={featureIndex} className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-green-100/80 backdrop-blur-sm rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 shadow-sm">
-                    <Check className="w-3.5 h-3.5 text-green-600" />
+                <li key={featureIndex} className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-100/80 backdrop-blur-sm rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 shadow-sm">
+                    <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-600" />
                   </div>
-                  <span className="text-slate-700 leading-relaxed">{feature}</span>
+                  <span className="text-slate-700 leading-relaxed text-sm sm:text-base">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -197,7 +197,7 @@ export function PricingAdvanced({
                 buttonVariants({
                   variant: "outline",
                 }),
-                "w-full py-5 px-6 rounded-2xl font-semibold transition-all duration-300 group-hover:scale-[1.02] shadow-lg hover:shadow-xl",
+                "w-full py-4 sm:py-5 px-4 sm:px-6 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 group-hover:scale-[1.01] shadow-lg hover:shadow-xl text-sm sm:text-base min-h-[44px]",
                 plan.isPopular 
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/20 hover:shadow-blue-500/30'
                   : 'bg-white/80 backdrop-blur-sm text-slate-900 hover:bg-white border border-slate-200/60 hover:border-slate-300'
