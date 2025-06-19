@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type Language = 'pt-BR' | 'en';
+type Language = 'en' | 'pt-BR';
 
 interface LanguageContextType {
   language: Language;
@@ -10,81 +10,6 @@ interface LanguageContextType {
 }
 
 const translations = {
-  'pt-BR': {
-    // Header
-    'pricing': 'Preços',
-    'faq': 'FAQ',
-    'login': 'Entrar',
-    
-    // Hero
-    'hero.badge': '🚀 Revolucione suas avaliações de LLM',
-    'hero.title': 'Avalie LLMs com Precisão e Escala',
-    'hero.subtitle': 'Plataforma completa para comparar, ranquear e otimizar modelos de linguagem com métricas avançadas e insights acionáveis.',
-    'hero.cta': 'Entre na Lista de Espera',
-    
-    // Problem
-    'problem.title': 'O Desafio que Você Enfrenta',
-    'problem.subtitle': 'Avaliar modelos de linguagem é complexo, demorado e frequentemente impreciso sem as ferramentas certas.',
-    'problem.point1.title': 'Avaliação Manual e Subjetiva',
-    'problem.point1.desc': 'Comparar modelos manualmente leva horas e é propenso a viés humano, resultando em decisões inconsistentes.',
-    'problem.point2.title': 'Custos Crescentes de Teste',
-    'problem.point2.desc': 'Testar múltiplos modelos sem uma estratégia clara desperdiça recursos e aumenta custos operacionais.',
-    'problem.point3.title': 'Falta de Métricas Padronizadas',
-    'problem.point3.desc': 'Sem benchmarks consistentes, é impossível tomar decisões fundamentadas sobre qual modelo usar.',
-    
-    // Transformation
-    'transformation.title': 'A Transformação que Oferecemos',
-    'transformation.subtitle': 'Automatize, padronize e acelere suas avaliações de LLM com nossa plataforma inteligente.',
-    'transformation.feature1.title': 'Benchmarks Automatizados',
-    'transformation.feature1.desc': 'Execute testes padronizados em múltiplos modelos simultaneamente com métricas precisas e comparáveis.',
-    'transformation.feature2.title': 'Análise de Custo-Benefício',
-    'transformation.feature2.desc': 'Compare performance vs. custo para tomar decisões inteligentes sobre qual modelo usar em cada caso.',
-    'transformation.feature3.title': 'Insights Acionáveis',
-    'transformation.feature3.desc': 'Relatórios detalhados com recomendações específicas para otimizar sua estratégia de LLM.',
-    
-    // Pricing
-    'pricing.title': 'Planos Sob Medida para Sua Necessidade',
-    'pricing.subtitle': 'Escolha o plano ideal para começar a otimizar seus modelos de linguagem hoje.',
-    'pricing.choose': 'Escolher Plano',
-    'pricing.contact': 'Falar com Vendas',
-    
-    'pricing.starter.title': 'Starter',
-    'pricing.starter.price': 'Gratuito',
-    'pricing.starter.desc': 'Perfeito para começar',
-    'pricing.starter.feature1': 'Até 100 avaliações/mês',
-    'pricing.starter.feature2': '3 modelos de comparação',
-    'pricing.starter.feature3': 'Métricas básicas',
-    'pricing.starter.feature4': 'Suporte por email',
-    
-    'pricing.pro.title': 'Pro',
-    'pricing.pro.price': 'R$ 299',
-    'pricing.pro.period': '/mês',
-    'pricing.pro.desc': 'Para equipes em crescimento',
-    'pricing.pro.feature1': 'Avaliações ilimitadas',
-    'pricing.pro.feature2': 'Todos os modelos disponíveis',
-    'pricing.pro.feature3': 'Métricas avançadas + custom',
-    'pricing.pro.feature4': 'API completa',
-    'pricing.pro.feature5': 'Suporte prioritário',
-    
-    'pricing.enterprise.title': 'Enterprise',
-    'pricing.enterprise.price': 'Customizado',
-    'pricing.enterprise.desc': 'Para grandes organizações',
-    'pricing.enterprise.feature1': 'Volume enterprise',
-    'pricing.enterprise.feature2': 'Modelos privados',
-    'pricing.enterprise.feature3': 'SLA garantido',
-    'pricing.enterprise.feature4': 'Suporte dedicado',
-    
-    // FAQ
-    'faq.title': 'Perguntas Frequentes',
-    'faq.q1': 'Como funciona a avaliação automatizada?',
-    'faq.a1': 'Nossa plataforma executa testes padronizados em múltiplos modelos simultaneamente, coletando métricas de performance, latência, custo e qualidade de resposta para gerar comparações objetivas.',
-    'faq.q2': 'Quais modelos de LLM são suportados?',
-    'faq.a2': 'Suportamos todos os principais modelos como GPT-4, Claude, Gemini, Llama, e muitos outros. Também oferecemos integração com modelos customizados para clientes Enterprise.',
-    'faq.q3': 'Os dados enviados são seguros?',
-    'faq.a3': 'Sim, utilizamos criptografia end-to-end e seguimos rigorosos padrões de segurança. Seus dados nunca são armazenados permanentemente ou usados para treinar outros modelos.',
-    'faq.q4': 'Posso cancelar a qualquer momento?',
-    'faq.a4': 'Absolutamente. Todos os planos podem ser cancelados a qualquer momento sem taxas adicionais. Você mantém acesso aos dados exportados.'
-  },
   'en': {
     // Header
     'pricing': 'Pricing',
@@ -92,7 +17,7 @@ const translations = {
     'login': 'Login',
     
     // Hero
-    'hero.badge': '🚀 Revolutionize your LLM evaluations',
+    'hero.badge': 'Revolutionize your LLM evaluations',
     'hero.title': 'Evaluate LLMs with Precision and Scale',
     'hero.subtitle': 'Complete platform to compare, rank, and optimize language models with advanced metrics and actionable insights.',
     'hero.cta': 'Join Waitlist',
@@ -123,17 +48,19 @@ const translations = {
     'pricing.choose': 'Choose Plan',
     'pricing.contact': 'Contact Sales',
     
-    'pricing.starter.title': 'Starter',
-    'pricing.starter.price': 'Free',
-    'pricing.starter.desc': 'Perfect to get started',
-    'pricing.starter.feature1': 'Up to 100 evaluations/month',
-    'pricing.starter.feature2': '3 comparison models',
-    'pricing.starter.feature3': 'Basic metrics',
-    'pricing.starter.feature4': 'Email support',
+    'pricing.trial.title': 'Trial',
+    'pricing.trial.price': '5.99',
+    'pricing.trial.period': 'for 3 months',
+    'pricing.trial.desc': 'Perfect for testing',
+    'pricing.trial.feature1': 'Up to 50 evaluations',
+    'pricing.trial.feature2': '3 comparison models',
+    'pricing.trial.feature3': 'Basic metrics',
+    'pricing.trial.feature4': 'Email support',
     
     'pricing.pro.title': 'Pro',
-    'pricing.pro.price': '$99',
-    'pricing.pro.period': '/month',
+    'pricing.pro.price': '29',
+    'pricing.pro.yearlyPrice': '190',
+    'pricing.pro.period': 'month',
     'pricing.pro.desc': 'For growing teams',
     'pricing.pro.feature1': 'Unlimited evaluations',
     'pricing.pro.feature2': 'All available models',
@@ -143,6 +70,7 @@ const translations = {
     
     'pricing.enterprise.title': 'Enterprise',
     'pricing.enterprise.price': 'Custom',
+    'pricing.enterprise.yearlyPrice': 'Custom',
     'pricing.enterprise.desc': 'For large organizations',
     'pricing.enterprise.feature1': 'Enterprise volume',
     'pricing.enterprise.feature2': 'Private models',
@@ -159,13 +87,91 @@ const translations = {
     'faq.a3': 'Yes, we use end-to-end encryption and follow strict security standards. Your data is never permanently stored or used to train other models.',
     'faq.q4': 'Can I cancel anytime?',
     'faq.a4': 'Absolutely. All plans can be canceled at any time without additional fees. You keep access to exported data.'
+  },
+  'pt-BR': {
+    // Header
+    'pricing': 'Preços',
+    'faq': 'FAQ',
+    'login': 'Entrar',
+    
+    // Hero
+    'hero.badge': 'Revolucione suas avaliações de LLM',
+    'hero.title': 'Avalie LLMs com Precisão e Escala',
+    'hero.subtitle': 'Plataforma completa para comparar, ranquear e otimizar modelos de linguagem com métricas avançadas e insights acionáveis.',
+    'hero.cta': 'Entre na Lista de Espera',
+    
+    // Problem
+    'problem.title': 'O Desafio que Você Enfrenta',
+    'problem.subtitle': 'Avaliar modelos de linguagem é complexo, demorado e frequentemente impreciso sem as ferramentas certas.',
+    'problem.point1.title': 'Avaliação Manual e Subjetiva',
+    'problem.point1.desc': 'Comparar modelos manualmente leva horas e é propenso a viés humano, resultando em decisões inconsistentes.',
+    'problem.point2.title': 'Custos Crescentes de Teste',
+    'problem.point2.desc': 'Testar múltiplos modelos sem uma estratégia clara desperdiça recursos e aumenta custos operacionais.',
+    'problem.point3.title': 'Falta de Métricas Padronizadas',
+    'problem.point3.desc': 'Sem benchmarks consistentes, é impossível tomar decisões fundamentadas sobre qual modelo usar.',
+    
+    // Transformation
+    'transformation.title': 'A Transformação que Oferecemos',
+    'transformation.subtitle': 'Automatize, padronize e acelere suas avaliações de LLM com nossa plataforma inteligente.',
+    'transformation.feature1.title': 'Benchmarks Automatizados',
+    'transformation.feature1.desc': 'Execute testes padronizados em múltiplos modelos simultaneamente com métricas precisas e comparáveis.',
+    'transformation.feature2.title': 'Análise de Custo-Benefício',
+    'transformation.feature2.desc': 'Compare performance vs. custo para tomar decisões inteligentes sobre qual modelo usar em cada caso.',
+    'transformation.feature3.title': 'Insights Acionáveis',
+    'transformation.feature3.desc': 'Relatórios detalhados com recomendações específicas para otimizar sua estratégia de LLM.',
+    
+    // Pricing
+    'pricing.title': 'Planos Sob Medida para Sua Necessidade',
+    'pricing.subtitle': 'Escolha o plano ideal para começar a otimizar seus modelos de linguagem hoje.',
+    'pricing.choose': 'Escolher Plano',
+    'pricing.contact': 'Falar com Vendas',
+    
+    'pricing.trial.title': 'Trial',
+    'pricing.trial.price': '5.99',
+    'pricing.trial.period': 'por 3 meses',
+    'pricing.trial.desc': 'Perfeito para testar',
+    'pricing.trial.feature1': 'Até 50 avaliações',
+    'pricing.trial.feature2': '3 modelos de comparação',
+    'pricing.trial.feature3': 'Métricas básicas',
+    'pricing.trial.feature4': 'Suporte por email',
+    
+    'pricing.pro.title': 'Pro',
+    'pricing.pro.price': '29',
+    'pricing.pro.yearlyPrice': '190',
+    'pricing.pro.period': 'mês',
+    'pricing.pro.desc': 'Para equipes em crescimento',
+    'pricing.pro.feature1': 'Avaliações ilimitadas',
+    'pricing.pro.feature2': 'Todos os modelos disponíveis',
+    'pricing.pro.feature3': 'Métricas avançadas + custom',
+    'pricing.pro.feature4': 'API completa',
+    'pricing.pro.feature5': 'Suporte prioritário',
+    
+    'pricing.enterprise.title': 'Enterprise',
+    'pricing.enterprise.price': 'Customizado',
+    'pricing.enterprise.yearlyPrice': 'Customizado',
+    'pricing.enterprise.desc': 'Para grandes organizações',
+    'pricing.enterprise.feature1': 'Volume enterprise',
+    'pricing.enterprise.feature2': 'Modelos privados',
+    'pricing.enterprise.feature3': 'SLA garantido',
+    'pricing.enterprise.feature4': 'Suporte dedicado',
+    
+    // FAQ
+    'faq.title': 'Perguntas Frequentes',
+    'faq.q1': 'Como funciona a avaliação automatizada?',
+    'faq.a1': 'Nossa plataforma executa testes padronizados em múltiplos modelos simultaneamente, coletando métricas de performance, latência, custo e qualidade de resposta para gerar comparações objetivas.',
+    'faq.q2': 'Quais modelos de LLM são suportados?',
+    'faq.a2': 'Suportamos todos os principais modelos como GPT-4, Claude, Gemini, Llama, e muitos outros. Também oferecemos integração com modelos customizados para clientes Enterprise.',
+    'faq.q3': 'Os dados enviados são seguros?',
+    'faq.a3': 'Sim, utilizamos criptografia end-to-end e seguimos rigorosos padrões de segurança. Seus dados nunca são armazenados permanentemente ou usados para treinar outros modelos.',
+    'faq.q4': 'Posso cancelar a qualquer momento?',
+    'faq.a4': 'Absolutamente. Todos os planos podem ser cancelados a qualquer momento sem taxas adicionais. Você mantém acesso aos dados exportados.'
   }
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('pt-BR');
+  const [language, setLanguage] = useState<Language>('en');
   
   const t = (key: string): string => {
     return translations[language][key] || key;
