@@ -11,56 +11,69 @@ const Problem = () => {
       icon: AlertTriangle,
       title: t('problem.point1.title'),
       description: t('problem.point1.desc'),
-      color: 'from-red-50 to-orange-50',
-      iconColor: 'text-red-600',
-      iconBg: 'bg-red-100'
+      color: 'from-slate-50/80 to-blue-50/80',
+      iconColor: 'text-slate-600',
+      iconBg: 'bg-slate-100/80'
     },
     {
       icon: DollarSign,
       title: t('problem.point2.title'),
       description: t('problem.point2.desc'),
-      color: 'from-amber-50 to-yellow-50',
-      iconColor: 'text-amber-600',
-      iconBg: 'bg-amber-100'
+      color: 'from-blue-50/80 to-indigo-50/80',
+      iconColor: 'text-blue-600',
+      iconBg: 'bg-blue-100/80'
     },
     {
       icon: TrendingDown,
       title: t('problem.point3.title'),
       description: t('problem.point3.desc'),
-      color: 'from-rose-50 to-pink-50',
-      iconColor: 'text-rose-600',
-      iconBg: 'bg-rose-100'
+      color: 'from-indigo-50/80 to-purple-50/80',
+      iconColor: 'text-indigo-600',
+      iconBg: 'bg-indigo-100/80'
     }
   ];
 
   return (
-    <section className="py-24 bg-slate-50/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-100/80 text-red-800 rounded-full text-sm font-medium mb-6">
+    <section className="py-32 bg-gradient-to-br from-slate-50/50 via-blue-50/30 to-indigo-50/40 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-24">
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/60 backdrop-blur-lg border border-slate-200/50 text-slate-700 rounded-full text-sm font-medium mb-8 shadow-lg shadow-slate-200/20">
             <AlertTriangle className="w-4 h-4" />
             Desafios Atuais
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 tracking-tight leading-tight">
             {t('problem.title')}
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto font-light leading-relaxed">
+          <p className="text-xl text-slate-600 max-w-4xl mx-auto font-light leading-relaxed">
             {t('problem.subtitle')}
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {problems.map((problem, index) => (
-            <div key={index} className={`relative bg-gradient-to-br ${problem.color} rounded-3xl p-8 border border-white/60 shadow-sm hover:shadow-lg transition-all duration-300 group`}>
-              <div className={`w-14 h-14 ${problem.iconBg} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <problem.icon className={`w-7 h-7 ${problem.iconColor}`} />
+            <div 
+              key={index} 
+              className={`group relative bg-gradient-to-br ${problem.color} backdrop-blur-lg rounded-3xl p-8 border border-white/40 shadow-xl shadow-slate-200/10 hover:shadow-2xl hover:shadow-slate-300/20 transition-all duration-500 hover:-translate-y-2 animate-fade-in`}
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              {/* Glassmorphic overlay */}
+              <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <div className="relative z-10">
+                <div className={`w-16 h-16 ${problem.iconBg} backdrop-blur-sm rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>
+                  <problem.icon className={`w-8 h-8 ${problem.iconColor}`} />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-6 leading-snug">
+                  {problem.title}
+                </h3>
+                <p className="text-slate-700 leading-relaxed opacity-90">
+                  {problem.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-4 leading-snug">
-                {problem.title}
-              </h3>
-              <p className="text-slate-700 leading-relaxed">
-                {problem.description}
-              </p>
             </div>
           ))}
         </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Send, User, Mail, Phone } from 'lucide-react';
@@ -114,14 +113,15 @@ const ContactForm = () => {
 
   if (submitted) {
     return (
-      <section id="form" className="py-24 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-white rounded-3xl p-12 shadow-lg border border-blue-100">
-            <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Send className="w-10 h-10 text-white" />
+      <section id="form" className="py-32 bg-gradient-to-br from-blue-50/50 to-indigo-50/40 relative overflow-hidden">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-green-200/20 rounded-full blur-3xl"></div>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-16 shadow-2xl border border-white/40 animate-scale-in">
+            <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
+              <Send className="w-12 h-12 text-white" />
             </div>
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">Obrigado!</h3>
-            <p className="text-lg text-slate-600">Em breve entraremos em contato.</p>
+            <h3 className="text-4xl font-bold text-slate-900 mb-6">Obrigado!</h3>
+            <p className="text-xl text-slate-600">Em breve entraremos em contato.</p>
           </div>
         </div>
       </section>
@@ -129,32 +129,35 @@ const ContactForm = () => {
   }
 
   return (
-    <section id="form" className="py-24 bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100/80 text-blue-800 rounded-full text-sm font-medium mb-6">
+    <section id="form" className="py-32 bg-gradient-to-br from-blue-50/50 to-indigo-50/40 relative overflow-hidden">
+      <div className="absolute top-20 left-10 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-20 right-10 w-72 h-72 bg-indigo-200/20 rounded-full blur-3xl"></div>
+      
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-16 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/60 backdrop-blur-lg border border-white/50 text-blue-800 rounded-full text-sm font-medium mb-8 shadow-lg">
             <Send className="w-4 h-4" />
             Entre na Lista de Espera
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 tracking-tight leading-tight">
             Comece Agora
           </h2>
-          <p className="text-xl text-slate-600 font-light">
+          <p className="text-xl text-slate-600 font-light leading-relaxed">
             Seja um dos primeiros a revolucionar suas avaliações de LLM
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-lg border border-blue-100">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-white/40 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <form onSubmit={handleSubmit} className="space-y-8">
             {submitError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm">
+              <div className="bg-red-50/80 backdrop-blur-sm border border-red-200/60 text-red-700 px-6 py-4 rounded-2xl text-sm shadow-lg">
                 {submitError}
               </div>
             )}
             
-            <div className="relative">
+            <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <User className="w-5 h-5 text-slate-400" />
+                <User className="w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
               </div>
               <input
                 type="text"
@@ -163,18 +166,18 @@ const ContactForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className={`w-full pl-12 pr-4 py-4 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200 ${
-                  errors.name ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                className={`w-full pl-12 pr-4 py-5 border rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 shadow-lg hover:shadow-xl ${
+                  errors.name ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
                 }`}
               />
               {errors.name && (
-                <p className="mt-2 text-sm text-red-600">{errors.name}</p>
+                <p className="mt-3 text-sm text-red-600 animate-fade-in">{errors.name}</p>
               )}
             </div>
 
-            <div className="relative">
+            <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="w-5 h-5 text-slate-400" />
+                <Mail className="w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
               </div>
               <input
                 type="email"
@@ -183,18 +186,18 @@ const ContactForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className={`w-full pl-12 pr-4 py-4 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200 ${
-                  errors.email ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                className={`w-full pl-12 pr-4 py-5 border rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 shadow-lg hover:shadow-xl ${
+                  errors.email ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
                 }`}
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-3 text-sm text-red-600 animate-fade-in">{errors.email}</p>
               )}
             </div>
 
-            <div className="relative">
+            <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Phone className="w-5 h-5 text-slate-400" />
+                <Phone className="w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
               </div>
               <input
                 type="tel"
@@ -203,19 +206,19 @@ const ContactForm = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className={`w-full pl-12 pr-4 py-4 border rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-500 transition-all duration-200 ${
-                  errors.phone ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                className={`w-full pl-12 pr-4 py-5 border rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 shadow-lg hover:shadow-xl ${
+                  errors.phone ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
                 }`}
               />
               {errors.phone && (
-                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+                <p className="mt-3 text-sm text-red-600 animate-fade-in">{errors.phone}</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting || Object.keys(errors).length > 0}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 px-8 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-5 px-8 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl hover:shadow-3xl hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 backdrop-blur-sm border border-blue-500/20"
             >
               {isSubmitting ? (
                 <>
