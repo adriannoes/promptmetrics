@@ -11,9 +11,6 @@ import { Check, Star } from "lucide-react";
 import { useState, useRef } from "react";
 import NumberFlow from "@number-flow/react";
 
-// Import canvas-confetti dinamicamente para evitar problemas de build
-const confetti = typeof window !== 'undefined' ? require('canvas-confetti') : null;
-
 interface PricingPlan {
   name: string;
   price: string;
@@ -41,32 +38,37 @@ export function PricingAdvanced({
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const switchRef = useRef<HTMLButtonElement>(null);
 
-  const handleToggle = (checked: boolean) => {
+  const handleToggle = async (checked: boolean) => {
     setIsMonthly(!checked);
-    if (checked && switchRef.current && confetti) {
+    if (checked && switchRef.current && typeof window !== 'undefined') {
       const rect = switchRef.current.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
 
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: {
-          x: x / window.innerWidth,
-          y: y / window.innerHeight,
-        },
-        colors: [
-          "#3b82f6",
-          "#6366f1", 
-          "#8b5cf6",
-          "#06b6d4",
-        ],
-        ticks: 200,
-        gravity: 1.2,
-        decay: 0.94,
-        startVelocity: 30,
-        shapes: ["circle"],
-      });
+      try {
+        const confetti = (await import('canvas-confetti')).default;
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: {
+            x: x / window.innerWidth,
+            y: y / window.innerHeight,
+          },
+          colors: [
+            "#3b82f6",
+            "#6366f1", 
+            "#8b5cf6",
+            "#06b6d4",
+          ],
+          ticks: 200,
+          gravity: 1.2,
+          decay: 0.94,
+          startVelocity: 30,
+          shapes: ["circle"],
+        });
+      } catch (error) {
+        console.log('Confetti not available');
+      }
     }
   };
 
