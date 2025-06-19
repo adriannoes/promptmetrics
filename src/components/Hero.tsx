@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { AuroraBackground } from './ui/aurora-background';
 
 const Hero = () => {
@@ -15,14 +15,14 @@ const Hero = () => {
   };
 
   return (
-    <AuroraBackground className="bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/50 pt-16">
+    <AuroraBackground className="bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/50 pt-16 pb-20 min-h-[85vh]">
       {/* Enhanced background decoration - keeping existing gradients */}
       <div className="absolute inset-0 bg-grid-slate-100/40 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
       <div className="absolute top-20 left-10 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-indigo-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-300/10 rounded-full blur-3xl"></div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 flex items-center justify-center min-h-[70vh]">
         <motion.div 
           initial={{ opacity: 0.0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -57,12 +57,6 @@ const Hero = () => {
             <div className="w-2 h-2 bg-white/80 rounded-full group-hover:bg-white group-hover:scale-125 transition-all duration-300"></div>
           </button>
         </motion.div>
-        
-        <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-12 h-12 rounded-full bg-white/70 backdrop-blur-xl border border-white/50 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer">
-            <ChevronDown className="w-5 h-5 text-slate-500" />
-          </div>
-        </div>
       </div>
     </AuroraBackground>
   );

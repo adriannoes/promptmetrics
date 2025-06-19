@@ -11,11 +11,11 @@ const LanguageSelector = () => {
       <Globe className="w-4 h-4 text-slate-600" />
       <select
         value={language}
-        onChange={(e) => setLanguage(e.target.value as 'pt-BR' | 'en')}
+        onChange={(e) => setLanguage(e.target.value as 'en' | 'pt-BR')}
         className="bg-transparent border-none text-sm font-medium text-slate-700 focus:outline-none cursor-pointer"
       >
-        <option value="pt-BR">PT</option>
         <option value="en">EN</option>
+        <option value="pt-BR">PT</option>
       </select>
     </div>
   );
