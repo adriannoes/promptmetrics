@@ -9,7 +9,6 @@ import Pricing from '../components/Pricing';
 import FAQ from '../components/FAQ';
 import ContactForm from '../components/ContactForm';
 import Footer from '../components/Footer';
-import TestComponent from '../components/TestComponent';
 
 const Index = () => {
   console.log('Index component rendering...');
@@ -17,7 +16,6 @@ const Index = () => {
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-white">
-        <TestComponent />
         <Header />
         <Hero />
         <Problem />

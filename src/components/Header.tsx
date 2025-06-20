@@ -17,12 +17,12 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/60 shadow-lg shadow-slate-200/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-18">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <Zap className="w-5 h-5 text-white" />
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <Zap className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-bold text-slate-900 tracking-tight">RankMeLLM</span>
+            <span className="text-lg font-bold text-slate-900 tracking-tight">RankMeLLM</span>
           </div>
           
           <nav className="hidden md:flex items-center gap-8">
@@ -39,9 +39,9 @@ const Header = () => {
               {t('faq')}
             </button>
             
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <LanguageSelector />
-              <button className="px-5 py-2.5 text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 hover:bg-white/50 rounded-lg backdrop-blur-sm">
+              <button className="px-4 py-2 text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 hover:bg-white/50 rounded-lg backdrop-blur-sm">
                 {t('login')}
               </button>
             </div>
