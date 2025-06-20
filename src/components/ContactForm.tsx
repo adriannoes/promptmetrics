@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Send, User, Mail, Phone } from 'lucide-react';
+import { Send, User, Mail } from 'lucide-react';
+import PhoneInput from './PhoneInput';
 
 const ContactForm = () => {
   const { t } = useLanguage();
@@ -14,6 +15,30 @@ const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [submitError, setSubmitError] = useState('');
+
+  const validatePhoneNumber = (phoneValue: string): boolean => {
+    if (!phoneValue.trim()) return false;
+    
+    // Extract country code and number
+    const dialCodes = ['+55', '+1', '+44', '+49', '+33'];
+    const country = dialCodes.find(code => phoneValue.startsWith(code));
+    
+    if (!country) return false;
+    
+    const numberPart = phoneValue.replace(country + ' ', '');
+    
+    // Basic validation patterns for each country
+    const patterns = {
+      '+55': /^\d{2}\s\d{5}-\d{4}$/, // Brazil
+      '+1': /^\(\d{3}\)\s\d{3}-\d{4}$/, // US/Canada
+      '+44': /^\d{2}\s\d{4}\s\d{4}$/, // UK
+      '+49': /^\d{2}\s\d{8}$/, // Germany
+      '+33': /^\d\s\d{2}\s\d{2}\s\d{2}\s\d{2}$/ // France
+    };
+    
+    const pattern = patterns[country as keyof typeof patterns];
+    return pattern ? pattern.test(numberPart) : false;
+  };
 
   const validateField = (name: string, value: string) => {
     const newErrors = { ...errors };
@@ -33,17 +58,16 @@ const ContactForm = () => {
         if (!value.trim()) {
           newErrors.email = 'Email is required';
         } else if (!emailRegex.test(value)) {
-          newErrors.email = 'Invalid email';
+          newErrors.email = 'Invalid email address';
         } else {
           delete newErrors.email;
         }
         break;
       case 'phone':
-        const phoneRegex = /^(\+\d{1,3}\s?)?(\(?\d{2,3}\)?[\s-]?)?\d{3,4}[\s-]?\d{4}$/;
         if (!value.trim()) {
-          newErrors.phone = 'Phone is required';
-        } else if (!phoneRegex.test(value)) {
-          newErrors.phone = 'Invalid phone number';
+          newErrors.phone = 'Phone number is required';
+        } else if (!validatePhoneNumber(value)) {
+          newErrors.phone = 'Invalid phone number format';
         } else {
           delete newErrors.phone;
         }
@@ -110,6 +134,21 @@ const ContactForm = () => {
     
     // Validate field on change
     validateField(name, value);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      phone: value
+    }));
+    
+    // Clear submit error when user starts typing
+    if (submitError) {
+      setSubmitError('');
+    }
+    
+    // Validate phone field on change
+    validateField('phone', value);
   };
 
   if (submitted) {
@@ -196,25 +235,13 @@ const ContactForm = () => {
               )}
             </div>
 
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
-              </div>
-              <input
-                type="tel"
-                name="phone"
-                placeholder="+1 (555) 123-4567"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-4 sm:py-5 border rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 shadow-lg hover:shadow-xl text-sm sm:text-base min-h-[48px] ${
-                  errors.phone ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
-                }`}
-              />
-              {errors.phone && (
-                <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-red-600 animate-fade-in">{errors.phone}</p>
-              )}
-            </div>
+            <PhoneInput
+              value={formData.phone}
+              onChange={handlePhoneChange}
+              error={errors.phone}
+              placeholder="Enter phone number"
+              required
+            />
 
             <button
               type="submit"
