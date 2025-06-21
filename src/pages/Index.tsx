@@ -11,6 +11,8 @@ import ContactForm from '../components/ContactForm';
 import Footer from '../components/Footer';
 
 const Index = () => {
+  console.log('Index component rendering...');
+  
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-white">
