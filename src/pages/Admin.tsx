@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Zap, LogOut, Users, Settings, BarChart3 } from 'lucide-react';
+import AdminUserManagement from '@/components/AdminUserManagement';
 
 const Admin = () => {
   const { profile, signOut } = useAuth();
@@ -52,7 +53,7 @@ const Admin = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -93,7 +94,12 @@ const Admin = () => {
           </div>
         </div>
 
-        <div className="mt-12 bg-white rounded-2xl shadow-xl border border-white/60 p-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8 mb-8">
+          <h2 className="text-2xl font-semibold text-slate-900 mb-6">User Management</h2>
+          <AdminUserManagement />
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8">
           <h2 className="text-2xl font-semibold text-slate-900 mb-6">Quick Stats</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
