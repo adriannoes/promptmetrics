@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Zap, LogOut, Users, Settings, BarChart3 } from 'lucide-react';
 import AdminUserManagement from '@/components/AdminUserManagement';
+import AdminInvitationCodes from '@/components/AdminInvitationCodes';
 
 const Admin = () => {
   const { profile, signOut } = useAuth();
@@ -97,6 +98,11 @@ const Admin = () => {
         <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8 mb-8">
           <h2 className="text-2xl font-semibold text-slate-900 mb-6">User Management</h2>
           <AdminUserManagement />
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8 mb-8">
+          <h2 className="text-2xl font-semibold text-slate-900 mb-6">Manage Invitation Codes</h2>
+          <AdminInvitationCodes />
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8">
