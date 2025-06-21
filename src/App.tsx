@@ -55,6 +55,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </AuthProvider>
+
     </TooltipProvider>
   </QueryClientProvider>
 );
