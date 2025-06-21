@@ -1,17 +1,25 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 import LanguageSelector from './LanguageSelector';
-import { Zap } from 'lucide-react';
+import { Button } from './ui/button';
+import { Zap, LogOut } from 'lucide-react';
 
 const Header = () => {
   const { t } = useLanguage();
+  const { user, profile, signOut } = useAuth();
 
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
@@ -41,9 +49,28 @@ const Header = () => {
             
             <div className="flex items-center gap-4">
               <LanguageSelector />
-              <button className="px-4 py-2 text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 hover:bg-white/50 rounded-lg backdrop-blur-sm">
-                {t('login')}
-              </button>
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-slate-600">
+                    {profile?.full_name || user.email}
+                  </span>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign out
+                  </Button>
+                </div>
+              ) : (
+                <Link to="/login">
+                  <button className="px-5 py-2.5 text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 hover:bg-white/50 rounded-lg backdrop-blur-sm">
+                    {t('login')}
+                  </button>
+                </Link>
+              )}
             </div>
           </nav>
         </div>
