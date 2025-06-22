@@ -4,7 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { Target, Calculator, BarChart3, ArrowRight } from 'lucide-react';
 
 const Transformation = () => {
-  const { t } = useLanguage();
+  const { t, tHTML } = useLanguage();
 
   const features = [
     {
@@ -36,9 +36,10 @@ const Transformation = () => {
             <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
             {t('tags.transformation')}
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8 tracking-tight leading-tight">
-            {t('transformation.title')}
-          </h2>
+          <h2 
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8 tracking-tight leading-tight"
+            dangerouslySetInnerHTML={tHTML('transformation.title')}
+          />
           <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-4xl mx-auto font-light leading-relaxed">
             {t('transformation.subtitle')}
           </p>
