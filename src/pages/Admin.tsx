@@ -3,9 +3,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Zap, LogOut, Users, Settings, BarChart3 } from 'lucide-react';
+import { Zap, LogOut, Users, Settings, BarChart3, Shield } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminUserManagement from '@/components/AdminUserManagement';
 import AdminInvitationCodes from '@/components/AdminInvitationCodes';
+import SecurityAuditLogs from '@/components/SecurityAuditLogs';
 
 const Admin = () => {
   const { profile, signOut } = useAuth();
@@ -65,7 +67,6 @@ const Admin = () => {
             <p className="text-slate-600 mb-4">
               Manage user accounts, roles, and permissions across the platform.
             </p>
-            <Button className="w-full">Manage Users</Button>
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-6">
@@ -78,7 +79,6 @@ const Admin = () => {
             <p className="text-slate-600 mb-4">
               View platform usage statistics, evaluation metrics, and performance data.
             </p>
-            <Button className="w-full">View Analytics</Button>
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-6">
@@ -91,40 +91,38 @@ const Admin = () => {
             <p className="text-slate-600 mb-4">
               Configure platform settings, API keys, and system preferences.
             </p>
-            <Button className="w-full">Configure System</Button>
           </div>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8 mb-8">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-6">User Management</h2>
-          <AdminUserManagement />
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8 mb-8">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-6">Manage Invitation Codes</h2>
-          <AdminInvitationCodes />
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-6">Quick Stats</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-2">--</div>
-              <div className="text-slate-600">Total Users</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600 mb-2">--</div>
-              <div className="text-slate-600">Active Evaluations</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-2">--</div>
-              <div className="text-slate-600">Models Tested</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">--</div>
-              <div className="text-slate-600">System Uptime</div>
-            </div>
-          </div>
+          <Tabs defaultValue="users" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="users" className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                User Management
+              </TabsTrigger>
+              <TabsTrigger value="invites" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                Invitation Codes
+              </TabsTrigger>
+              <TabsTrigger value="security" className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                Security Audit
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="users" className="mt-6">
+              <AdminUserManagement />
+            </TabsContent>
+            
+            <TabsContent value="invites" className="mt-6">
+              <AdminInvitationCodes />
+            </TabsContent>
+            
+            <TabsContent value="security" className="mt-6">
+              <SecurityAuditLogs />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>
