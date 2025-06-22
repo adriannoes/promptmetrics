@@ -50,7 +50,7 @@ const translations = {
     
     // Transformation section
     'tags.transformation': 'Transformation',
-    'transformation.title': 'A satisfied customer brings another.\nA well-trained AI brings much more.',
+    'transformation.title': 'A satisfied customer brings another.<br />A well-trained AI brings <em>much more</em>.',
     'transformation.subtitle': 'Discover how leading companies are influencing ChatGPT, Gemini, Perplexity, and other GenAIs to bring in more customers and increase revenue.',
     'transformation.feature1.title': 'AI Brand Analysis',
     'transformation.feature1.desc': 'Get comprehensive reports on how major AI systems perceive and describe your brand, products, and services.',
@@ -173,7 +173,7 @@ const translations = {
     
     // Transformation section
     'tags.transformation': 'Transformação',
-    'transformation.title': 'Um cliente satisfeito traz outro.\nUma IA bem treinada traz muitos.',
+    'transformation.title': 'Um cliente satisfeito traz outro.<br />Uma IA bem treinada traz <em>muitos</em>.',
     'transformation.subtitle': 'Descubra como empresas líderes estão influenciando ChatGPT, Gemini, Perplexity e outras ferramentas de IA a trazer clientes e aumentar receita.',
     'transformation.feature1.title': 'Análise da Marca na IA',
     'transformation.feature1.desc': 'Obtenha relatórios abrangentes sobre como os principais sistemas de IA percebem e descrevem sua marca, produtos e serviços.',
