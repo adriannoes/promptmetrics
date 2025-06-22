@@ -9,14 +9,14 @@ export const sanitizeHtml = (html: string, options?: DOMPurify.Config): string =
     ALLOWED_TAGS: ['em', 'strong', 'br', 'span', 'i', 'b', 'p', 'ul', 'li', 'ol'],
     ALLOWED_ATTR: ['class'],
     ...options
-  });
+  }) as string;
 };
 
 /**
  * Sanitizes plain text input by removing all HTML tags
  */
 export const sanitizeText = (text: string): string => {
-  return DOMPurify.sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  return DOMPurify.sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }) as string;
 };
 
 /**
