@@ -68,7 +68,7 @@ const Pricing = () => {
         <div className="text-center mb-16 sm:mb-20 md:mb-24 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-white/60 backdrop-blur-lg border border-white/50 text-green-800 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-lg">
             <Star className="w-3 h-3 sm:w-4 sm:h-4" />
-            Planos e Preços
+            {t('tags.pricingPlans')}
           </div>
         </div>
         
