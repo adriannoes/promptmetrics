@@ -43,7 +43,7 @@ const Problem = () => {
         <div className="text-center mb-16 sm:mb-20 md:mb-24">
           <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-white/60 backdrop-blur-lg border border-slate-200/50 text-slate-700 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-lg shadow-slate-200/20">
             <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4" />
-            Desafios Atuais
+            {t('tags.currentChallenges')}
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8 tracking-tight leading-tight">
             {t('problem.title')}
