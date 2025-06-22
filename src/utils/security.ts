@@ -1,9 +1,10 @@
+
 import DOMPurify from 'dompurify';
 
 /**
  * Sanitizes HTML content to prevent XSS attacks
  */
-export const sanitizeHtml = (html: string, options?: DOMPurify.Config): string => {
+export const sanitizeHtml = (html: string, options?: any): string => {
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: ['em', 'strong', 'br', 'span', 'i', 'b', 'p', 'ul', 'li', 'ol'],
     ALLOWED_ATTR: ['class'],
