@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'pt-BR';
@@ -6,6 +7,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  tHTML: (key: string) => React.ReactNode;
 }
 
 const translations = {
@@ -281,8 +283,26 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return translations[language][key as keyof typeof translations['en']] || key;
   };
 
+  const tHTML = (key: string): React.ReactNode => {
+    const text = translations[language][key as keyof typeof translations['en']] || key;
+    
+    // Simple HTML parsing for <br> and <em> tags
+    const parts = text.split(/(<br\s*\/?>|<em>.*?<\/em>)/g);
+    
+    return parts.map((part, index) => {
+      if (part.match(/<br\s*\/?>/)) {
+        return <br key={index} />;
+      } else if (part.match(/<em>.*?<\/em>/)) {
+        const content = part.replace(/<\/?em>/g, '');
+        return <em key={index}>{content}</em>;
+      } else {
+        return part;
+      }
+    });
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t, tHTML }}>
       {children}
     </LanguageContext.Provider>
   );
