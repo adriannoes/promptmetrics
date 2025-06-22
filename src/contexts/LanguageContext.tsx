@@ -30,10 +30,17 @@ const translations = {
     'accessibility.fontSize.normal': 'Normal',
     'accessibility.fontSize.large': 'Large',
     'accessibility.fontSize.extra-large': 'Extra Large',
+
+    // Hero section
+    'hero.badge': '🚀 Boost your brand\'s performance on AI chats',
+    'hero.title': 'What is AI talking about your company?',
+    'hero.subtitle': 'Consumers are asking LLMs like ChatGPT, Gemini, and Perplexity about your brand and products. Is your company ready?',
+    'hero.cta': 'Get Your AI Brand Report',
     
     // Problem section
-    'problem.title': 'Current Market Challenges',
-    'problem.subtitle': 'Understanding the challenges brands face in the AI-driven landscape',
+    'tags.currentChallenges': 'The market has already changed',
+    'problem.title': 'Ranking on search engines is no longer enough',
+    'problem.subtitle': 'Millions of customers are already asking AI for help before deciding a purchase.',
     'problem.point1.title': 'Lack of AI Brand Visibility',
     'problem.point1.desc': 'Most companies have no idea how AI systems like ChatGPT, Gemini, and Perplexity describe their brand when users ask about their industry.',
     'problem.point2.title': 'Missed Revenue Opportunities',
@@ -42,8 +49,9 @@ const translations = {
     'problem.point3.desc': 'While you remain unaware, your competitors may already be optimizing their AI presence and gaining market advantage.',
     
     // Transformation section
-    'transformation.title': 'Transform Your AI Brand Presence',
-    'transformation.subtitle': 'Discover how leading companies are leveraging AI insights to dominate their markets',
+    'tags.transformation': 'Transformation',
+    'transformation.title': 'A satisfied customer brings another. A well-trained AI brings much more.',
+    'transformation.subtitle': 'Discover how leading companies are influencing ChatGPT, Gemini, Perplexity, and other GenAIs to bring in more customers and increase revenue.',
     'transformation.feature1.title': 'AI Brand Analysis',
     'transformation.feature1.desc': 'Get comprehensive reports on how major AI systems perceive and describe your brand, products, and services.',
     'transformation.feature2.title': 'Competitive Intelligence',
@@ -52,6 +60,7 @@ const translations = {
     'transformation.feature3.desc': 'Receive actionable recommendations to improve your AI visibility and influence AI-driven customer decisions.',
     
     // Pricing section
+    'tags.pricingPlans': 'Pricing & Plans',
     'pricing.title': 'Simple, Transparent Pricing',
     'pricing.subtitle': 'Choose the plan that works for you\nAll plans include access to our platform, lead generation tools, and dedicated support.',
     'pricing.trial.title': 'Free Trial',
@@ -84,6 +93,7 @@ const translations = {
     'pricing.contact': 'Contact Sales',
     
     // FAQ section
+    'tags.faq': 'Frequently Asked Questions',
     'faq.title': 'Frequently Asked Questions',
     'faq.q1': 'How does AI brand analysis work?',
     'faq.a1': 'We query major AI systems like ChatGPT, Gemini, and Perplexity with industry-specific questions to understand how they describe your brand, products, and services.',
@@ -94,17 +104,7 @@ const translations = {
     'faq.q4': 'Is my data secure?',
     'faq.a4': 'Absolutely. We use enterprise-grade security measures and never share your data with third parties. All analysis is conducted securely and confidentially.',
     
-    // Tags/Badges
-    'tags.currentChallenges': 'Current Challenges',
-    'tags.transformation': 'Transformation',
-    'tags.pricingPlans': 'Pricing & Plans',
-    'tags.faq': 'Frequently Asked Questions',
-    
     // Existing translations
-    'hero.badge': '🚀 Discover how AI sees your brand',
-    'hero.title': 'How does AI describe your company?',
-    'hero.subtitle': 'Find out how LLMs like ChatGPT, Gemini, and Perplexity describe your company.',
-    'hero.cta': 'Get Your AI Brand Report',
     'pricing': 'Pricing',
     'faq': 'FAQ',
     'login': 'Login',
@@ -151,19 +151,27 @@ const translations = {
     'accessibility.fontSize.large': 'Grande',
     'accessibility.fontSize.extra-large': 'Extra Grande',
     
+    // Hero section
+    'hero.badge': '🚀 Melhore o Desempenho da sua marca nas conversas com IA',
+    'hero.title': 'O que a IA está falando sobre sua empresa?',
+    'hero.subtitle': 'Consumidores estão buscando ajuda de LLMs como ChatGPT, Gemini e Perplexity na hora de pesquisar e comprar. Sua marca está preparada?',
+    'hero.cta': 'Obter Relatório da Marca na IA',
+
     // Problem section
-    'problem.title': 'Desafios Atuais do Mercado',
-    'problem.subtitle': 'Compreendendo os desafios que as marcas enfrentam no cenário impulsionado pela IA',
+    'tags.currentChallenges': 'O Mercado já mudou',
+    'problem.title': 'Posicionar sua marca nos resultados de busca não é mais suficiente',
+    'problem.subtitle': 'Cada vez mais pessoas estão buscando ajuda de Inteligência Artificial antes de comprar.',
     'problem.point1.title': 'Falta de Visibilidade da Marca na IA',
     'problem.point1.desc': 'A maioria das empresas não tem ideia de como sistemas de IA como ChatGPT, Gemini e Perplexity descrevem sua marca quando usuários perguntam sobre seu setor.',
     'problem.point2.title': 'Oportunidades de Receita Perdidas',
     'problem.point2.desc': 'Sem entender sua presença na IA, você pode estar perdendo clientes potenciais que dependem da IA para decisões de compra e recomendações.',
     'problem.point3.title': 'Desvantagem Competitiva',
-    'problem.point3.desc': 'Enquanto você permanece alheio, seus concorrentes podem já estar otimizando sua presença na IA e ganhando vantagem no mercado.',
+    'problem.point3.desc': 'Enquanto você ignora o problema, seus concorrentes podem já estar otimizando sua presença na IA e ganhando vantagem no mercado.',
     
     // Transformation section
-    'transformation.title': 'Transforme sua Presença na IA',
-    'transformation.subtitle': 'Descubra como empresas líderes estão aproveitando insights de IA para dominar seus mercados',
+    'tags.transformation': 'Transformação',
+    'transformation.title': 'Um cliente satisfeito traz outro.<br />Uma IA bem treinada traz <em>muitos</em>.',
+    'transformation.subtitle': 'Descubra como empresas líderes estão influenciando ChatGPT, Gemini, Perplexity e outras ferramentas de IA a trazer clientes e aumentar receita.',
     'transformation.feature1.title': 'Análise da Marca na IA',
     'transformation.feature1.desc': 'Obtenha relatórios abrangentes sobre como os principais sistemas de IA percebem e descrevem sua marca, produtos e serviços.',
     'transformation.feature2.title': 'Inteligência Competitiva',
@@ -172,6 +180,7 @@ const translations = {
     'transformation.feature3.desc': 'Receba recomendações acionáveis para melhorar sua visibilidade na IA e influenciar decisões de clientes impulsionadas pela IA.',
     
     // Pricing section
+    'tags.pricingPlans': 'Planos e Preços',
     'pricing.title': 'Preços Simples e Transparentes',
     'pricing.subtitle': 'Escolha o plano que funciona para você\nTodos os planos incluem acesso à nossa plataforma, ferramentas de geração de leads e suporte dedicado.',
     'pricing.trial.title': 'Teste Gratuito',
@@ -204,6 +213,7 @@ const translations = {
     'pricing.contact': 'Falar com Vendas',
     
     // FAQ section
+    'tags.faq': 'Perguntas Frequentes',
     'faq.title': 'Perguntas Frequentes',
     'faq.q1': 'Como funciona a análise da marca na IA?',
     'faq.a1': 'Consultamos os principais sistemas de IA como ChatGPT, Gemini e Perplexity com perguntas específicas do setor para entender como eles descrevem sua marca, produtos e serviços.',
@@ -214,17 +224,7 @@ const translations = {
     'faq.q4': 'Meus dados estão seguros?',
     'faq.a4': 'Absolutamente. Usamos medidas de segurança de nível empresarial e nunca compartilhamos seus dados com terceiros. Toda análise é conduzida de forma segura e confidencial.',
     
-    // Tags/Badges
-    'tags.currentChallenges': 'Desafios Atuais',
-    'tags.transformation': 'Transformação',
-    'tags.pricingPlans': 'Planos e Preços',
-    'tags.faq': 'Perguntas Frequentes',
-    
     // Existing translations
-    'hero.badge': '🚀 Descubra como a IA vê sua marca',
-    'hero.title': 'Como a IA descreve sua empresa?',
-    'hero.subtitle': 'Saiba como LLMs como ChatGPT, Gemini e Perplexity descrevem sua empresa.',
-    'hero.cta': 'Obter Relatório da Marca na IA',
     'pricing': 'Preços',
     'faq': 'Perguntas Frequentes',
     'login': 'Entrar',
