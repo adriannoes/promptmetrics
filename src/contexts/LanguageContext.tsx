@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'pt-BR';
@@ -6,6 +7,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  tHTML: (key: string) => { __html: string };
 }
 
 const translations = {
@@ -287,8 +289,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return translations[language][key as keyof typeof translations['en']] || key;
   };
 
+  const tHTML = (key: string): { __html: string } => {
+    const translation = translations[language][key as keyof typeof translations['en']] || key;
+    return { __html: translation };
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t, tHTML }}>
       {children}
     </LanguageContext.Provider>
   );
