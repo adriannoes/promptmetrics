@@ -86,7 +86,31 @@ const translations = {
     'faq.q3': 'Is the data sent secure?',
     'faq.a3': 'Yes, we use end-to-end encryption and follow strict security standards. Your data is never permanently stored or used to train other models.',
     'faq.q4': 'Can I cancel anytime?',
-    'faq.a4': 'Absolutely. All plans can be canceled at any time without additional fees. You keep access to exported data.'
+    'faq.a4': 'Absolutely. All plans can be canceled at any time without additional fees. You keep access to exported data.',
+    
+    // Contact Form
+    'form.badge': 'Join the Waitlist',
+    'form.title': 'Get Started Now',
+    'form.subtitle': 'Be one of the first to revolutionize your LLM evaluations',
+    'form.name.placeholder': 'Your full name',
+    'form.email.placeholder': 'your@email.com',
+    'form.phone.placeholder': 'Enter phone number',
+    'form.button': 'Join Waitlist',
+    'form.submitting': 'Submitting...',
+    'form.success.title': 'Thank you!',
+    'form.success.subtitle': 'We\'ll be in touch soon.',
+    'form.error.name.required': 'Name is required',
+    'form.error.name.min': 'Name must be at least 2 characters',
+    'form.error.email.required': 'Email is required',
+    'form.error.email.invalid': 'Invalid email address',
+    'form.error.phone.required': 'Phone number is required',
+    'form.error.phone.invalid': 'Invalid phone number format',
+    'form.error.submit': 'Something went wrong. Please try again.',
+    
+    // Footer
+    'footer.terms': 'Terms of Use',
+    'footer.privacy': 'Privacy Policy',
+    'footer.copyright': '© 2024 PromptMetrics. All rights reserved.',
   },
   'pt-BR': {
     // Header
@@ -164,7 +188,31 @@ const translations = {
     'faq.q3': 'Os dados enviados são seguros?',
     'faq.a3': 'Sim, utilizamos criptografia end-to-end e seguimos rigorosos padrões de segurança. Seus dados nunca são armazenados permanentemente ou usados para treinar outros modelos.',
     'faq.q4': 'Posso cancelar a qualquer momento?',
-    'faq.a4': 'Absolutamente. Todos os planos podem ser cancelados a qualquer momento sem taxas adicionais. Você mantém acesso aos dados exportados.'
+    'faq.a4': 'Absolutamente. Todos os planos podem ser cancelados a qualquer momento sem taxas adicionais. Você mantém acesso aos dados exportados.',
+    
+    // Contact Form
+    'form.badge': 'Entre na Lista de Espera',
+    'form.title': 'Comece Agora',
+    'form.subtitle': 'Seja um dos primeiros a revolucionar suas avaliações de LLM',
+    'form.name.placeholder': 'Seu nome completo',
+    'form.email.placeholder': 'seu@email.com',
+    'form.phone.placeholder': 'Digite o número do telefone',
+    'form.button': 'Entrar na Lista',
+    'form.submitting': 'Enviando...',
+    'form.success.title': 'Obrigado!',
+    'form.success.subtitle': 'Entraremos em contato em breve.',
+    'form.error.name.required': 'Nome é obrigatório',
+    'form.error.name.min': 'Nome deve ter pelo menos 2 caracteres',
+    'form.error.email.required': 'Email é obrigatório',
+    'form.error.email.invalid': 'Endereço de email inválido',
+    'form.error.phone.required': 'Número de telefone é obrigatório',
+    'form.error.phone.invalid': 'Formato de número de telefone inválido',
+    'form.error.submit': 'Algo deu errado. Tente novamente.',
+    
+    // Footer
+    'footer.terms': 'Termos de Uso',
+    'footer.privacy': 'Política de Privacidade',
+    'footer.copyright': '© 2024 PromptMetrics. Todos os direitos reservados.',
   }
 };
 
