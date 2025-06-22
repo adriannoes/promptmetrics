@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 
 type Language = 'en' | 'pt-BR';
 
@@ -291,7 +292,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const tHTML = (key: string): { __html: string } => {
     const translation = translations[language][key as keyof typeof translations['en']] || key;
-    return { __html: translation };
+    // Sanitize HTML content to prevent XSS attacks
+    const sanitizedHTML = DOMPurify.sanitize(translation, {
+      ALLOWED_TAGS: ['em', 'strong', 'br', 'span', 'i', 'b'],
+      ALLOWED_ATTR: ['class']
+    });
+    return { __html: sanitizedHTML };
   };
 
   return (
