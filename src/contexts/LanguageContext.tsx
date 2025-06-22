@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'pt-BR';
@@ -7,7 +6,6 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
-  tHTML: (key: string) => React.ReactNode;
 }
 
 const translations = {
@@ -172,7 +170,7 @@ const translations = {
     
     // Transformation section
     'tags.transformation': 'Transformação',
-    'transformation.title': 'Um cliente satisfeito traz outro.<br />Uma IA bem treinada traz <em>muitos</em>.',
+    'transformation.title': 'Um cliente satisfeito traz outro. Uma IA bem treinada traz muitos.',
     'transformation.subtitle': 'Descubra como empresas líderes estão influenciando ChatGPT, Gemini, Perplexity e outras ferramentas de IA a trazer clientes e aumentar receita.',
     'transformation.feature1.title': 'Análise da Marca na IA',
     'transformation.feature1.desc': 'Obtenha relatórios abrangentes sobre como os principais sistemas de IA percebem e descrevem sua marca, produtos e serviços.',
@@ -204,8 +202,8 @@ const translations = {
     'pricing.pro.feature4': 'Rastreamento ilimitado de concorrentes',
     'pricing.pro.feature5': 'Recomendações estratégicas',
     'pricing.enterprise.title': 'Empresarial',
-    'pricing.enterprise.price': 'Personalizado',
-    'pricing.enterprise.yearlyPrice': 'Personalizado',
+    'pricing.enterprise.price': 'Consulte',
+    'pricing.enterprise.yearlyPrice': 'Consulte',
     'pricing.enterprise.desc': 'Para grandes organizações',
     'pricing.enterprise.feature1': 'Análise personalizada de IA',
     'pricing.enterprise.feature2': 'Insights diários',
@@ -283,26 +281,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return translations[language][key as keyof typeof translations['en']] || key;
   };
 
-  const tHTML = (key: string): React.ReactNode => {
-    const text = translations[language][key as keyof typeof translations['en']] || key;
-    
-    // Simple HTML parsing for <br> and <em> tags
-    const parts = text.split(/(<br\s*\/?>|<em>.*?<\/em>)/g);
-    
-    return parts.map((part, index) => {
-      if (part.match(/<br\s*\/?>/)) {
-        return <br key={index} />;
-      } else if (part.match(/<em>.*?<\/em>/)) {
-        const content = part.replace(/<\/?em>/g, '');
-        return <em key={index}>{content}</em>;
-      } else {
-        return part;
-      }
-    });
-  };
-
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t, tHTML }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
