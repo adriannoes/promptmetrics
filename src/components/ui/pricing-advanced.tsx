@@ -1,4 +1,3 @@
-
 "use client";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -38,7 +37,7 @@ export function PricingAdvanced({
   const [isMonthly, setIsMonthly] = useState(true);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const switchRef = useRef<HTMLButtonElement>(null);
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const getCurrency = () => {
     return language === 'pt-BR' ? 'BRL' : 'USD';
@@ -101,7 +100,7 @@ export function PricingAdvanced({
       </div>
 
       <div className="flex justify-center items-center gap-4 mb-12 sm:mb-14 md:mb-16">
-        <span className="font-semibold text-slate-700 text-sm sm:text-base">Monthly</span>
+        <span className="font-semibold text-slate-700 text-sm sm:text-base">{t('pricing.monthly')}</span>
         <Label>
           <Switch
             ref={switchRef as any}
@@ -111,7 +110,7 @@ export function PricingAdvanced({
           />
         </Label>
         <span className="font-semibold text-slate-700 text-sm sm:text-base">
-          Annual <span className="text-blue-600">(Save 45%)</span>
+          {t('pricing.annual')} <span className="text-blue-600">({t('pricing.save')})</span>
         </span>
       </div>
 
