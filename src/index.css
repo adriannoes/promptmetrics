@@ -88,6 +88,114 @@
   }
 }
 
+/* Accessibility Features */
+@layer base {
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .sr-only.focus:not(.sr-only):focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* High contrast mode */
+  .high-contrast {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 85%;
+    --muted-foreground: 0 0% 0%;
+    --accent: 220 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 100%;
+    --ring: 220 100% 50%;
+  }
+
+  .high-contrast * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .high-contrast button:focus,
+  .high-contrast a:focus,
+  .high-contrast input:focus,
+  .high-contrast textarea:focus,
+  .high-contrast select:focus {
+    outline: 3px solid #0066cc !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Font size adjustments */
+  .font-large {
+    font-size: 110%;
+  }
+
+  .font-extra-large {
+    font-size: 125%;
+  }
+
+  /* Reduced motion */
+  .reduced-motion,
+  .reduced-motion *,
+  .reduced-motion *::before,
+  .reduced-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Focus indicators */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Ensure minimum touch target sizes */
+  @media (pointer: coarse) {
+    button,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+}
+
 /* Custom animations for glassmorphic design */
 @layer utilities {
   .animate-fade-in {
@@ -119,5 +227,10 @@
   /* Glassmorphic hover effects */
   .glass-hover {
     @apply transition-all duration-300 hover:backdrop-blur-xl hover:bg-white/80;
+  }
+
+  /* Mobile-friendly tap targets */
+  .tap-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
   }
 }
