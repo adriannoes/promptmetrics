@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAccessibility } from '../contexts/AccessibilityContext';
@@ -7,6 +6,7 @@ import PhoneInput from './PhoneInput';
 import FormField from './FormField';
 import SubmitButton from './SubmitButton';
 import SuccessMessage from './SuccessMessage';
+import DOMPurify from 'dompurify';
 
 const ContactForm = () => {
   const { t } = useLanguage();
@@ -20,6 +20,18 @@ const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [submitError, setSubmitError] = useState('');
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
+
+  // Enhanced email validation
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    return emailRegex.test(email) && email.length <= 254;
+  };
+
+  // Sanitize input to prevent injection attacks
+  const sanitizeInput = (input: string): string => {
+    return DOMPurify.sanitize(input.trim(), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  };
 
   const validatePhoneNumber = (phoneValue: string): boolean => {
     if (!phoneValue.trim()) return false;
@@ -50,19 +62,22 @@ const ContactForm = () => {
     
     switch (name) {
       case 'name':
-        if (!value.trim()) {
+        const sanitizedName = sanitizeInput(value);
+        if (!sanitizedName) {
           newErrors.name = t('form.error.name.required');
-        } else if (value.trim().length < 2) {
+        } else if (sanitizedName.length < 2) {
           newErrors.name = t('form.error.name.min');
+        } else if (sanitizedName.length > 100) {
+          newErrors.name = 'Name must be less than 100 characters';
         } else {
           delete newErrors.name;
         }
         break;
       case 'email':
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value.trim()) {
+        const sanitizedEmail = sanitizeInput(value);
+        if (!sanitizedEmail) {
           newErrors.email = t('form.error.email.required');
-        } else if (!emailRegex.test(value)) {
+        } else if (!isValidEmail(sanitizedEmail)) {
           newErrors.email = t('form.error.email.invalid');
         } else {
           delete newErrors.email;
@@ -86,6 +101,13 @@ const ContactForm = () => {
     e.preventDefault();
     setSubmitError('');
     
+    // Rate limiting - prevent rapid submissions
+    const now = Date.now();
+    if (now - lastSubmitTime < 5000) { // 5 second cooldown
+      setSubmitError('Please wait before submitting again');
+      return;
+    }
+    
     // Validate all fields
     Object.keys(formData).forEach(key => {
       validateField(key, formData[key as keyof typeof formData]);
@@ -98,19 +120,23 @@ const ContactForm = () => {
     }
     
     setIsSubmitting(true);
+    setLastSubmitTime(now);
     announceToScreenReader('Submitting form...');
 
     try {
+      // Sanitize all form data before submission
+      const sanitizedData = {
+        name: sanitizeInput(formData.name),
+        email: sanitizeInput(formData.email),
+        phone: sanitizeInput(formData.phone)
+      };
+
       const response = await fetch('https://ipaas.pipefy.com/api/v1/webhooks/4sNQtjopIlKuRKpqg4elS/sync', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim()
-        }),
+        body: JSON.stringify(sanitizedData),
       });
 
       if (response.ok) {
@@ -131,9 +157,15 @@ const ContactForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
+    // Limit input length
+    const maxLengths = { name: 100, email: 254, phone: 50 };
+    const maxLength = maxLengths[name as keyof typeof maxLengths];
+    const trimmedValue = value.slice(0, maxLength);
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: trimmedValue
     }));
     
     // Clear submit error when user starts typing
@@ -142,13 +174,15 @@ const ContactForm = () => {
     }
     
     // Validate field on change
-    validateField(name, value);
+    validateField(name, trimmedValue);
   };
 
   const handlePhoneChange = (value: string) => {
+    const trimmedValue = value.slice(0, 50); // Limit phone input length
+    
     setFormData(prev => ({
       ...prev,
-      phone: value
+      phone: trimmedValue
     }));
     
     // Clear submit error when user starts typing
@@ -157,7 +191,7 @@ const ContactForm = () => {
     }
     
     // Validate phone field on change
-    validateField('phone', value);
+    validateField('phone', trimmedValue);
   };
 
   if (submitted) {
