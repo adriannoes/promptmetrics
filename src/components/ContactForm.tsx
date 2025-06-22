@@ -4,6 +4,9 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useAccessibility } from '../contexts/AccessibilityContext';
 import { Send, User, Mail } from 'lucide-react';
 import PhoneInput from './PhoneInput';
+import FormField from './FormField';
+import SubmitButton from './SubmitButton';
+import SuccessMessage from './SuccessMessage';
 
 const ContactForm = () => {
   const { t } = useLanguage();
@@ -159,30 +162,10 @@ const ContactForm = () => {
 
   if (submitted) {
     return (
-      <section 
-        id="form" 
-        className="py-16 sm:py-20 md:py-24 lg:py-32 bg-gradient-to-br from-blue-50/50 to-indigo-50/40 relative overflow-hidden"
-        aria-labelledby="success-title"
-        role="region"
-      >
-        <div className="absolute top-20 left-20 w-72 h-72 bg-green-200/20 rounded-full blur-3xl" aria-hidden="true"></div>
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="bg-white/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-12 sm:p-16 shadow-2xl border border-white/40 animate-scale-in">
-            <div 
-              className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-xl"
-              aria-hidden="true"
-            >
-              <Send className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" />
-            </div>
-            <h2 id="success-title" className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4 sm:mb-6">
-              {t('form.success.title')}
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600">
-              {t('form.success.subtitle')}
-            </p>
-          </div>
-        </div>
-      </section>
+      <SuccessMessage 
+        title={t('form.success.title')}
+        subtitle={t('form.success.subtitle')}
+      />
     );
   }
 
@@ -222,61 +205,29 @@ const ContactForm = () => {
               </div>
             )}
             
-            <div className="relative group">
-              <label htmlFor="name" className="sr-only">
-                {t('form.name.placeholder')}
-              </label>
-              <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                <User className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" aria-hidden="true" />
-              </div>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder={t('form.name.placeholder')}
-                value={formData.name}
-                onChange={handleChange}
-                required
-                aria-invalid={errors.name ? 'true' : 'false'}
-                aria-describedby={errors.name ? 'name-error' : undefined}
-                className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-4 sm:py-5 border rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 shadow-lg hover:shadow-xl text-sm sm:text-base min-h-[48px] ${
-                  errors.name ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
-                }`}
-              />
-              {errors.name && (
-                <p id="name-error" className="mt-2 sm:mt-3 text-xs sm:text-sm text-red-600 animate-fade-in" role="alert">
-                  {errors.name}
-                </p>
-              )}
-            </div>
+            <FormField
+              id="name"
+              name="name"
+              type="text"
+              placeholder={t('form.name.placeholder')}
+              value={formData.name}
+              onChange={handleChange}
+              required
+              error={errors.name}
+              icon={User}
+            />
 
-            <div className="relative group">
-              <label htmlFor="email" className="sr-only">
-                {t('form.email.placeholder')}
-              </label>
-              <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" aria-hidden="true" />
-              </div>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder={t('form.email.placeholder')}
-                value={formData.email}
-                onChange={handleChange}
-                required
-                aria-invalid={errors.email ? 'true' : 'false'}
-                aria-describedby={errors.email ? 'email-error' : undefined}
-                className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-4 sm:py-5 border rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 shadow-lg hover:shadow-xl text-sm sm:text-base min-h-[48px] ${
-                  errors.email ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
-                }`}
-              />
-              {errors.email && (
-                <p id="email-error" className="mt-2 sm:mt-3 text-xs sm:text-sm text-red-600 animate-fade-in" role="alert">
-                  {errors.email}
-                </p>
-              )}
-            </div>
+            <FormField
+              id="email"
+              name="email"
+              type="email"
+              placeholder={t('form.email.placeholder')}
+              value={formData.email}
+              onChange={handleChange}
+              required
+              error={errors.email}
+              icon={Mail}
+            />
 
             <div>
               <label htmlFor="phone" className="sr-only">
@@ -291,24 +242,12 @@ const ContactForm = () => {
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting || Object.keys(errors).length > 0}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 sm:py-5 px-6 sm:px-8 rounded-xl sm:rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl hover:shadow-3xl hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 sm:gap-3 backdrop-blur-sm border border-blue-500/20 text-sm sm:text-base min-h-[48px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              aria-describedby={isSubmitting ? 'submit-status' : undefined}
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true"></div>
-                  <span id="submit-status">{t('form.submitting')}</span>
-                </>
-              ) : (
-                <>
-                  {t('form.button')}
-                  <Send className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                </>
-              )}
-            </button>
+            <SubmitButton
+              isSubmitting={isSubmitting}
+              hasErrors={Object.keys(errors).length > 0}
+              submitText={t('form.button')}
+              submittingText={t('form.submitting')}
+            />
           </form>
         </div>
       </div>
