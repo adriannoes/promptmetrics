@@ -31,6 +31,26 @@ const translations = {
     'accessibility.fontSize.large': 'Large',
     'accessibility.fontSize.extra-large': 'Extra Large',
     
+    // Problem section
+    'problem.title': 'Current Market Challenges',
+    'problem.subtitle': 'Understanding the challenges brands face in the AI-driven landscape',
+    'problem.point1.title': 'Lack of AI Brand Visibility',
+    'problem.point1.desc': 'Most companies have no idea how AI systems like ChatGPT, Gemini, and Perplexity describe their brand when users ask about their industry.',
+    'problem.point2.title': 'Missed Revenue Opportunities',
+    'problem.point2.desc': 'Without understanding your AI presence, you might be losing potential customers who rely on AI for purchasing decisions and recommendations.',
+    'problem.point3.title': 'Competitive Disadvantage',
+    'problem.point3.desc': 'While you remain unaware, your competitors may already be optimizing their AI presence and gaining market advantage.',
+    
+    // Transformation section
+    'transformation.title': 'Transform Your AI Brand Presence',
+    'transformation.subtitle': 'Discover how leading companies are leveraging AI insights to dominate their markets',
+    'transformation.feature1.title': 'AI Brand Analysis',
+    'transformation.feature1.desc': 'Get comprehensive reports on how major AI systems perceive and describe your brand, products, and services.',
+    'transformation.feature2.title': 'Competitive Intelligence',
+    'transformation.feature2.desc': 'Understand how your competitors are positioned in AI responses and identify opportunities to gain advantage.',
+    'transformation.feature3.title': 'Strategic Insights',
+    'transformation.feature3.desc': 'Receive actionable recommendations to improve your AI visibility and influence AI-driven customer decisions.',
+    
     // Existing translations
     'hero.badge': '🚀 Discover how AI sees your brand',
     'hero.title': 'How does AI describe your company?',
@@ -81,6 +101,26 @@ const translations = {
     'accessibility.fontSize.normal': 'Normal',
     'accessibility.fontSize.large': 'Grande',
     'accessibility.fontSize.extra-large': 'Extra Grande',
+    
+    // Problem section
+    'problem.title': 'Desafios Atuais do Mercado',
+    'problem.subtitle': 'Compreendendo os desafios que as marcas enfrentam no cenário impulsionado pela IA',
+    'problem.point1.title': 'Falta de Visibilidade da Marca na IA',
+    'problem.point1.desc': 'A maioria das empresas não tem ideia de como sistemas de IA como ChatGPT, Gemini e Perplexity descrevem sua marca quando usuários perguntam sobre seu setor.',
+    'problem.point2.title': 'Oportunidades de Receita Perdidas',
+    'problem.point2.desc': 'Sem entender sua presença na IA, você pode estar perdendo clientes potenciais que dependem da IA para decisões de compra e recomendações.',
+    'problem.point3.title': 'Desvantagem Competitiva',
+    'problem.point3.desc': 'Enquanto você permanece alheio, seus concorrentes podem já estar otimizando sua presença na IA e ganhando vantagem no mercado.',
+    
+    // Transformation section
+    'transformation.title': 'Transforme sua Presença na IA',
+    'transformation.subtitle': 'Descubra como empresas líderes estão aproveitando insights de IA para dominar seus mercados',
+    'transformation.feature1.title': 'Análise da Marca na IA',
+    'transformation.feature1.desc': 'Obtenha relatórios abrangentes sobre como os principais sistemas de IA percebem e descrevem sua marca, produtos e serviços.',
+    'transformation.feature2.title': 'Inteligência Competitiva',
+    'transformation.feature2.desc': 'Entenda como seus concorrentes estão posicionados nas respostas da IA e identifique oportunidades para ganhar vantagem.',
+    'transformation.feature3.title': 'Insights Estratégicos',
+    'transformation.feature3.desc': 'Receba recomendações acionáveis para melhorar sua visibilidade na IA e influenciar decisões de clientes impulsionadas pela IA.',
     
     // Existing translations
     'hero.badge': '🚀 Descubra como a IA vê sua marca',
