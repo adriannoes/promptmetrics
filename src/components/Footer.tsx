@@ -11,9 +11,9 @@ const Footer = () => {
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-8">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">R</span>
+              <span className="text-white font-bold text-lg">P</span>
             </div>
-            <span className="text-2xl font-bold tracking-tight">RankMeLLM</span>
+            <span className="text-2xl font-bold tracking-tight">PromptMetrics</span>
           </div>
           
           <div className="flex justify-center gap-8 mb-8">
@@ -21,19 +21,19 @@ const Footer = () => {
               href="#" 
               className="text-slate-400 hover:text-white transition-colors font-medium"
             >
-              Termos de Uso
+              {t('footer.terms')}
             </a>
             <a 
               href="#" 
               className="text-slate-400 hover:text-white transition-colors font-medium"
             >
-              Política de Privacidade
+              {t('footer.privacy')}
             </a>
           </div>
           
           <div className="pt-8 border-t border-slate-800">
             <p className="text-slate-400">
-              © 2024 RankMeLLM. Todos os direitos reservados.
+              {t('footer.copyright')}
             </p>
           </div>
         </div>

@@ -46,9 +46,9 @@ const ContactForm = () => {
     switch (name) {
       case 'name':
         if (!value.trim()) {
-          newErrors.name = 'Name is required';
+          newErrors.name = t('form.error.name.required');
         } else if (value.trim().length < 2) {
-          newErrors.name = 'Name must be at least 2 characters';
+          newErrors.name = t('form.error.name.min');
         } else {
           delete newErrors.name;
         }
@@ -56,18 +56,18 @@ const ContactForm = () => {
       case 'email':
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value.trim()) {
-          newErrors.email = 'Email is required';
+          newErrors.email = t('form.error.email.required');
         } else if (!emailRegex.test(value)) {
-          newErrors.email = 'Invalid email address';
+          newErrors.email = t('form.error.email.invalid');
         } else {
           delete newErrors.email;
         }
         break;
       case 'phone':
         if (!value.trim()) {
-          newErrors.phone = 'Phone number is required';
+          newErrors.phone = t('form.error.phone.required');
         } else if (!validatePhoneNumber(value)) {
-          newErrors.phone = 'Invalid phone number format';
+          newErrors.phone = t('form.error.phone.invalid');
         } else {
           delete newErrors.phone;
         }
@@ -114,7 +114,7 @@ const ContactForm = () => {
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      setSubmitError('Something went wrong. Please try again.');
+      setSubmitError(t('form.error.submit'));
     } finally {
       setIsSubmitting(false);
     }
@@ -160,8 +160,8 @@ const ContactForm = () => {
             <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-xl">
               <Send className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" />
             </div>
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4 sm:mb-6">Thank you!</h3>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600">We'll be in touch soon.</p>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4 sm:mb-6">{t('form.success.title')}</h3>
+            <p className="text-base sm:text-lg md:text-xl text-slate-600">{t('form.success.subtitle')}</p>
           </div>
         </div>
       </section>
@@ -177,13 +177,13 @@ const ContactForm = () => {
         <div className="text-center mb-12 sm:mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-white/60 backdrop-blur-lg border border-white/50 text-blue-800 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-lg">
             <Send className="w-3 h-3 sm:w-4 sm:h-4" />
-            Join the Waitlist
+            {t('form.badge')}
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8 tracking-tight leading-tight">
-            Get Started Now
+            {t('form.title')}
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-slate-600 font-light leading-relaxed">
-            Be one of the first to revolutionize your LLM evaluations
+            {t('form.subtitle')}
           </p>
         </div>
 
@@ -202,7 +202,7 @@ const ContactForm = () => {
               <input
                 type="text"
                 name="name"
-                placeholder="Your full name"
+                placeholder={t('form.name.placeholder')}
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -222,7 +222,7 @@ const ContactForm = () => {
               <input
                 type="email"
                 name="email"
-                placeholder="your@email.com"
+                placeholder={t('form.email.placeholder')}
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -239,7 +239,7 @@ const ContactForm = () => {
               value={formData.phone}
               onChange={handlePhoneChange}
               error={errors.phone}
-              placeholder="Enter phone number"
+              placeholder={t('form.phone.placeholder')}
               required
             />
 
@@ -251,11 +251,11 @@ const ContactForm = () => {
               {isSubmitting ? (
                 <>
                   <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Submitting...
+                  {t('form.submitting')}
                 </>
               ) : (
                 <>
-                  Join Waitlist
+                  {t('form.button')}
                   <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 </>
               )}
