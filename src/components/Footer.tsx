@@ -5,6 +5,13 @@ import { useLanguage } from '../contexts/LanguageContext';
 const Footer = () => {
   const { t } = useLanguage();
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer className="bg-slate-900 text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,18 +24,20 @@ const Footer = () => {
           </div>
           
           <div className="flex justify-center gap-8 mb-8">
-            <a 
-              href="#" 
-              className="text-slate-400 hover:text-white transition-colors font-medium"
+            <button 
+              onClick={() => scrollToSection('pricing')}
+              className="text-slate-400 hover:text-white transition-colors font-medium cursor-pointer"
+              type="button"
             >
               {t('footer.terms')}
-            </a>
-            <a 
-              href="#" 
-              className="text-slate-400 hover:text-white transition-colors font-medium"
+            </button>
+            <button 
+              onClick={() => scrollToSection('faq')}
+              className="text-slate-400 hover:text-white transition-colors font-medium cursor-pointer"
+              type="button"
             >
               {t('footer.privacy')}
-            </a>
+            </button>
           </div>
           
           <div className="pt-8 border-t border-slate-800">

@@ -47,28 +47,43 @@ const handler = async (req: Request): Promise<Response> => {
     const formData: WaitlistFormData = await req.json();
     console.log('Form data received:', { name: formData.name, email: formData.email });
 
-    // Submit to webhook
-    const webhookResponse = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+    // Submit to webhook with timeout and retry logic
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-    console.log('Webhook response status:', webhookResponse.status);
+    try {
+      const webhookResponse = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        signal: controller.signal,
+      });
 
-    if (!webhookResponse.ok) {
-      throw new Error(`Webhook request failed with status ${webhookResponse.status}`);
-    }
+      clearTimeout(timeoutId);
+      console.log('Webhook response status:', webhookResponse.status);
 
-    return new Response(
-      JSON.stringify({ success: true, message: 'Successfully added to waitlist' }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      if (!webhookResponse.ok) {
+        const errorText = await webhookResponse.text();
+        console.error('Webhook error response:', errorText);
+        throw new Error(`Webhook request failed with status ${webhookResponse.status}: ${errorText}`);
       }
-    );
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Successfully added to waitlist' }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        }
+      );
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId);
+      if (fetchError.name === 'AbortError') {
+        throw new Error('Webhook request timed out');
+      }
+      throw fetchError;
+    }
 
   } catch (error: any) {
     console.error('Error in waitlist submission:', error);
