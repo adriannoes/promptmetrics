@@ -6,6 +6,7 @@ import PhoneInput from './PhoneInput';
 import FormField from './FormField';
 import SubmitButton from './SubmitButton';
 import SuccessMessage from './SuccessMessage';
+import { supabase } from '../integrations/supabase/client';
 import DOMPurify from 'dompurify';
 
 const ContactForm = () => {
@@ -131,21 +132,17 @@ const ContactForm = () => {
         phone: sanitizeInput(formData.phone)
       };
 
-      const response = await fetch('https://ipaas.pipefy.com/api/v1/webhooks/4sNQtjopIlKuRKpqg4elS/sync', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sanitizedData),
+      const { data, error } = await supabase.functions.invoke('submit-waitlist', {
+        body: sanitizedData
       });
 
-      if (response.ok) {
-        setSubmitted(true);
-        setFormData({ name: '', email: '', phone: '' });
-        announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
-      } else {
-        throw new Error('Network response was not ok');
+      if (error) {
+        throw error;
       }
+
+      setSubmitted(true);
+      setFormData({ name: '', email: '', phone: '' });
+      announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
     } catch (error) {
       console.error('Error submitting form:', error);
       setSubmitError(t('form.error.submit'));
