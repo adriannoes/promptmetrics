@@ -1,3 +1,4 @@
+
 "use client";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -89,8 +90,8 @@ export function PricingAdvanced({
   };
 
   return (
-    <div className="container py-12 sm:py-16 md:py-20">
-      <div className="text-center space-y-4 mb-8 sm:mb-12">
+    <div className="container py-8 sm:py-12 md:py-16">
+      <div className="text-center space-y-3 mb-8 sm:mb-10">
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
           {title}
         </h2>
@@ -99,7 +100,7 @@ export function PricingAdvanced({
         </p>
       </div>
 
-      <div className="flex justify-center items-center gap-4 mb-12 sm:mb-14 md:mb-16">
+      <div className="flex justify-center items-center gap-4 mb-10 sm:mb-12 md:mb-14">
         <span className="font-semibold text-slate-700 text-sm sm:text-base">{t('pricing.monthly')}</span>
         <Label>
           <Switch
