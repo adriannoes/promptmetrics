@@ -135,7 +135,9 @@ export type Database = {
     }
     Functions: {
       consume_invitation_code: {
-        Args: { code_to_use: string; user_id: string }
+        Args:
+          | { code_to_use: string; user_id: string }
+          | { invitation_code: string; user_id: number }
         Returns: boolean
       }
       get_current_user_role: {
@@ -147,11 +149,13 @@ export type Database = {
         Returns: boolean
       }
       is_rate_limited: {
-        Args: {
-          p_email: string
-          p_window_minutes?: number
-          p_max_attempts?: number
-        }
+        Args:
+          | Record<PropertyKey, never>
+          | {
+              p_email: string
+              p_window_minutes?: number
+              p_max_attempts?: number
+            }
         Returns: boolean
       }
       is_valid_invitation_code: {
@@ -159,18 +163,24 @@ export type Database = {
         Returns: boolean
       }
       log_audit_event: {
-        Args: {
-          p_action: string
-          p_table_name?: string
-          p_record_id?: string
-          p_old_values?: Json
-          p_new_values?: Json
-        }
+        Args:
+          | Record<PropertyKey, never>
+          | {
+              p_action: string
+              p_table_name?: string
+              p_record_id?: string
+              p_old_values?: Json
+              p_new_values?: Json
+            }
         Returns: string
       }
       log_login_attempt: {
         Args: { p_email: string; p_success?: boolean; p_ip_address?: unknown }
         Returns: string
+      }
+      new_audit_profile_changes: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {
