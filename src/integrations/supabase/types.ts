@@ -99,6 +99,36 @@ export type Database = {
         }
         Relationships: []
       }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          slug: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -106,6 +136,7 @@ export type Database = {
           full_name: string
           id: string
           invite_code: string | null
+          organization_id: string | null
           role: string
           updated_at: string
         }
@@ -115,6 +146,7 @@ export type Database = {
           full_name: string
           id: string
           invite_code?: string | null
+          organization_id?: string | null
           role?: string
           updated_at?: string
         }
@@ -124,10 +156,19 @@ export type Database = {
           full_name?: string
           id?: string
           invite_code?: string | null
+          organization_id?: string | null
           role?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
