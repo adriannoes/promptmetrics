@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Zap } from 'lucide-react';
 import { toast } from 'sonner';
+import { getPostLoginRedirect } from '@/services/redirectService';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,14 +17,20 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && profile) {
-      // Redirect based on role
-      if (profile.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/home');
+    const handlePostLoginRedirect = async () => {
+      if (user && profile) {
+        try {
+          const { path, reason } = await getPostLoginRedirect(profile);
+          console.log('Login redirect:', reason);
+          navigate(path, { replace: true });
+        } catch (error) {
+          console.error('Error during login redirect:', error);
+          navigate('/test', { replace: true });
+        }
       }
-    }
+    };
+
+    handlePostLoginRedirect();
   }, [user, profile, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {

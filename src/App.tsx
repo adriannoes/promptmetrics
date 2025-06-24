@@ -13,6 +13,7 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import OrganizationHome from "./pages/OrganizationHome";
 import Admin from "./pages/Admin";
+import Test from "./pages/Test";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -36,6 +37,14 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route 
+              path="/test" 
+              element={
+                <ProtectedRoute>
+                  <Test />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="/home" 
               element={
