@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
+import OrganizationHome from "./pages/OrganizationHome";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -40,6 +41,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="client">
                   <Home />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/home/:slug" 
+              element={
+                <ProtectedRoute requiredRole="client">
+                  <OrganizationHome />
                 </ProtectedRoute>
               } 
             />
