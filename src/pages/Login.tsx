@@ -1,37 +1,22 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePostLoginRedirect } from '@/hooks/usePostLoginRedirect';
 import { Zap } from 'lucide-react';
 import { toast } from 'sonner';
-import { getPostLoginRedirect } from '@/services/redirectService';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signInWithGoogle, user, profile } = useAuth();
-  const navigate = useNavigate();
+  const { signIn, signInWithGoogle } = useAuth();
 
-  useEffect(() => {
-    const handlePostLoginRedirect = async () => {
-      if (user && profile) {
-        try {
-          const { path, reason } = await getPostLoginRedirect(profile);
-          console.log('Login redirect:', reason);
-          navigate(path, { replace: true });
-        } catch (error) {
-          console.error('Error during login redirect:', error);
-          navigate('/test', { replace: true });
-        }
-      }
-    };
-
-    handlePostLoginRedirect();
-  }, [user, profile, navigate]);
+  // Use the centralized post-login redirect hook
+  usePostLoginRedirect();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

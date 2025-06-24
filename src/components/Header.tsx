@@ -20,7 +20,9 @@ const Header = () => {
   };
 
   const handleSignOut = async () => {
+    console.log('Header: Initiating signOut');
     await signOut();
+    // signOut now handles the redirect internally
   };
 
   return (

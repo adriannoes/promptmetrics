@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { LogOut, ExternalLink } from 'lucide-react';
 
 interface Organization {
@@ -19,11 +18,11 @@ interface OrganizationHeaderProps {
 
 const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const { profile, signOut } = useAuth();
-  const navigate = useNavigate();
 
   const handleSignOut = async () => {
+    console.log('OrganizationHeader: Initiating signOut');
     await signOut();
-    navigate('/');
+    // signOut now handles the redirect internally
   };
 
   return (
