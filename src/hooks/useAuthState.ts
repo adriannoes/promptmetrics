@@ -24,7 +24,7 @@ export const useAuthState = () => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch user profile without setTimeout to prevent race conditions
+          // Only fetch profile for authenticated users
           try {
             const { data: profileData, error } = await supabase
               .from('profiles')
@@ -34,20 +34,22 @@ export const useAuthState = () => {
             
             if (error) {
               console.error('Error fetching profile:', error);
-              // If profile doesn't exist, user might be in the middle of signup
               if (error.code !== 'PGRST116') {
-                throw error;
+                setProfile(null);
               }
             } else {
               setProfile(profileData);
             }
           } catch (error) {
             console.error('Profile fetch error:', error);
+            setProfile(null);
           }
         } else {
+          // Clear profile immediately when user is null
           setProfile(null);
         }
         
+        // Always set loading to false after processing auth change
         if (mounted) {
           setLoading(false);
         }
@@ -60,6 +62,8 @@ export const useAuthState = () => {
       
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // If no session, set loading to false immediately
       if (!session && mounted) {
         setLoading(false);
       }

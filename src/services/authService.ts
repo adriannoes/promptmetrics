@@ -56,11 +56,9 @@ export const signIn = async (email: string, password: string) => {
     return { error: { message: 'Password is required' } };
   }
 
-  // Sanitize email
   const sanitizedEmail = email.trim().toLowerCase();
 
   try {
-    // Check rate limiting
     const { data: rateLimitData, error: rateLimitError } = await supabase
       .rpc('is_rate_limited', { p_email: sanitizedEmail });
 
@@ -75,7 +73,6 @@ export const signIn = async (email: string, password: string) => {
       password
     });
 
-    // Log the login attempt
     const success = !error;
     try {
       await supabase.rpc('log_login_attempt', {
@@ -90,7 +87,6 @@ export const signIn = async (email: string, password: string) => {
   } catch (error) {
     console.error('Signin error:', error);
     
-    // Log failed attempt
     try {
       await supabase.rpc('log_login_attempt', {
         p_email: sanitizedEmail,
@@ -122,8 +118,14 @@ export const signInWithGoogle = async () => {
 
 export const signOut = async () => {
   try {
+    console.log('Signing out user...');
     await supabase.auth.signOut();
+    
+    // Force redirect to home page after successful signout
+    window.location.href = '/';
   } catch (error) {
     console.error('Signout error:', error);
+    // Even if there's an error, try to redirect to clear the state
+    window.location.href = '/';
   }
 };
