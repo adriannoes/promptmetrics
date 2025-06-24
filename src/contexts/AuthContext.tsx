@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +8,7 @@ interface Profile {
   email: string;
   role: 'client' | 'admin';
   invite_code?: string;
+  organization_id?: string;
 }
 
 interface AuthContextType {
