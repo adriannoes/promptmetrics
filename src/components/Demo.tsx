@@ -2,6 +2,7 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Play } from 'lucide-react';
+import DashboardPreview from './DashboardPreview';
 
 const Demo = () => {
   const { t } = useLanguage();
@@ -35,13 +36,8 @@ const Demo = () => {
         <div className="max-w-6xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
           <div className="relative group">
             <div className="absolute -inset-4 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative bg-white/80 backdrop-blur-lg border border-white/50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl shadow-indigo-500/10">
-              <img
-                src="/lovable-uploads/15f59e8f-3071-4ae2-aa73-37762b237030.png"
-                alt="Platform Dashboard Preview"
-                className="w-full h-auto rounded-xl sm:rounded-2xl shadow-lg"
-                loading="lazy"
-              />
+            <div className="relative">
+              <DashboardPreview />
             </div>
           </div>
         </div>
