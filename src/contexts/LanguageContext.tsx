@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
@@ -61,6 +60,13 @@ const translations = {
     'transformation.feature2.desc': 'Understand how your competitors are positioned in AI responses and identify opportunities to gain advantage.',
     'transformation.feature3.title': 'Strategic Insights',
     'transformation.feature3.desc': 'Receive actionable recommendations to improve your AI visibility and influence AI-driven customer decisions.',
+    
+    // Demo section
+    'tags.demo': 'Platform Demo',
+    'demo.title': 'See it in action',
+    'demo.subtitle': 'Get real-time insights into how AI systems perceive your brand across different platforms and queries.',
+    'demo.description': 'Real-time model performance dashboards, automated benchmarks, and clear insights to help you understand your AI brand presence.',
+    'demo.cta': 'Join Waitlist to Try It',
     
     // Pricing section
     'tags.pricingPlans': 'Pricing & Plans',
@@ -184,6 +190,13 @@ const translations = {
     'transformation.feature2.desc': 'Entenda como seus concorrentes estão posicionados nas respostas da IA e identifique oportunidades para ganhar vantagem.',
     'transformation.feature3.title': 'Insights Estratégicos',
     'transformation.feature3.desc': 'Receba recomendações acionáveis para melhorar sua visibilidade na IA e influenciar decisões de clientes impulsionadas pela IA.',
+    
+    // Demo section
+    'tags.demo': 'Demo da Plataforma',
+    'demo.title': 'Veja em ação',
+    'demo.subtitle': 'Obtenha insights em tempo real sobre como os sistemas de IA percebem sua marca em diferentes plataformas e consultas.',
+    'demo.description': 'Dashboards de performance de modelos em tempo real, benchmarks automatizados e insights claros para ajudar você a entender sua presença na IA.',
+    'demo.cta': 'Entre na Lista para Experimentar',
     
     // Pricing section
     'tags.pricingPlans': 'Planos e Preços',
