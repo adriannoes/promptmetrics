@@ -20,6 +20,14 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
 
   // Client users need organization lookup
   if (profile.role === 'client') {
+    // Special handling for demo user - always redirect to demo org
+    if (profile.email === 'demo@example.com') {
+      return {
+        path: '/home/demo',
+        reason: 'Demo user redirected to demo organization'
+      };
+    }
+
     if (!profile.organization_id) {
       console.warn('Client user has no organization_id');
       return {
