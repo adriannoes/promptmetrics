@@ -116,6 +116,21 @@ export const signInWithGoogle = async () => {
   }
 };
 
+export const signInWithDemo = async () => {
+  try {
+    console.log('Attempting demo login...');
+    const { error } = await supabase.auth.signInWithPassword({
+      email: 'demo@example.com',
+      password: 'demo123456'
+    });
+    
+    return { error };
+  } catch (error) {
+    console.error('Demo signin error:', error);
+    return { error: { message: 'An unexpected error occurred during demo signin' } };
+  }
+};
+
 export const signOut = async () => {
   try {
     console.log('Signing out user...');

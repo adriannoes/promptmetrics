@@ -8,6 +8,8 @@ export interface Profile {
   role: 'client' | 'admin';
   invite_code?: string;
   organization_id?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface AuthContextType {
@@ -18,5 +20,6 @@ export interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, inviteCode: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
+  signInWithDemo: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
