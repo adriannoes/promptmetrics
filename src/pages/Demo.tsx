@@ -65,6 +65,38 @@ const Demo = () => {
     { area: 'API documentation', urgency: 'low' }
   ];
 
+  // Chart configs for ChartContainer
+  const chartConfig = {
+    positive: {
+      label: "Positive",
+      color: "#10b981",
+    },
+    neutral: {
+      label: "Neutral", 
+      color: "#f59e0b",
+    },
+    negative: {
+      label: "Negative",
+      color: "#ef4444",
+    },
+    lovable: {
+      label: "Lovable",
+      color: "#3b82f6",
+    },
+    bolt: {
+      label: "Bolt",
+      color: "#10b981",
+    },
+    v0: {
+      label: "V0",
+      color: "#8b5cf6",
+    },
+    figmaMake: {
+      label: "Figma Make",
+      color: "#f59e0b",
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
@@ -130,26 +162,24 @@ const Demo = () => {
                   <CardTitle>Overall Sentiment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={overallSentiment}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={100}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          {overallSentiment.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <ChartContainer config={chartConfig} className="h-64">
+                    <PieChart>
+                      <Pie
+                        data={overallSentiment}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {overallSentiment.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </PieChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
 
@@ -158,25 +188,23 @@ const Demo = () => {
                   <CardTitle>Market Share vs. Sentiment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ScatterChart>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="share" name="Market Share" />
-                        <YAxis dataKey="sentiment" name="Sentiment" />
-                        <Scatter 
-                          data={[
-                            {share: 35, sentiment: 73, name: 'Lovable'},
-                            {share: 28, sentiment: 65, name: 'Bolt'},
-                            {share: 22, sentiment: 58, name: 'V0'},
-                            {share: 15, sentiment: 62, name: 'Figma Make'}
-                          ]} 
-                          fill="#3b82f6" 
-                        />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                      </ScatterChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <ChartContainer config={chartConfig} className="h-64">
+                    <ScatterChart>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="share" name="Market Share" />
+                      <YAxis dataKey="sentiment" name="Sentiment" />
+                      <Scatter 
+                        data={[
+                          {share: 35, sentiment: 73, name: 'Lovable'},
+                          {share: 28, sentiment: 65, name: 'Bolt'},
+                          {share: 22, sentiment: 58, name: 'V0'},
+                          {share: 15, sentiment: 62, name: 'Figma Make'}
+                        ]} 
+                        fill="#3b82f6" 
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </ScatterChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
             </div>
@@ -345,20 +373,18 @@ const Demo = () => {
                 <CardTitle>Competitive Perception by Platform</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={competitiveData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
-                      <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
-                      <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
-                      <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+                <ChartContainer config={chartConfig} className="h-80">
+                  <LineChart data={competitiveData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
+                    <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
+                    <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
+                    <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
+                  </LineChart>
+                </ChartContainer>
               </CardContent>
             </Card>
           </TabsContent>
@@ -378,34 +404,32 @@ const Demo = () => {
                   <CardTitle>Query Intent Distribution</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={[
-                            { name: 'Research', value: 62, color: '#3b82f6' },
-                            { name: 'Purchase', value: 23, color: '#10b981' },
-                            { name: 'Education', value: 9, color: '#f59e0b' },
-                            { name: 'Comparison', value: 6, color: '#8b5cf6' }
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={80}
-                          dataKey="value"
-                        >
-                          {[
-                            { name: 'Research', value: 62, color: '#3b82f6' },
-                            { name: 'Purchase', value: 23, color: '#10b981' },
-                            { name: 'Education', value: 9, color: '#f59e0b' },
-                            { name: 'Comparison', value: 6, color: '#8b5cf6' }
-                          ].map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <ChartContainer config={chartConfig} className="h-64">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Research', value: 62, color: '#3b82f6' },
+                          { name: 'Purchase', value: 23, color: '#10b981' },
+                          { name: 'Education', value: 9, color: '#f59e0b' },
+                          { name: 'Comparison', value: 6, color: '#8b5cf6' }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        dataKey="value"
+                      >
+                        {[
+                          { name: 'Research', value: 62, color: '#3b82f6' },
+                          { name: 'Purchase', value: 23, color: '#10b981' },
+                          { name: 'Education', value: 9, color: '#f59e0b' },
+                          { name: 'Comparison', value: 6, color: '#8b5cf6' }
+                        ].map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </PieChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
 
@@ -453,10 +477,10 @@ const Demo = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <Badge className="bg-blue-100 text-blue-800">1</Badge>
-                    <h3 className="font-semibold text-slate-900">Dominate With Try-On Program</h3>
+                    <h3 className="font-semibold text-slate-900">Dominate AI-Powered Development</h3>
                   </div>
                   <p className="text-sm text-slate-600">
-                    25.5% market share—expand Home Try-On to outpace competitors.
+                    35% market share in AI development tools—expand visual programming to outpace competitors.
                   </p>
                 </CardContent>
               </Card>
@@ -465,10 +489,10 @@ const Demo = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <Badge className="bg-green-100 text-green-800">2</Badge>
-                    <h3 className="font-semibold text-slate-900">Win Value-Conscious Shoppers</h3>
+                    <h3 className="font-semibold text-slate-900">Win Enterprise Market</h3>
                   </div>
                   <p className="text-sm text-slate-600">
-                    Compete with Zenni/EyeBuyDirect (23.8% share) via budget-friendly collections.
+                    Compete with Bolt/V0 (28%/22% share) via enterprise-grade security and collaboration features.
                   </p>
                 </CardContent>
               </Card>
@@ -477,10 +501,10 @@ const Demo = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <Badge className="bg-purple-100 text-purple-800">3</Badge>
-                    <h3 className="font-semibold text-slate-900">Lead Digital Experience Innovation</h3>
+                    <h3 className="font-semibold text-slate-900">Lead Content & Education</h3>
                   </div>
                   <p className="text-sm text-slate-600">
-                    Invest in AR/AI Try-On to surpass Zenni, GlassesUSA, Ray-Ban offerings.
+                    Invest in tutorial content and developer education to maintain thought leadership position.
                   </p>
                 </CardContent>
               </Card>
@@ -489,10 +513,10 @@ const Demo = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <Badge className="bg-orange-100 text-orange-800">4</Badge>
-                    <h3 className="font-semibold text-slate-900">Broaden Omnichannel Services</h3>
+                    <h3 className="font-semibold text-slate-900">Expand Integration Ecosystem</h3>
                   </div>
                   <p className="text-sm text-slate-600">
-                    Leverage store footprint, expand eye exams and pickup for loyalty.
+                    Leverage API integrations and third-party tools to increase developer adoption and retention.
                   </p>
                 </CardContent>
               </Card>
@@ -505,20 +529,18 @@ const Demo = () => {
                   <CardTitle>Market Share Trends</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={competitiveData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
-                        <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
-                        <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
-                        <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <ChartContainer config={chartConfig} className="h-64">
+                    <LineChart data={competitiveData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
+                      <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
+                      <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
+                      <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
+                    </LineChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
 
@@ -527,26 +549,24 @@ const Demo = () => {
                   <CardTitle>Market Share Distribution</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={marketShare}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={100}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          {marketShare.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <ChartContainer config={chartConfig} className="h-64">
+                    <PieChart>
+                      <Pie
+                        data={marketShare}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {marketShare.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </PieChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
             </div>
