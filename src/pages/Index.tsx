@@ -7,7 +7,6 @@ import Header from '../components/Header';
 import Hero from '../components/Hero';
 import Problem from '../components/Problem';
 import Transformation from '../components/Transformation';
-import Demo from '../components/Demo';
 import Pricing from '../components/Pricing';
 import FAQ from '../components/FAQ';
 import ContactForm from '../components/ContactForm';
@@ -27,7 +26,6 @@ const Index = () => {
             <Hero />
             <Problem />
             <Transformation />
-            <Demo />
             <Pricing />
             <FAQ />
             <ContactForm />
