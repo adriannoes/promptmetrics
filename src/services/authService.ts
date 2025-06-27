@@ -118,13 +118,37 @@ export const signInWithGoogle = async () => {
 
 export const signInWithDemo = async () => {
   try {
-    console.log('Attempting demo login...');
-    const { error } = await supabase.auth.signInWithPassword({
-      email: 'demo@example.com',
-      password: 'demo123456'
-    });
+    console.log('Bypassing authentication for demo user...');
     
-    return { error };
+    // Create a mock session for the demo user
+    const demoUser = {
+      id: '82a96621-2849-4dee-a70f-8da2616823be',
+      email: 'demo@example.com',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      email_confirmed_at: new Date().toISOString(),
+      app_metadata: {},
+      user_metadata: {
+        full_name: 'Demo User'
+      }
+    };
+
+    // Bypass Supabase auth and directly trigger the auth state change
+    // This simulates a successful login without actual authentication
+    window.dispatchEvent(new CustomEvent('demo-login', { 
+      detail: { 
+        user: demoUser,
+        session: {
+          user: demoUser,
+          access_token: 'demo-token',
+          refresh_token: 'demo-refresh',
+          expires_at: Date.now() + 3600000, // 1 hour from now
+          token_type: 'bearer'
+        }
+      }
+    }));
+    
+    return { error: null };
   } catch (error) {
     console.error('Demo signin error:', error);
     return { error: { message: 'An unexpected error occurred during demo signin' } };

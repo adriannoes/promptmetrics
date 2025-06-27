@@ -13,6 +13,35 @@ export const useAuthState = () => {
   useEffect(() => {
     let mounted = true;
 
+    // Handle demo login events
+    const handleDemoLogin = (event: CustomEvent) => {
+      if (!mounted) return;
+      
+      console.log('Demo login event received');
+      const { user: demoUser, session: demoSession } = event.detail;
+      
+      setUser(demoUser);
+      setSession(demoSession);
+      
+      // Set demo profile directly
+      const demoProfile: Profile = {
+        id: '82a96621-2849-4dee-a70f-8da2616823be',
+        full_name: 'Demo User',
+        email: 'demo@example.com',
+        role: 'client',
+        organization_id: null, // Will be set by redirect service
+        invite_code: 'DEMO2024',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      setProfile(demoProfile);
+      setLoading(false);
+    };
+
+    // Add demo login event listener
+    window.addEventListener('demo-login', handleDemoLogin as EventListener);
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -71,6 +100,7 @@ export const useAuthState = () => {
 
     return () => {
       mounted = false;
+      window.removeEventListener('demo-login', handleDemoLogin as EventListener);
       subscription.unsubscribe();
     };
   }, []);
