@@ -14,6 +14,7 @@ import Home from "./pages/Home";
 import OrganizationHome from "./pages/OrganizationHome";
 import Admin from "./pages/Admin";
 import Test from "./pages/Test";
+import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/demo" element={<Demo />} />
             <Route 
               path="/test" 
               element={
