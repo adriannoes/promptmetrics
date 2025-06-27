@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users, MessageSquare, Target, BarChart3 } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip, Legend } from 'recharts';
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users, MessageSquare, Target, BarChart3, ExternalLink } from 'lucide-react';
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -65,6 +65,97 @@ const Demo = () => {
     { area: 'API documentation', urgency: 'low' }
   ];
 
+  // New data for prompt analysis section
+  const promptAnalysisData = [
+    { 
+      prompt: "Quais são as melhores plataformas para marketing digital?", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: false, rank: null }, 
+      volume: 'high' 
+    },
+    { 
+      prompt: "Recomende cursos de análise de dados", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: true, rank: 39 }, 
+      volume: 'medium' 
+    },
+    { 
+      prompt: "Cursos online para profissionais de tecnologia", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: false, rank: null }, 
+      volume: 'low' 
+    },
+    { 
+      prompt: "Melhores cursos de gestão de produtos", 
+      chatgpt: { present: true, rank: 2.7 }, 
+      google: { present: true, rank: 7 }, 
+      volume: 'low' 
+    },
+    { 
+      prompt: "Top 10 escolas de design no Brasil", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: false, rank: null }, 
+      volume: 'low' 
+    },
+    { 
+      prompt: "Como melhorar habilidades em gestão de produtos?", 
+      chatgpt: { present: true, rank: 3.5 }, 
+      google: { present: true, rank: 10 }, 
+      volume: 'low' 
+    },
+    { 
+      prompt: "Ferramentas essenciais para gerenciamento de produtos", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: true, rank: 9 }, 
+      volume: 'low' 
+    },
+    { 
+      prompt: "Melhores aplicativos para aprendizado em marketing", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: false, rank: null }, 
+      volume: 'low' 
+    },
+    { 
+      prompt: "Quais habilidades são essenciais para product managers?", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: true, rank: 3 }, 
+      volume: 'low' 
+    },
+    { 
+      prompt: "Como se tornar um especialista em produto?", 
+      chatgpt: { present: false, rank: null }, 
+      google: { present: true, rank: 13 }, 
+      volume: 'low' 
+    }
+  ];
+
+  const competitorAnalysis = [
+    { name: 'Udemy', website: 'udemy.com', prevalence: 42.5, averageRank: 2.8 },
+    { name: 'Coursera', website: 'coursera.org', prevalence: 37.5, averageRank: 1.5 },
+    { name: 'Bolt', website: 'bolt.new', prevalence: 30.0, averageRank: 2.8 },
+    { name: 'V0', website: 'v0.dev', prevalence: 22.5, averageRank: 6.7 },
+    { name: 'Figma Make', website: 'figma.com', prevalence: 17.5, averageRank: 4.0 },
+    { name: 'Lovable', website: 'lovable.dev', prevalence: 12.5, averageRank: 3.0, highlight: true },
+    { name: 'Replit', website: 'replit.com', prevalence: 12.5, averageRank: 4.0 },
+    { name: 'Claude', website: 'claude.ai', prevalence: 10.0, averageRank: 2.0 }
+  ];
+
+  const getVolumeIcon = (volume) => {
+    const bars = volume === 'high' ? 5 : volume === 'medium' ? 3 : 1;
+    return (
+      <div className="flex items-center gap-0.5">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className={`w-1 h-3 rounded-sm ${
+              i < bars ? 'bg-blue-500' : 'bg-slate-200'
+            }`}
+          />
+        ))}
+      </div>
+    );
+  };
+
   // Chart configs for ChartContainer
   const chartConfig = {
     positive: {
@@ -122,7 +213,7 @@ const Demo = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="brand-marketing">Brand & Marketing</TabsTrigger>
+            <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
             <TabsTrigger value="audience">Audience & Content</TabsTrigger>
             <TabsTrigger value="landscape">Business Landscape</TabsTrigger>
           </TabsList>
@@ -162,7 +253,7 @@ const Demo = () => {
                   <CardTitle>Overall Sentiment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-64">
+                  <ResponsiveContainer width="100%" height={256}>
                     <PieChart>
                       <Pie
                         data={overallSentiment}
@@ -177,9 +268,9 @@ const Demo = () => {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Tooltip />
                     </PieChart>
-                  </ChartContainer>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
 
@@ -188,7 +279,7 @@ const Demo = () => {
                   <CardTitle>Market Share vs. Sentiment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-64">
+                  <ResponsiveContainer width="100%" height={256}>
                     <ScatterChart>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="share" name="Market Share" />
@@ -202,9 +293,9 @@ const Demo = () => {
                         ]} 
                         fill="#3b82f6" 
                       />
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Tooltip />
                     </ScatterChart>
-                  </ChartContainer>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
@@ -277,114 +368,254 @@ const Demo = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="brand-marketing" className="space-y-6">
+          <TabsContent value="prompt-analysis" className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">Brand & Marketing</h1>
-                <p className="text-slate-600 mt-2">AI Critical Sentiment Shifts</p>
+                <h1 className="text-3xl font-bold text-slate-900">Prompt Analysis</h1>
+                <p className="text-slate-600 mt-2">How Lovable appears in LLM responses across different queries</p>
               </div>
             </div>
 
-            {/* Top Ranking Prompts */}
+            {/* Key Metrics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <BarChart3 className="w-6 h-6 text-blue-600" />
+                    </div>
+                  </div>
+                  <h3 className="text-sm text-slate-600 mb-2">Average Rank</h3>
+                  <p className="text-3xl font-bold text-slate-900">3.0</p>
+                  <p className="text-xs text-slate-500 mt-1">Average product position within prompt results</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                      <Target className="w-6 h-6 text-orange-600" />
+                    </div>
+                  </div>
+                  <h3 className="text-sm text-slate-600 mb-2">Prevalence</h3>
+                  <p className="text-3xl font-bold text-slate-900">13%</p>
+                  <p className="text-xs text-slate-500 mt-1">% of total prompt runs in which your product appears</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-6 h-6 text-yellow-600" />
+                    </div>
+                  </div>
+                  <h3 className="text-sm text-slate-600 mb-2">Category Rank</h3>
+                  <p className="text-3xl font-bold text-slate-900">8<span className="text-lg text-slate-500">/105</span></p>
+                  <p className="text-xs text-slate-500 mt-1">Ranked by prevalence relative to all products in prompt results</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Prompt Analysis Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Top Ranking Prompts</CardTitle>
-                <p className="text-sm text-slate-600">Prompts where Lovable appears in top LLM responses</p>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Prompts
+                  </CardTitle>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700">ChatGPT</Badge>
+                      <Badge variant="outline" className="bg-green-50 text-green-700">Google</Badge>
+                    </div>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {topPrompts.map((prompt, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <Badge variant="outline" className="w-8 h-8 rounded-full flex items-center justify-center">
-                          {prompt.rank}
-                        </Badge>
-                        <div>
-                          <p className="font-medium text-slate-900">"{prompt.prompt}"</p>
-                          <p className="text-sm text-slate-600">{prompt.mentions} mentions</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${prompt.sentiment >= 80 ? 'bg-green-500' : prompt.sentiment >= 70 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
-                        <span className="text-sm font-medium">{prompt.sentiment}% positive</span>
-                      </div>
-                    </div>
-                  ))}
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Prompts</TableHead>
+                      <TableHead className="text-center">ChatGPT<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                      <TableHead className="text-center">Google<br/><span className="text-xs text-slate-500">Present | Position</span></TableHead>
+                      <TableHead className="text-center">Volume</TableHead>
+                      <TableHead></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {promptAnalysisData.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium max-w-md">
+                          {item.prompt}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            {item.chatgpt.present ? (
+                              <>
+                                <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
+                                <span className="font-medium">{item.chatgpt.rank}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Badge variant="secondary" className="bg-red-100 text-red-800">No</Badge>
+                                <span className="text-slate-400">-</span>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            {item.google.present ? (
+                              <>
+                                <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
+                                <span className="font-medium">{item.google.rank}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Badge variant="secondary" className="bg-red-100 text-red-800">No</Badge>
+                                <span className="text-slate-400">-</span>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {getVolumeIcon(item.volume)}
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm">
+                            <ExternalLink className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                
+                <div className="mt-6">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationPrevious href="#" />
+                      <PaginationItem>
+                        <PaginationLink href="#" isActive>1</PaginationLink>
+                      </PaginationItem>
+                      <PaginationItem>
+                        <PaginationLink href="#">2</PaginationLink>
+                      </PaginationItem>
+                      <PaginationItem>
+                        <PaginationLink href="#">3</PaginationLink>
+                      </PaginationItem>
+                      <PaginationNext href="#" />
+                    </PaginationContent>
+                  </Pagination>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Brand Strength Factors */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    Brand Strength Factors
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {brandStrengths.map((strength, index) => (
-                      <div key={index} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-slate-700">{strength.factor}</span>
-                          <span className="text-sm font-medium">{strength.score}%</span>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full transition-all duration-300" 
-                            style={{ width: `${strength.score}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-yellow-600" />
-                    Areas for Improvement
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {improvementAreas.map((area, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                        <span className="text-sm text-slate-700">{area.area}</span>
-                        <Badge 
-                          variant={area.urgency === 'high' ? 'destructive' : area.urgency === 'medium' ? 'default' : 'secondary'}
-                        >
-                          {area.urgency} priority
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Competitive Analysis */}
+            {/* All Competitors Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Competitive Perception by Platform</CardTitle>
+                <CardTitle>All Competitors</CardTitle>
+                <p className="text-sm text-slate-600">105 Competitors identified across all prompts</p>
               </CardHeader>
               <CardContent>
-                <ChartContainer config={chartConfig} className="h-80">
-                  <LineChart data={competitiveData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
-                    <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
-                    <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
-                    <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
-                  </LineChart>
-                </ChartContainer>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Competitor</TableHead>
+                      <TableHead>Website</TableHead>
+                      <TableHead className="text-center">Prevalence %</TableHead>
+                      <TableHead className="text-center">Average Rank</TableHead>
+                      <TableHead></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {competitorAnalysis.map((competitor, index) => (
+                      <TableRow key={index} className={competitor.highlight ? 'bg-blue-50' : undefined}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            {competitor.name}
+                            {competitor.highlight && (
+                              <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                Your Product
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <a 
+                            href={`https://${competitor.website}`} 
+                            className="text-blue-600 hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {competitor.website}
+                          </a>
+                        </TableCell>
+                        <TableCell className="text-center font-medium">
+                          {competitor.prevalence}%
+                        </TableCell>
+                        <TableCell className="text-center font-medium">
+                          {competitor.averageRank}
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm">
+                            <ExternalLink className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Product Sentiment Analysis */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Sentiment</CardTitle>
+                <p className="text-sm text-slate-600">Sentiment analysis reveals how ChatGPT views your product's strengths and weaknesses.</p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <h3 className="font-semibold text-slate-900">Strengths</h3>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="text-sm">
+                        <strong>Strong AI-powered development:</strong> Lovable offers advanced AI-driven code generation tailored to modern web development, ensuring high-quality, maintainable code output.
+                      </div>
+                      <div className="text-sm">
+                        <strong>Visual interface design:</strong> Emphasis on intuitive visual programming allows developers to see changes in real-time, setting Lovable apart from more traditional development tools.
+                      </div>
+                      <div className="text-sm">
+                        <strong>Rapid prototyping capabilities:</strong> Enables quick iteration and testing of ideas, making it ideal for startups and rapid development cycles.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <AlertCircle className="w-5 h-5 text-red-600" />
+                      <h3 className="font-semibold text-slate-900">Drawbacks</h3>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="text-sm">
+                        <strong>Limited enterprise features:</strong> Compared to competitors, resulting in fewer options for large-scale enterprise deployments and advanced security requirements.
+                      </div>
+                      <div className="text-sm">
+                        <strong>Pricing structure concerns:</strong> Some users find the pricing less justified compared to feature-rich alternatives offered by competitors.
+                      </div>
+                      <div className="text-sm">
+                        <strong>Team collaboration limitations:</strong> Advanced team features and collaborative development tools need improvement for larger development teams.
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -404,7 +635,7 @@ const Demo = () => {
                   <CardTitle>Query Intent Distribution</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-64">
+                  <ResponsiveContainer width="100%" height={256}>
                     <PieChart>
                       <Pie
                         data={[
@@ -427,9 +658,9 @@ const Demo = () => {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Tooltip />
                     </PieChart>
-                  </ChartContainer>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
 
@@ -529,18 +760,19 @@ const Demo = () => {
                   <CardTitle>Market Share Trends</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-64">
+                  <ResponsiveContainer width="100%" height={256}>
                     <LineChart data={competitiveData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Tooltip />
+                      <Legend />
                       <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
                       <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
                       <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
                       <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
                     </LineChart>
-                  </ChartContainer>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
 
@@ -549,7 +781,7 @@ const Demo = () => {
                   <CardTitle>Market Share Distribution</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-64">
+                  <ResponsiveContainer width="100%" height={256}>
                     <PieChart>
                       <Pie
                         data={marketShare}
@@ -564,9 +796,9 @@ const Demo = () => {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Tooltip />
                     </PieChart>
-                  </ChartContainer>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
