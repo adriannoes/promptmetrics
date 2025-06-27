@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       signUp: authService.signUp,
       signIn: authService.signIn,
       signInWithGoogle: authService.signInWithGoogle,
+      signInWithDemo: authService.signInWithDemo,
       signOut: authService.signOut
     }}>
       {children}
