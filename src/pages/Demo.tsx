@@ -880,7 +880,7 @@ const Demo = () => {
                                     <Checkbox
                                       id={llm.id}
                                       checked={selectedLLMs.includes(llm.id)}
-                                      onCheckedChange={(checked) => handleLLMToggle(llm.id, checked)}
+                                      onCheckedChange={(checked) => handleLLMToggle(llm.id, checked as boolean)}
                                     />
                                     <label htmlFor={llm.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
                                       <span className="text-lg">{llm.logo}</span>
@@ -917,7 +917,7 @@ const Demo = () => {
                                     <Checkbox
                                       id={competitor.id}
                                       checked={selectedCompetitors.includes(competitor.id)}
-                                      onCheckedChange={(checked) => handleCompetitorToggle(competitor.id, checked)}
+                                      onCheckedChange={(checked) => handleCompetitorToggle(competitor.id, checked as boolean)}
                                     />
                                     <label htmlFor={competitor.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
                                       <div 
