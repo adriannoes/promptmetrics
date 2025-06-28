@@ -15,7 +15,7 @@ const Hero = () => {
   };
 
   return (
-    <AuroraBackground className="bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/50 pt-12 sm:pt-16 pb-16 sm:pb-20 min-h-[60vh] sm:min-h-[70vh] md:min-h-[75vh]">
+    <AuroraBackground className="bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/50 pt-20 sm:pt-24 pb-16 sm:pb-20 min-h-[60vh] sm:min-h-[70vh] md:min-h-[75vh]">
       {/* Enhanced background decoration - keeping existing gradients */}
       <div className="absolute inset-0 bg-grid-slate-100/40 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
       <div className="absolute top-20 left-10 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
@@ -24,7 +24,7 @@ const Hero = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 flex items-center justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[65vh]">
         <motion.div 
-          initial={{ opacity: 0.0, y: 40 }}
+          initial={{ opacity: 0.0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{
             delay: 0.3,

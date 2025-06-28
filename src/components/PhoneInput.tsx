@@ -152,7 +152,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         <Select value={selectedCountry.code} onValueChange={handleCountryChange}>
           <SelectTrigger className={`w-28 sm:w-32 rounded-none border-r-0 pl-10 sm:pl-12 pr-2 ${
             error ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
-          } bg-white/50 backdrop-blur-sm hover:bg-white/70 focus:bg-white/80 min-h-[48px] sm:min-h-[52px] flex items-center justify-center`}>
+          } bg-white/50 backdrop-blur-sm hover:bg-white/70 focus:bg-white/80 h-[48px] sm:h-[52px] flex items-center justify-center`}>
             <SelectValue>
               <div className="flex items-center gap-1 sm:gap-2">
                 <span className="text-sm sm:text-base">{selectedCountry.flag}</span>
@@ -179,7 +179,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
           onChange={handlePhoneChange}
           placeholder={placeholder}
           required={required}
-          className={`flex-1 pl-3 sm:pl-4 pr-3 sm:pr-4 py-4 sm:py-5 border-l-0 rounded-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 text-sm sm:text-base min-h-[48px] sm:min-h-[52px] ${
+          className={`flex-1 pl-3 sm:pl-4 pr-3 sm:pr-4 border-l-0 rounded-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/50 backdrop-blur-sm text-slate-900 placeholder-slate-500 transition-all duration-300 hover:bg-white/70 focus:bg-white/80 text-sm sm:text-base h-[48px] sm:h-[52px] ${
             error ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
           }`}
         />

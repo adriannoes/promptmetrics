@@ -8,7 +8,7 @@ interface PricingHeaderProps {
 
 export function PricingHeader({ title, description }: PricingHeaderProps) {
   return (
-    <div className="text-center space-y-3 mb-8 sm:mb-10">
+    <div className="text-center space-y-2 mb-6 sm:mb-8">
       <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
         {title}
       </h2>
