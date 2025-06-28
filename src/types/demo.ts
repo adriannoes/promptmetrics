@@ -18,6 +18,39 @@ export interface TimeSeriesDataPoint {
   neutral: number;
 }
 
+export interface LLMPresenceData {
+  llm: string;
+  lovablePresence: boolean;
+  lovableRank?: number;
+  competitors: {
+    [key: string]: {
+      presence: boolean;
+      rank?: number;
+    };
+  };
+}
+
+export interface EnhancedPromptData {
+  id: string;
+  prompt: string;
+  category: string;
+  sentiment: 'Positive' | 'Negative' | 'Neutral';
+  confidence: number;
+  timestamp: string;
+  source: string;
+  region: string;
+  industry: string;
+  userType: string;
+  keywords: string[];
+  length: number;
+  complexity: 'Low' | 'Medium' | 'High';
+  responseTime: number;
+  satisfaction: number;
+  priority: 'High' | 'Medium' | 'Low';
+  volume: number; // 1-5 scale
+  llmData: LLMPresenceData[];
+}
+
 export interface PromptData {
   id: string;
   prompt: string;
@@ -46,6 +79,11 @@ export interface CompetitorData {
   pricing: string;
   strengths: string[];
   weaknesses: string[];
+}
+
+export interface ViewCustomizationOptions {
+  selectedLLMs: string[];
+  selectedCompetitors: string[];
 }
 
 export interface FilterState {
