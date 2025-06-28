@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings, ThumbsUp, ThumbsDown, AlertTriangle, Star } from 'lucide-react';
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -527,6 +527,116 @@ const Demo = () => {
     }
   };
 
+  // Enhanced sentiment analysis data
+  const sentimentByLLM = [
+    { llm: 'ChatGPT', lovable: 78, bolt: 72, v0: 65, figmaMake: 58 },
+    { llm: 'Google AI Search', lovable: 82, bolt: 69, v0: 71, figmaMake: 62 },
+    { llm: 'Claude', lovable: 85, bolt: 75, v0: 68, figmaMake: 55 },
+    { llm: 'Perplexity', lovable: 80, bolt: 73, v0: 66, figmaMake: 60 },
+    { llm: 'Grok', lovable: 65, bolt: 78, v0: 74, figmaMake: 63 }
+  ];
+
+  const criticalPrompts = [
+    { 
+      prompt: "enterprise development tools", 
+      sentiment: -15, 
+      mentions: 89,
+      issue: "Limited enterprise features compared to competitors",
+      impact: "high"
+    },
+    { 
+      prompt: "team collaboration platforms", 
+      sentiment: -8, 
+      mentions: 67,
+      issue: "Weak team collaboration tools",
+      impact: "high"
+    },
+    { 
+      prompt: "scalable web development", 
+      sentiment: -12, 
+      mentions: 45,
+      issue: "Scalability concerns for large projects",
+      impact: "medium"
+    },
+    { 
+      prompt: "API integration tools", 
+      sentiment: -6, 
+      mentions: 38,
+      issue: "Limited third-party integrations",
+      impact: "medium"
+    }
+  ];
+
+  const sentimentStrengths = [
+    { 
+      strength: "AI-Powered Development", 
+      sentiment: 92, 
+      mentions: 234,
+      description: "Users consistently praise Lovable's intelligent code generation and AI assistance"
+    },
+    { 
+      strength: "Visual Programming Interface", 
+      sentiment: 88, 
+      mentions: 198,
+      description: "Real-time visual feedback and intuitive design tools receive high praise"
+    },
+    { 
+      strength: "Rapid Prototyping", 
+      sentiment: 85, 
+      mentions: 167,
+      description: "Speed of development and quick iteration capabilities are highly valued"
+    },
+    { 
+      strength: "User Experience", 
+      sentiment: 83, 
+      mentions: 145,
+      description: "Clean interface and ease of use consistently mentioned positively"
+    }
+  ];
+
+  const sentimentDrawbacks = [
+    { 
+      drawback: "Enterprise Features", 
+      sentiment: -18, 
+      mentions: 156,
+      description: "Lack of advanced enterprise security, compliance, and management features"
+    },
+    { 
+      drawback: "Team Collaboration", 
+      sentiment: -15, 
+      mentions: 123,
+      description: "Limited real-time collaboration tools for development teams"
+    },
+    { 
+      drawback: "Advanced Integrations", 
+      sentiment: -12, 
+      mentions: 98,
+      description: "Fewer third-party integrations compared to established competitors"
+    },
+    { 
+      drawback: "Custom Deployment", 
+      sentiment: -10, 
+      mentions: 87,
+      description: "Limited options for custom hosting and deployment configurations"
+    }
+  ];
+
+  const overallSentimentComparison = [
+    { brand: 'Lovable', sentiment: 77.6, color: '#3b82f6' },
+    { brand: 'Bolt', sentiment: 73.4, color: '#10b981' },
+    { brand: 'V0', sentiment: 68.8, color: '#8b5cf6' },
+    { brand: 'Figma Make', sentiment: 59.6, color: '#f59e0b' }
+  ];
+
+  const sentimentTrends = [
+    { month: 'Jan', lovable: 75, bolt: 70, v0: 65, figmaMake: 58 },
+    { month: 'Feb', lovable: 76, bolt: 72, v0: 67, figmaMake: 59 },
+    { month: 'Mar', lovable: 78, bolt: 73, v0: 68, figmaMake: 60 },
+    { month: 'Apr', lovable: 77, bolt: 74, v0: 69, figmaMake: 59 },
+    { month: 'May', lovable: 79, bolt: 73, v0: 68, figmaMake: 61 },
+    { month: 'Jun', lovable: 78, bolt: 73, v0: 69, figmaMake: 60 }
+  ];
+
   // Chart configs for ChartContainer
   const chartConfig = {
     positive: {
@@ -985,46 +1095,256 @@ const Demo = () => {
                 </DialogContent>
               </Dialog>
 
+              {/* Enhanced Product Sentiment Section */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Product Sentiment</CardTitle>
-                  <p className="text-sm text-slate-600">Sentiment analysis reveals how ChatGPT views your product's strengths and weaknesses.</p>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Product Sentiment Analysis
+                  </CardTitle>
+                  <p className="text-sm text-slate-600">
+                    Comprehensive sentiment analysis of your brand across LLMs compared to competitors
+                  </p>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div>
-                      <div className="flex items-center gap-2 mb-4">
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                        <h3 className="font-semibold text-slate-900">Strengths</h3>
+                <CardContent className="space-y-8">
+                  {/* Overall Sentiment Comparison */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <Star className="w-5 h-5 text-yellow-500" />
+                      Overall Sentiment Score
+                    </h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div>
+                        <ResponsiveContainer width="100%" height={200}>
+                          <BarChart data={overallSentimentComparison}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="brand" />
+                            <YAxis domain={[0, 100]} />
+                            <RechartsTooltip />
+                            <Bar dataKey="sentiment" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                       <div className="space-y-3">
-                        <div className="text-sm">
-                          <strong>Strong AI-powered development:</strong> Lovable offers advanced AI-driven code generation tailored to modern web development, ensuring high-quality, maintainable code output.
+                        {overallSentimentComparison.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                            <div className="flex items-center gap-3">
+                              <div 
+                                className="w-4 h-4 rounded-full" 
+                                style={{ backgroundColor: item.color }}
+                              />
+                              <span className="font-medium">{item.brand}</span>
+                              {item.brand === 'Lovable' && (
+                                <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                  Your Product
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-lg">{item.sentiment}</span>
+                              <div className="flex items-center gap-1">
+                                {item.sentiment >= 75 ? (
+                                  <ThumbsUp className="w-4 h-4 text-green-600" />
+                                ) : item.sentiment >= 65 ? (
+                                  <div className="w-4 h-4 rounded-full bg-yellow-400" />
+                                ) : (
+                                  <ThumbsDown className="w-4 h-4 text-red-600" />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sentiment by LLM */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-blue-500" />
+                      Sentiment by LLM
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>LLM</TableHead>
+                            <TableHead className="text-center">Lovable</TableHead>
+                            <TableHead className="text-center">Bolt</TableHead>
+                            <TableHead className="text-center">V0</TableHead>
+                            <TableHead className="text-center">Figma Make</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {sentimentByLLM.map((row, index) => (
+                            <TableRow key={index}>
+                              <TableCell className="font-medium">{row.llm}</TableCell>
+                              <TableCell className="text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <span className="font-bold">{row.lovable}</span>
+                                  {row.lovable >= 80 ? (
+                                    <ThumbsUp className="w-4 h-4 text-green-600" />
+                                  ) : row.lovable >= 70 ? (
+                                    <div className="w-4 h-4 rounded-full bg-yellow-400" />
+                                  ) : (
+                                    <ThumbsDown className="w-4 h-4 text-red-600" />
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center font-medium text-slate-600">{row.bolt}</TableCell>
+                              <TableCell className="text-center font-medium text-slate-600">{row.v0}</TableCell>
+                              <TableCell className="text-center font-medium text-slate-600">{row.figmaMake}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  {/* Critical Prompts */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-red-500" />
+                      Critical Prompts (Negative Sentiment)
+                    </h3>
+                    <div className="space-y-3">
+                      {criticalPrompts.map((prompt, index) => (
+                        <div key={index} className="border rounded-lg p-4 bg-red-50 border-red-200">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="font-medium text-slate-900">"{prompt.prompt}"</span>
+                                <Badge 
+                                  variant="secondary" 
+                                  className={`text-xs ${
+                                    prompt.impact === 'high' 
+                                      ? 'bg-red-100 text-red-800' 
+                                      : 'bg-yellow-100 text-yellow-800'
+                                  }`}
+                                >
+                                  {prompt.impact} impact
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-slate-600 mb-2">{prompt.issue}</p>
+                              <div className="flex items-center gap-4 text-xs text-slate-500">
+                                <span>{prompt.mentions} mentions</span>
+                                <span>Sentiment: {prompt.sentiment}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 ml-4">
+                              <span className="font-bold text-red-600">{prompt.sentiment}</span>
+                              <ThumbsDown className="w-4 h-4 text-red-600" />
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-sm">
-                          <strong>Visual interface design:</strong> Emphasis on intuitive visual programming allows developers to see changes in real-time, setting Lovable apart from more traditional development tools.
-                        </div>
-                        <div className="text-sm">
-                          <strong>Rapid prototyping capabilities:</strong> Enables quick iteration and testing of ideas, making it ideal for startups and rapid development cycles.
-                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Strengths and Drawbacks */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        Top Sentiment Strengths
+                      </h3>
+                      <div className="space-y-3">
+                        {sentimentStrengths.map((strength, index) => (
+                          <div key={index} className="border rounded-lg p-4 bg-green-50 border-green-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <span className="font-medium text-slate-900">{strength.strength}</span>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-bold text-green-600">+{strength.sentiment}</span>
+                                    <ThumbsUp className="w-4 h-4 text-green-600" />
+                                  </div>
+                                </div>
+                                <p className="text-sm text-slate-600 mb-2">{strength.description}</p>
+                                <div className="text-xs text-slate-500">
+                                  {strength.mentions} positive mentions
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-2 mb-4">
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-red-600" />
-                        <h3 className="font-semibold text-slate-900">Drawbacks</h3>
+                        Key Sentiment Drawbacks
+                      </h3>
+                      <div className="space-y-3">
+                        {sentimentDrawbacks.map((drawback, index) => (
+                          <div key={index} className="border rounded-lg p-4 bg-red-50 border-red-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <span className="font-medium text-slate-900">{drawback.drawback}</span>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-bold text-red-600">{drawback.sentiment}</span>
+                                    <ThumbsDown className="w-4 h-4 text-red-600" />
+                                  </div>
+                                </div>
+                                <p className="text-sm text-slate-600 mb-2">{drawback.description}</p>
+                                <div className="text-xs text-slate-500">
+                                  {drawback.mentions} negative mentions
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sentiment Trends */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-blue-500" />
+                      Sentiment Trends (6 Months)
+                    </h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={sentimentTrends}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis domain={[50, 85]} />
+                        <RechartsTooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="lovable" stroke="#3b82f6" strokeWidth={3} name="Lovable" />
+                        <Line type="monotone" dataKey="bolt" stroke="#10b981" strokeWidth={2} name="Bolt" />
+                        <Line type="monotone" dataKey="v0" stroke="#8b5cf6" strokeWidth={2} name="V0" />
+                        <Line type="monotone" dataKey="figmaMake" stroke="#f59e0b" strokeWidth={2} name="Figma Make" />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Actionable Insights */}
+                  <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <Target className="w-5 h-5 text-blue-600" />
+                      Actionable Sentiment Insights
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-blue-900">Immediate Actions</h4>
+                        <ul className="text-sm text-blue-800 space-y-2">
+                          <li>• Address enterprise features gap - highest negative sentiment driver</li>
+                          <li>• Improve team collaboration tools to match competitor offerings</li>
+                          <li>• Leverage AI-powered development strength in marketing content</li>
+                          <li>• Create case studies highlighting visual programming success</li>
+                        </ul>
                       </div>
                       <div className="space-y-3">
-                        <div className="text-sm">
-                          <strong>Limited enterprise features:</strong> Compared to competitors, resulting in fewer options for large-scale enterprise deployments and advanced security requirements.
-                        </div>
-                        <div className="text-sm">
-                          <strong>Pricing structure concerns:</strong> Some users find the pricing less justified compared to feature-rich alternatives offered by competitors.
-                        </div>
-                        <div className="text-sm">
-                          <strong>Team collaboration limitations:</strong> Advanced team features and collaborative development tools need improvement for larger development teams.
-                        </div>
+                        <h4 className="font-medium text-blue-900">Strategic Opportunities</h4>
+                        <ul className="text-sm text-blue-800 space-y-2">
+                          <li>• Claude shows highest sentiment (85) - focus partnership efforts</li>
+                          <li>• Grok sentiment lower (65) - investigate specific concerns</li>
+                          <li>• Rapid prototyping strength underutilized in messaging</li>
+                          <li>• API integrations gap creating competitive disadvantage</li>
+                        </ul>
                       </div>
                     </div>
                   </div>
