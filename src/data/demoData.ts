@@ -1,4 +1,4 @@
-import { PromptData, CompetitorData, ChartDataPoint, MetricData, TimeSeriesDataPoint } from '@/types/demo';
+import { PromptData, CompetitorData, ChartDataPoint, MetricData, TimeSeriesDataPoint, EnhancedPromptData } from '@/types/demo';
 
 export const mockPrompts: PromptData[] = [
   {
@@ -90,6 +90,150 @@ export const mockPrompts: PromptData[] = [
     responseTime: 1.8,
     satisfaction: 4.1,
     priority: 'Medium'
+  }
+];
+
+export const availableLLMs = ['ChatGPT', 'Google AI Search', 'Claude', 'Perplexity', 'Grok'];
+export const availableCompetitors = ['bolt', 'v0', 'Figma Make'];
+
+export const enhancedMockPrompts: EnhancedPromptData[] = [
+  {
+    id: '1',
+    prompt: 'How can I improve my marketing strategy for Q4?',
+    category: 'Marketing',
+    sentiment: 'Positive',
+    confidence: 85,
+    timestamp: '2024-01-15 14:30',
+    source: 'Web App',
+    region: 'North America',
+    industry: 'Technology',
+    userType: 'Business',
+    keywords: ['marketing', 'strategy', 'Q4', 'improvement'],
+    length: 48,
+    complexity: 'Medium',
+    responseTime: 1.2,
+    satisfaction: 4.5,
+    priority: 'High',
+    volume: 4,
+    llmData: [
+      {
+        llm: 'ChatGPT',
+        lovablePresence: true,
+        lovableRank: 3,
+        competitors: {
+          'bolt': { presence: true, rank: 1 },
+          'v0': { presence: true, rank: 2 },
+          'Figma Make': { presence: false }
+        }
+      },
+      {
+        llm: 'Google AI Search',
+        lovablePresence: true,
+        lovableRank: 2,
+        competitors: {
+          'bolt': { presence: true, rank: 1 },
+          'v0': { presence: false },
+          'Figma Make': { presence: true, rank: 4 }
+        }
+      },
+      {
+        llm: 'Claude',
+        lovablePresence: false,
+        competitors: {
+          'bolt': { presence: true, rank: 1 },
+          'v0': { presence: true, rank: 2 },
+          'Figma Make': { presence: false }
+        }
+      },
+      {
+        llm: 'Perplexity',
+        lovablePresence: true,
+        lovableRank: 1,
+        competitors: {
+          'bolt': { presence: true, rank: 2 },
+          'v0': { presence: false },
+          'Figma Make': { presence: true, rank: 3 }
+        }
+      },
+      {
+        llm: 'Grok',
+        lovablePresence: false,
+        competitors: {
+          'bolt': { presence: false },
+          'v0': { presence: true, rank: 1 },
+          'Figma Make': { presence: false }
+        }
+      }
+    ]
+  },
+  {
+    id: '2',
+    prompt: 'The new feature is confusing and hard to use',
+    category: 'Product Feedback',
+    sentiment: 'Negative',
+    confidence: 92,
+    timestamp: '2024-01-15 13:45',
+    source: 'Mobile App',
+    region: 'Europe',
+    industry: 'Healthcare',
+    userType: 'Individual',
+    keywords: ['feature', 'confusing', 'usability'],
+    length: 42,
+    complexity: 'Low',
+    responseTime: 0.8,
+    satisfaction: 2.1,
+    priority: 'High',
+    volume: 3,
+    llmData: [
+      {
+        llm: 'ChatGPT',
+        lovablePresence: true,
+        lovableRank: 2,
+        competitors: {
+          'bolt': { presence: false },
+          'v0': { presence: true, rank: 1 },
+          'Figma Make': { presence: true, rank: 3 }
+        }
+      },
+      {
+        llm: 'Google AI Search',
+        lovablePresence: false,
+        competitors: {
+          'bolt': { presence: true, rank: 1 },
+          'v0': { presence: false },
+          'Figma Make': { presence: false }
+        }
+      },
+      {
+        llm: 'Claude',
+        lovablePresence: true,
+        lovableRank: 1,
+        competitors: {
+          'bolt': { presence: true, rank: 2 },
+          'v0': { presence: true, rank: 3 },
+          'Figma Make': { presence: false }
+        }
+      },
+      {
+        llm: 'Perplexity',
+        lovablePresence: false,
+        competitors: {
+          'bolt': { presence: true, rank: 1 },
+          'v0': { presence: false },
+          'Figma Make': { presence: true, rank: 2 }
+        }
+      },
+      {
+        llm: 'Grok',
+        lovablePresence: true,
+        lovableRank: 1,
+        competitors: {
+          'bolt': { presence: false },
+          'v0': { presence: false },
+          'Figma Make': { presence: false }
+        }
+      }
+    ]
   }
 ];
 
