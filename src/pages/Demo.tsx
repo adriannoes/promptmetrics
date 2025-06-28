@@ -37,7 +37,7 @@ const Demo = () => {
     { id: 'figmaMake', name: 'Figma Make', color: '#f59e0b' }
   ];
 
-  const promptsPerPageOptions = [5, 10, 15, 20, 25];
+  const promptsPerPageOptions = [5, 10, 20];
 
   // Mock data based on the screenshots
   const overallSentiment = [
@@ -93,7 +93,7 @@ const Demo = () => {
     { area: 'API documentation', urgency: 'low' }
   ];
 
-  // Enhanced data for prompt analysis with LLM breakdown and detailed answers
+  // Enhanced data for prompt analysis with LLM breakdown and detailed answers - expanded dataset
   const promptAnalysisDataWithLLMs = [
     { 
       prompt: "best AI code editor",
@@ -243,6 +243,146 @@ const Demo = () => {
         }
       },
       volume: 'medium' 
+    },
+    { 
+      prompt: "no-code web development",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 4 },
+          details: {
+            products: [
+              { name: 'Bolt', rank: 1, sentiment: 'positive', mention: 'Bolt.new excels in no-code web development with AI assistance.' },
+              { name: 'V0', rank: 2, sentiment: 'positive', mention: 'V0 provides excellent no-code component generation.' },
+              { name: 'Lovable', rank: 3, sentiment: 'positive', mention: 'Lovable offers intuitive no-code development with visual programming.' },
+              { name: 'Figma Make', rank: 4, sentiment: 'neutral', mention: 'Figma Make provides basic no-code capabilities.' }
+            ]
+          }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Bolt', rank: 1, sentiment: 'positive', mention: 'Bolt is highly recommended for no-code web development.' },
+              { name: 'Lovable', rank: 2, sentiment: 'positive', mention: 'Lovable makes web development accessible without coding.' },
+              { name: 'V0', rank: 3, sentiment: 'neutral', mention: 'V0 offers no-code component creation.' }
+            ]
+          }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 3 },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable leads in no-code development with excellent visual tools.' },
+              { name: 'Bolt', rank: 2, sentiment: 'positive', mention: 'Bolt provides solid no-code development features.' },
+              { name: 'Figma Make', rank: 3, sentiment: 'neutral', mention: 'Figma Make offers limited no-code functionality.' }
+            ]
+          }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 3 },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable is top choice for no-code web development.' },
+              { name: 'Bolt', rank: 2, sentiment: 'positive', mention: 'Bolt offers excellent no-code capabilities.' },
+              { name: 'V0', rank: 3, sentiment: 'neutral', mention: 'V0 provides no-code component generation.' }
+            ]
+          }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Bolt', rank: 1, sentiment: 'positive', mention: 'Bolt is recommended for no-code development.' },
+              { name: 'V0', rank: 2, sentiment: 'neutral', mention: 'V0 provides no-code tools.' }
+            ]
+          }
+        }
+      },
+      volume: 'low' 
+    },
+    { 
+      prompt: "web development automation",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 3 },
+          details: {
+            products: [
+              { name: 'Bolt', rank: 1, sentiment: 'positive', mention: 'Bolt leads in web development automation.' },
+              { name: 'Lovable', rank: 2, sentiment: 'positive', mention: 'Lovable provides excellent automation features.' },
+              { name: 'Figma Make', rank: 3, sentiment: 'neutral', mention: 'Figma Make offers basic automation capabilities.' }
+            ]
+          }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable excels in development automation.' },
+              { name: 'Bolt', rank: 2, sentiment: 'positive', mention: 'Bolt provides strong automation capabilities.' },
+              { name: 'V0', rank: 3, sentiment: 'neutral', mention: 'V0 offers automation features.' }
+            ]
+          }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable is top choice for web development automation.' },
+              { name: 'Bolt', rank: 2, sentiment: 'positive', mention: 'Bolt provides good automation tools.' }
+            ]
+          }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 3 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable leads in development automation.' },
+              { name: 'V0', rank: 2, sentiment: 'neutral', mention: 'V0 provides automation capabilities.' },
+              { name: 'Bolt', rank: 3, sentiment: 'neutral', mention: 'Bolt offers automation features.' }
+            ]
+          }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Bolt', rank: 1, sentiment: 'positive', mention: 'Bolt is recommended for automation.' },
+              { name: 'V0', rank: 2, sentiment: 'neutral', mention: 'V0 provides automation tools.' }
+            ]
+          }
+        }
+      },
+      volume: 'medium' 
     }
   ];
 
@@ -303,7 +443,7 @@ const Demo = () => {
     }
   };
 
-  // Filter data based on selections
+  // Filter data based on selections - Fixed filtering logic
   const filteredPrompts = promptAnalysisDataWithLLMs.slice(0, promptsPerPage);
   
   // Generate table rows with multi-row structure based on selected options
@@ -763,6 +903,10 @@ const Demo = () => {
                           <p>Coming soon: choose your preferred Local and Language</p>
                         </TooltipContent>
                       </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-600">Showing:</span>
+                      <Badge variant="secondary">{filteredPrompts.length} of {promptAnalysisDataWithLLMs.length} prompts</Badge>
                     </div>
                   </div>
                 </CardHeader>
