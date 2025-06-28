@@ -66,86 +66,366 @@ const Demo = () => {
     { area: 'API documentation', urgency: 'low' }
   ];
 
-  // New data for prompt analysis section
-  const promptAnalysisData = [
+  // Enhanced data for prompt analysis with LLM breakdown
+  const promptAnalysisDataWithLLMs = [
     { 
-      prompt: "best AI code editor", 
-      lovable: { present: true, rank: 1 },
-      bolt: { present: true, rank: 3 },
-      v0: { present: false, rank: null },
-      figmaMake: { present: false, rank: null },
+      prompt: "best AI code editor",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 3 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: false, rank: null }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 4 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 5 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 4 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 3 }
+        }
+      },
       volume: 'high' 
     },
     { 
-      prompt: "visual programming platforms", 
-      lovable: { present: true, rank: 2 },
-      bolt: { present: true, rank: 4 },
-      v0: { present: true, rank: 1 },
-      figmaMake: { present: true, rank: 5 },
+      prompt: "visual programming platforms",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 4 },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: true, rank: 5 }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 3 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: true, rank: 2 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 3 },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: true, rank: 3 }
+        }
+      },
       volume: 'medium' 
     },
     { 
-      prompt: "no-code web development", 
-      lovable: { present: false, rank: null },
-      bolt: { present: true, rank: 2 },
-      v0: { present: true, rank: 3 },
-      figmaMake: { present: true, rank: 1 },
+      prompt: "no-code web development",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 1 }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 4 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 3 }
+        },
+        "Claude": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 3 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 3 },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: true, rank: 2 }
+        }
+      },
       volume: 'high' 
     },
     { 
-      prompt: "AI-powered design tools", 
-      lovable: { present: true, rank: 1 },
-      bolt: { present: false, rank: null },
-      v0: { present: true, rank: 4 },
-      figmaMake: { present: true, rank: 2 },
+      prompt: "AI-powered design tools",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 4 },
+          figmaMake: { present: true, rank: 2 }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 3 },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 2 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 4 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 1 }
+        },
+        "Grok": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 1 }
+        }
+      },
       volume: 'medium' 
     },
     { 
-      prompt: "frontend development tools", 
-      lovable: { present: true, rank: 3 },
-      bolt: { present: true, rank: 1 },
-      v0: { present: true, rank: 2 },
-      figmaMake: { present: false, rank: null },
+      prompt: "frontend development tools",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 4 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 3 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 3 }
+        }
+      },
       volume: 'low' 
     },
     { 
-      prompt: "rapid prototyping platforms", 
-      lovable: { present: true, rank: 1 },
-      bolt: { present: true, rank: 2 },
-      v0: { present: false, rank: null },
-      figmaMake: { present: true, rank: 3 },
+      prompt: "rapid prototyping platforms",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 3 }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 3 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 2 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 4 },
+          figmaMake: { present: true, rank: 3 }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 2 }
+        }
+      },
       volume: 'low' 
     },
     { 
-      prompt: "web application builders", 
-      lovable: { present: false, rank: null },
-      bolt: { present: true, rank: 1 },
-      v0: { present: true, rank: 2 },
-      figmaMake: { present: false, rank: null },
+      prompt: "web application builders",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Claude": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 3 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: true, rank: 3 }
+        }
+      },
       volume: 'medium' 
     },
     { 
-      prompt: "code generation tools", 
-      lovable: { present: true, rank: 2 },
-      bolt: { present: false, rank: null },
-      v0: { present: true, rank: 1 },
-      figmaMake: { present: false, rank: null },
+      prompt: "code generation tools",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 3 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 3 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Grok": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 1 },
+          figmaMake: { present: false, rank: null }
+        }
+      },
       volume: 'high' 
     },
     { 
-      prompt: "drag and drop website builders", 
-      lovable: { present: false, rank: null },
-      bolt: { present: false, rank: null },
-      v0: { present: false, rank: null },
-      figmaMake: { present: true, rank: 1 },
+      prompt: "drag and drop website builders",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: false, rank: null },
+          bolt: { present: false, rank: null },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 1 }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 4 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 1 }
+        },
+        "Claude": {
+          lovable: { present: false, rank: null },
+          bolt: { present: true, rank: 2 },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 1 }
+        },
+        "Perplexity": {
+          lovable: { present: false, rank: null },
+          bolt: { present: false, rank: null },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 1 }
+        },
+        "Grok": {
+          lovable: { present: false, rank: null },
+          bolt: { present: false, rank: null },
+          v0: { present: false, rank: null },
+          figmaMake: { present: true, rank: 1 }
+        }
+      },
       volume: 'low' 
     },
     { 
-      prompt: "developer productivity tools", 
-      lovable: { present: true, rank: 4 },
-      bolt: { present: true, rank: 2 },
-      v0: { present: true, rank: 3 },
-      figmaMake: { present: true, rank: 1 },
+      prompt: "developer productivity tools",
+      llms: {
+        "ChatGPT": {
+          lovable: { present: true, rank: 4 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 1 }
+        },
+        "Google AI Search": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Claude": {
+          lovable: { present: true, rank: 2 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: true, rank: 4 }
+        },
+        "Perplexity": {
+          lovable: { present: true, rank: 1 },
+          bolt: { present: true, rank: 2 },
+          v0: { present: true, rank: 3 },
+          figmaMake: { present: false, rank: null }
+        },
+        "Grok": {
+          lovable: { present: true, rank: 3 },
+          bolt: { present: true, rank: 1 },
+          v0: { present: true, rank: 2 },
+          figmaMake: { present: true, rank: 4 }
+        }
+      },
       volume: 'medium' 
     }
   ];
@@ -180,19 +460,72 @@ const Demo = () => {
   const renderPresenceRank = (brand) => {
     if (brand.present) {
       return (
-        <div className="flex items-center justify-center gap-2">
-          <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
-          <span className="font-medium">{brand.rank}</span>
+        <div className="flex items-center justify-center gap-1">
+          <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">Yes</Badge>
+          <span className="font-medium text-sm">{brand.rank}</span>
         </div>
       );
     } else {
       return (
-        <div className="flex items-center justify-center gap-2">
-          <Badge variant="secondary" className="bg-red-100 text-red-800">No</Badge>
-          <span className="text-slate-400">-</span>
+        <div className="flex items-center justify-center gap-1">
+          <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs">No</Badge>
+          <span className="text-slate-400 text-sm">-</span>
         </div>
       );
     }
+  };
+
+  // Generate table rows with multi-row structure
+  const generateTableRows = () => {
+    const rows = [];
+    
+    promptAnalysisDataWithLLMs.forEach((promptData, promptIndex) => {
+      const llmNames = Object.keys(promptData.llms);
+      
+      llmNames.forEach((llmName, llmIndex) => {
+        const llmData = promptData.llms[llmName];
+        const isFirstRowOfPrompt = llmIndex === 0;
+        const isLastRowOfPrompt = llmIndex === llmNames.length - 1;
+        
+        rows.push(
+          <TableRow key={`${promptIndex}-${llmIndex}`} className={isLastRowOfPrompt ? 'border-b-2 border-slate-200' : ''}>
+            {isFirstRowOfPrompt && (
+              <TableCell 
+                className="font-medium max-w-xs align-top border-r border-slate-200" 
+                rowSpan={llmNames.length}
+              >
+                <div className="space-y-2">
+                  <div className="text-sm">{promptData.prompt}</div>
+                  <div className="flex items-center gap-2">
+                    {getVolumeIcon(promptData.volume)}
+                    <Button variant="ghost" size="sm">
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </TableCell>
+            )}
+            <TableCell className="text-sm font-medium text-slate-700 bg-slate-50">
+              {llmName}
+            </TableCell>
+            <TableCell className="text-center">
+              {renderPresenceRank(llmData.lovable)}
+            </TableCell>
+            <TableCell className="text-center">
+              {renderPresenceRank(llmData.bolt)}
+            </TableCell>
+            <TableCell className="text-center">
+              {renderPresenceRank(llmData.v0)}
+            </TableCell>
+            <TableCell className="text-center">
+              {renderPresenceRank(llmData.figmaMake)}
+            </TableCell>
+          </TableRow>
+        );
+      });
+    });
+    
+    return rows;
   };
 
   // Chart configs for ChartContainer
@@ -502,43 +835,16 @@ const Demo = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Prompt</TableHead>
+                        <TableHead className="w-64">Prompt</TableHead>
+                        <TableHead className="w-32">LLM</TableHead>
                         <TableHead className="text-center">Lovable<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
                         <TableHead className="text-center">Bolt<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
                         <TableHead className="text-center">V0<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
                         <TableHead className="text-center">Figma Make<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
-                        <TableHead className="text-center">Volume</TableHead>
-                        <TableHead className="text-center">Details</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {promptAnalysisData.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium max-w-xs">
-                            {item.prompt}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {renderPresenceRank(item.lovable)}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {renderPresenceRank(item.bolt)}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {renderPresenceRank(item.v0)}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {renderPresenceRank(item.figmaMake)}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {getVolumeIcon(item.volume)}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <Button variant="ghost" size="sm">
-                              <ExternalLink className="w-4 h-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {generateTableRows()}
                     </TableBody>
                   </Table>
                   
