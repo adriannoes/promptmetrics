@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PromptData, FilterState, CustomizationOptions } from '@/types/demo';
 
@@ -112,6 +113,13 @@ export const getTableHeaders = (customization: CustomizationOptions): string[] =
 };
 
 export const getUniqueValues = (prompts: PromptData[], field: keyof PromptData): string[] => {
-  const values = prompts.map(prompt => prompt[field]);
+  const values = prompts.map(prompt => {
+    const value = prompt[field];
+    // Convert different types to strings
+    if (Array.isArray(value)) {
+      return value.join(', ');
+    }
+    return String(value);
+  });
   return Array.from(new Set(values.filter(Boolean))).sort();
 };
