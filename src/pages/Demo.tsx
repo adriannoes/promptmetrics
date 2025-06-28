@@ -6,11 +6,36 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings } from 'lucide-react';
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // Customize view state
+  const [selectedLLMs, setSelectedLLMs] = useState(['ChatGPT', 'Google AI Search', 'Claude', 'Perplexity', 'Grok']);
+  const [promptsPerPage, setPromptsPerPage] = useState(10);
+  const [selectedCompetitors, setSelectedCompetitors] = useState(['bolt', 'v0', 'figmaMake']);
+  const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+
+  // Available options
+  const availableLLMs = [
+    { id: 'ChatGPT', name: 'ChatGPT', logo: '🤖' },
+    { id: 'Google AI Search', name: 'Google AI Search', logo: '🔍' },
+    { id: 'Claude', name: 'Claude', logo: '🧠' },
+    { id: 'Perplexity', name: 'Perplexity', logo: '🔮' },
+    { id: 'Grok', name: 'Grok', logo: '⚡' }
+  ];
+
+  const availableCompetitors = [
+    { id: 'bolt', name: 'Bolt', color: '#10b981' },
+    { id: 'v0', name: 'V0', color: '#8b5cf6' },
+    { id: 'figmaMake', name: 'Figma Make', color: '#f59e0b' }
+  ];
+
+  const promptsPerPageOptions = [5, 10, 15, 20, 25];
 
   // Mock data based on the screenshots
   const overallSentiment = [
@@ -475,24 +500,27 @@ const Demo = () => {
     }
   };
 
-  // Generate table rows with multi-row structure
+  // Filter data based on selections
+  const filteredPrompts = promptAnalysisDataWithLLMs.slice(0, promptsPerPage);
+  
+  // Generate table rows with multi-row structure based on selected options
   const generateTableRows = () => {
     const rows = [];
     
-    promptAnalysisDataWithLLMs.forEach((promptData, promptIndex) => {
-      const llmNames = Object.keys(promptData.llms);
+    filteredPrompts.forEach((promptData, promptIndex) => {
+      const filteredLLMs = selectedLLMs.filter(llmName => promptData.llms[llmName]);
       
-      llmNames.forEach((llmName, llmIndex) => {
+      filteredLLMs.forEach((llmName, llmIndex) => {
         const llmData = promptData.llms[llmName];
         const isFirstRowOfPrompt = llmIndex === 0;
-        const isLastRowOfPrompt = llmIndex === llmNames.length - 1;
+        const isLastRowOfPrompt = llmIndex === filteredLLMs.length - 1;
         
         rows.push(
           <TableRow key={`${promptIndex}-${llmIndex}`} className={isLastRowOfPrompt ? 'border-b-2 border-slate-200' : ''}>
             {isFirstRowOfPrompt && (
               <TableCell 
                 className="font-medium max-w-xs align-top border-r border-slate-200" 
-                rowSpan={llmNames.length}
+                rowSpan={filteredLLMs.length}
               >
                 <div className="space-y-2">
                   <div className="text-sm">{promptData.prompt}</div>
@@ -506,26 +534,57 @@ const Demo = () => {
               </TableCell>
             )}
             <TableCell className="text-sm font-medium text-slate-700 bg-slate-50">
-              {llmName}
+              <div className="flex items-center gap-2">
+                <span className="text-lg">
+                  {availableLLMs.find(llm => llm.id === llmName)?.logo}
+                </span>
+                {llmName}
+              </div>
             </TableCell>
             <TableCell className="text-center">
               {renderPresenceRank(llmData.lovable)}
             </TableCell>
-            <TableCell className="text-center">
-              {renderPresenceRank(llmData.bolt)}
-            </TableCell>
-            <TableCell className="text-center">
-              {renderPresenceRank(llmData.v0)}
-            </TableCell>
-            <TableCell className="text-center">
-              {renderPresenceRank(llmData.figmaMake)}
-            </TableCell>
+            {selectedCompetitors.includes('bolt') && (
+              <TableCell className="text-center">
+                {renderPresenceRank(llmData.bolt)}
+              </TableCell>
+            )}
+            {selectedCompetitors.includes('v0') && (
+              <TableCell className="text-center">
+                {renderPresenceRank(llmData.v0)}
+              </TableCell>
+            )}
+            {selectedCompetitors.includes('figmaMake') && (
+              <TableCell className="text-center">
+                {renderPresenceRank(llmData.figmaMake)}
+              </TableCell>
+            )}
           </TableRow>
         );
       });
     });
     
     return rows;
+  };
+
+  const handleLLMToggle = (llmId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedLLMs([...selectedLLMs, llmId]);
+    } else {
+      setSelectedLLMs(selectedLLMs.filter(id => id !== llmId));
+    }
+  };
+
+  const handleCompetitorToggle = (competitorId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedCompetitors([...selectedCompetitors, competitorId]);
+    } else {
+      setSelectedCompetitors(selectedCompetitors.filter(id => id !== competitorId));
+    }
+  };
+
+  const applyCustomizations = () => {
+    setIsCustomizeOpen(false);
   };
 
   // Chart configs for ChartContainer
@@ -800,6 +859,89 @@ const Demo = () => {
                       Prompts
                     </CardTitle>
                     <div className="flex items-center gap-4">
+                      <Dialog open={isCustomizeOpen} onOpenChange={setIsCustomizeOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Customize view
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Customize View</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-6">
+                            {/* LLM Selection */}
+                            <div>
+                              <h3 className="font-semibold mb-3">Select LLMs to Display</h3>
+                              <div className="grid grid-cols-2 gap-3">
+                                {availableLLMs.map((llm) => (
+                                  <div key={llm.id} className="flex items-center space-x-3">
+                                    <Checkbox
+                                      id={llm.id}
+                                      checked={selectedLLMs.includes(llm.id)}
+                                      onCheckedChange={(checked) => handleLLMToggle(llm.id, checked)}
+                                    />
+                                    <label htmlFor={llm.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                                      <span className="text-lg">{llm.logo}</span>
+                                      {llm.name}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Prompts per page */}
+                            <div>
+                              <h3 className="font-semibold mb-3">Prompts per Page</h3>
+                              <div className="flex gap-2">
+                                {promptsPerPageOptions.map((option) => (
+                                  <Button
+                                    key={option}
+                                    variant={promptsPerPage === option ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setPromptsPerPage(option)}
+                                  >
+                                    {option}
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Competitor Selection */}
+                            <div>
+                              <h3 className="font-semibold mb-3">Select Competitors</h3>
+                              <div className="grid grid-cols-2 gap-3">
+                                {availableCompetitors.map((competitor) => (
+                                  <div key={competitor.id} className="flex items-center space-x-3">
+                                    <Checkbox
+                                      id={competitor.id}
+                                      checked={selectedCompetitors.includes(competitor.id)}
+                                      onCheckedChange={(checked) => handleCompetitorToggle(competitor.id, checked)}
+                                    />
+                                    <label htmlFor={competitor.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                                      <div 
+                                        className="w-3 h-3 rounded-full" 
+                                        style={{ backgroundColor: competitor.color }}
+                                      />
+                                      {competitor.name}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="flex justify-end gap-2">
+                              <Button variant="outline" onClick={() => setIsCustomizeOpen(false)}>
+                                Cancel
+                              </Button>
+                              <Button onClick={applyCustomizations}>
+                                Apply Changes
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                       <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm">
                           <Edit className="w-4 h-4 mr-2" />
@@ -838,9 +980,15 @@ const Demo = () => {
                         <TableHead className="w-64">Prompt</TableHead>
                         <TableHead className="w-32">LLM</TableHead>
                         <TableHead className="text-center">Lovable<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
-                        <TableHead className="text-center">Bolt<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
-                        <TableHead className="text-center">V0<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
-                        <TableHead className="text-center">Figma Make<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        {selectedCompetitors.includes('bolt') && (
+                          <TableHead className="text-center">Bolt<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        )}
+                        {selectedCompetitors.includes('v0') && (
+                          <TableHead className="text-center">V0<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        )}
+                        {selectedCompetitors.includes('figmaMake') && (
+                          <TableHead className="text-center">Figma Make<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        )}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
