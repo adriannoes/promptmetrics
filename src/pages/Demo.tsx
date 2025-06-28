@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings, ThumbsUp, ThumbsDown, AlertTriangle, Star, Clock, Filter, Download, XCircle, Heart } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings, ThumbsUp, ThumbsDown, AlertTriangle, Star } from 'lucide-react';
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -670,563 +670,931 @@ const Demo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">P</span>
+    <TooltipProvider>
+      <div className="min-h-screen bg-slate-50">
+        {/* Header */}
+        <header className="bg-white border-b border-slate-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">P</span>
+                </div>
+                <span className="text-xl font-bold text-slate-900">PromptMetrics</span>
               </div>
-              <span className="text-xl font-bold text-slate-900">PromptMetrics</span>
+              <Badge variant="secondary" className="bg-green-100 text-green-800">Demo Mode</Badge>
             </div>
-            <Badge variant="secondary" className="bg-green-100 text-green-800">Demo Mode</Badge>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600">Analyzing: lovable.dev</span>
-            <Button size="sm">Export Report</Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="prompt-analysis" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
-            <TabsTrigger value="strategic-insights">Strategic Insights</TabsTrigger>
-            <TabsTrigger value="competitor-analysis">Competitor Analysis</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="prompt-analysis" className="space-y-8">
-            {/* First section with 4 cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-blue-800">Total Prompts</h3>
-                  <MessageSquare className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-3xl font-bold text-blue-900">2,847</p>
-                  <p className="text-sm text-blue-600">+12% from last month</p>
-                </div>
-              </Card>
-
-              <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-green-800">Avg Response Time</h3>
-                  <Clock className="h-6 w-6 text-green-600" />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-3xl font-bold text-green-900">1.2s</p>
-                  <p className="text-sm text-green-600">-0.3s improvement</p>
-                </div>
-              </Card>
-
-              <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-purple-800">Success Rate</h3>
-                  <TrendingUp className="h-6 w-6 text-purple-600" />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-3xl font-bold text-purple-900">94.2%</p>
-                  <p className="text-sm text-purple-600">+2.1% increase</p>
-                </div>
-              </Card>
-
-              <Card className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-orange-800">Sentiment Score</h3>
-                  <Heart className="h-6 w-6 text-orange-600" />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-3xl font-bold text-orange-900">7.4/10</p>
-                  <p className="text-sm text-orange-600">Above competitor avg</p>
-                </div>
-              </Card>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-slate-600">Analyzing: lovable.dev</span>
+              <Button size="sm">Export Report</Button>
             </div>
+          </div>
+        </header>
 
-            {/* Prompts Section */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <MessageSquare className="h-6 w-6 text-blue-600" />
-                  <h2 className="text-2xl font-bold">Prompts</h2>
+        <div className="p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
+              <TabsTrigger value="audience">Strategic Insights</TabsTrigger>
+              <TabsTrigger value="landscape">Competitor Analysis</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="dashboard" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">AI Strategic Insights</h1>
+                  <p className="text-slate-600 mt-2">Based on current LLM output about your brand</p>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Button variant="outline" size="sm">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter
-                  </Button>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Settings className="h-4 w-4 mr-2" />
-                        Customize View
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Customize View</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
+              </div>
+
+              {/* Key Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {keyMetrics.map((metric, index) => (
+                  <Card key={index}>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Columns to display</label>
-                          <div className="mt-2 space-y-2">
-                            {['Prompt', 'Model', 'Sentiment', 'Response Time', 'Success Rate'].map((column) => (
-                              <div key={column} className="flex items-center space-x-2">
-                                <input type="checkbox" defaultChecked className="rounded" />
-                                <label className="text-sm">{column}</label>
-                              </div>
-                            ))}
-                          </div>
+                          <p className="text-sm text-slate-600">{metric.title}</p>
+                          <p className="text-2xl font-bold text-slate-900">{metric.value}</p>
+                        </div>
+                        <div className={`flex items-center gap-1 ${metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                          {metric.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                          <span className="text-sm font-medium">{metric.change}</span>
                         </div>
                       </div>
-                    </DialogContent>
-                  </Dialog>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Charts Row */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Overall Sentiment</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <PieChart>
+                        <Pie
+                          data={overallSentiment}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {overallSentiment.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Market Share vs. Sentiment</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <ScatterChart>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="share" name="Market Share" />
+                        <YAxis dataKey="sentiment" name="Sentiment" />
+                        <Scatter 
+                          data={[
+                            {share: 35, sentiment: 73, name: 'Lovable'},
+                            {share: 28, sentiment: 65, name: 'Bolt'},
+                            {share: 22, sentiment: 58, name: 'V0'},
+                            {share: 15, sentiment: 62, name: 'Figma Make'}
+                          ]} 
+                          fill="#3b82f6" 
+                        />
+                        <Tooltip />
+                      </ScatterChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* AI Strategic Opportunities */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>AI Strategic Opportunities</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <h3 className="font-semibold text-slate-900">Leverage Competitive Edge</h3>
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        Lovable consistently ranks #1 for "AI-powered development" and "visual programming." 
+                        Double down on these differentiators in content strategy.
+                      </p>
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Recommendations:</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          <li>• Create thought leadership content around AI-first development</li>
+                          <li>• Develop case studies showcasing visual programming success</li>
+                          <li>• Partner with AI/ML influencers for credibility</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Target className="w-5 h-5 text-blue-600" />
+                        <h3 className="font-semibold text-slate-900">Address Market Gaps</h3>
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        Enterprise features and team collaboration are frequently mentioned as limitations. 
+                        Competitors are gaining ground in these areas.
+                      </p>
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Recommendations:</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          <li>• Prioritize enterprise-grade security features</li>
+                          <li>• Develop advanced team collaboration tools</li>
+                          <li>• Create enterprise pricing and support tiers</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5 text-purple-600" />
+                        <h3 className="font-semibold text-slate-900">Optimize Content Strategy</h3>
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        High-performing prompts show users value speed and ease-of-use. 
+                        Adjust messaging to emphasize rapid development cycles.
+                      </p>
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Recommendations:</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          <li>• Create "5-minute app" demo content</li>
+                          <li>• Highlight time-to-market advantages</li>
+                          <li>• Develop beginner-friendly tutorials</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="prompt-analysis" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">Prompt Analysis</h1>
+                  <p className="text-slate-600 mt-2">How Lovable appears in LLM responses across different queries</p>
                 </div>
               </div>
 
-              {/* Fixed header table */}
-              <div className="border rounded-lg">
-                <div className="overflow-hidden">
-                  {/* Fixed header */}
-                  <div className="bg-gray-50 border-b sticky top-0 z-10">
-                    <div className="grid grid-cols-5 gap-4 p-4 font-medium text-sm text-gray-700">
-                      <div>Prompt</div>
-                      <div>Model</div>
-                      <div>Sentiment</div>
-                      <div>Response Time</div>
-                      <div>Success Rate</div>
+              {/* Key Metrics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <BarChart3 className="w-6 h-6 text-blue-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm text-slate-600 mb-2">Average Rank</h3>
+                    <p className="text-3xl font-bold text-slate-900">2.3</p>
+                    <p className="text-xs text-slate-500 mt-1">Average product position within prompt results</p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <Target className="w-6 h-6 text-orange-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm text-slate-600 mb-2">Prevalence</h3>
+                    <p className="text-3xl font-bold text-slate-900">60%</p>
+                    <p className="text-xs text-slate-500 mt-1">% of total prompt runs in which your product appears</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-yellow-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm text-slate-600 mb-2">Category Rank</h3>
+                    <p className="text-3xl font-bold text-slate-900">2<span className="text-lg text-slate-500">/4</span></p>
+                    <p className="text-xs text-slate-500 mt-1">Ranked by prevalence relative to all products in prompt results</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Prompt Analysis Table */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="w-5 h-5" />
+                      Prompts
+                    </CardTitle>
+                    <div className="flex items-center gap-4">
+                      <Dialog open={isCustomizeOpen} onOpenChange={setIsCustomizeOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Customize view
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Customize View</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-6">
+                            {/* LLM Selection */}
+                            <div>
+                              <h3 className="font-semibold mb-3">Select LLMs to Display</h3>
+                              <div className="grid grid-cols-2 gap-3">
+                                {availableLLMs.map((llm) => (
+                                  <div key={llm.id} className="flex items-center space-x-3">
+                                    <Checkbox
+                                      id={llm.id}
+                                      checked={selectedLLMs.includes(llm.id)}
+                                      onCheckedChange={(checked) => handleLLMToggle(llm.id, checked as boolean)}
+                                    />
+                                    <label htmlFor={llm.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                                      {llm.name}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Competitor Selection */}
+                            <div>
+                              <h3 className="font-semibold mb-3">Select Competitors</h3>
+                              <div className="grid grid-cols-2 gap-3">
+                                {availableCompetitors.map((competitor) => (
+                                  <div key={competitor.id} className="flex items-center space-x-3">
+                                    <Checkbox
+                                      id={competitor.id}
+                                      checked={selectedCompetitors.includes(competitor.id)}
+                                      onCheckedChange={(checked) => handleCompetitorToggle(competitor.id, checked as boolean)}
+                                    />
+                                    <label htmlFor={competitor.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                                      <div 
+                                        className="w-3 h-3 rounded-full" 
+                                        style={{ backgroundColor: competitor.color }}
+                                      />
+                                      {competitor.name}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit prompts
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add new prompt
+                        </Button>
+                      </div>
                     </div>
                   </div>
+                  <div className="flex items-center gap-6 mt-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-600">Local:</span>
+                      <Badge variant="outline">Global</Badge>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-600">Language:</span>
+                      <Badge variant="outline">English</Badge>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-4 h-4 text-slate-400" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Coming soon: choose your preferred Local and Language</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-600">Showing:</span>
+                      <Badge variant="secondary">{filteredPrompts.length} prompts</Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-64">Prompt</TableHead>
+                        <TableHead className="w-32">LLM</TableHead>
+                        <TableHead className="text-center">Lovable<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        {selectedCompetitors.includes('bolt') && (
+                          <TableHead className="text-center">Bolt<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        )}
+                        {selectedCompetitors.includes('v0') && (
+                          <TableHead className="text-center">V0<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        )}
+                        {selectedCompetitors.includes('figmaMake') && (
+                          <TableHead className="text-center">Figma Make<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        )}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {generateTableRows()}
+                    </TableBody>
+                  </Table>
                   
-                  {/* Scrollable content */}
-                  <div className="max-h-96 overflow-y-auto">
-                    <div className="divide-y">
-                      {[
-                        {
-                          prompt: "What are the best features of TechFlow?",
-                          model: "GPT-4",
-                          sentiment: "Positive",
-                          responseTime: "1.2s",
-                          successRate: "98%"
-                        },
-                        {
-                          prompt: "Compare TechFlow with competitors",
-                          model: "Claude",
-                          sentiment: "Neutral",
-                          responseTime: "0.9s",
-                          successRate: "95%"
-                        },
-                        {
-                          prompt: "TechFlow pricing concerns",
-                          model: "Gemini",
-                          sentiment: "Negative",
-                          responseTime: "1.5s",
-                          successRate: "89%"
-                        },
-                        {
-                          prompt: "How reliable is TechFlow?",
-                          model: "GPT-4",
-                          sentiment: "Positive",
-                          responseTime: "1.1s",
-                          successRate: "97%"
-                        },
-                        {
-                          prompt: "TechFlow customer support experience",
-                          model: "Claude",
-                          sentiment: "Positive",
-                          responseTime: "1.3s",
-                          successRate: "94%"
-                        }
-                      ].map((row, index) => (
-                        <div key={index} className="grid grid-cols-5 gap-4 p-4 hover:bg-gray-50">
-                          <div className="text-sm">{row.prompt}</div>
-                          <div className="text-sm">
-                            <Badge variant="outline">{row.model}</Badge>
+                  <div className="mt-6">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationPrevious href="#" />
+                        <PaginationItem>
+                          <PaginationLink href="#" isActive>1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink href="#">2</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink href="#">3</PaginationLink>
+                        </PaginationItem>
+                        <PaginationNext href="#" />
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* LLM Answer Details Modal */}
+              <Dialog open={isPromptDetailsOpen} onOpenChange={setIsPromptDetailsOpen}>
+                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      LLM Answer Details: "{selectedPromptDetails?.prompt}"
+                    </DialogTitle>
+                  </DialogHeader>
+                  {selectedPromptDetails && (
+                    <Tabs defaultValue={selectedLLMs[0]} className="w-full">
+                      <TabsList className="grid w-full grid-cols-5">
+                        {selectedLLMs.map((llmName) => (
+                          <TabsTrigger key={llmName} value={llmName} className="text-xs">
+                            {llmName}
+                          </TabsTrigger>
+                        ))}
+                      </TabsList>
+                      {selectedLLMs.map((llmName) => {
+                        const llmData = selectedPromptDetails.llms[llmName];
+                        if (!llmData || !llmData.details) return null;
+                        
+                        return (
+                          <TabsContent key={llmName} value={llmName} className="space-y-4">
+                            <div className="space-y-4">
+                              <h3 className="font-semibold text-lg">{llmName} Response Analysis</h3>
+                              <div className="space-y-3">
+                                {llmData.details.products.map((product, index) => (
+                                  <div key={index} className="border rounded-lg p-4 space-y-2">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-3">
+                                        <Badge variant="outline" className="text-sm font-medium">
+                                          #{product.rank}
+                                        </Badge>
+                                        <span className="font-semibold">{product.name}</span>
+                                        {getSentimentBadge(product.sentiment)}
+                                      </div>
+                                    </div>
+                                    <p className="text-sm text-slate-600 italic">
+                                      "{product.mention}"
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </TabsContent>
+                        );
+                      })}
+                    </Tabs>
+                  )}
+                </DialogContent>
+              </Dialog>
+
+              {/* Enhanced Product Sentiment Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Product Sentiment Analysis
+                  </CardTitle>
+                  <p className="text-sm text-slate-600">
+                    Comprehensive sentiment analysis of your brand across LLMs compared to competitors
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                  {/* Overall Sentiment Comparison */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <Star className="w-5 h-5 text-yellow-500" />
+                      Overall Sentiment Score
+                    </h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div>
+                        <ResponsiveContainer width="100%" height={200}>
+                          <BarChart data={overallSentimentComparison}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="brand" />
+                            <YAxis domain={[0, 100]} />
+                            <RechartsTooltip />
+                            <Bar dataKey="sentiment" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="space-y-3">
+                        {overallSentimentComparison.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                            <div className="flex items-center gap-3">
+                              <div 
+                                className="w-4 h-4 rounded-full" 
+                                style={{ backgroundColor: item.color }}
+                              />
+                              <span className="font-medium">{item.brand}</span>
+                              {item.brand === 'Lovable' && (
+                                <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                  Your Product
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-lg">{item.sentiment}</span>
+                              <div className="flex items-center gap-1">
+                                {item.sentiment >= 75 ? (
+                                  <ThumbsUp className="w-4 h-4 text-green-600" />
+                                ) : item.sentiment >= 65 ? (
+                                  <div className="w-4 h-4 rounded-full bg-yellow-400" />
+                                ) : (
+                                  <ThumbsDown className="w-4 h-4 text-red-600" />
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-sm">
-                            <Badge 
-                              variant={row.sentiment === 'Positive' ? 'default' : row.sentiment === 'Negative' ? 'destructive' : 'secondary'}
-                            >
-                              {row.sentiment}
-                            </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sentiment by LLM */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-blue-500" />
+                      Sentiment by LLM
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>LLM</TableHead>
+                            <TableHead className="text-center">Lovable</TableHead>
+                            <TableHead className="text-center">Bolt</TableHead>
+                            <TableHead className="text-center">V0</TableHead>
+                            <TableHead className="text-center">Figma Make</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {sentimentByLLM.map((row, index) => (
+                            <TableRow key={index}>
+                              <TableCell className="font-medium">{row.llm}</TableCell>
+                              <TableCell className="text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <span className="font-bold">{row.lovable}</span>
+                                  {row.lovable >= 80 ? (
+                                    <ThumbsUp className="w-4 h-4 text-green-600" />
+                                  ) : row.lovable >= 70 ? (
+                                    <div className="w-4 h-4 rounded-full bg-yellow-400" />
+                                  ) : (
+                                    <ThumbsDown className="w-4 h-4 text-red-600" />
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center font-medium text-slate-600">{row.bolt}</TableCell>
+                              <TableCell className="text-center font-medium text-slate-600">{row.v0}</TableCell>
+                              <TableCell className="text-center font-medium text-slate-600">{row.figmaMake}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  {/* Critical Prompts */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-red-500" />
+                      Critical Prompts (Negative Sentiment)
+                    </h3>
+                    <div className="space-y-3">
+                      {criticalPrompts.map((prompt, index) => (
+                        <div key={index} className="border rounded-lg p-4 bg-red-50 border-red-200">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="font-medium text-slate-900">"{prompt.prompt}"</span>
+                                <Badge 
+                                  variant="secondary" 
+                                  className={`text-xs ${
+                                    prompt.impact === 'high' 
+                                      ? 'bg-red-100 text-red-800' 
+                                      : 'bg-yellow-100 text-yellow-800'
+                                  }`}
+                                >
+                                  {prompt.impact} impact
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-slate-600 mb-2">{prompt.issue}</p>
+                              <div className="flex items-center gap-4 text-xs text-slate-500">
+                                <span>{prompt.mentions} mentions</span>
+                                <span>Sentiment: {prompt.sentiment}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 ml-4">
+                              <span className="font-bold text-red-600">{prompt.sentiment}</span>
+                              <ThumbsDown className="w-4 h-4 text-red-600" />
+                            </div>
                           </div>
-                          <div className="text-sm">{row.responseTime}</div>
-                          <div className="text-sm">{row.successRate}</div>
                         </div>
                       ))}
                     </div>
                   </div>
-                </div>
-              </div>
-            </Card>
 
-            {/* Sentiment Analysis Section - renamed from Product Sentiment Analysis */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <BarChart3 className="h-6 w-6 text-purple-600" />
-                  <h2 className="text-2xl font-bold">Sentiment Analysis</h2>
-                </div>
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Report
-                </Button>
-              </div>
-
-              {/* ... keep existing code (sentiment analysis content remains the same) */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <Card className="p-4">
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
-                    Overall Sentiment Comparison
-                  </h3>
-                  <div className="space-y-4">
-                    {[
-                      { brand: "Your Product", score: 7.4, change: "+0.3", color: "bg-blue-500" },
-                      { brand: "Competitor A", score: 6.8, change: "-0.1", color: "bg-gray-400" },
-                      { brand: "Competitor B", score: 6.2, change: "+0.2", color: "bg-gray-400" },
-                      { brand: "Competitor C", score: 5.9, change: "-0.4", color: "bg-gray-400" }
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
-                          <span className="font-medium">{item.brand}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold">{item.score}/10</span>
-                          <span className={`text-sm ${item.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
-                            {item.change}
-                          </span>
-                        </div>
+                  {/* Strengths and Drawbacks */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        Top Sentiment Strengths
+                      </h3>
+                      <div className="space-y-3">
+                        {sentimentStrengths.map((strength, index) => (
+                          <div key={index} className="border rounded-lg p-4 bg-green-50 border-green-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <span className="font-medium text-slate-900">{strength.strength}</span>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-bold text-green-600">+{strength.sentiment}</span>
+                                    <ThumbsUp className="w-4 h-4 text-green-600" />
+                                  </div>
+                                </div>
+                                <p className="text-sm text-slate-600 mb-2">{strength.description}</p>
+                                <div className="text-xs text-slate-500">
+                                  {strength.mentions} positive mentions
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                        <AlertCircle className="w-5 h-5 text-red-600" />
+                        Key Sentiment Drawbacks
+                      </h3>
+                      <div className="space-y-3">
+                        {sentimentDrawbacks.map((drawback, index) => (
+                          <div key={index} className="border rounded-lg p-4 bg-red-50 border-red-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <span className="font-medium text-slate-900">{drawback.drawback}</span>
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-bold text-red-600">{drawback.sentiment}</span>
+                                    <ThumbsDown className="w-4 h-4 text-red-600" />
+                                  </div>
+                                </div>
+                                <p className="text-sm text-slate-600 mb-2">{drawback.description}</p>
+                                <div className="text-xs text-slate-500">
+                                  {drawback.mentions} negative mentions
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Sentiment Trends */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-blue-500" />
+                      Sentiment Trends (6 Months)
+                    </h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={sentimentTrends}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis domain={[50, 85]} />
+                        <RechartsTooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="lovable" stroke="#3b82f6" strokeWidth={3} name="Lovable" />
+                        <Line type="monotone" dataKey="bolt" stroke="#10b981" strokeWidth={2} name="Bolt" />
+                        <Line type="monotone" dataKey="v0" stroke="#8b5cf6" strokeWidth={2} name="V0" />
+                        <Line type="monotone" dataKey="figmaMake" stroke="#f59e0b" strokeWidth={2} name="Figma Make" />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Actionable Insights */}
+                  <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <Target className="w-5 h-5 text-blue-600" />
+                      Actionable Sentiment Insights
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-blue-900">Immediate Actions</h4>
+                        <ul className="text-sm text-blue-800 space-y-2">
+                          <li>• Address enterprise features gap - highest negative sentiment driver</li>
+                          <li>• Improve team collaboration tools to match competitor offerings</li>
+                          <li>• Leverage AI-powered development strength in marketing content</li>
+                          <li>• Create case studies highlighting visual programming success</li>
+                        </ul>
+                      </div>
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-blue-900">Strategic Opportunities</h4>
+                        <ul className="text-sm text-blue-800 space-y-2">
+                          <li>• Claude shows highest sentiment (85) - focus partnership efforts</li>
+                          <li>• Grok sentiment lower (65) - investigate specific concerns</li>
+                          <li>• Rapid prototyping strength underutilized in messaging</li>
+                          <li>• API integrations gap creating competitive disadvantage</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="audience" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">Strategic Insights</h1>
+                  <p className="text-slate-600 mt-2">AI Tone, Critical Shifts</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Query Intent Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: 'Research', value: 62, color: '#3b82f6' },
+                            { name: 'Purchase', value: 23, color: '#10b981' },
+                            { name: 'Education', value: 9, color: '#f59e0b' },
+                            { name: 'Comparison', value: 6, color: '#8b5cf6' }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          dataKey="value"
+                        >
+                          {[
+                            { name: 'Research', value: 62, color: '#3b82f6' },
+                            { name: 'Purchase', value: 23, color: '#10b981' },
+                            { name: 'Education', value: 9, color: '#f59e0b' },
+                            { name: 'Comparison', value: 6, color: '#8b5cf6' }
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
                 </Card>
 
-                <Card className="p-4">
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-orange-600" />
-                    Critical Prompts (Negative Sentiment)
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      { prompt: "TechFlow pricing too expensive", severity: "High", score: 2.1 },
-                      { prompt: "Customer support response time", severity: "Medium", score: 3.4 },
-                      { prompt: "Integration complexity issues", severity: "Medium", score: 3.8 },
-                      { prompt: "Limited customization options", severity: "Low", score: 4.2 }
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-red-200 bg-red-50">
-                        <div>
-                          <p className="text-sm font-medium text-red-800">{item.prompt}</p>
-                          <Badge 
-                            variant={item.severity === 'High' ? 'destructive' : item.severity === 'Medium' ? 'secondary' : 'outline'}
-                            className="mt-1"
-                          >
-                            {item.severity} Priority
-                          </Badge>
-                        </div>
-                        <span className="text-sm font-bold text-red-600">{item.score}/10</span>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Content Performance Insights</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <h3 className="font-semibold text-blue-900 mb-2">High-Performance Content</h3>
+                        <p className="text-sm text-blue-800">
+                          Tutorial content and "getting started" guides drive 73% of positive sentiment mentions
+                        </p>
                       </div>
-                    ))}
-                  </div>
+                      <div className="p-4 bg-green-50 rounded-lg">
+                        <h3 className="font-semibold text-green-900 mb-2">Emerging Opportunities</h3>
+                        <p className="text-sm text-green-800">
+                          AI integration examples and advanced use cases show 40% growth in mentions
+                        </p>
+                      </div>
+                      <div className="p-4 bg-yellow-50 rounded-lg">
+                        <h3 className="font-semibold text-yellow-900 mb-2">Content Gaps</h3>
+                        <p className="text-sm text-yellow-800">
+                          Enterprise case studies and ROI documentation are frequently requested but scarce
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="landscape" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">Competitor Analysis</h1>
+                  <p className="text-slate-600 mt-2">Market Position: AI Urgent Strategic Priorities</p>
+                </div>
+              </div>
+
+              {/* All Competitors Section - moved from Prompt Analysis */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Competitors</CardTitle>
+                  <p className="text-sm text-slate-600">105 Competitors identified across all prompts</p>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Competitor</TableHead>
+                        <TableHead>Website</TableHead>
+                        <TableHead className="text-center">Prevalence %</TableHead>
+                        <TableHead className="text-center">Average Rank</TableHead>
+                        <TableHead></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {competitorAnalysis.map((competitor, index) => (
+                        <TableRow key={index} className={competitor.highlight ? 'bg-blue-50' : undefined}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              {competitor.name}
+                              {competitor.highlight && (
+                                <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                  Your Product
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <a 
+                              href={`https://${competitor.website}`} 
+                              className="text-blue-600 hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {competitor.website}
+                            </a>
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            {competitor.prevalence}%
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            {competitor.averageRank}
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+
+              {/* Business Landscape strategic priorities and charts */}
+              <div className="space-y-4">
+                <Card className="border-l-4 border-l-blue-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-blue-100 text-blue-800">1</Badge>
+                      <h3 className="font-semibold text-slate-900">Dominate AI-Powered Development</h3>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      35% market share in AI development tools—expand visual programming to outpace competitors.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-l-4 border-l-green-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-green-100 text-green-800">2</Badge>
+                      <h3 className="font-semibold text-slate-900">Win Enterprise Market</h3>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      Compete with Bolt/V0 (28%/22% share) via enterprise-grade security and collaboration features.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-l-4 border-l-purple-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-purple-100 text-purple-800">3</Badge>
+                      <h3 className="font-semibold text-slate-900">Lead Content & Education</h3>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      Invest in tutorial content and developer education to maintain thought leadership position.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-l-4 border-l-orange-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-orange-100 text-orange-800">4</Badge>
+                      <h3 className="font-semibold text-slate-900">Expand Integration Ecosystem</h3>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      Leverage API integrations and third-party tools to increase developer adoption and retention.
+                    </p>
+                  </CardContent>
                 </Card>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className="p-4">
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    Top Strengths (Positive Sentiment)
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      { strength: "Reliability & Uptime", mentions: 342, score: 8.9 },
-                      { strength: "User-Friendly Interface", mentions: 298, score: 8.7 },
-                      { strength: "Performance & Speed", mentions: 276, score: 8.5 },
-                      { strength: "Security Features", mentions: 201, score: 8.3 }
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-green-200 bg-green-50">
-                        <div>
-                          <p className="text-sm font-medium text-green-800">{item.strength}</p>
-                          <p className="text-xs text-green-600">{item.mentions} mentions</p>
-                        </div>
-                        <span className="text-sm font-bold text-green-600">{item.score}/10</span>
-                      </div>
-                    ))}
-                  </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Market Share Trends</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <LineChart data={competitiveData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
+                        <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
+                        <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
+                        <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
                 </Card>
 
-                <Card className="p-4">
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <XCircle className="h-5 w-5 text-red-600" />
-                    Major Drawbacks (Negative Sentiment)
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      { drawback: "Pricing Structure", mentions: 156, score: 3.2 },
-                      { drawback: "Learning Curve", mentions: 134, score: 3.8 },
-                      { drawback: "Limited Integrations", mentions: 98, score: 4.1 },
-                      { drawback: "Mobile Experience", mentions: 87, score: 4.3 }
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-red-200 bg-red-50">
-                        <div>
-                          <p className="text-sm font-medium text-red-800">{item.drawback}</p>
-                          <p className="text-xs text-red-600">{item.mentions} mentions</p>
-                        </div>
-                        <span className="text-sm font-bold text-red-600">{item.score}/10</span>
-                      </div>
-                    ))}
-                  </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Market Share Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <PieChart>
+                        <Pie
+                          data={marketShare}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {marketShare.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
                 </Card>
               </div>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="strategic-insights" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">Strategic Insights</h1>
-                <p className="text-slate-600 mt-2">AI Tone, Critical Shifts</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Query Intent Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Research', value: 62, color: '#3b82f6' },
-                          { name: 'Purchase', value: 23, color: '#10b981' },
-                          { name: 'Education', value: 9, color: '#f59e0b' },
-                          { name: 'Comparison', value: 6, color: '#8b5cf6' }
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        dataKey="value"
-                      >
-                        {[
-                          { name: 'Research', value: 62, color: '#3b82f6' },
-                          { name: 'Purchase', value: 23, color: '#10b981' },
-                          { name: 'Education', value: 9, color: '#f59e0b' },
-                          { name: 'Comparison', value: 6, color: '#8b5cf6' }
-                        ].map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Content Performance Insights</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h3 className="font-semibold text-blue-900 mb-2">High-Performance Content</h3>
-                      <p className="text-sm text-blue-800">
-                        Tutorial content and "getting started" guides drive 73% of positive sentiment mentions
-                      </p>
-                    </div>
-                    <div className="p-4 bg-green-50 rounded-lg">
-                      <h3 className="font-semibold text-green-900 mb-2">Emerging Opportunities</h3>
-                      <p className="text-sm text-green-800">
-                        AI integration examples and advanced use cases show 40% growth in mentions
-                      </p>
-                    </div>
-                    <div className="p-4 bg-yellow-50 rounded-lg">
-                      <h3 className="font-semibold text-yellow-900 mb-2">Content Gaps</h3>
-                      <p className="text-sm text-yellow-800">
-                        Enterprise case studies and ROI documentation are frequently requested but scarce
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="competitor-analysis" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">Competitor Analysis</h1>
-                <p className="text-slate-600 mt-2">Market Position: AI Urgent Strategic Priorities</p>
-              </div>
-            </div>
-
-            {/* All Competitors Section - moved from Prompt Analysis */}
-            <Card>
-              <CardHeader>
-                <CardTitle>All Competitors</CardTitle>
-                <p className="text-sm text-slate-600">105 Competitors identified across all prompts</p>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Competitor</TableHead>
-                      <TableHead>Website</TableHead>
-                      <TableHead className="text-center">Prevalence %</TableHead>
-                      <TableHead className="text-center">Average Rank</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {competitorAnalysis.map((competitor, index) => (
-                      <TableRow key={index} className={competitor.highlight ? 'bg-blue-50' : undefined}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            {competitor.name}
-                            {competitor.highlight && (
-                              <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
-                                Your Product
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <a 
-                            href={`https://${competitor.website}`} 
-                            className="text-blue-600 hover:underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {competitor.website}
-                          </a>
-                        </TableCell>
-                        <TableCell className="text-center font-medium">
-                          {competitor.prevalence}%
-                        </TableCell>
-                        <TableCell className="text-center font-medium">
-                          {competitor.averageRank}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <ExternalLink className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            {/* Business Landscape strategic priorities and charts */}
-            <div className="space-y-4">
-              <Card className="border-l-4 border-l-blue-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-blue-100 text-blue-800">1</Badge>
-                    <h3 className="font-semibold text-slate-900">Dominate AI-Powered Development</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    35% market share in AI development tools—expand visual programming to outpace competitors.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-green-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-green-100 text-green-800">2</Badge>
-                    <h3 className="font-semibold text-slate-900">Win Enterprise Market</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    Compete with Bolt/V0 (28%/22% share) via enterprise-grade security and collaboration features.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-purple-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-purple-100 text-purple-800">3</Badge>
-                    <h3 className="font-semibold text-slate-900">Lead Content & Education</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    Invest in tutorial content and developer education to maintain thought leadership position.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-orange-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-orange-100 text-orange-800">4</Badge>
-                    <h3 className="font-semibold text-slate-900">Expand Integration Ecosystem</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    Leverage API integrations and third-party tools to increase developer adoption and retention.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Market Share Trends</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <LineChart data={competitiveData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
-                      <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
-                      <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
-                      <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Market Share Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <PieChart>
-                      <Pie
-                        data={marketShare}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {marketShare.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </TooltipProvider>
   );
 };
 
