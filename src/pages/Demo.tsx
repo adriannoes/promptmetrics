@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings } from 'lucide-react';
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -19,14 +19,16 @@ const Demo = () => {
   const [promptsPerPage, setPromptsPerPage] = useState(10);
   const [selectedCompetitors, setSelectedCompetitors] = useState(['bolt', 'v0', 'figmaMake']);
   const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+  const [selectedPromptDetails, setSelectedPromptDetails] = useState(null);
+  const [isPromptDetailsOpen, setIsPromptDetailsOpen] = useState(false);
 
   // Available options
   const availableLLMs = [
-    { id: 'ChatGPT', name: 'ChatGPT', logo: '🤖' },
-    { id: 'Google AI Search', name: 'Google AI Search', logo: '🔍' },
-    { id: 'Claude', name: 'Claude', logo: '🧠' },
-    { id: 'Perplexity', name: 'Perplexity', logo: '🔮' },
-    { id: 'Grok', name: 'Grok', logo: '⚡' }
+    { id: 'ChatGPT', name: 'ChatGPT' },
+    { id: 'Google AI Search', name: 'Google AI Search' },
+    { id: 'Claude', name: 'Claude' },
+    { id: 'Perplexity', name: 'Perplexity' },
+    { id: 'Grok', name: 'Grok' }
   ];
 
   const availableCompetitors = [
@@ -91,7 +93,7 @@ const Demo = () => {
     { area: 'API documentation', urgency: 'low' }
   ];
 
-  // Enhanced data for prompt analysis with LLM breakdown
+  // Enhanced data for prompt analysis with LLM breakdown and detailed answers
   const promptAnalysisDataWithLLMs = [
     { 
       prompt: "best AI code editor",
@@ -100,31 +102,70 @@ const Demo = () => {
           lovable: { present: true, rank: 1 },
           bolt: { present: true, rank: 3 },
           v0: { present: false, rank: null },
-          figmaMake: { present: false, rank: null }
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable stands out as an exceptional AI-powered code editor with intuitive visual programming capabilities.' },
+              { name: 'GitHub Copilot', rank: 2, sentiment: 'positive', mention: 'GitHub Copilot provides excellent code suggestions and completions.' },
+              { name: 'Bolt', rank: 3, sentiment: 'neutral', mention: 'Bolt offers decent AI assistance for web development.' }
+            ]
+          }
         },
         "Google AI Search": {
           lovable: { present: true, rank: 2 },
           bolt: { present: true, rank: 1 },
           v0: { present: true, rank: 4 },
-          figmaMake: { present: false, rank: null }
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Bolt', rank: 1, sentiment: 'positive', mention: 'Bolt.new is a popular choice for rapid web development with AI assistance.' },
+              { name: 'Lovable', rank: 2, sentiment: 'positive', mention: 'Lovable provides powerful visual programming with AI code generation.' },
+              { name: 'Cursor', rank: 3, sentiment: 'positive', mention: 'Cursor offers advanced AI-powered coding features.' },
+              { name: 'V0', rank: 4, sentiment: 'neutral', mention: 'V0 by Vercel provides AI-powered component generation.' }
+            ]
+          }
         },
         "Claude": {
           lovable: { present: true, rank: 1 },
           bolt: { present: true, rank: 2 },
           v0: { present: false, rank: null },
-          figmaMake: { present: true, rank: 5 }
+          figmaMake: { present: true, rank: 5 },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable excels in AI-driven development with excellent visual interface design.' },
+              { name: 'Bolt', rank: 2, sentiment: 'positive', mention: 'Bolt provides solid AI coding assistance for web projects.' },
+              { name: 'Replit', rank: 3, sentiment: 'neutral', mention: 'Replit offers collaborative coding with AI features.' },
+              { name: 'Tabnine', rank: 4, sentiment: 'neutral', mention: 'Tabnine provides AI code completions across multiple IDEs.' },
+              { name: 'Figma Make', rank: 5, sentiment: 'negative', mention: 'Figma Make has limited AI coding capabilities compared to dedicated code editors.' }
+            ]
+          }
         },
         "Perplexity": {
           lovable: { present: true, rank: 1 },
           bolt: { present: true, rank: 4 },
           v0: { present: true, rank: 3 },
-          figmaMake: { present: false, rank: null }
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable is highly regarded for its AI-powered visual development environment.' },
+              { name: 'GitHub Copilot', rank: 2, sentiment: 'positive', mention: 'GitHub Copilot remains a top choice for AI-assisted coding.' },
+              { name: 'V0', rank: 3, sentiment: 'neutral', mention: 'V0 offers good component generation capabilities.' },
+              { name: 'Bolt', rank: 4, sentiment: 'neutral', mention: 'Bolt provides reasonable AI coding support.' }
+            ]
+          }
         },
         "Grok": {
           lovable: { present: false, rank: null },
           bolt: { present: true, rank: 1 },
           v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 3 }
+          figmaMake: { present: true, rank: 3 },
+          details: {
+            products: [
+              { name: 'Bolt', rank: 1, sentiment: 'positive', mention: 'Bolt.new is recommended for quick AI-powered web development.' },
+              { name: 'V0', rank: 2, sentiment: 'positive', mention: 'V0 by Vercel provides excellent component generation.' },
+              { name: 'Figma Make', rank: 3, sentiment: 'neutral', mention: 'Figma Make offers design-to-code capabilities.' }
+            ]
+          }
         }
       },
       volume: 'high' 
@@ -136,319 +177,69 @@ const Demo = () => {
           lovable: { present: true, rank: 2 },
           bolt: { present: true, rank: 4 },
           v0: { present: true, rank: 1 },
-          figmaMake: { present: true, rank: 5 }
+          figmaMake: { present: true, rank: 5 },
+          details: {
+            products: [
+              { name: 'V0', rank: 1, sentiment: 'positive', mention: 'V0 leads in visual component generation with excellent UI previews.' },
+              { name: 'Lovable', rank: 2, sentiment: 'positive', mention: 'Lovable excels at visual programming with real-time code generation.' },
+              { name: 'Webflow', rank: 3, sentiment: 'positive', mention: 'Webflow provides comprehensive visual web development.' },
+              { name: 'Bolt', rank: 4, sentiment: 'neutral', mention: 'Bolt offers some visual programming features.' },
+              { name: 'Figma Make', rank: 5, sentiment: 'negative', mention: 'Figma Make has limited visual programming capabilities.' }
+            ]
+          }
         },
         "Google AI Search": {
           lovable: { present: true, rank: 1 },
           bolt: { present: true, rank: 3 },
           v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 4 }
+          figmaMake: { present: true, rank: 4 },
+          details: {
+            products: [
+              { name: 'Lovable', rank: 1, sentiment: 'positive', mention: 'Lovable stands out for visual programming with AI assistance.' },
+              { name: 'V0', rank: 2, sentiment: 'positive', mention: 'V0 provides excellent visual component creation.' },
+              { name: 'Bolt', rank: 3, sentiment: 'neutral', mention: 'Bolt offers visual development features.' },
+              { name: 'Figma Make', rank: 4, sentiment: 'neutral', mention: 'Figma Make bridges design and development.' }
+            ]
+          }
         },
         "Claude": {
           lovable: { present: true, rank: 3 },
           bolt: { present: false, rank: null },
           v0: { present: true, rank: 1 },
-          figmaMake: { present: true, rank: 2 }
+          figmaMake: { present: true, rank: 2 },
+          details: {
+            products: [
+              { name: 'V0', rank: 1, sentiment: 'positive', mention: 'V0 is excellent for visual programming and component generation.' },
+              { name: 'Figma Make', rank: 2, sentiment: 'neutral', mention: 'Figma Make provides design-to-code capabilities.' },
+              { name: 'Lovable', rank: 3, sentiment: 'positive', mention: 'Lovable offers strong visual programming features.' }
+            ]
+          }
         },
         "Perplexity": {
           lovable: { present: true, rank: 2 },
           bolt: { present: true, rank: 3 },
           v0: { present: true, rank: 1 },
-          figmaMake: { present: false, rank: null }
+          figmaMake: { present: false, rank: null },
+          details: {
+            products: [
+              { name: 'V0', rank: 1, sentiment: 'positive', mention: 'V0 leads in visual programming for React components.' },
+              { name: 'Lovable', rank: 2, sentiment: 'positive', mention: 'Lovable provides excellent visual development environment.' },
+              { name: 'Bolt', rank: 3, sentiment: 'neutral', mention: 'Bolt offers visual programming capabilities.' }
+            ]
+          }
         },
         "Grok": {
           lovable: { present: false, rank: null },
           bolt: { present: true, rank: 2 },
           v0: { present: true, rank: 1 },
-          figmaMake: { present: true, rank: 3 }
-        }
-      },
-      volume: 'medium' 
-    },
-    { 
-      prompt: "no-code web development",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 2 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 1 }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 4 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 3 }
-        },
-        "Claude": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 3 }
-        },
-        "Perplexity": {
-          lovable: { present: true, rank: 3 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 4 }
-        },
-        "Grok": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 3 },
-          v0: { present: true, rank: 1 },
-          figmaMake: { present: true, rank: 2 }
-        }
-      },
-      volume: 'high' 
-    },
-    { 
-      prompt: "AI-powered design tools",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: false, rank: null },
-          v0: { present: true, rank: 4 },
-          figmaMake: { present: true, rank: 2 }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: true, rank: 3 },
-          v0: { present: true, rank: 1 },
-          figmaMake: { present: true, rank: 4 }
-        },
-        "Claude": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: false, rank: null },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 2 }
-        },
-        "Perplexity": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: true, rank: 4 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 1 }
-        },
-        "Grok": {
-          lovable: { present: true, rank: 3 },
-          bolt: { present: false, rank: null },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 1 }
-        }
-      },
-      volume: 'medium' 
-    },
-    { 
-      prompt: "frontend development tools",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: true, rank: 3 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 4 }
-        },
-        "Claude": {
-          lovable: { present: true, rank: 4 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 3 }
-        },
-        "Perplexity": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Grok": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 3 }
-        }
-      },
-      volume: 'low' 
-    },
-    { 
-      prompt: "rapid prototyping platforms",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: true, rank: 2 },
-          v0: { present: false, rank: null },
-          figmaMake: { present: true, rank: 3 }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 4 }
-        },
-        "Claude": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: true, rank: 3 },
-          v0: { present: false, rank: null },
-          figmaMake: { present: true, rank: 2 }
-        },
-        "Perplexity": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: true, rank: 2 },
-          v0: { present: true, rank: 4 },
-          figmaMake: { present: true, rank: 3 }
-        },
-        "Grok": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 1 },
-          v0: { present: false, rank: null },
-          figmaMake: { present: true, rank: 2 }
-        }
-      },
-      volume: 'low' 
-    },
-    { 
-      prompt: "web application builders",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 3 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 4 }
-        },
-        "Claude": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 3 }
-        },
-        "Perplexity": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Grok": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 2 },
-          v0: { present: true, rank: 1 },
-          figmaMake: { present: true, rank: 3 }
-        }
-      },
-      volume: 'medium' 
-    },
-    { 
-      prompt: "code generation tools",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: false, rank: null },
-          v0: { present: true, rank: 1 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: true, rank: 3 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Claude": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: false, rank: null },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 3 }
-        },
-        "Perplexity": {
-          lovable: { present: true, rank: 3 },
-          bolt: { present: true, rank: 2 },
-          v0: { present: true, rank: 1 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Grok": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: false, rank: null },
-          v0: { present: true, rank: 1 },
-          figmaMake: { present: false, rank: null }
-        }
-      },
-      volume: 'high' 
-    },
-    { 
-      prompt: "drag and drop website builders",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: false, rank: null },
-          bolt: { present: false, rank: null },
-          v0: { present: false, rank: null },
-          figmaMake: { present: true, rank: 1 }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 4 },
-          bolt: { present: true, rank: 2 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 1 }
-        },
-        "Claude": {
-          lovable: { present: false, rank: null },
-          bolt: { present: true, rank: 2 },
-          v0: { present: false, rank: null },
-          figmaMake: { present: true, rank: 1 }
-        },
-        "Perplexity": {
-          lovable: { present: false, rank: null },
-          bolt: { present: false, rank: null },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 1 }
-        },
-        "Grok": {
-          lovable: { present: false, rank: null },
-          bolt: { present: false, rank: null },
-          v0: { present: false, rank: null },
-          figmaMake: { present: true, rank: 1 }
-        }
-      },
-      volume: 'low' 
-    },
-    { 
-      prompt: "developer productivity tools",
-      llms: {
-        "ChatGPT": {
-          lovable: { present: true, rank: 4 },
-          bolt: { present: true, rank: 2 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 1 }
-        },
-        "Google AI Search": {
-          lovable: { present: true, rank: 3 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 4 }
-        },
-        "Claude": {
-          lovable: { present: true, rank: 2 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: true, rank: 4 }
-        },
-        "Perplexity": {
-          lovable: { present: true, rank: 1 },
-          bolt: { present: true, rank: 2 },
-          v0: { present: true, rank: 3 },
-          figmaMake: { present: false, rank: null }
-        },
-        "Grok": {
-          lovable: { present: true, rank: 3 },
-          bolt: { present: true, rank: 1 },
-          v0: { present: true, rank: 2 },
-          figmaMake: { present: true, rank: 4 }
+          figmaMake: { present: true, rank: 3 },
+          details: {
+            products: [
+              { name: 'V0', rank: 1, sentiment: 'positive', mention: 'V0 by Vercel is top choice for visual programming.' },
+              { name: 'Bolt', rank: 2, sentiment: 'neutral', mention: 'Bolt provides visual development features.' },
+              { name: 'Figma Make', rank: 3, sentiment: 'neutral', mention: 'Figma Make offers design-to-code workflow.' }
+            ]
+          }
         }
       },
       volume: 'medium' 
@@ -500,6 +291,18 @@ const Demo = () => {
     }
   };
 
+  const getSentimentBadge = (sentiment) => {
+    switch (sentiment) {
+      case 'positive':
+        return <Badge className="bg-green-100 text-green-800 text-xs">Positive</Badge>;
+      case 'negative':
+        return <Badge className="bg-red-100 text-red-800 text-xs">Negative</Badge>;
+      case 'neutral':
+      default:
+        return <Badge className="bg-yellow-100 text-yellow-800 text-xs">Neutral</Badge>;
+    }
+  };
+
   // Filter data based on selections
   const filteredPrompts = promptAnalysisDataWithLLMs.slice(0, promptsPerPage);
   
@@ -526,7 +329,14 @@ const Demo = () => {
                   <div className="text-sm">{promptData.prompt}</div>
                   <div className="flex items-center gap-2">
                     {getVolumeIcon(promptData.volume)}
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        setSelectedPromptDetails(promptData);
+                        setIsPromptDetailsOpen(true);
+                      }}
+                    >
                       <ExternalLink className="w-4 h-4" />
                     </Button>
                   </div>
@@ -535,9 +345,6 @@ const Demo = () => {
             )}
             <TableCell className="text-sm font-medium text-slate-700 bg-slate-50">
               <div className="flex items-center gap-2">
-                <span className="text-lg">
-                  {availableLLMs.find(llm => llm.id === llmName)?.logo}
-                </span>
                 {llmName}
               </div>
             </TableCell>
@@ -581,10 +388,6 @@ const Demo = () => {
     } else {
       setSelectedCompetitors(selectedCompetitors.filter(id => id !== competitorId));
     }
-  };
-
-  const applyCustomizations = () => {
-    setIsCustomizeOpen(false);
   };
 
   // Chart configs for ChartContainer
@@ -883,7 +686,6 @@ const Demo = () => {
                                       onCheckedChange={(checked) => handleLLMToggle(llm.id, checked as boolean)}
                                     />
                                     <label htmlFor={llm.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                                      <span className="text-lg">{llm.logo}</span>
                                       {llm.name}
                                     </label>
                                   </div>
@@ -929,15 +731,6 @@ const Demo = () => {
                                   </div>
                                 ))}
                               </div>
-                            </div>
-
-                            <div className="flex justify-end gap-2">
-                              <Button variant="outline" onClick={() => setIsCustomizeOpen(false)}>
-                                Cancel
-                              </Button>
-                              <Button onClick={applyCustomizations}>
-                                Apply Changes
-                              </Button>
                             </div>
                           </div>
                         </DialogContent>
@@ -1016,7 +809,58 @@ const Demo = () => {
                 </CardContent>
               </Card>
 
-              {/* All Competitors Table */}
+              {/* LLM Answer Details Modal */}
+              <Dialog open={isPromptDetailsOpen} onOpenChange={setIsPromptDetailsOpen}>
+                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      LLM Answer Details: "{selectedPromptDetails?.prompt}"
+                    </DialogTitle>
+                  </DialogHeader>
+                  {selectedPromptDetails && (
+                    <Tabs defaultValue={selectedLLMs[0]} className="w-full">
+                      <TabsList className="grid w-full grid-cols-5">
+                        {selectedLLMs.map((llmName) => (
+                          <TabsTrigger key={llmName} value={llmName} className="text-xs">
+                            {llmName}
+                          </TabsTrigger>
+                        ))}
+                      </TabsList>
+                      {selectedLLMs.map((llmName) => {
+                        const llmData = selectedPromptDetails.llms[llmName];
+                        if (!llmData || !llmData.details) return null;
+                        
+                        return (
+                          <TabsContent key={llmName} value={llmName} className="space-y-4">
+                            <div className="space-y-4">
+                              <h3 className="font-semibold text-lg">{llmName} Response Analysis</h3>
+                              <div className="space-y-3">
+                                {llmData.details.products.map((product, index) => (
+                                  <div key={index} className="border rounded-lg p-4 space-y-2">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-3">
+                                        <Badge variant="outline" className="text-sm font-medium">
+                                          #{product.rank}
+                                        </Badge>
+                                        <span className="font-semibold">{product.name}</span>
+                                        {getSentimentBadge(product.sentiment)}
+                                      </div>
+                                    </div>
+                                    <p className="text-sm text-slate-600 italic">
+                                      "{product.mention}"
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </TabsContent>
+                        );
+                      })}
+                    </Tabs>
+                  )}
+                </DialogContent>
+              </Dialog>
+
               <Card>
                 <CardHeader>
                   <CardTitle>All Competitors</CardTitle>
@@ -1074,7 +918,6 @@ const Demo = () => {
                 </CardContent>
               </Card>
 
-              {/* Product Sentiment Analysis */}
               <Card>
                 <CardHeader>
                   <CardTitle>Product Sentiment</CardTitle>
@@ -1130,7 +973,6 @@ const Demo = () => {
                 </div>
               </div>
 
-              {/* Content sections based on screenshots */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
@@ -1204,7 +1046,6 @@ const Demo = () => {
                 </div>
               </div>
 
-              {/* Strategic Priorities */}
               <div className="space-y-4">
                 <Card className="border-l-4 border-l-blue-500">
                   <CardContent className="p-6">
@@ -1255,7 +1096,6 @@ const Demo = () => {
                 </Card>
               </div>
 
-              {/* Market Share Trends */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
