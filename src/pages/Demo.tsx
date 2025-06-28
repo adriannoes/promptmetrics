@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users, MessageSquare, Target, BarChart3, ExternalLink } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip as RechartsTooltip, Legend } from 'recharts';
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Users, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus } from 'lucide-react';
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -68,64 +69,84 @@ const Demo = () => {
   // New data for prompt analysis section
   const promptAnalysisData = [
     { 
-      prompt: "Quais são as melhores plataformas para marketing digital?", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: false, rank: null }, 
+      prompt: "best AI code editor", 
+      lovable: { present: true, rank: 1 },
+      bolt: { present: true, rank: 3 },
+      v0: { present: false, rank: null },
+      figmaMake: { present: false, rank: null },
       volume: 'high' 
     },
     { 
-      prompt: "Recomende cursos de análise de dados", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: true, rank: 39 }, 
+      prompt: "visual programming platforms", 
+      lovable: { present: true, rank: 2 },
+      bolt: { present: true, rank: 4 },
+      v0: { present: true, rank: 1 },
+      figmaMake: { present: true, rank: 5 },
       volume: 'medium' 
     },
     { 
-      prompt: "Cursos online para profissionais de tecnologia", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: false, rank: null }, 
+      prompt: "no-code web development", 
+      lovable: { present: false, rank: null },
+      bolt: { present: true, rank: 2 },
+      v0: { present: true, rank: 3 },
+      figmaMake: { present: true, rank: 1 },
+      volume: 'high' 
+    },
+    { 
+      prompt: "AI-powered design tools", 
+      lovable: { present: true, rank: 1 },
+      bolt: { present: false, rank: null },
+      v0: { present: true, rank: 4 },
+      figmaMake: { present: true, rank: 2 },
+      volume: 'medium' 
+    },
+    { 
+      prompt: "frontend development tools", 
+      lovable: { present: true, rank: 3 },
+      bolt: { present: true, rank: 1 },
+      v0: { present: true, rank: 2 },
+      figmaMake: { present: false, rank: null },
       volume: 'low' 
     },
     { 
-      prompt: "Melhores cursos de gestão de produtos", 
-      chatgpt: { present: true, rank: 2.7 }, 
-      google: { present: true, rank: 7 }, 
+      prompt: "rapid prototyping platforms", 
+      lovable: { present: true, rank: 1 },
+      bolt: { present: true, rank: 2 },
+      v0: { present: false, rank: null },
+      figmaMake: { present: true, rank: 3 },
       volume: 'low' 
     },
     { 
-      prompt: "Top 10 escolas de design no Brasil", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: false, rank: null }, 
+      prompt: "web application builders", 
+      lovable: { present: false, rank: null },
+      bolt: { present: true, rank: 1 },
+      v0: { present: true, rank: 2 },
+      figmaMake: { present: false, rank: null },
+      volume: 'medium' 
+    },
+    { 
+      prompt: "code generation tools", 
+      lovable: { present: true, rank: 2 },
+      bolt: { present: false, rank: null },
+      v0: { present: true, rank: 1 },
+      figmaMake: { present: false, rank: null },
+      volume: 'high' 
+    },
+    { 
+      prompt: "drag and drop website builders", 
+      lovable: { present: false, rank: null },
+      bolt: { present: false, rank: null },
+      v0: { present: false, rank: null },
+      figmaMake: { present: true, rank: 1 },
       volume: 'low' 
     },
     { 
-      prompt: "Como melhorar habilidades em gestão de produtos?", 
-      chatgpt: { present: true, rank: 3.5 }, 
-      google: { present: true, rank: 10 }, 
-      volume: 'low' 
-    },
-    { 
-      prompt: "Ferramentas essenciais para gerenciamento de produtos", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: true, rank: 9 }, 
-      volume: 'low' 
-    },
-    { 
-      prompt: "Melhores aplicativos para aprendizado em marketing", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: false, rank: null }, 
-      volume: 'low' 
-    },
-    { 
-      prompt: "Quais habilidades são essenciais para product managers?", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: true, rank: 3 }, 
-      volume: 'low' 
-    },
-    { 
-      prompt: "Como se tornar um especialista em produto?", 
-      chatgpt: { present: false, rank: null }, 
-      google: { present: true, rank: 13 }, 
-      volume: 'low' 
+      prompt: "developer productivity tools", 
+      lovable: { present: true, rank: 4 },
+      bolt: { present: true, rank: 2 },
+      v0: { present: true, rank: 3 },
+      figmaMake: { present: true, rank: 1 },
+      volume: 'medium' 
     }
   ];
 
@@ -154,6 +175,24 @@ const Demo = () => {
         ))}
       </div>
     );
+  };
+
+  const renderPresenceRank = (brand) => {
+    if (brand.present) {
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
+          <span className="font-medium">{brand.rank}</span>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <Badge variant="secondary" className="bg-red-100 text-red-800">No</Badge>
+          <span className="text-slate-400">-</span>
+        </div>
+      );
+    }
   };
 
   // Chart configs for ChartContainer
@@ -189,623 +228,633 @@ const Demo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">P</span>
+    <TooltipProvider>
+      <div className="min-h-screen bg-slate-50">
+        {/* Header */}
+        <header className="bg-white border-b border-slate-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">P</span>
+                </div>
+                <span className="text-xl font-bold text-slate-900">PromptMetrics</span>
               </div>
-              <span className="text-xl font-bold text-slate-900">PromptMetrics</span>
+              <Badge variant="secondary" className="bg-green-100 text-green-800">Demo Mode</Badge>
             </div>
-            <Badge variant="secondary" className="bg-green-100 text-green-800">Demo Mode</Badge>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-slate-600">Analyzing: lovable.dev</span>
+              <Button size="sm">Export Report</Button>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600">Analyzing: lovable.dev</span>
-            <Button size="sm">Export Report</Button>
-          </div>
-        </div>
-      </header>
+        </header>
 
-      <div className="p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
-            <TabsTrigger value="audience">Audience & Content</TabsTrigger>
-            <TabsTrigger value="landscape">Business Landscape</TabsTrigger>
-          </TabsList>
+        <div className="p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
+              <TabsTrigger value="audience">Audience & Content</TabsTrigger>
+              <TabsTrigger value="landscape">Business Landscape</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="dashboard" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">AI Strategic Insights</h1>
-                <p className="text-slate-600 mt-2">Based on current LLM output about your brand</p>
+            <TabsContent value="dashboard" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">AI Strategic Insights</h1>
+                  <p className="text-slate-600 mt-2">Based on current LLM output about your brand</p>
+                </div>
               </div>
-            </div>
 
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {keyMetrics.map((metric, index) => (
-                <Card key={index}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-slate-600">{metric.title}</p>
-                        <p className="text-2xl font-bold text-slate-900">{metric.value}</p>
+              {/* Key Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {keyMetrics.map((metric, index) => (
+                  <Card key={index}>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-slate-600">{metric.title}</p>
+                          <p className="text-2xl font-bold text-slate-900">{metric.value}</p>
+                        </div>
+                        <div className={`flex items-center gap-1 ${metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                          {metric.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                          <span className="text-sm font-medium">{metric.change}</span>
+                        </div>
                       </div>
-                      <div className={`flex items-center gap-1 ${metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                        {metric.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        <span className="text-sm font-medium">{metric.change}</span>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Charts Row */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Overall Sentiment</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <PieChart>
+                        <Pie
+                          data={overallSentiment}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {overallSentiment.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Market Share vs. Sentiment</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <ScatterChart>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="share" name="Market Share" />
+                        <YAxis dataKey="sentiment" name="Sentiment" />
+                        <Scatter 
+                          data={[
+                            {share: 35, sentiment: 73, name: 'Lovable'},
+                            {share: 28, sentiment: 65, name: 'Bolt'},
+                            {share: 22, sentiment: 58, name: 'V0'},
+                            {share: 15, sentiment: 62, name: 'Figma Make'}
+                          ]} 
+                          fill="#3b82f6" 
+                        />
+                        <Tooltip />
+                      </ScatterChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* AI Strategic Opportunities */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>AI Strategic Opportunities</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <h3 className="font-semibold text-slate-900">Leverage Competitive Edge</h3>
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        Lovable consistently ranks #1 for "AI-powered development" and "visual programming." 
+                        Double down on these differentiators in content strategy.
+                      </p>
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Recommendations:</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          <li>• Create thought leadership content around AI-first development</li>
+                          <li>• Develop case studies showcasing visual programming success</li>
+                          <li>• Partner with AI/ML influencers for credibility</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Target className="w-5 h-5 text-blue-600" />
+                        <h3 className="font-semibold text-slate-900">Address Market Gaps</h3>
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        Enterprise features and team collaboration are frequently mentioned as limitations. 
+                        Competitors are gaining ground in these areas.
+                      </p>
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Recommendations:</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          <li>• Prioritize enterprise-grade security features</li>
+                          <li>• Develop advanced team collaboration tools</li>
+                          <li>• Create enterprise pricing and support tiers</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5 text-purple-600" />
+                        <h3 className="font-semibold text-slate-900">Optimize Content Strategy</h3>
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        High-performing prompts show users value speed and ease-of-use. 
+                        Adjust messaging to emphasize rapid development cycles.
+                      </p>
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Recommendations:</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          <li>• Create "5-minute app" demo content</li>
+                          <li>• Highlight time-to-market advantages</li>
+                          <li>• Develop beginner-friendly tutorials</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="prompt-analysis" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">Prompt Analysis</h1>
+                  <p className="text-slate-600 mt-2">How Lovable appears in LLM responses across different queries</p>
+                </div>
+              </div>
+
+              {/* Key Metrics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <BarChart3 className="w-6 h-6 text-blue-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm text-slate-600 mb-2">Average Rank</h3>
+                    <p className="text-3xl font-bold text-slate-900">2.3</p>
+                    <p className="text-xs text-slate-500 mt-1">Average product position within prompt results</p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <Target className="w-6 h-6 text-orange-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm text-slate-600 mb-2">Prevalence</h3>
+                    <p className="text-3xl font-bold text-slate-900">60%</p>
+                    <p className="text-xs text-slate-500 mt-1">% of total prompt runs in which your product appears</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-yellow-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm text-slate-600 mb-2">Category Rank</h3>
+                    <p className="text-3xl font-bold text-slate-900">2<span className="text-lg text-slate-500">/4</span></p>
+                    <p className="text-xs text-slate-500 mt-1">Ranked by prevalence relative to all products in prompt results</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Prompt Analysis Table */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="w-5 h-5" />
+                      Prompts
+                    </CardTitle>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit prompts
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add new prompt
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6 mt-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-600">Local:</span>
+                      <Badge variant="outline">Global</Badge>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-600">Language:</span>
+                      <Badge variant="outline">English</Badge>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="w-4 h-4 text-slate-400" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Coming soon: choose your preferred Local and Language</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Prompt</TableHead>
+                        <TableHead className="text-center">Lovable<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        <TableHead className="text-center">Bolt<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        <TableHead className="text-center">V0<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        <TableHead className="text-center">Figma Make<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
+                        <TableHead className="text-center">Volume</TableHead>
+                        <TableHead className="text-center">Details</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {promptAnalysisData.map((item, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium max-w-xs">
+                            {item.prompt}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {renderPresenceRank(item.lovable)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {renderPresenceRank(item.bolt)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {renderPresenceRank(item.v0)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {renderPresenceRank(item.figmaMake)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {getVolumeIcon(item.volume)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  
+                  <div className="mt-6">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationPrevious href="#" />
+                        <PaginationItem>
+                          <PaginationLink href="#" isActive>1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink href="#">2</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink href="#">3</PaginationLink>
+                        </PaginationItem>
+                        <PaginationNext href="#" />
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* All Competitors Table */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Competitors</CardTitle>
+                  <p className="text-sm text-slate-600">105 Competitors identified across all prompts</p>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Competitor</TableHead>
+                        <TableHead>Website</TableHead>
+                        <TableHead className="text-center">Prevalence %</TableHead>
+                        <TableHead className="text-center">Average Rank</TableHead>
+                        <TableHead></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {competitorAnalysis.map((competitor, index) => (
+                        <TableRow key={index} className={competitor.highlight ? 'bg-blue-50' : undefined}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              {competitor.name}
+                              {competitor.highlight && (
+                                <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                  Your Product
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <a 
+                              href={`https://${competitor.website}`} 
+                              className="text-blue-600 hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {competitor.website}
+                            </a>
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            {competitor.prevalence}%
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            {competitor.averageRank}
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+
+              {/* Product Sentiment Analysis */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Product Sentiment</CardTitle>
+                  <p className="text-sm text-slate-600">Sentiment analysis reveals how ChatGPT views your product's strengths and weaknesses.</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <h3 className="font-semibold text-slate-900">Strengths</h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="text-sm">
+                          <strong>Strong AI-powered development:</strong> Lovable offers advanced AI-driven code generation tailored to modern web development, ensuring high-quality, maintainable code output.
+                        </div>
+                        <div className="text-sm">
+                          <strong>Visual interface design:</strong> Emphasis on intuitive visual programming allows developers to see changes in real-time, setting Lovable apart from more traditional development tools.
+                        </div>
+                        <div className="text-sm">
+                          <strong>Rapid prototyping capabilities:</strong> Enables quick iteration and testing of ideas, making it ideal for startups and rapid development cycles.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <AlertCircle className="w-5 h-5 text-red-600" />
+                        <h3 className="font-semibold text-slate-900">Drawbacks</h3>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="text-sm">
+                          <strong>Limited enterprise features:</strong> Compared to competitors, resulting in fewer options for large-scale enterprise deployments and advanced security requirements.
+                        </div>
+                        <div className="text-sm">
+                          <strong>Pricing structure concerns:</strong> Some users find the pricing less justified compared to feature-rich alternatives offered by competitors.
+                        </div>
+                        <div className="text-sm">
+                          <strong>Team collaboration limitations:</strong> Advanced team features and collaborative development tools need improvement for larger development teams.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="audience" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">Audience & Content</h1>
+                  <p className="text-slate-600 mt-2">AI Tone, Critical Shifts</p>
+                </div>
+              </div>
+
+              {/* Content sections based on screenshots */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Query Intent Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: 'Research', value: 62, color: '#3b82f6' },
+                            { name: 'Purchase', value: 23, color: '#10b981' },
+                            { name: 'Education', value: 9, color: '#f59e0b' },
+                            { name: 'Comparison', value: 6, color: '#8b5cf6' }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          dataKey="value"
+                        >
+                          {[
+                            { name: 'Research', value: 62, color: '#3b82f6' },
+                            { name: 'Purchase', value: 23, color: '#10b981' },
+                            { name: 'Education', value: 9, color: '#f59e0b' },
+                            { name: 'Comparison', value: 6, color: '#8b5cf6' }
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Content Performance Insights</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <h3 className="font-semibold text-blue-900 mb-2">High-Performance Content</h3>
+                        <p className="text-sm text-blue-800">
+                          Tutorial content and "getting started" guides drive 73% of positive sentiment mentions
+                        </p>
+                      </div>
+                      <div className="p-4 bg-green-50 rounded-lg">
+                        <h3 className="font-semibold text-green-900 mb-2">Emerging Opportunities</h3>
+                        <p className="text-sm text-green-800">
+                          AI integration examples and advanced use cases show 40% growth in mentions
+                        </p>
+                      </div>
+                      <div className="p-4 bg-yellow-50 rounded-lg">
+                        <h3 className="font-semibold text-yellow-900 mb-2">Content Gaps</h3>
+                        <p className="text-sm text-yellow-800">
+                          Enterprise case studies and ROI documentation are frequently requested but scarce
+                        </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              </div>
+            </TabsContent>
 
-            {/* Charts Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Overall Sentiment</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <PieChart>
-                      <Pie
-                        data={overallSentiment}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {overallSentiment.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+            <TabsContent value="landscape" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">Business Landscape</h1>
+                  <p className="text-slate-600 mt-2">Market Position: AI Urgent Strategic Priorities</p>
+                </div>
+              </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Market Share vs. Sentiment</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <ScatterChart>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="share" name="Market Share" />
-                      <YAxis dataKey="sentiment" name="Sentiment" />
-                      <Scatter 
-                        data={[
-                          {share: 35, sentiment: 73, name: 'Lovable'},
-                          {share: 28, sentiment: 65, name: 'Bolt'},
-                          {share: 22, sentiment: 58, name: 'V0'},
-                          {share: 15, sentiment: 62, name: 'Figma Make'}
-                        ]} 
-                        fill="#3b82f6" 
-                      />
-                      <Tooltip />
-                    </ScatterChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* AI Strategic Opportunities */}
-            <Card>
-              <CardHeader>
-                <CardTitle>AI Strategic Opportunities</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                      <h3 className="font-semibold text-slate-900">Leverage Competitive Edge</h3>
+              {/* Strategic Priorities */}
+              <div className="space-y-4">
+                <Card className="border-l-4 border-l-blue-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-blue-100 text-blue-800">1</Badge>
+                      <h3 className="font-semibold text-slate-900">Dominate AI-Powered Development</h3>
                     </div>
                     <p className="text-sm text-slate-600">
-                      Lovable consistently ranks #1 for "AI-powered development" and "visual programming." 
-                      Double down on these differentiators in content strategy.
+                      35% market share in AI development tools—expand visual programming to outpace competitors.
                     </p>
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Recommendations:</h4>
-                      <ul className="text-sm text-slate-600 space-y-1">
-                        <li>• Create thought leadership content around AI-first development</li>
-                        <li>• Develop case studies showcasing visual programming success</li>
-                        <li>• Partner with AI/ML influencers for credibility</li>
-                      </ul>
-                    </div>
-                  </div>
+                  </CardContent>
+                </Card>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Target className="w-5 h-5 text-blue-600" />
-                      <h3 className="font-semibold text-slate-900">Address Market Gaps</h3>
+                <Card className="border-l-4 border-l-green-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-green-100 text-green-800">2</Badge>
+                      <h3 className="font-semibold text-slate-900">Win Enterprise Market</h3>
                     </div>
                     <p className="text-sm text-slate-600">
-                      Enterprise features and team collaboration are frequently mentioned as limitations. 
-                      Competitors are gaining ground in these areas.
+                      Compete with Bolt/V0 (28%/22% share) via enterprise-grade security and collaboration features.
                     </p>
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Recommendations:</h4>
-                      <ul className="text-sm text-slate-600 space-y-1">
-                        <li>• Prioritize enterprise-grade security features</li>
-                        <li>• Develop advanced team collaboration tools</li>
-                        <li>• Create enterprise pricing and support tiers</li>
-                      </ul>
-                    </div>
-                  </div>
+                  </CardContent>
+                </Card>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5 text-purple-600" />
-                      <h3 className="font-semibold text-slate-900">Optimize Content Strategy</h3>
+                <Card className="border-l-4 border-l-purple-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-purple-100 text-purple-800">3</Badge>
+                      <h3 className="font-semibold text-slate-900">Lead Content & Education</h3>
                     </div>
                     <p className="text-sm text-slate-600">
-                      High-performing prompts show users value speed and ease-of-use. 
-                      Adjust messaging to emphasize rapid development cycles.
+                      Invest in tutorial content and developer education to maintain thought leadership position.
                     </p>
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Recommendations:</h4>
-                      <ul className="text-sm text-slate-600 space-y-1">
-                        <li>• Create "5-minute app" demo content</li>
-                        <li>• Highlight time-to-market advantages</li>
-                        <li>• Develop beginner-friendly tutorials</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  </CardContent>
+                </Card>
 
-          <TabsContent value="prompt-analysis" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">Prompt Analysis</h1>
-                <p className="text-slate-600 mt-2">How Lovable appears in LLM responses across different queries</p>
+                <Card className="border-l-4 border-l-orange-500">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Badge className="bg-orange-100 text-orange-800">4</Badge>
+                      <h3 className="font-semibold text-slate-900">Expand Integration Ecosystem</h3>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      Leverage API integrations and third-party tools to increase developer adoption and retention.
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
-            </div>
 
-            {/* Key Metrics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <BarChart3 className="w-6 h-6 text-blue-600" />
-                    </div>
-                  </div>
-                  <h3 className="text-sm text-slate-600 mb-2">Average Rank</h3>
-                  <p className="text-3xl font-bold text-slate-900">3.0</p>
-                  <p className="text-xs text-slate-500 mt-1">Average product position within prompt results</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                      <Target className="w-6 h-6 text-orange-600" />
-                    </div>
-                  </div>
-                  <h3 className="text-sm text-slate-600 mb-2">Prevalence</h3>
-                  <p className="text-3xl font-bold text-slate-900">13%</p>
-                  <p className="text-xs text-slate-500 mt-1">% of total prompt runs in which your product appears</p>
-                </CardContent>
-              </Card>
+              {/* Market Share Trends */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Market Share Trends</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <LineChart data={competitiveData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
+                        <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
+                        <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
+                        <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-6 h-6 text-yellow-600" />
-                    </div>
-                  </div>
-                  <h3 className="text-sm text-slate-600 mb-2">Category Rank</h3>
-                  <p className="text-3xl font-bold text-slate-900">8<span className="text-lg text-slate-500">/105</span></p>
-                  <p className="text-xs text-slate-500 mt-1">Ranked by prevalence relative to all products in prompt results</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Prompt Analysis Table */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5" />
-                    Prompts
-                  </CardTitle>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-blue-50 text-blue-700">ChatGPT</Badge>
-                      <Badge variant="outline" className="bg-green-50 text-green-700">Google</Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Prompts</TableHead>
-                      <TableHead className="text-center">ChatGPT<br/><span className="text-xs text-slate-500">Present | Rank</span></TableHead>
-                      <TableHead className="text-center">Google<br/><span className="text-xs text-slate-500">Present | Position</span></TableHead>
-                      <TableHead className="text-center">Volume</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {promptAnalysisData.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium max-w-md">
-                          {item.prompt}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            {item.chatgpt.present ? (
-                              <>
-                                <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
-                                <span className="font-medium">{item.chatgpt.rank}</span>
-                              </>
-                            ) : (
-                              <>
-                                <Badge variant="secondary" className="bg-red-100 text-red-800">No</Badge>
-                                <span className="text-slate-400">-</span>
-                              </>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            {item.google.present ? (
-                              <>
-                                <Badge variant="secondary" className="bg-green-100 text-green-800">Yes</Badge>
-                                <span className="font-medium">{item.google.rank}</span>
-                              </>
-                            ) : (
-                              <>
-                                <Badge variant="secondary" className="bg-red-100 text-red-800">No</Badge>
-                                <span className="text-slate-400">-</span>
-                              </>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {getVolumeIcon(item.volume)}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <ExternalLink className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                
-                <div className="mt-6">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationPrevious href="#" />
-                      <PaginationItem>
-                        <PaginationLink href="#" isActive>1</PaginationLink>
-                      </PaginationItem>
-                      <PaginationItem>
-                        <PaginationLink href="#">2</PaginationLink>
-                      </PaginationItem>
-                      <PaginationItem>
-                        <PaginationLink href="#">3</PaginationLink>
-                      </PaginationItem>
-                      <PaginationNext href="#" />
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* All Competitors Table */}
-            <Card>
-              <CardHeader>
-                <CardTitle>All Competitors</CardTitle>
-                <p className="text-sm text-slate-600">105 Competitors identified across all prompts</p>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Competitor</TableHead>
-                      <TableHead>Website</TableHead>
-                      <TableHead className="text-center">Prevalence %</TableHead>
-                      <TableHead className="text-center">Average Rank</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {competitorAnalysis.map((competitor, index) => (
-                      <TableRow key={index} className={competitor.highlight ? 'bg-blue-50' : undefined}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            {competitor.name}
-                            {competitor.highlight && (
-                              <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
-                                Your Product
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <a 
-                            href={`https://${competitor.website}`} 
-                            className="text-blue-600 hover:underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {competitor.website}
-                          </a>
-                        </TableCell>
-                        <TableCell className="text-center font-medium">
-                          {competitor.prevalence}%
-                        </TableCell>
-                        <TableCell className="text-center font-medium">
-                          {competitor.averageRank}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <ExternalLink className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            {/* Product Sentiment Analysis */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Sentiment</CardTitle>
-                <p className="text-sm text-slate-600">Sentiment analysis reveals how ChatGPT views your product's strengths and weaknesses.</p>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div>
-                    <div className="flex items-center gap-2 mb-4">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                      <h3 className="font-semibold text-slate-900">Strengths</h3>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="text-sm">
-                        <strong>Strong AI-powered development:</strong> Lovable offers advanced AI-driven code generation tailored to modern web development, ensuring high-quality, maintainable code output.
-                      </div>
-                      <div className="text-sm">
-                        <strong>Visual interface design:</strong> Emphasis on intuitive visual programming allows developers to see changes in real-time, setting Lovable apart from more traditional development tools.
-                      </div>
-                      <div className="text-sm">
-                        <strong>Rapid prototyping capabilities:</strong> Enables quick iteration and testing of ideas, making it ideal for startups and rapid development cycles.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-2 mb-4">
-                      <AlertCircle className="w-5 h-5 text-red-600" />
-                      <h3 className="font-semibold text-slate-900">Drawbacks</h3>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="text-sm">
-                        <strong>Limited enterprise features:</strong> Compared to competitors, resulting in fewer options for large-scale enterprise deployments and advanced security requirements.
-                      </div>
-                      <div className="text-sm">
-                        <strong>Pricing structure concerns:</strong> Some users find the pricing less justified compared to feature-rich alternatives offered by competitors.
-                      </div>
-                      <div className="text-sm">
-                        <strong>Team collaboration limitations:</strong> Advanced team features and collaborative development tools need improvement for larger development teams.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="audience" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">Audience & Content</h1>
-                <p className="text-slate-600 mt-2">AI Tone, Critical Shifts</p>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Market Share Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={256}>
+                      <PieChart>
+                        <Pie
+                          data={marketShare}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {marketShare.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
               </div>
-            </div>
-
-            {/* Content sections based on screenshots */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Query Intent Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Research', value: 62, color: '#3b82f6' },
-                          { name: 'Purchase', value: 23, color: '#10b981' },
-                          { name: 'Education', value: 9, color: '#f59e0b' },
-                          { name: 'Comparison', value: 6, color: '#8b5cf6' }
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        dataKey="value"
-                      >
-                        {[
-                          { name: 'Research', value: 62, color: '#3b82f6' },
-                          { name: 'Purchase', value: 23, color: '#10b981' },
-                          { name: 'Education', value: 9, color: '#f59e0b' },
-                          { name: 'Comparison', value: 6, color: '#8b5cf6' }
-                        ].map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Content Performance Insights</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h3 className="font-semibold text-blue-900 mb-2">High-Performance Content</h3>
-                      <p className="text-sm text-blue-800">
-                        Tutorial content and "getting started" guides drive 73% of positive sentiment mentions
-                      </p>
-                    </div>
-                    <div className="p-4 bg-green-50 rounded-lg">
-                      <h3 className="font-semibold text-green-900 mb-2">Emerging Opportunities</h3>
-                      <p className="text-sm text-green-800">
-                        AI integration examples and advanced use cases show 40% growth in mentions
-                      </p>
-                    </div>
-                    <div className="p-4 bg-yellow-50 rounded-lg">
-                      <h3 className="font-semibold text-yellow-900 mb-2">Content Gaps</h3>
-                      <p className="text-sm text-yellow-800">
-                        Enterprise case studies and ROI documentation are frequently requested but scarce
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="landscape" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">Business Landscape</h1>
-                <p className="text-slate-600 mt-2">Market Position: AI Urgent Strategic Priorities</p>
-              </div>
-            </div>
-
-            {/* Strategic Priorities */}
-            <div className="space-y-4">
-              <Card className="border-l-4 border-l-blue-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-blue-100 text-blue-800">1</Badge>
-                    <h3 className="font-semibold text-slate-900">Dominate AI-Powered Development</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    35% market share in AI development tools—expand visual programming to outpace competitors.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-green-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-green-100 text-green-800">2</Badge>
-                    <h3 className="font-semibold text-slate-900">Win Enterprise Market</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    Compete with Bolt/V0 (28%/22% share) via enterprise-grade security and collaboration features.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-purple-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-purple-100 text-purple-800">3</Badge>
-                    <h3 className="font-semibold text-slate-900">Lead Content & Education</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    Invest in tutorial content and developer education to maintain thought leadership position.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-l-4 border-l-orange-500">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="bg-orange-100 text-orange-800">4</Badge>
-                    <h3 className="font-semibold text-slate-900">Expand Integration Ecosystem</h3>
-                  </div>
-                  <p className="text-sm text-slate-600">
-                    Leverage API integrations and third-party tools to increase developer adoption and retention.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Market Share Trends */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Market Share Trends</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <LineChart data={competitiveData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="Lovable" stroke="#3b82f6" strokeWidth={3} />
-                      <Line type="monotone" dataKey="Bolt" stroke="#10b981" strokeWidth={2} />
-                      <Line type="monotone" dataKey="V0" stroke="#8b5cf6" strokeWidth={2} />
-                      <Line type="monotone" dataKey="Figma Make" stroke="#f59e0b" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Market Share Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={256}>
-                    <PieChart>
-                      <Pie
-                        data={marketShare}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {marketShare.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
