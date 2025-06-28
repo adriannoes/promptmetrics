@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ScatterChart, Scatter, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings, ThumbsUp, ThumbsDown, AlertTriangle, Star, Clock, Filter, Download, XCircle, heart } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Target, BarChart3, ExternalLink, Info, Edit, Plus, Settings, ThumbsUp, ThumbsDown, AlertTriangle, Star, Clock, Filter, Download, XCircle, Heart } from 'lucide-react';
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
