@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { PromptData, FilterState, CustomizationOptions } from '@/types/demo';
 
 export const renderPresenceRank = (rank: number) => {
