@@ -14,15 +14,14 @@ import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, MessageSquare, Targ
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   
-  // Customize view state
+  // Customize view state - removed promptsPerPage
   const [selectedLLMs, setSelectedLLMs] = useState(['ChatGPT', 'Google AI Search', 'Claude', 'Perplexity', 'Grok']);
-  const [promptsPerPage, setPromptsPerPage] = useState(10);
   const [selectedCompetitors, setSelectedCompetitors] = useState(['bolt', 'v0', 'figmaMake']);
   const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
   const [selectedPromptDetails, setSelectedPromptDetails] = useState(null);
   const [isPromptDetailsOpen, setIsPromptDetailsOpen] = useState(false);
 
-  // Available options
+  // Available options - removed promptsPerPageOptions
   const availableLLMs = [
     { id: 'ChatGPT', name: 'ChatGPT' },
     { id: 'Google AI Search', name: 'Google AI Search' },
@@ -36,8 +35,6 @@ const Demo = () => {
     { id: 'v0', name: 'V0', color: '#8b5cf6' },
     { id: 'figmaMake', name: 'Figma Make', color: '#f59e0b' }
   ];
-
-  const promptsPerPageOptions = [5, 10, 20];
 
   // Mock data based on the screenshots
   const overallSentiment = [
@@ -93,7 +90,7 @@ const Demo = () => {
     { area: 'API documentation', urgency: 'low' }
   ];
 
-  // Enhanced data for prompt analysis with LLM breakdown and detailed answers - expanded dataset
+  // Enhanced data for prompt analysis with LLM breakdown and detailed answers - set to 5 prompts
   const promptAnalysisDataWithLLMs = [
     { 
       prompt: "best AI code editor",
@@ -443,8 +440,8 @@ const Demo = () => {
     }
   };
 
-  // Filter data based on selections - Fixed filtering logic
-  const filteredPrompts = promptAnalysisDataWithLLMs.slice(0, promptsPerPage);
+  // Filter data to show only 5 prompts
+  const filteredPrompts = promptAnalysisDataWithLLMs.slice(0, 5);
   
   // Generate table rows with multi-row structure based on selected options
   const generateTableRows = () => {
@@ -589,8 +586,8 @@ const Demo = () => {
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
-              <TabsTrigger value="audience">Audience & Content</TabsTrigger>
-              <TabsTrigger value="landscape">Business Landscape</TabsTrigger>
+              <TabsTrigger value="audience">Strategic Insights</TabsTrigger>
+              <TabsTrigger value="landscape">Competitor Analysis</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard" className="space-y-6">
@@ -833,23 +830,6 @@ const Demo = () => {
                               </div>
                             </div>
 
-                            {/* Prompts per page */}
-                            <div>
-                              <h3 className="font-semibold mb-3">Prompts per Page</h3>
-                              <div className="flex gap-2">
-                                {promptsPerPageOptions.map((option) => (
-                                  <Button
-                                    key={option}
-                                    variant={promptsPerPage === option ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => setPromptsPerPage(option)}
-                                  >
-                                    {option}
-                                  </Button>
-                                ))}
-                              </div>
-                            </div>
-
                             {/* Competitor Selection */}
                             <div>
                               <h3 className="font-semibold mb-3">Select Competitors</h3>
@@ -906,7 +886,7 @@ const Demo = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-slate-600">Showing:</span>
-                      <Badge variant="secondary">{filteredPrompts.length} of {promptAnalysisDataWithLLMs.length} prompts</Badge>
+                      <Badge variant="secondary">{filteredPrompts.length} prompts</Badge>
                     </div>
                   </div>
                 </CardHeader>
@@ -1007,63 +987,6 @@ const Demo = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>All Competitors</CardTitle>
-                  <p className="text-sm text-slate-600">105 Competitors identified across all prompts</p>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Competitor</TableHead>
-                        <TableHead>Website</TableHead>
-                        <TableHead className="text-center">Prevalence %</TableHead>
-                        <TableHead className="text-center">Average Rank</TableHead>
-                        <TableHead></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {competitorAnalysis.map((competitor, index) => (
-                        <TableRow key={index} className={competitor.highlight ? 'bg-blue-50' : undefined}>
-                          <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              {competitor.name}
-                              {competitor.highlight && (
-                                <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
-                                  Your Product
-                                </Badge>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <a 
-                              href={`https://${competitor.website}`} 
-                              className="text-blue-600 hover:underline"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {competitor.website}
-                            </a>
-                          </TableCell>
-                          <TableCell className="text-center font-medium">
-                            {competitor.prevalence}%
-                          </TableCell>
-                          <TableCell className="text-center font-medium">
-                            {competitor.averageRank}
-                          </TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="sm">
-                              <ExternalLink className="w-4 h-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
                   <CardTitle>Product Sentiment</CardTitle>
                   <p className="text-sm text-slate-600">Sentiment analysis reveals how ChatGPT views your product's strengths and weaknesses.</p>
                 </CardHeader>
@@ -1112,7 +1035,7 @@ const Demo = () => {
             <TabsContent value="audience" className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900">Audience & Content</h1>
+                  <h1 className="text-3xl font-bold text-slate-900">Strategic Insights</h1>
                   <p className="text-slate-600 mt-2">AI Tone, Critical Shifts</p>
                 </div>
               </div>
@@ -1185,11 +1108,70 @@ const Demo = () => {
             <TabsContent value="landscape" className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900">Business Landscape</h1>
+                  <h1 className="text-3xl font-bold text-slate-900">Competitor Analysis</h1>
                   <p className="text-slate-600 mt-2">Market Position: AI Urgent Strategic Priorities</p>
                 </div>
               </div>
 
+              {/* All Competitors Section - moved from Prompt Analysis */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Competitors</CardTitle>
+                  <p className="text-sm text-slate-600">105 Competitors identified across all prompts</p>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Competitor</TableHead>
+                        <TableHead>Website</TableHead>
+                        <TableHead className="text-center">Prevalence %</TableHead>
+                        <TableHead className="text-center">Average Rank</TableHead>
+                        <TableHead></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {competitorAnalysis.map((competitor, index) => (
+                        <TableRow key={index} className={competitor.highlight ? 'bg-blue-50' : undefined}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              {competitor.name}
+                              {competitor.highlight && (
+                                <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                  Your Product
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <a 
+                              href={`https://${competitor.website}`} 
+                              className="text-blue-600 hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {competitor.website}
+                            </a>
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            {competitor.prevalence}%
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            {competitor.averageRank}
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+
+              {/* Business Landscape strategic priorities and charts */}
               <div className="space-y-4">
                 <Card className="border-l-4 border-l-blue-500">
                   <CardContent className="p-6">
