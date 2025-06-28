@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PromptData, FilterState, CustomizationOptions } from '@/types/demo';
 
@@ -71,9 +70,9 @@ export const filterPrompts = (prompts: PromptData[], filters: FilterState): Prom
   });
 };
 
-export const generateTableRows = (prompts: PromptData[], customization: CustomizationOptions) => {
+export const generateTableRows = (prompts: PromptData[], customization: CustomizationOptions): (string | React.ReactElement)[][] => {
   return prompts.map((prompt) => {
-    const baseRow = [
+    const baseRow: (string | React.ReactElement)[] = [
       prompt.prompt,
       prompt.category,
       renderSentimentBadge(prompt.sentiment)
