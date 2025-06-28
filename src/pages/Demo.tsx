@@ -224,7 +224,7 @@ const Demo = () => {
               </Card>
             </div>
 
-            {/* Prompts Section */}
+            {/* Prompts Section - with sticky header */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -236,9 +236,9 @@ const Demo = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="relative">
+                <div className="relative max-h-96 overflow-auto">
                   <Table>
-                    <TableHeader className="sticky top-0 bg-white z-10 shadow-sm">
+                    <TableHeader className="sticky top-0 bg-white z-10 shadow-sm border-b">
                       <TableRow>
                         <TableHead className="bg-white">Prompt</TableHead>
                         <TableHead className="bg-white">LLM</TableHead>
