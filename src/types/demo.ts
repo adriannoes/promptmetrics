@@ -1,4 +1,3 @@
-
 export interface MetricData {
   label: string;
   value: string | number;
@@ -10,6 +9,13 @@ export interface ChartDataPoint {
   name: string;
   value: number;
   [key: string]: any;
+}
+
+export interface TimeSeriesDataPoint {
+  name: string;
+  positive: number;
+  negative: number;
+  neutral: number;
 }
 
 export interface PromptData {

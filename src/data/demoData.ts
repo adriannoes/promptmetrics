@@ -1,5 +1,4 @@
-
-import { PromptData, CompetitorData, ChartDataPoint, MetricData } from '@/types/demo';
+import { PromptData, CompetitorData, ChartDataPoint, MetricData, TimeSeriesDataPoint } from '@/types/demo';
 
 export const mockPrompts: PromptData[] = [
   {
@@ -107,7 +106,7 @@ export const categoryData: ChartDataPoint[] = [
   { name: 'Analytics', value: 20 }
 ];
 
-export const timeSeriesData: ChartDataPoint[] = [
+export const timeSeriesData: TimeSeriesDataPoint[] = [
   { name: 'Jan', positive: 65, negative: 35, neutral: 45 },
   { name: 'Feb', positive: 70, negative: 30, neutral: 50 },
   { name: 'Mar', positive: 75, negative: 25, neutral: 55 },
