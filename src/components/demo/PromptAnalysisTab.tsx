@@ -35,6 +35,11 @@ export const PromptAnalysisTab: React.FC<PromptAnalysisTabProps> = ({
   const uniqueRegions = getUniqueValues(mockPrompts, 'region');
   const uniqueIndustries = getUniqueValues(mockPrompts, 'industry');
 
+  const handleFilterChange = (key: keyof FilterState, value: string) => {
+    // Convert "all" back to undefined for the filter logic
+    updateFilter(key, value === 'all' ? undefined : value);
+  };
+
   return (
     <div className="space-y-6">
       {/* Filters */}
@@ -50,12 +55,12 @@ export const PromptAnalysisTab: React.FC<PromptAnalysisTabProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <Label>Sentiment</Label>
-              <Select value={filters.sentiment || ''} onValueChange={(value) => updateFilter('sentiment', value || undefined)}>
+              <Select value={filters.sentiment || 'all'} onValueChange={(value) => handleFilterChange('sentiment', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All sentiments" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All sentiments</SelectItem>
+                  <SelectItem value="all">All sentiments</SelectItem>
                   <SelectItem value="Positive">Positive</SelectItem>
                   <SelectItem value="Negative">Negative</SelectItem>
                   <SelectItem value="Neutral">Neutral</SelectItem>
@@ -65,12 +70,12 @@ export const PromptAnalysisTab: React.FC<PromptAnalysisTabProps> = ({
 
             <div>
               <Label>Category</Label>
-              <Select value={filters.category || ''} onValueChange={(value) => updateFilter('category', value || undefined)}>
+              <Select value={filters.category || 'all'} onValueChange={(value) => handleFilterChange('category', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All categories</SelectItem>
+                  <SelectItem value="all">All categories</SelectItem>
                   {uniqueCategories.map(category => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
@@ -80,12 +85,12 @@ export const PromptAnalysisTab: React.FC<PromptAnalysisTabProps> = ({
 
             <div>
               <Label>Region</Label>
-              <Select value={filters.region || ''} onValueChange={(value) => updateFilter('region', value || undefined)}>
+              <Select value={filters.region || 'all'} onValueChange={(value) => handleFilterChange('region', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All regions" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All regions</SelectItem>
+                  <SelectItem value="all">All regions</SelectItem>
                   {uniqueRegions.map(region => (
                     <SelectItem key={region} value={region}>{region}</SelectItem>
                   ))}
@@ -95,12 +100,12 @@ export const PromptAnalysisTab: React.FC<PromptAnalysisTabProps> = ({
 
             <div>
               <Label>Industry</Label>
-              <Select value={filters.industry || ''} onValueChange={(value) => updateFilter('industry', value || undefined)}>
+              <Select value={filters.industry || 'all'} onValueChange={(value) => handleFilterChange('industry', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All industries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All industries</SelectItem>
+                  <SelectItem value="all">All industries</SelectItem>
                   {uniqueIndustries.map(industry => (
                     <SelectItem key={industry} value={industry}>{industry}</SelectItem>
                   ))}
