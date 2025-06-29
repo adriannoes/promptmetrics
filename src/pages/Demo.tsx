@@ -1,35 +1,53 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { DashboardTab } from '@/components/demo/DashboardTab';
 import { PromptAnalysisTab } from '@/components/demo/PromptAnalysisTab';
 import { CompetitorAnalysisTab } from '@/components/demo/CompetitorAnalysisTab';
 import { StrategicInsightsTab } from '@/components/demo/StrategicInsightsTab';
+import { Zap, Download, ExternalLink } from 'lucide-react';
 
 const Demo = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold">
-                P
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-xl border-b border-white/60 shadow-lg shadow-slate-200/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Zap className="w-4 h-4 text-white" aria-hidden="true" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">PromptMetrics</h1>
+              <span className="text-lg font-bold text-slate-900 tracking-tight">PromptMetrics</span>
               <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">
                 Demo Mode
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Analyzing: lovable.dev</span>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <span>Analyzing:</span>
+                <a 
+                  href="https://lovable.dev" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1"
+                >
+                  lovable.dev
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+              <Button className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
                 Export Report
-              </button>
+              </Button>
             </div>
           </div>
         </div>
+      </header>
 
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto p-8">
         <Tabs defaultValue="dashboard" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
