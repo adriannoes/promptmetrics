@@ -66,7 +66,7 @@ const Login = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Zap className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-slate-900 tracking-tight">RankMeLLM</span>
+              <span className="text-2xl font-bold text-slate-900 tracking-tight">PrompMetrics</span>
             </div>
             <h1 className="text-2xl font-bold text-slate-900 mb-2">Welcome back</h1>
             <p className="text-slate-600">Sign in to your account</p>
