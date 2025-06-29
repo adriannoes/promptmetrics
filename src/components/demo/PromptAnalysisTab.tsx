@@ -1,11 +1,12 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { BarChart3, Target, TrendingUp, Heart, Edit, Plus, Eye, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const flashCardData = [
   { title: 'Average Rank', value: '2.3', subtitle: 'Average product position within prompt results', icon: BarChart3, color: 'bg-blue-100 text-blue-600' },
@@ -87,6 +88,21 @@ const promptsData = [
   },
 ];
 
+const allLlms = [
+  { id: 'ChatGPT', name: 'ChatGPT', logo: '🤖' },
+  { id: 'Google AI Search', name: 'Google AI Search', logo: '🔍' },
+  { id: 'Claude', name: 'Claude', logo: '🎭' },
+  { id: 'Perplexity', name: 'Perplexity', logo: '🔮' },
+  { id: 'Grok', name: 'Grok', logo: '🚀' },
+];
+
+const allCompetitors = [
+  { id: 'lovable', name: 'Lovable', logo: '💜' },
+  { id: 'bolt', name: 'Bolt', logo: '⚡' },
+  { id: 'v0', name: 'V0', logo: '⭕' },
+  { id: 'figmaMake', name: 'Figma Make', logo: '🎨' },
+];
+
 const VolumeIndicator = ({ volume }: { volume: number }) => {
   return (
     <div className="flex items-center gap-1">
@@ -115,6 +131,33 @@ const PresenceRankCell = ({ data }: { data: { present: boolean; rank: number | n
 };
 
 export const PromptAnalysisTab = () => {
+  const [selectedLlms, setSelectedLlms] = useState<string[]>(allLlms.map(llm => llm.id));
+  const [selectedCompetitors, setSelectedCompetitors] = useState<string[]>(allCompetitors.map(comp => comp.id));
+  const [isCustomizeViewOpen, setIsCustomizeViewOpen] = useState(false);
+
+  const handleLlmToggle = (llmId: string) => {
+    setSelectedLlms(prev => 
+      prev.includes(llmId) 
+        ? prev.filter(id => id !== llmId)
+        : [...prev, llmId]
+    );
+  };
+
+  const handleCompetitorToggle = (competitorId: string) => {
+    setSelectedCompetitors(prev => 
+      prev.includes(competitorId) 
+        ? prev.filter(id => id !== competitorId)
+        : [...prev, competitorId]
+    );
+  };
+
+  const filteredPromptsData = promptsData.map(prompt => ({
+    ...prompt,
+    llmData: prompt.llmData.filter(llmRow => selectedLlms.includes(llmRow.llm))
+  }));
+
+  const visibleCompetitors = allCompetitors.filter(comp => selectedCompetitors.includes(comp.id));
+
   return (
     <div className="space-y-8">
       {/* Flash Cards */}
@@ -144,10 +187,68 @@ export const PromptAnalysisTab = () => {
               Prompts
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                <Eye className="w-4 h-4 mr-2" />
-                Customize view
-              </Button>
+              <Dialog open={isCustomizeViewOpen} onOpenChange={setIsCustomizeViewOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Customize view
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Customize View</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Select LLMs to Display</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        {allLlms.map((llm) => (
+                          <div key={llm.id} className="flex items-center space-x-3">
+                            <Checkbox
+                              id={`llm-${llm.id}`}
+                              checked={selectedLlms.includes(llm.id)}
+                              onCheckedChange={() => handleLlmToggle(llm.id)}
+                            />
+                            <label
+                              htmlFor={`llm-${llm.id}`}
+                              className="flex items-center gap-2 text-sm font-medium cursor-pointer"
+                            >
+                              <span className="text-lg">{llm.logo}</span>
+                              {llm.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Select Competitors to Display</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        {allCompetitors.map((competitor) => (
+                          <div key={competitor.id} className="flex items-center space-x-3">
+                            <Checkbox
+                              id={`competitor-${competitor.id}`}
+                              checked={selectedCompetitors.includes(competitor.id)}
+                              onCheckedChange={() => handleCompetitorToggle(competitor.id)}
+                            />
+                            <label
+                              htmlFor={`competitor-${competitor.id}`}
+                              className="flex items-center gap-2 text-sm font-medium cursor-pointer"
+                            >
+                              <span className="text-lg">{competitor.logo}</span>
+                              {competitor.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex justify-end">
+                      <Button onClick={() => setIsCustomizeViewOpen(false)}>
+                        Apply Changes
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
               <Button variant="outline" size="sm">
                 <Edit className="w-4 h-4 mr-2" />
                 Edit prompts
@@ -174,20 +275,24 @@ export const PromptAnalysisTab = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-auto max-h-96">
+          <div className="overflow-auto max-h-96 relative">
             <Table>
-              <TableHeader className="sticky top-0 bg-white z-10">
+              <TableHeader className="sticky top-0 bg-white z-20 shadow-sm">
                 <TableRow>
-                  <TableHead>Prompt</TableHead>
-                  <TableHead>LLM</TableHead>
-                  <TableHead className="text-center">Lovable<br />Present | Rank</TableHead>
-                  <TableHead className="text-center">Bolt<br />Present | Rank</TableHead>
-                  <TableHead className="text-center">V0<br />Present | Rank</TableHead>
-                  <TableHead className="text-center">Figma Make<br />Present | Rank</TableHead>
+                  <TableHead className="bg-white">Prompt</TableHead>
+                  <TableHead className="bg-white">LLM</TableHead>
+                  {visibleCompetitors.map((competitor) => (
+                    <TableHead key={competitor.id} className="text-center bg-white">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-lg">{competitor.logo}</span>
+                        {competitor.name}<br />Present | Rank
+                      </div>
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {promptsData.map((prompt) => (
+                {filteredPromptsData.map((prompt) => (
                   prompt.llmData.map((llmRow, index) => (
                     <TableRow key={`${prompt.prompt}-${llmRow.llm}`}>
                       {index === 0 && (
@@ -206,18 +311,11 @@ export const PromptAnalysisTab = () => {
                         </TableCell>
                       )}
                       <TableCell>{llmRow.llm}</TableCell>
-                      <TableCell className="text-center">
-                        <PresenceRankCell data={llmRow.lovable} />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <PresenceRankCell data={llmRow.bolt} />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <PresenceRankCell data={llmRow.v0} />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <PresenceRankCell data={llmRow.figmaMake} />
-                      </TableCell>
+                      {visibleCompetitors.map((competitor) => (
+                        <TableCell key={competitor.id} className="text-center">
+                          <PresenceRankCell data={llmRow[competitor.id as keyof typeof llmRow] as { present: boolean; rank: number | null }} />
+                        </TableCell>
+                      ))}
                     </TableRow>
                   ))
                 ))}
