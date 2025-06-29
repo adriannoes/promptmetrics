@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { BarChart3, Target, TrendingUp, Heart, Info, Edit, Plus, Eye, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { BarChart3, Target, TrendingUp, Heart, Edit, Plus, Eye, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
 const flashCardData = [
   { title: 'Average Rank', value: '2.3', subtitle: 'Average product position within prompt results', icon: BarChart3, color: 'bg-blue-100 text-blue-600' },
@@ -50,6 +50,39 @@ const promptsData = [
       { llm: 'Claude', lovable: { present: true, rank: 3 }, bolt: { present: false, rank: null }, v0: { present: true, rank: 1 }, figmaMake: { present: true, rank: 2 } },
       { llm: 'Perplexity', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 3 }, v0: { present: true, rank: 1 }, figmaMake: { present: false, rank: null } },
       { llm: 'Grok', lovable: { present: false, rank: null }, bolt: { present: true, rank: 2 }, v0: { present: true, rank: 1 }, figmaMake: { present: true, rank: 3 } },
+    ]
+  },
+  {
+    prompt: 'no-code web development',
+    volume: 4,
+    llmData: [
+      { llm: 'ChatGPT', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 2 }, v0: { present: true, rank: 3 }, figmaMake: { present: false, rank: null } },
+      { llm: 'Google AI Search', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 1 }, v0: { present: true, rank: 4 }, figmaMake: { present: true, rank: 3 } },
+      { llm: 'Claude', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 3 }, v0: { present: true, rank: 2 }, figmaMake: { present: false, rank: null } },
+      { llm: 'Perplexity', lovable: { present: true, rank: 3 }, bolt: { present: true, rank: 1 }, v0: { present: true, rank: 2 }, figmaMake: { present: true, rank: 4 } },
+      { llm: 'Grok', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 1 }, v0: { present: false, rank: null }, figmaMake: { present: true, rank: 3 } },
+    ]
+  },
+  {
+    prompt: 'rapid prototyping tools',
+    volume: 2,
+    llmData: [
+      { llm: 'ChatGPT', lovable: { present: true, rank: 3 }, bolt: { present: false, rank: null }, v0: { present: true, rank: 1 }, figmaMake: { present: true, rank: 2 } },
+      { llm: 'Google AI Search', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 4 }, v0: { present: true, rank: 2 }, figmaMake: { present: true, rank: 3 } },
+      { llm: 'Claude', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 1 }, v0: { present: false, rank: null }, figmaMake: { present: true, rank: 3 } },
+      { llm: 'Perplexity', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 2 }, v0: { present: true, rank: 3 }, figmaMake: { present: false, rank: null } },
+      { llm: 'Grok', lovable: { present: false, rank: null }, bolt: { present: true, rank: 3 }, v0: { present: true, rank: 1 }, figmaMake: { present: true, rank: 2 } },
+    ]
+  },
+  {
+    prompt: 'AI-powered development platforms',
+    volume: 5,
+    llmData: [
+      { llm: 'ChatGPT', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 2 }, v0: { present: false, rank: null }, figmaMake: { present: false, rank: null } },
+      { llm: 'Google AI Search', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 3 }, v0: { present: true, rank: 2 }, figmaMake: { present: false, rank: null } },
+      { llm: 'Claude', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 2 }, v0: { present: true, rank: 3 }, figmaMake: { present: true, rank: 4 } },
+      { llm: 'Perplexity', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 1 }, v0: { present: true, rank: 3 }, figmaMake: { present: false, rank: null } },
+      { llm: 'Grok', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 2 }, v0: { present: true, rank: 3 }, figmaMake: { present: true, rank: 4 } },
     ]
   },
 ];
@@ -133,70 +166,64 @@ export const PromptAnalysisTab = () => {
             <div className="flex items-center gap-2">
               <span>Language:</span>
               <span className="font-medium">English</span>
-              <Info className="w-4 h-4 text-gray-400" title="Coming soon: choose your preferred Local and Language" />
             </div>
             <div className="flex items-center gap-2">
               <span>Showing:</span>
-              <span className="font-medium">4 prompts</span>
+              <span className="font-medium">5 prompts</span>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Prompt</TableHead>
-                <TableHead>LLM</TableHead>
-                <TableHead className="text-center">Lovable<br />Present | Rank</TableHead>
-                <TableHead className="text-center">Bolt<br />Present | Rank</TableHead>
-                <TableHead className="text-center">V0<br />Present | Rank</TableHead>
-                <TableHead className="text-center">Figma Make<br />Present | Rank</TableHead>
-                <TableHead className="text-center">Volume</TableHead>
-                <TableHead className="text-center">Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {promptsData.map((prompt) => (
-                prompt.llmData.map((llmRow, index) => (
-                  <TableRow key={`${prompt.prompt}-${llmRow.llm}`}>
-                    {index === 0 && (
-                      <TableCell rowSpan={prompt.llmData.length} className="font-medium align-top">
-                        <div className="flex items-center gap-2">
-                          {prompt.prompt}
-                          <VolumeIndicator volume={prompt.volume} />
-                        </div>
+          <div className="overflow-auto max-h-96">
+            <Table>
+              <TableHeader className="sticky top-0 bg-white z-10">
+                <TableRow>
+                  <TableHead>Prompt</TableHead>
+                  <TableHead>LLM</TableHead>
+                  <TableHead className="text-center">Lovable<br />Present | Rank</TableHead>
+                  <TableHead className="text-center">Bolt<br />Present | Rank</TableHead>
+                  <TableHead className="text-center">V0<br />Present | Rank</TableHead>
+                  <TableHead className="text-center">Figma Make<br />Present | Rank</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {promptsData.map((prompt) => (
+                  prompt.llmData.map((llmRow, index) => (
+                    <TableRow key={`${prompt.prompt}-${llmRow.llm}`}>
+                      {index === 0 && (
+                        <TableCell rowSpan={prompt.llmData.length} className="font-medium align-top">
+                          <div className="flex items-center gap-3">
+                            <div className="flex flex-col gap-2">
+                              <span>{prompt.prompt}</span>
+                              <div className="flex items-center gap-2">
+                                <VolumeIndicator volume={prompt.volume} />
+                                <Button variant="outline" size="sm">
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                      )}
+                      <TableCell>{llmRow.llm}</TableCell>
+                      <TableCell className="text-center">
+                        <PresenceRankCell data={llmRow.lovable} />
                       </TableCell>
-                    )}
-                    <TableCell>{llmRow.llm}</TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.lovable} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.bolt} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.v0} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.figmaMake} />
-                    </TableCell>
-                    {index === 0 && (
-                      <>
-                        <TableCell rowSpan={prompt.llmData.length} className="text-center align-top">
-                          <VolumeIndicator volume={prompt.volume} />
-                        </TableCell>
-                        <TableCell rowSpan={prompt.llmData.length} className="text-center align-top">
-                          <Button variant="outline" size="sm">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))
-              ))}
-            </TableBody>
-          </Table>
+                      <TableCell className="text-center">
+                        <PresenceRankCell data={llmRow.bolt} />
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <PresenceRankCell data={llmRow.v0} />
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <PresenceRankCell data={llmRow.figmaMake} />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
