@@ -42,30 +42,6 @@ export const DashboardTab = () => {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Sentiment Trends */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              Sentiment Trends (6 Months)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={sentimentTrendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis domain={[50, 85]} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="Lovable" stroke="#3B82F6" strokeWidth={2} />
-                <Line type="monotone" dataKey="Bolt" stroke="#10B981" strokeWidth={2} />
-                <Line type="monotone" dataKey="V0" stroke="#8B5CF6" strokeWidth={2} />
-                <Line type="monotone" dataKey="Figma Make" stroke="#F59E0B" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
 
         {/* Average Ranking */}
         <Card>
@@ -81,6 +57,56 @@ export const DashboardTab = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis domain={[1, 5]} />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="Lovable" stroke="#3B82F6" strokeWidth={2} />
+                <Line type="monotone" dataKey="Bolt" stroke="#10B981" strokeWidth={2} />
+                <Line type="monotone" dataKey="V0" stroke="#8B5CF6" strokeWidth={2} />
+                <Line type="monotone" dataKey="Figma Make" stroke="#F59E0B" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        
+        {/* Share of #1 Rank */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-blue-600" />
+              Share of #1 Rank per Competitor
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={shareOfRankData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis domain={[0, 60]} />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="Lovable" stroke="#3B82F6" strokeWidth={2} />
+                <Line type="monotone" dataKey="Bolt" stroke="#10B981" strokeWidth={2} />
+                <Line type="monotone" dataKey="V0" stroke="#8B5CF6" strokeWidth={2} />
+                <Line type="monotone" dataKey="Figma Make" stroke="#F59E0B" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        
+        {/* Sentiment Trends */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-blue-600" />
+              Sentiment Trends (6 Months)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={sentimentTrendData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis domain={[50, 85]} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="Lovable" stroke="#3B82F6" strokeWidth={2} />
@@ -124,30 +150,7 @@ export const DashboardTab = () => {
           </CardContent>
         </Card>
 
-        {/* Share of #1 Rank */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-blue-600" />
-              Share of #1 Rank per Competitor
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={shareOfRankData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis domain={[0, 60]} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="Lovable" stroke="#3B82F6" strokeWidth={2} />
-                <Line type="monotone" dataKey="Bolt" stroke="#10B981" strokeWidth={2} />
-                <Line type="monotone" dataKey="V0" stroke="#8B5CF6" strokeWidth={2} />
-                <Line type="monotone" dataKey="Figma Make" stroke="#F59E0B" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+
       </div>
     </div>
   );
