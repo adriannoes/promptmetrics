@@ -1,202 +1,290 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { BarChart3, Target, TrendingUp, Heart, Info, Edit, Plus, Eye, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
-
-const flashCardData = [
-  { title: 'Average Rank', value: '2.3', subtitle: 'Average product position within prompt results', icon: BarChart3, color: 'bg-blue-100 text-blue-600' },
-  { title: 'Prevalence', value: '60%', subtitle: '% of total prompt runs in which your product appears', icon: Target, color: 'bg-orange-100 text-orange-600' },
-  { title: 'Category Rank', value: '2/4', subtitle: 'Ranked by prevalence relative to all products in prompt results', icon: TrendingUp, color: 'bg-yellow-100 text-yellow-600' },
-  { title: '% Positive Sentiment', value: '78%', subtitle: 'Percentage of positive mentions across all prompts', icon: Heart, color: 'bg-green-100 text-green-600' },
-];
-
-const overallSentimentData = [
-  { name: 'Lovable', score: 77.6, color: '#3B82F6' },
-  { name: 'Bolt', score: 73.4, color: '#10B981' },
-  { name: 'V0', score: 68.8, color: '#8B5CF6' },
-  { name: 'Figma Make', score: 59.6, color: '#F59E0B' },
-];
-
-const llmSentimentData = [
-  { llm: 'ChatGPT', lovable: 78, bolt: 72, v0: 65, figmaMake: 58 },
-  { llm: 'Google AI Search', lovable: 82, bolt: 69, v0: 71, figmaMake: 62 },
-  { llm: 'Claude', lovable: 85, bolt: 75, v0: 68, figmaMake: 55 },
-  { llm: 'Perplexity', lovable: 80, bolt: 73, v0: 66, figmaMake: 60 },
-  { llm: 'Grok', lovable: 65, bolt: 78, v0: 74, figmaMake: 63 },
-];
+import { Progress } from '@/components/ui/progress';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { 
+  TrendingUp, 
+  Target, 
+  Heart, 
+  Trophy, 
+  MapPin, 
+  Globe, 
+  Settings, 
+  Edit, 
+  Plus, 
+  ExternalLink,
+  AlertTriangle,
+  TrendingDown,
+  CheckCircle,
+  XCircle,
+  Lightbulb
+} from 'lucide-react';
 
 const promptsData = [
   {
-    prompt: 'best AI code editor',
-    volume: 5,
-    llmData: [
-      { llm: 'ChatGPT', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 3 }, v0: { present: false, rank: null }, figmaMake: { present: false, rank: null } },
-      { llm: 'Google AI Search', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 1 }, v0: { present: true, rank: 4 }, figmaMake: { present: false, rank: null } },
-      { llm: 'Claude', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 2 }, v0: { present: false, rank: null }, figmaMake: { present: true, rank: 5 } },
-      { llm: 'Perplexity', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 4 }, v0: { present: true, rank: 3 }, figmaMake: { present: false, rank: null } },
-      { llm: 'Grok', lovable: { present: false, rank: null }, bolt: { present: true, rank: 1 }, v0: { present: true, rank: 2 }, figmaMake: { present: true, rank: 3 } },
-    ]
+    name: "Why is prompt engineering important?",
+    volume: 4,
+    llms: [
+      {
+        name: "GPT-4",
+        lovable: { present: true, rank: 1 },
+        competitors: [
+          { name: "Bard", present: true, rank: 2 },
+          { name: "Claude", present: false },
+        ],
+      },
+      {
+        name: "Bard",
+        lovable: { present: true, rank: 2 },
+        competitors: [
+          { name: "GPT-4", present: true, rank: 1 },
+          { name: "Claude", present: false },
+        ],
+      },
+    ],
   },
   {
-    prompt: 'visual programming platforms',
+    name: "Best practices for prompt design",
+    volume: 5,
+    llms: [
+      {
+        name: "GPT-4",
+        lovable: { present: true, rank: 1 },
+        competitors: [
+          { name: "Bard", present: true, rank: 3 },
+          { name: "Claude", present: true, rank: 2 },
+        ],
+      },
+      {
+        name: "Claude",
+        lovable: { present: true, rank: 2 },
+        competitors: [
+          { name: "GPT-4", present: true, rank: 1 },
+          { name: "Bard", present: true, rank: 3 },
+        ],
+      },
+    ],
+  },
+  {
+    name: "How to avoid prompt injection attacks",
     volume: 3,
-    llmData: [
-      { llm: 'ChatGPT', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 4 }, v0: { present: true, rank: 1 }, figmaMake: { present: true, rank: 5 } },
-      { llm: 'Google AI Search', lovable: { present: true, rank: 1 }, bolt: { present: true, rank: 3 }, v0: { present: true, rank: 2 }, figmaMake: { present: true, rank: 4 } },
-      { llm: 'Claude', lovable: { present: true, rank: 3 }, bolt: { present: false, rank: null }, v0: { present: true, rank: 1 }, figmaMake: { present: true, rank: 2 } },
-      { llm: 'Perplexity', lovable: { present: true, rank: 2 }, bolt: { present: true, rank: 3 }, v0: { present: true, rank: 1 }, figmaMake: { present: false, rank: null } },
-      { llm: 'Grok', lovable: { present: false, rank: null }, bolt: { present: true, rank: 2 }, v0: { present: true, rank: 1 }, figmaMake: { present: true, rank: 3 } },
-    ]
+    llms: [
+      {
+        name: "GPT-4",
+        lovable: { present: true, rank: 2 },
+        competitors: [
+          { name: "Bard", present: true, rank: 1 },
+          { name: "Claude", present: false },
+        ],
+      },
+      {
+        name: "Bard",
+        lovable: { present: true, rank: 1 },
+        competitors: [
+          { name: "GPT-4", present: true, rank: 2 },
+          { name: "Claude", present: false },
+        ],
+      },
+    ],
   },
 ];
 
-const VolumeIndicator = ({ volume }: { volume: number }) => {
-  return (
-    <div className="flex items-center gap-1">
-      {[1, 2, 3, 4, 5].map((bar) => (
-        <div
-          key={bar}
-          className={`w-1 h-4 rounded ${
-            bar <= volume ? 'bg-blue-600' : 'bg-gray-200'
-          }`}
-        />
-      ))}
-    </div>
-  );
-};
+const sentimentByLLMData = [
+  { llm: 'GPT-4', positive: 85, neutral: 10, negative: 5 },
+  { llm: 'Bard', positive: 78, neutral: 15, negative: 7 },
+  { llm: 'Claude', positive: 80, neutral: 12, negative: 8 },
+];
 
-const PresenceRankCell = ({ data }: { data: { present: boolean; rank: number | null } }) => {
-  if (!data.present) {
-    return <Badge variant="secondary" className="bg-red-100 text-red-700">No</Badge>;
-  }
-  return (
-    <div className="flex items-center gap-2">
-      <Badge variant="secondary" className="bg-green-100 text-green-700">Yes</Badge>
-      <span className="text-sm font-medium">{data.rank}</span>
-    </div>
-  );
-};
+const criticalPrompts = [
+  { name: 'Inaccurate Information', issue: 'Provides misleading data', sentiment: 35 },
+  { name: 'Biased Responses', issue: 'Shows unfair preferences', sentiment: 42 },
+];
+
+const sentimentStrengths = [
+  { category: 'Clarity', description: 'Clear and concise responses', score: 92 },
+  { category: 'Relevance', description: 'Highly relevant to the query', score: 88 },
+];
+
+const sentimentDrawbacks = [
+  { category: 'Inconsistency', description: 'Responses vary in quality', impact: 'High' },
+  { category: 'Lack of Creativity', description: 'Struggles with open-ended tasks', impact: 'Medium' },
+];
+
+const actionableInsights = [
+  { title: 'Improve Data Accuracy', description: 'Verify data sources for accuracy', priority: 'High', timeframe: 'Immediate' },
+  { title: 'Reduce Bias', description: 'Implement bias detection algorithms', priority: 'Medium', timeframe: 'Next Month' },
+];
 
 export const PromptAnalysisTab = () => {
   return (
     <div className="space-y-8">
       {/* Flash Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {flashCardData.map((card) => (
-          <Card key={card.title}>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className={`p-2 rounded-lg ${card.color}`}>
-                  <card.icon className="w-5 h-5" />
-                </div>
-                <h3 className="font-semibold text-gray-900">{card.title}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Average Rank</p>
+                <p className="text-2xl font-bold text-gray-900">2.3</p>
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  +0.2 from last month
+                </p>
               </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{card.value}</div>
-              <p className="text-sm text-gray-600">{card.subtitle}</p>
-            </CardContent>
-          </Card>
-        ))}
+              <Target className="w-8 h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Prevalence</p>
+                <p className="text-2xl font-bold text-gray-900">78%</p>
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  +5% from last month
+                </p>
+              </div>
+              <Trophy className="w-8 h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Category Rank</p>
+                <p className="text-2xl font-bold text-gray-900">#2</p>
+                <p className="text-xs text-gray-500">in AI Development</p>
+              </div>
+              <Target className="w-8 h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">% Positive Sentiment</p>
+                <p className="text-2xl font-bold text-gray-900">82%</p>
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  +3% from last month
+                </p>
+              </div>
+              <Heart className="w-8 h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Prompts Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
-              Prompts
-            </CardTitle>
-            <div className="flex items-center gap-2">
+            <CardTitle>Prompts Analysis</CardTitle>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <MapPin className="w-4 h-4" />
+                <span>Location: Global</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Globe className="w-4 h-4" />
+                <span>Language: English</span>
+              </div>
               <Button variant="outline" size="sm">
-                <Eye className="w-4 h-4 mr-2" />
-                Customize view
+                <Settings className="w-4 h-4 mr-2" />
+                Customize View
               </Button>
               <Button variant="outline" size="sm">
                 <Edit className="w-4 h-4 mr-2" />
-                Edit prompts
+                Edit Prompts
               </Button>
               <Button size="sm">
                 <Plus className="w-4 h-4 mr-2" />
-                Add new prompt
+                Add New Prompt
               </Button>
-            </div>
-          </div>
-          <div className="flex items-center gap-6 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <span>Local:</span>
-              <span className="font-medium">Global</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>Language:</span>
-              <span className="font-medium">English</span>
-              <Info className="w-4 h-4 text-gray-400" title="Coming soon: choose your preferred Local and Language" />
-            </div>
-            <div className="flex items-center gap-2">
-              <span>Showing:</span>
-              <span className="font-medium">4 prompts</span>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Prompt</TableHead>
-                <TableHead>LLM</TableHead>
-                <TableHead className="text-center">Lovable<br />Present | Rank</TableHead>
-                <TableHead className="text-center">Bolt<br />Present | Rank</TableHead>
-                <TableHead className="text-center">V0<br />Present | Rank</TableHead>
-                <TableHead className="text-center">Figma Make<br />Present | Rank</TableHead>
-                <TableHead className="text-center">Volume</TableHead>
-                <TableHead className="text-center">Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {promptsData.map((prompt) => (
-                prompt.llmData.map((llmRow, index) => (
-                  <TableRow key={`${prompt.prompt}-${llmRow.llm}`}>
-                    {index === 0 && (
-                      <TableCell rowSpan={prompt.llmData.length} className="font-medium align-top">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-4 font-medium text-gray-700">Prompt</th>
+                  <th className="text-left p-4 font-medium text-gray-700">LLM</th>
+                  <th className="text-left p-4 font-medium text-gray-700">Lovable Presence & Rank</th>
+                  <th className="text-left p-4 font-medium text-gray-700">Competitor Presence & Rank</th>
+                  <th className="text-left p-4 font-medium text-gray-700">Volume</th>
+                  <th className="text-left p-4 font-medium text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {promptsData.map((prompt, promptIndex) => (
+                  prompt.llms.map((llm, llmIndex) => (
+                    <tr key={`${promptIndex}-${llmIndex}`} className="border-b hover:bg-gray-50">
+                      {llmIndex === 0 && (
+                        <td className="p-4 font-medium" rowSpan={prompt.llms.length}>
+                          {prompt.name}
+                        </td>
+                      )}
+                      <td className="p-4">{llm.name}</td>
+                      <td className="p-4">
                         <div className="flex items-center gap-2">
-                          {prompt.prompt}
-                          <VolumeIndicator volume={prompt.volume} />
+                          <Badge variant={llm.lovable.present ? "default" : "secondary"}>
+                            {llm.lovable.present ? "Present" : "Not Present"}
+                          </Badge>
+                          {llm.lovable.present && (
+                            <span className="text-sm font-medium">#{llm.lovable.rank}</span>
+                          )}
                         </div>
-                      </TableCell>
-                    )}
-                    <TableCell>{llmRow.llm}</TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.lovable} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.bolt} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.v0} />
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <PresenceRankCell data={llmRow.figmaMake} />
-                    </TableCell>
-                    {index === 0 && (
-                      <>
-                        <TableCell rowSpan={prompt.llmData.length} className="text-center align-top">
-                          <VolumeIndicator volume={prompt.volume} />
-                        </TableCell>
-                        <TableCell rowSpan={prompt.llmData.length} className="text-center align-top">
-                          <Button variant="outline" size="sm">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))
-              ))}
-            </TableBody>
-          </Table>
+                      </td>
+                      <td className="p-4">
+                        <div className="space-y-1">
+                          {llm.competitors.map((comp, compIndex) => (
+                            <div key={compIndex} className="flex items-center gap-2 text-sm">
+                              <span className="w-16">{comp.name}:</span>
+                              <Badge variant={comp.present ? "default" : "secondary"} className="text-xs">
+                                {comp.present ? `#${comp.rank}` : "Not Present"}
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                      {llmIndex === 0 && (
+                        <>
+                          <td className="p-4" rowSpan={prompt.llms.length}>
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((bar) => (
+                                <div
+                                  key={bar}
+                                  className={`w-2 h-6 rounded ${
+                                    bar <= prompt.volume ? 'bg-blue-600' : 'bg-gray-200'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </td>
+                          <td className="p-4" rowSpan={prompt.llms.length}>
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </td>
+                        </>
+                      )}
+                    </tr>
+                  ))
+                ))}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 
@@ -211,26 +299,36 @@ export const PromptAnalysisTab = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={overallSentimentData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Bar dataKey="score" fill="#3B82F6" />
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              {overallSentimentData.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-sm">{item.name}</span>
-                  </div>
-                  <span className="font-semibold">{item.score}</span>
-                </div>
-              ))}
+            <div className="text-center mb-4">
+              <div className="text-4xl font-bold text-blue-600 mb-2">82%</div>
+              <p className="text-gray-600">Positive Sentiment</p>
             </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Positive', value: 82, color: '#10B981' },
+                    { name: 'Neutral', value: 12, color: '#F59E0B' },
+                    { name: 'Negative', value: 6, color: '#EF4444' }
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  dataKey="value"
+                >
+                  {[
+                    { name: 'Positive', value: 82, color: '#10B981' },
+                    { name: 'Neutral', value: 12, color: '#F59E0B' },
+                    { name: 'Negative', value: 6, color: '#EF4444' }
+                  ].map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
@@ -238,173 +336,137 @@ export const PromptAnalysisTab = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
+              <BarChart className="w-5 h-5 text-blue-600" />
               Sentiment by LLM
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>LLM</TableHead>
-                  <TableHead>Lovable</TableHead>
-                  <TableHead>Bolt</TableHead>
-                  <TableHead>V0</TableHead>
-                  <TableHead>Figma Make</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {llmSentimentData.map((row) => (
-                  <TableRow key={row.llm}>
-                    <TableCell className="font-medium">{row.llm}</TableCell>
-                    <TableCell>{row.lovable} {row.lovable >= 80 ? '👍' : row.lovable >= 70 ? '⚠️' : '👎'}</TableCell>
-                    <TableCell>{row.bolt}</TableCell>
-                    <TableCell>{row.v0}</TableCell>
-                    <TableCell>{row.figmaMake}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={sentimentByLLMData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="llm" />
+                <YAxis domain={[0, 100]} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="positive" fill="#10B981" name="Positive" />
+                <Bar dataKey="neutral" fill="#F59E0B" name="Neutral" />
+                <Bar dataKey="negative" fill="#EF4444" name="Negative" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
+      </div>
 
+      {/* Critical Prompts & Insights */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Critical Prompts */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-600" />
-              Critical Prompts (Negative Sentiment)
+              Critical Prompts
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="border-l-4 border-red-500 pl-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium">"enterprise development tools"</h4>
-                  <Badge variant="destructive">-15</Badge>
+              {criticalPrompts.map((prompt, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                  <div>
+                    <p className="font-medium text-gray-900">{prompt.name}</p>
+                    <p className="text-sm text-gray-600">{prompt.issue}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="destructive">{prompt.sentiment}%</Badge>
+                    <TrendingDown className="w-4 h-4 text-red-600" />
+                  </div>
                 </div>
-                <p className="text-sm text-gray-600">Limited enterprise features compared to competitors</p>
-                <p className="text-xs text-gray-500">89 mentions | Sentiment: -15</p>
-              </div>
-              <div className="border-l-4 border-red-500 pl-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium">"team collaboration platforms"</h4>
-                  <Badge variant="destructive">-8</Badge>
-                </div>
-                <p className="text-sm text-gray-600">Weak team collaboration tools</p>
-                <p className="text-xs text-gray-500">67 mentions | Sentiment: -8</p>
-              </div>
-              <div className="border-l-4 border-orange-500 pl-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium">"scalable web development"</h4>
-                  <Badge variant="secondary">-12</Badge>
-                </div>
-                <p className="text-sm text-gray-600">Scalability concerns for large projects</p>
-                <p className="text-xs text-gray-500">45 mentions | Sentiment: -12</p>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Actionable Insights */}
+        {/* Top Sentiment Strengths */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-blue-600" />
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              Top Sentiment Strengths
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {sentimentStrengths.map((strength, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <div>
+                    <p className="font-medium text-gray-900">{strength.category}</p>
+                    <p className="text-sm text-gray-600">{strength.description}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="default" className="bg-green-100 text-green-800">
+                      {strength.score}%
+                    </Badge>
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Key Sentiment Drawbacks & Actionable Insights */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Key Sentiment Drawbacks */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <XCircle className="w-5 h-5 text-orange-600" />
+              Key Sentiment Drawbacks
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {sentimentDrawbacks.map((drawback, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                  <XCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-gray-900">{drawback.category}</p>
+                    <p className="text-sm text-gray-600 mt-1">{drawback.description}</p>
+                    <Badge variant="secondary" className="mt-2">
+                      Impact: {drawback.impact}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Actionable Sentiment Insights */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5 text-blue-600" />
               Actionable Sentiment Insights
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-medium text-blue-600 mb-2">Immediate Actions</h4>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2" />
-                    Address enterprise features gap - highest negative sentiment driver
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2" />
-                    Improve team collaboration tools to match competitor offerings
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2" />
-                    Leverage AI-powered development strength in marketing content
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium text-green-600 mb-2">Strategic Opportunities</h4>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2" />
-                    Claude shows highest sentiment (85) - focus partnership efforts
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2" />
-                    Rapid prototyping strength underutilized in messaging
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Sentiment Strengths & Drawbacks */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Sentiment Analysis Summary</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="flex items-center gap-2 font-medium text-green-600 mb-3">
-                  <CheckCircle className="w-4 h-4" />
-                  Top Sentiment Strengths
-                </h4>
-                <div className="space-y-3">
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium">AI-Powered Development</span>
-                      <Badge variant="secondary" className="bg-green-100 text-green-700">+92</Badge>
+            <div className="space-y-4">
+              {actionableInsights.map((insight, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                  <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-gray-900">{insight.title}</p>
+                    <p className="text-sm text-gray-600 mt-1">{insight.description}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant="default" className="bg-blue-100 text-blue-800">
+                        {insight.priority}
+                      </Badge>
+                      <span className="text-xs text-gray-500">{insight.timeframe}</span>
                     </div>
-                    <p className="text-sm text-gray-600">Users consistently praise Lovable's intelligent code generation and AI assistance</p>
-                    <p className="text-xs text-gray-500">234 positive mentions</p>
-                  </div>
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium">Visual Programming Interface</span>
-                      <Badge variant="secondary" className="bg-green-100 text-green-700">+88</Badge>
-                    </div>
-                    <p className="text-sm text-gray-600">Real-time visual feedback and intuitive design tools receive high praise</p>
-                    <p className="text-xs text-gray-500">189 positive mentions</p>
                   </div>
                 </div>
-              </div>
-              <div>
-                <h4 className="flex items-center gap-2 font-medium text-red-600 mb-3">
-                  <XCircle className="w-4 h-4" />
-                  Key Sentiment Drawbacks
-                </h4>
-                <div className="space-y-3">
-                  <div className="bg-red-50 p-3 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium">Enterprise Features</span>
-                      <Badge variant="destructive">-18</Badge>
-                    </div>
-                    <p className="text-sm text-gray-600">Lack of advanced enterprise security, compliance, and management features</p>
-                    <p className="text-xs text-gray-500">156 negative mentions</p>
-                  </div>
-                  <div className="bg-red-50 p-3 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium">Team Collaboration</span>
-                      <Badge variant="destructive">-15</Badge>
-                    </div>
-                    <p className="text-sm text-gray-600">Limited real-time collaboration tools for development teams</p>
-                    <p className="text-xs text-gray-500">123 negative mentions</p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
