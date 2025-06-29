@@ -273,7 +273,7 @@ export const PromptAnalysisTab = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-auto max-h-96 relative">
+          <div className="overflow-auto min-h-96 h-[80vh] relative">
             <Table>
               <TableHeader className="sticky top-0 bg-white z-10 border-b">
                 <TableRow>
@@ -379,7 +379,7 @@ export const PromptAnalysisTab = () => {
                 {llmSentimentData.map((row) => (
                   <TableRow key={row.llm}>
                     <TableCell className="font-medium">{row.llm}</TableCell>
-                    <TableCell>{row.lovable} {row.lovable >= 80 ? '👍' : row.lovable >= 70 ? '⚠️' : '👎'}</TableCell>
+                    <TableCell>{row.lovable}</TableCell>
                     <TableCell>{row.bolt}</TableCell>
                     <TableCell>{row.v0}</TableCell>
                     <TableCell>{row.figmaMake}</TableCell>
