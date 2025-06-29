@@ -48,6 +48,9 @@ const MobileNav = () => {
     closeNav();
   };
 
+  // Check if user is logged in (including demo user)
+  const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
+
   return (
     <div className="md:hidden">
       <button
@@ -122,11 +125,11 @@ const MobileNav = () => {
 
             {/* Auth Section */}
             <div className="pt-4 border-t border-slate-200">
-              {user ? (
+              {isLoggedIn ? (
                 <div className="space-y-4">
                   <div className="px-4">
                     <span className="text-sm text-slate-600">
-                      {profile?.full_name || user.email}
+                      {profile?.full_name || user?.email || 'Demo User'}
                     </span>
                   </div>
                   <Button

@@ -25,6 +25,9 @@ const Header = () => {
     // signOut now handles the redirect internally
   };
 
+  // Check if user is logged in (including demo user)
+  const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
+
   return (
     <header 
       className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/60 shadow-lg shadow-slate-200/10"
@@ -56,10 +59,10 @@ const Header = () => {
             
             <div className="flex items-center gap-4">
               <LanguageSelector />
-              {user ? (
+              {isLoggedIn ? (
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-slate-600">
-                    {profile?.full_name || user.email}
+                    {profile?.full_name || user?.email || 'Demo User'}
                   </span>
                   <Button
                     onClick={handleSignOut}
