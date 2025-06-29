@@ -67,8 +67,20 @@ export const useAuthState = () => {
       setLoading(false);
     };
 
-    // Add demo login event listener
+    // Handle demo logout events
+    const handleDemoLogout = () => {
+      if (!mounted) return;
+      
+      console.log('Demo logout event received');
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      setLoading(false);
+    };
+
+    // Add demo login/logout event listeners
     window.addEventListener('demo-login', handleDemoLogin as EventListener);
+    window.addEventListener('demo-logout', handleDemoLogout as EventListener);
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -129,6 +141,7 @@ export const useAuthState = () => {
     return () => {
       mounted = false;
       window.removeEventListener('demo-login', handleDemoLogin as EventListener);
+      window.removeEventListener('demo-logout', handleDemoLogout as EventListener);
       subscription.unsubscribe();
     };
   }, []);
