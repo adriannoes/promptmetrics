@@ -89,18 +89,18 @@ const promptsData = [
 ];
 
 const allLlms = [
-  { id: 'ChatGPT', name: 'ChatGPT', logo: '🤖' },
-  { id: 'Google AI Search', name: 'Google AI Search', logo: '🔍' },
-  { id: 'Claude', name: 'Claude', logo: '🎭' },
-  { id: 'Perplexity', name: 'Perplexity', logo: '🔮' },
-  { id: 'Grok', name: 'Grok', logo: '🚀' },
+  { id: 'ChatGPT', name: 'ChatGPT' },
+  { id: 'Google AI Search', name: 'Google AI Search' },
+  { id: 'Claude', name: 'Claude' },
+  { id: 'Perplexity', name: 'Perplexity' },
+  { id: 'Grok', name: 'Grok' },
 ];
 
 const allCompetitors = [
-  { id: 'lovable', name: 'Lovable', logo: '💜' },
-  { id: 'bolt', name: 'Bolt', logo: '⚡' },
-  { id: 'v0', name: 'V0', logo: '⭕' },
-  { id: 'figmaMake', name: 'Figma Make', logo: '🎨' },
+  { id: 'lovable', name: 'Lovable' },
+  { id: 'bolt', name: 'Bolt' },
+  { id: 'v0', name: 'V0' },
+  { id: 'figmaMake', name: 'Figma Make' },
 ];
 
 const VolumeIndicator = ({ volume }: { volume: number }) => {
@@ -211,9 +211,8 @@ export const PromptAnalysisTab = () => {
                             />
                             <label
                               htmlFor={`llm-${llm.id}`}
-                              className="flex items-center gap-2 text-sm font-medium cursor-pointer"
+                              className="text-sm font-medium cursor-pointer"
                             >
-                              <span className="text-lg">{llm.logo}</span>
                               {llm.name}
                             </label>
                           </div>
@@ -232,9 +231,8 @@ export const PromptAnalysisTab = () => {
                             />
                             <label
                               htmlFor={`competitor-${competitor.id}`}
-                              className="flex items-center gap-2 text-sm font-medium cursor-pointer"
+                              className="text-sm font-medium cursor-pointer"
                             >
-                              <span className="text-lg">{competitor.logo}</span>
                               {competitor.name}
                             </label>
                           </div>
@@ -277,14 +275,13 @@ export const PromptAnalysisTab = () => {
         <CardContent>
           <div className="overflow-auto max-h-96 relative">
             <Table>
-              <TableHeader className="sticky top-0 bg-white z-20 shadow-sm">
+              <TableHeader className="sticky top-0 bg-white z-10 border-b">
                 <TableRow>
                   <TableHead className="bg-white">Prompt</TableHead>
                   <TableHead className="bg-white">LLM</TableHead>
                   {visibleCompetitors.map((competitor) => (
                     <TableHead key={competitor.id} className="text-center bg-white">
                       <div className="flex items-center justify-center gap-2">
-                        <span className="text-lg">{competitor.logo}</span>
                         {competitor.name}<br />Present | Rank
                       </div>
                     </TableHead>
