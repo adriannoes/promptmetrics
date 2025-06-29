@@ -14,7 +14,7 @@ export const useAuthState = () => {
     let mounted = true;
 
     // Handle demo login events
-    const handleDemoLogin = (event: CustomEvent) => {
+    const handleDemoLogin = async (event: CustomEvent) => {
       if (!mounted) return;
       
       console.log('Demo login event received');
@@ -23,19 +23,47 @@ export const useAuthState = () => {
       setUser(demoUser);
       setSession(demoSession);
       
-      // Set demo profile directly
-      const demoProfile: Profile = {
-        id: '82a96621-2849-4dee-a70f-8da2616823be',
-        full_name: 'Demo User',
-        email: 'demo@example.com',
-        role: 'client',
-        organization_id: null, // Will be set by redirect service
-        invite_code: 'DEMO2024',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      // Fetch the actual demo profile from the database
+      try {
+        const { data: profileData, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('email', 'demo@example.com')
+          .single();
+        
+        if (error) {
+          console.error('Error fetching demo profile:', error);
+          // Fallback to mock profile
+          const demoProfile: Profile = {
+            id: '82a96621-2849-4dee-a70f-8da2616823be',
+            full_name: 'Demo User',
+            email: 'demo@example.com',
+            role: 'client',
+            organization_id: null,
+            invite_code: 'DEMO2024',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+          setProfile(demoProfile);
+        } else {
+          setProfile(profileData);
+        }
+      } catch (error) {
+        console.error('Demo profile fetch error:', error);
+        // Fallback to mock profile
+        const demoProfile: Profile = {
+          id: '82a96621-2849-4dee-a70f-8da2616823be',
+          full_name: 'Demo User',
+          email: 'demo@example.com',
+          role: 'client',
+          organization_id: null,
+          invite_code: 'DEMO2024',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        setProfile(demoProfile);
+      }
       
-      setProfile(demoProfile);
       setLoading(false);
     };
 

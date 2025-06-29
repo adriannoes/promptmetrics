@@ -20,11 +20,11 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
 
   // Client users need organization lookup
   if (profile.role === 'client') {
-    // Special handling for demo user - always redirect to demo org
+    // Special handling for demo user - always redirect to demo page
     if (profile.email === 'demo@example.com') {
       return {
-        path: '/home/demo',
-        reason: 'Demo user redirected to demo organization'
+        path: '/demo',
+        reason: 'Demo user redirected to demo page'
       };
     }
 
