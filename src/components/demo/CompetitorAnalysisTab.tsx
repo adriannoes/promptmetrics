@@ -10,45 +10,45 @@ const marketShareData = [
   { name: 'Lovable', value: 35, color: '#3B82F6' },
   { name: 'Bolt', value: 25, color: '#10B981' },
   { name: 'V0', value: 20, color: '#8B5CF6' },
-  { name: 'Cursor', value: 12, color: '#F59E0B' },
+  { name: 'Figma Make', value: 12, color: '#F59E0B' },
   { name: 'Other', value: 8, color: '#6B7280' },
 ];
 
 const marketTrendsData = [
-  { month: 'Jan', Lovable: 32, Bolt: 28, V0: 22, Cursor: 10, Other: 8 },
-  { month: 'Feb', Lovable: 33, Bolt: 27, V0: 21, Cursor: 11, Other: 8 },
-  { month: 'Mar', Lovable: 34, Bolt: 26, V0: 21, Cursor: 11, Other: 8 },
-  { month: 'Apr', Lovable: 35, Bolt: 25, V0: 20, Cursor: 12, Other: 8 },
-  { month: 'May', Lovable: 35, Bolt: 25, V0: 20, Cursor: 12, Other: 8 },
-  { month: 'Jun', Lovable: 35, Bolt: 25, V0: 20, Cursor: 12, Other: 8 },
+  { month: 'Jan', Lovable: 32, Bolt: 28, V0: 22, 'Figma Make': 10, Other: 8 },
+  { month: 'Feb', Lovable: 33, Bolt: 27, V0: 21, 'Figma Make': 11, Other: 8 },
+  { month: 'Mar', Lovable: 34, Bolt: 26, V0: 21, 'Figma Make': 11, Other: 8 },
+  { month: 'Apr', Lovable: 35, Bolt: 25, V0: 20, 'Figma Make': 12, Other: 8 },
+  { month: 'May', Lovable: 35, Bolt: 25, V0: 20, 'Figma Make': 12, Other: 8 },
+  { month: 'Jun', Lovable: 35, Bolt: 25, V0: 20, 'Figma Make': 12, Other: 8 },
 ];
 
 const strategicPriorities = [
   {
     id: 1,
-    title: 'Dominate With Try-On Program',
-    description: '35.52% market share—expand Home Try-On to outpace competitors.',
+    title: 'Expand AI-Powered Development Features',
+    description: '35.52% market share—enhance Lovable\'s AI capabilities to outpace Bolt and v0.',
     priority: 'high',
     marketShare: 35.52
   },
   {
     id: 2,
-    title: 'Win Value-Conscious Shoppers',
-    description: 'Compete with Zenni/EyeBuyDirect (23.6% share) via budget-friendly collections.',
+    title: 'Target Small Development Teams',
+    description: 'Compete with Bolt and v0 (25.0% combined share) via simplified onboarding and team features.',
     priority: 'medium',
-    marketShare: 23.6
+    marketShare: 25.0
   },
   {
     id: 3,
-    title: 'Lead Digital Experience Innovation',
-    description: 'Invest in AR/AI try-on to surpass Zenni, GlassesUSA, Ray-Ban offerings.',
+    title: 'Lead Visual Development Innovation',
+    description: 'Invest in advanced UI generation to surpass v0, Bolt, and Figma Make offerings.',
     priority: 'high',
-    marketShare: 18.2
+    marketShare: 20.0
   },
   {
     id: 4,
-    title: 'Broaden Omnichannel Services',
-    description: 'Leverage store footprint; expand eye exams and pickup for loyalty.',
+    title: 'Strengthen Integration Ecosystem',
+    description: 'Leverage platform integrations; expand deployment options and third-party connections.',
     priority: 'medium',
     marketShare: 15.8
   },
@@ -57,22 +57,22 @@ const strategicPriorities = [
 const competitorOpportunities = [
   {
     category: 'Product Development',
-    title: 'Leverage Warby Parker\'s Home Try-On program to further differentiate from competitors.',
-    description: 'Warby Parker\'s Home Try-On program continues to be a unique and valuable service, with only a few competitors offering similar programs...',
+    title: 'Leverage Lovable\'s conversational AI interface to differentiate from competitors.',
+    description: 'Lovable\'s natural language development approach continues to be unique, with competitors focusing more on template-based generation...',
     impact: 'high',
     effort: 'medium'
   },
   {
     category: 'Market Expansion',
-    title: 'Capitalize on Warby Parker\'s social responsibility and eco-friendliness to increasingly attract conscious consumers.',
-    description: 'Sustainable materials set it apart from many competitors. Social responsibility and eco-friendliness are increasingly important...',
+    title: 'Capitalize on Lovable\'s full-stack capabilities to attract teams seeking complete solutions.',
+    description: 'Full-stack development with database integration sets it apart from many competitors. Complete project solutions are increasingly important...',
     impact: 'medium',
     effort: 'low'
   },
   {
     category: 'Product Innovation',
-    title: 'Enhance and innovate digital experiences, particularly the Virtual Try-On, to compete effectively with top online rivals.',
-    description: 'While Warby Parker offers digital try-on experiences like Zenni, GlassesUSA, and Ray-Ban offering similar tools...',
+    title: 'Enhance and innovate real-time collaboration features to compete with design-focused tools.',
+    description: 'While Lovable offers live preview and instant updates, competitors like Figma Make and v0 are improving their collaborative features...',
     impact: 'high',
     effort: 'high'
   }
@@ -219,7 +219,7 @@ export const CompetitorAnalysisTab = () => {
                 <Line type="monotone" dataKey="Lovable" stroke="#3B82F6" strokeWidth={2} />
                 <Line type="monotone" dataKey="Bolt" stroke="#10B981" strokeWidth={2} />
                 <Line type="monotone" dataKey="V0" stroke="#8B5CF6" strokeWidth={2} />
-                <Line type="monotone" dataKey="Cursor" stroke="#F59E0B" strokeWidth={2} />
+                <Line type="monotone" dataKey="Figma Make" stroke="#F59E0B" strokeWidth={2} />
                 <Line type="monotone" dataKey="Other" stroke="#6B7280" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
@@ -332,15 +332,15 @@ export const CompetitorAnalysisTab = () => {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span>Expand Home Try-On program through targeted marketing partnerships</span>
+                  <span>Expand conversational AI capabilities through advanced natural language processing</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span>Highlight unique features in brand communications and consider exclusive try-on experiences</span>
+                  <span>Highlight unique full-stack features in marketing and consider exclusive development workflows</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span>Introduce "Basics" or "Essentials" collection with lower entry price points</span>
+                  <span>Introduce "Starter" templates collection with simpler onboarding for new developers</span>
                 </li>
               </ul>
             </div>
@@ -353,15 +353,15 @@ export const CompetitorAnalysisTab = () => {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <span>Integrate social impact storytelling into marketing campaigns and website content</span>
+                  <span>Integrate developer success stories into marketing campaigns and documentation</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <span>Launch limited-edition collections tied to social or environmental causes</span>
+                  <span>Launch community-driven templates and showcase collections</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <span>Invest in next-generation AR/AI for more accurate and personalized recommendations</span>
+                  <span>Invest in next-generation collaboration features for team-based development</span>
                 </li>
               </ul>
             </div>
