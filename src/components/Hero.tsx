@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Sparkles } from 'lucide-react';
 import { AuroraBackground } from './ui/aurora-background';
+import { CTAButton } from './ui/cta-button';
 
 const Hero = () => {
   const { t } = useLanguage();
@@ -49,13 +50,9 @@ const Hero = () => {
             {t('hero.subtitle')}
           </p>
           
-          <button
-            onClick={scrollToForm}
-            className="group inline-flex items-center gap-3 sm:gap-4 px-6 py-4 sm:px-10 sm:py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl hover:shadow-3xl hover:shadow-blue-500/30 border border-blue-500/20 backdrop-blur-sm min-h-[44px]"
-          >
+          <CTAButton onClick={scrollToForm} size="md">
             {t('hero.cta')}
-            <div className="w-2 h-2 bg-white/80 rounded-full group-hover:bg-white group-hover:scale-125 transition-all duration-300"></div>
-          </button>
+          </CTAButton>
         </motion.div>
       </div>
     </AuroraBackground>

@@ -5,6 +5,7 @@ import { User, Mail } from 'lucide-react';
 import PhoneInput from '../PhoneInput';
 import FormField from '../FormField';
 import SubmitButton from '../SubmitButton';
+import { FormErrorMessage } from './FormErrorMessage';
 
 interface ContactFormFieldsProps {
   formData: {
@@ -33,15 +34,10 @@ export const ContactFormFields: React.FC<ContactFormFieldsProps> = ({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6 sm:space-y-8" noValidate>
-      {submitError && (
-        <div 
-          className="bg-red-50/80 backdrop-blur-sm border border-red-200/60 text-red-700 px-4 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl text-sm shadow-lg"
-          role="alert"
-          aria-live="polite"
-        >
-          {submitError}
-        </div>
-      )}
+      <FormErrorMessage 
+        error={submitError}
+        className="bg-red-50/80 backdrop-blur-sm border border-red-200/60 text-red-700 px-4 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg"
+      />
       
       <FormField
         id="name"
