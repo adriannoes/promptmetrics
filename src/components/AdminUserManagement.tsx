@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,7 +55,14 @@ const AdminUserManagement = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProfiles(data || []);
+      
+      // Type assert the data to ensure role is properly typed
+      const typedProfiles = (data || []).map(profile => ({
+        ...profile,
+        role: profile.role as 'client' | 'admin'
+      }));
+      
+      setProfiles(typedProfiles);
     } catch (error) {
       console.error('Error fetching profiles:', error);
       toast.error('Failed to load user profiles');

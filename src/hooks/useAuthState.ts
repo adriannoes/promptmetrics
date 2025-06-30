@@ -46,7 +46,12 @@ export const useAuthState = () => {
           };
           setProfile(demoProfile);
         } else {
-          setProfile(profileData);
+          // Type assert the role to ensure it matches our Profile type
+          const typedProfile: Profile = {
+            ...profileData,
+            role: profileData.role as 'client' | 'admin'
+          };
+          setProfile(typedProfile);
         }
       } catch (error) {
         console.error('Demo profile fetch error:', error);
@@ -107,7 +112,12 @@ export const useAuthState = () => {
                 setProfile(null);
               }
             } else {
-              setProfile(profileData);
+              // Type assert the role to ensure it matches our Profile type
+              const typedProfile: Profile = {
+                ...profileData,
+                role: profileData.role as 'client' | 'admin'
+              };
+              setProfile(typedProfile);
             }
           } catch (error) {
             console.error('Profile fetch error:', error);
