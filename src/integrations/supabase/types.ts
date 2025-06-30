@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       invitation_codes: {
         Row: {
           code: string
@@ -36,6 +75,60 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempted_at: string
+          email: string
+          id: string
+          ip_address: unknown | null
+          success: boolean
+        }
+        Insert: {
+          attempted_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown | null
+          success?: boolean
+        }
+        Update: {
+          attempted_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown | null
+          success?: boolean
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          slug: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -43,6 +136,7 @@ export type Database = {
           full_name: string
           id: string
           invite_code: string | null
+          organization_id: string | null
           role: string
           updated_at: string
         }
@@ -52,6 +146,7 @@ export type Database = {
           full_name: string
           id: string
           invite_code?: string | null
+          organization_id?: string | null
           role?: string
           updated_at?: string
         }
@@ -61,17 +156,73 @@ export type Database = {
           full_name?: string
           id?: string
           invite_code?: string | null
+          organization_id?: string | null
           role?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      consume_invitation_code: {
+        Args:
+          | { code_to_use: string; user_id: string }
+          | { invitation_code: string; user_id: number }
+        Returns: boolean
+      }
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      is_current_user_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_rate_limited: {
+        Args:
+          | Record<PropertyKey, never>
+          | {
+              p_email: string
+              p_window_minutes?: number
+              p_max_attempts?: number
+            }
+        Returns: boolean
+      }
+      is_valid_invitation_code: {
+        Args: { code_to_check: string }
+        Returns: boolean
+      }
+      log_audit_event: {
+        Args:
+          | Record<PropertyKey, never>
+          | {
+              p_action: string
+              p_table_name?: string
+              p_record_id?: string
+              p_old_values?: Json
+              p_new_values?: Json
+            }
+        Returns: string
+      }
+      log_login_attempt: {
+        Args: { p_email: string; p_success?: boolean; p_ip_address?: unknown }
+        Returns: string
+      }
+      new_audit_profile_changes: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

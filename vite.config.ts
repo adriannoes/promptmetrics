@@ -9,6 +9,13 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // Remove restrictive headers for development to prevent connection issues
+    ...(mode === 'development' && {
+      headers: {
+        // Only essential headers for development
+        'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws:; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' data: https:;",
+      }
+    })
   },
   plugins: [
     react(),
@@ -28,6 +35,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
+          ui: ['lucide-react', '@radix-ui/react-slot', '@radix-ui/react-toast'],
         },
       },
     },

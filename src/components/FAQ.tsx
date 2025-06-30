@@ -43,7 +43,7 @@ const FAQ = () => {
         <div className="text-center mb-16 sm:mb-20 md:mb-24 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-white/70 backdrop-blur-lg border border-slate-200/50 text-purple-800 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-lg">
             <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-            Perguntas Frequentes
+            {t('tags.faq')}
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8 tracking-tight leading-tight">
             {t('faq.title')}

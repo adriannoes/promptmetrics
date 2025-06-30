@@ -8,7 +8,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { Users, UserCheck, Filter } from 'lucide-react';
+import { Users, UserCheck, Filter, AlertTriangle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Profile {
   id: string;
@@ -25,6 +36,7 @@ const AdminUserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [emailToPromote, setEmailToPromote] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
+  const [processingRoleChange, setProcessingRoleChange] = useState<string | null>(null);
   const { profile } = useAuth();
 
   // Only render if current user is admin
@@ -53,37 +65,30 @@ const AdminUserManagement = () => {
     }
   };
 
-  const promoteToAdmin = async (userId: string, email: string) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role: 'admin', updated_at: new Date().toISOString() })
-        .eq('id', userId);
-
-      if (error) throw error;
-
-      toast.success(`Successfully promoted ${email} to admin`);
-      fetchProfiles();
-    } catch (error) {
-      console.error('Error promoting user:', error);
-      toast.error('Failed to promote user to admin');
+  const handleRoleChange = async (userId: string, email: string, newRole: 'admin' | 'client') => {
+    if (userId === profile?.id) {
+      toast.error('You cannot change your own role');
+      return;
     }
-  };
 
-  const demoteFromAdmin = async (userId: string, email: string) => {
+    setProcessingRoleChange(userId);
+    
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ role: 'client', updated_at: new Date().toISOString() })
+        .update({ role: newRole, updated_at: new Date().toISOString() })
         .eq('id', userId);
 
       if (error) throw error;
 
-      toast.success(`Successfully demoted ${email} to client`);
+      const action = newRole === 'admin' ? 'promoted' : 'demoted';
+      toast.success(`Successfully ${action} ${email} to ${newRole}`);
       fetchProfiles();
     } catch (error) {
-      console.error('Error demoting user:', error);
-      toast.error('Failed to demote user');
+      console.error('Error changing user role:', error);
+      toast.error(`Failed to change user role`);
+    } finally {
+      setProcessingRoleChange(null);
     }
   };
 
@@ -93,17 +98,26 @@ const AdminUserManagement = () => {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailToPromote.trim())) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    const sanitizedEmail = emailToPromote.trim().toLowerCase();
+
     try {
       const { data, error } = await supabase
         .from('profiles')
         .update({ role: 'admin', updated_at: new Date().toISOString() })
-        .eq('email', emailToPromote.trim())
+        .eq('email', sanitizedEmail)
         .select();
 
       if (error) throw error;
 
       if (data && data.length > 0) {
-        toast.success(`Successfully promoted ${emailToPromote} to admin`);
+        toast.success(`Successfully promoted ${sanitizedEmail} to admin`);
         setEmailToPromote('');
         fetchProfiles();
       } else {
@@ -236,37 +250,70 @@ const AdminUserManagement = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProfiles.map((profile) => (
-                    <TableRow key={profile.id}>
-                      <TableCell className="font-medium">{profile.full_name}</TableCell>
-                      <TableCell>{profile.email}</TableCell>
+                  {filteredProfiles.map((userProfile) => (
+                    <TableRow key={userProfile.id}>
+                      <TableCell className="font-medium">{userProfile.full_name}</TableCell>
+                      <TableCell>{userProfile.email}</TableCell>
                       <TableCell>
                         <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                          profile.role === 'admin' 
+                          userProfile.role === 'admin' 
                             ? 'bg-blue-100 text-blue-800' 
                             : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {profile.role}
+                          {userProfile.role}
                         </span>
                       </TableCell>
-                      <TableCell>{new Date(profile.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{new Date(userProfile.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
-                        {profile.role === 'client' ? (
-                          <Button
-                            onClick={() => promoteToAdmin(profile.id, profile.email)}
-                            size="sm"
-                            variant="outline"
-                          >
-                            Make Admin
-                          </Button>
+                        {userProfile.id !== profile?.id ? (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={processingRoleChange === userProfile.id}
+                              >
+                                {processingRoleChange === userProfile.id ? (
+                                  'Processing...'
+                                ) : userProfile.role === 'client' ? (
+                                  'Make Admin'
+                                ) : (
+                                  'Remove Admin'
+                                )}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="flex items-center gap-2">
+                                  <AlertTriangle className="w-5 h-5 text-orange-500" />
+                                  Confirm Role Change
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to {userProfile.role === 'client' ? 'promote' : 'demote'} {userProfile.full_name} ({userProfile.email}) {userProfile.role === 'client' ? 'to admin' : 'to client'}?
+                                  {userProfile.role === 'admin' && (
+                                    <span className="block mt-2 text-red-600 font-medium">
+                                      This will remove their admin privileges and they will lose access to the admin panel.
+                                    </span>
+                                  )}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleRoleChange(
+                                    userProfile.id, 
+                                    userProfile.email, 
+                                    userProfile.role === 'client' ? 'admin' : 'client'
+                                  )}
+                                  className="bg-orange-600 hover:bg-orange-700"
+                                >
+                                  {userProfile.role === 'client' ? 'Promote' : 'Demote'}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         ) : (
-                          <Button
-                            onClick={() => demoteFromAdmin(profile.id, profile.email)}
-                            size="sm"
-                            variant="outline"
-                          >
-                            Remove Admin
-                          </Button>
+                          <span className="text-sm text-slate-500">You</span>
                         )}
                       </TableCell>
                     </TableRow>
@@ -297,14 +344,6 @@ const AdminUserManagement = () => {
           <Button onClick={promoteByEmail} className="w-full">
             Promote to Admin
           </Button>
-          <div className="text-sm text-slate-600">
-            <p>Quick promote these users to admin once they sign up:</p>
-            <ul className="list-disc list-inside mt-2">
-              <li>esadrianno@gmail.com</li>
-              <li>almeidamarcell@gmail.com</li>
-              <li>raphael.farinazzo@gmail.com</li>
-            </ul>
-          </div>
         </CardContent>
       </Card>
     </div>
