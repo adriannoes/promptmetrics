@@ -31,28 +31,32 @@ const ContactForm = () => {
   return (
     <section 
       id="form" 
-      className="py-16 sm:py-20 md:py-24 lg:py-32 bg-gradient-to-br from-blue-50/50 to-indigo-50/40 relative overflow-hidden"
+      className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-gradient-to-br from-blue-50/50 to-indigo-50/40 relative overflow-hidden"
       aria-labelledby="form-title"
       role="region"
     >
-      <div className="absolute top-20 left-10 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl" aria-hidden="true"></div>
-      <div className="absolute bottom-20 right-10 w-72 h-72 bg-indigo-200/20 rounded-full blur-3xl" aria-hidden="true"></div>
+      {/* Optimized background decoration */}
+      <div className="absolute top-10 sm:top-20 left-4 sm:left-10 w-64 sm:w-96 h-64 sm:h-96 bg-blue-200/15 sm:bg-blue-200/20 rounded-full blur-2xl sm:blur-3xl" aria-hidden="true"></div>
+      <div className="absolute bottom-10 sm:bottom-20 right-4 sm:right-10 w-48 sm:w-72 h-48 sm:h-72 bg-indigo-200/15 sm:bg-indigo-200/20 rounded-full blur-2xl sm:blur-3xl" aria-hidden="true"></div>
       
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-white/60 backdrop-blur-lg border border-white/50 text-blue-800 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-lg">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-6 sm:py-3 bg-white/70 backdrop-blur-lg border border-white/50 text-blue-800 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 md:mb-8 shadow-lg">
             <Send className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
-            {t('form.badge')}
+            <span>{t('form.badge')}</span>
           </div>
-          <h2 id="form-title" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8 tracking-tight leading-tight">
+          <h2 
+            id="form-title" 
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 mb-4 sm:mb-6 md:mb-8 tracking-tight leading-tight px-2 sm:px-0"
+          >
             {t('form.title')}
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-slate-600 font-light leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 font-light leading-relaxed px-2 sm:px-0">
             {t('form.subtitle')}
           </p>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl border border-white/40 animate-fade-in" style={{ animationDelay: '200ms' }}>
+        <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-2xl border border-white/40 animate-fade-in" style={{ animationDelay: '200ms' }}>
           <ContactFormFields
             formData={formData}
             errors={errors}
