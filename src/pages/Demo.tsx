@@ -1,33 +1,53 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DashboardTab } from '@/components/demo/DashboardTab';
 import { PromptAnalysisTab } from '@/components/demo/PromptAnalysisTab';
 import { CompetitorAnalysisTab } from '@/components/demo/CompetitorAnalysisTab';
 import { StrategicInsightsTab } from '@/components/demo/StrategicInsightsTab';
+import { DomainAnalysisInput } from '@/components/DomainAnalysisInput';
+import { useAnalysisData } from '@/hooks/useAnalysisData';
 
 const Demo = () => {
+  const [currentDomain, setCurrentDomain] = useState('lovable.dev');
+  const { data: analysisData, loading, error, refetch } = useAnalysisData(currentDomain);
+
+  const handleAnalyze = (domain: string) => {
+    setCurrentDomain(domain);
+    refetch(domain);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold">
                 P
               </div>
               <h1 className="text-2xl font-bold text-gray-900">PromptMetrics</h1>
               <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">
-                Demo Mode
+                Live Analysis
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">Analyzing: lovable.dev</span>
+              <span className="text-sm text-gray-600">
+                {analysisData ? `Analyzing: ${analysisData.domain}` : 'No analysis yet'}
+              </span>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 Export Report
               </button>
             </div>
           </div>
+          
+          <DomainAnalysisInput onAnalyze={handleAnalyze} loading={loading} />
+          
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-800">Error: {error}</p>
+            </div>
+          )}
         </div>
 
         <Tabs defaultValue="dashboard" className="w-full">
