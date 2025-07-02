@@ -37,10 +37,10 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
     }
 
     try {
-      // Fetch organization slug
+      // Fetch organization to check if domain is configured
       const { data: organization, error } = await supabase
         .from('organizations')
-        .select('slug')
+        .select('slug, website_url')
         .eq('id', profile.organization_id)
         .single();
 
@@ -52,7 +52,23 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
         };
       }
 
-      if (!organization?.slug) {
+      if (!organization) {
+        console.warn('Organization not found');
+        return {
+          path: '/test',
+          reason: 'Organization not found, redirected to fallback'
+        };
+      }
+
+      // Check if organization has a domain configured
+      if (!organization.website_url) {
+        return {
+          path: '/domain-setup',
+          reason: 'Client needs to configure domain first'
+        };
+      }
+
+      if (!organization.slug) {
         console.warn('Organization exists but has no slug');
         return {
           path: '/test',
