@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface DomainAnalysisInputProps {
   onAnalyze: (domain: string) => void;
@@ -14,10 +16,28 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
 }) => {
   const [domain, setDomain] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (domain.trim()) {
+    if (!domain.trim()) return;
+
+    try {
+      // Trigger analysis workflow
+      const { data, error } = await supabase.functions.invoke('trigger-analysis', {
+        body: { domain: domain.trim() }
+      });
+
+      if (error) {
+        console.error('Error triggering analysis:', error);
+        toast.error('Failed to start analysis');
+        return;
+      }
+
+      toast.success('Analysis started! Results will appear shortly.');
       onAnalyze(domain.trim());
+      
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to start analysis');
     }
   };
 
