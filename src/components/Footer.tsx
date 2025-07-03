@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Footer = () => {
@@ -23,21 +24,30 @@ const Footer = () => {
             <span className="text-2xl font-bold tracking-tight">PromptMetrics</span>
           </div>
           
-          <div className="flex justify-center gap-8 mb-8">
-            <button 
-              onClick={() => scrollToSection('pricing')}
-              className="text-slate-400 hover:text-white transition-colors font-medium cursor-pointer"
-              type="button"
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-8">
+            <div className="flex items-center gap-8">
+              <button 
+                onClick={() => scrollToSection('pricing')}
+                className="text-slate-400 hover:text-white transition-colors font-medium cursor-pointer"
+                type="button"
+              >
+                {t('footer.terms')}
+              </button>
+              <button 
+                onClick={() => scrollToSection('faq')}
+                className="text-slate-400 hover:text-white transition-colors font-medium cursor-pointer"
+                type="button"
+              >
+                {t('footer.privacy')}
+              </button>
+            </div>
+            <div className="hidden sm:block text-slate-600">|</div>
+            <Link 
+              to="/changelog"
+              className="text-slate-400 hover:text-white transition-colors font-medium"
             >
-              {t('footer.terms')}
-            </button>
-            <button 
-              onClick={() => scrollToSection('faq')}
-              className="text-slate-400 hover:text-white transition-colors font-medium cursor-pointer"
-              type="button"
-            >
-              {t('footer.privacy')}
-            </button>
+              {t('footer.changelog')}
+            </Link>
           </div>
           
           <div className="pt-8 border-t border-slate-800">

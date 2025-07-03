@@ -133,7 +133,13 @@ const translations = {
     'form.error.submit': 'Something went wrong. Please try again.',
     'footer.terms': 'Terms of Service',
     'footer.privacy': 'Privacy Policy',
+    'footer.changelog': 'Changelog',
     'footer.copyright': '© 2024 PromptMetrics. All rights reserved.',
+    
+    // Changelog page
+    'changelog.title': 'Changelog & Release Notes',
+    'changelog.subtitle': 'Track all updates and improvements to PromptMetrics',
+    'changelog.empty': 'No updates yet. Changes will appear here as they are made.',
   },
   'pt-BR': {
     // Navigation
@@ -256,7 +262,13 @@ const translations = {
     'form.error.submit': 'Algo deu errado. Tente novamente.',
     'footer.terms': 'Termos de Serviço',
     'footer.privacy': 'Política de Privacidade',
+    'footer.changelog': 'Changelog',
     'footer.copyright': '© 2024 PromptMetrics. Todos os direitos reservados.',
+    
+    // Changelog page
+    'changelog.title': 'Changelog & Notas de Versão',
+    'changelog.subtitle': 'Acompanhe todas as atualizações e melhorias do PromptMetrics',
+    'changelog.empty': 'Nenhuma atualização ainda. As mudanças aparecerão aqui conforme são feitas.',
   },
 };
 
