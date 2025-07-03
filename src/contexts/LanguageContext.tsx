@@ -140,6 +140,20 @@ const translations = {
     'changelog.title': 'Changelog & Release Notes',
     'changelog.subtitle': 'Track all updates and improvements to PromptMetrics',
     'changelog.empty': 'No updates yet. Changes will appear here as they are made.',
+    'changelog.latest': 'Latest',
+    'changelog.by': 'By',
+    
+    // Changelog versions
+    'changelog.v1.4.0.title': 'Changelog & Transparency',
+    'changelog.v1.4.0.changes': '• Added comprehensive changelog page with version history|• Implemented footer navigation with changelog link|• Enhanced responsive design for changelog display|• Improved footer layout with better mobile responsiveness',
+    'changelog.v1.3.0.title': 'Domain Management',
+    'changelog.v1.3.0.changes': '• Implemented first-time user domain setup flow|• Added domain validation with real-time feedback|• Created beautiful domain setup page with animations|• Enhanced user onboarding experience|• Added redirect logic based on domain configuration status',
+    'changelog.v1.2.0.title': 'Interactive Demo',
+    'changelog.v1.2.0.changes': '• Built comprehensive demo page with AI analysis tabs|• Added prompt analysis, competitor analysis, and strategic insights|• Implemented interactive data tables and charts|• Created sentiment analysis visualization|• Added prompt customization and flash cards features',
+    'changelog.v1.1.0.title': 'Authentication & Admin',
+    'changelog.v1.1.0.changes': '• Implemented complete authentication system with Supabase|• Added role-based access control (admin, client)|• Created admin dashboard with user management|• Built invitation code system for user registration|• Added security audit logs and login attempt tracking|• Implemented organization management system',
+    'changelog.v1.0.0.title': 'Platform Launch',
+    'changelog.v1.0.0.changes': '• Launched PromptMetrics platform with landing page|• Implemented bilingual support (English & Portuguese)|• Created responsive design with accessibility features|• Built pricing, FAQ, and contact form sections|• Added waitlist functionality with form validation|• Established design system with Tailwind CSS',
   },
   'pt-BR': {
     // Navigation
@@ -269,6 +283,20 @@ const translations = {
     'changelog.title': 'Changelog & Notas de Versão',
     'changelog.subtitle': 'Acompanhe todas as atualizações e melhorias do PromptMetrics',
     'changelog.empty': 'Nenhuma atualização ainda. As mudanças aparecerão aqui conforme são feitas.',
+    'changelog.latest': 'Mais Recente',
+    'changelog.by': 'Por',
+    
+    // Changelog versions
+    'changelog.v1.4.0.title': 'Changelog & Transparência',
+    'changelog.v1.4.0.changes': '• Adicionada página abrangente de changelog com histórico de versões|• Implementada navegação no footer com link para changelog|• Melhorado design responsivo para exibição do changelog|• Aprimorado layout do footer com melhor responsividade móvel',
+    'changelog.v1.3.0.title': 'Gerenciamento de Domínio',
+    'changelog.v1.3.0.changes': '• Implementado fluxo de configuração de domínio para novos usuários|• Adicionada validação de domínio com feedback em tempo real|• Criada página de configuração de domínio com animações|• Melhorada experiência de onboarding do usuário|• Adicionada lógica de redirecionamento baseada no status de configuração do domínio',
+    'changelog.v1.2.0.title': 'Demo Interativo',
+    'changelog.v1.2.0.changes': '• Construída página de demo abrangente com abas de análise de IA|• Adicionadas análises de prompt, análise de concorrentes e insights estratégicos|• Implementadas tabelas e gráficos interativos de dados|• Criada visualização de análise de sentimento|• Adicionados recursos de personalização de prompt e flash cards',
+    'changelog.v1.1.0.title': 'Autenticação & Admin',
+    'changelog.v1.1.0.changes': '• Implementado sistema completo de autenticação com Supabase|• Adicionado controle de acesso baseado em funções (admin, cliente)|• Criado painel administrativo com gerenciamento de usuários|• Construído sistema de códigos de convite para registro de usuários|• Adicionados logs de auditoria de segurança e rastreamento de tentativas de login|• Implementado sistema de gerenciamento de organizações',
+    'changelog.v1.0.0.title': 'Lançamento da Plataforma',
+    'changelog.v1.0.0.changes': '• Lançada plataforma PromptMetrics com página inicial|• Implementado suporte bilíngue (inglês e português)|• Criado design responsivo com recursos de acessibilidade|• Construídas seções de preços, FAQ e formulário de contato|• Adicionada funcionalidade de lista de espera com validação de formulário|• Estabelecido sistema de design com Tailwind CSS',
   },
 };
 

@@ -29,23 +29,22 @@ const ChangelogContent = () => {
             <div className="border border-border rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">v1.4.0 - Changelog & Transparency</h3>
-                  <p className="text-sm text-muted-foreground">January 3, 2025</p>
+                  <h3 className="text-lg font-semibold">v1.4.0 - {t('changelog.v1.4.0.title')}</h3>
+                  <p className="text-sm text-muted-foreground">3 de Janeiro, 2025</p>
                 </div>
                 <span className="px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">
-                  Latest
+                  {t('changelog.latest')}
                 </span>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
                 <ul className="space-y-2">
-                  <li>• Added comprehensive changelog page with version history</li>
-                  <li>• Implemented footer navigation with changelog link</li>
-                  <li>• Enhanced responsive design for changelog display</li>
-                  <li>• Improved footer layout with better mobile responsiveness</li>
+                  {t('changelog.v1.4.0.changes').split('|').map((change, index) => (
+                    <li key={index}>{change}</li>
+                  ))}
                 </ul>
               </div>
               <div className="mt-4 text-xs text-muted-foreground">
-                By Development Team
+                {t('changelog.by')} Development Team
               </div>
             </div>
 
@@ -53,21 +52,19 @@ const ChangelogContent = () => {
             <div className="border border-border rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">v1.3.0 - Domain Management</h3>
-                  <p className="text-sm text-muted-foreground">January 2, 2025</p>
+                  <h3 className="text-lg font-semibold">v1.3.0 - {t('changelog.v1.3.0.title')}</h3>
+                  <p className="text-sm text-muted-foreground">2 de Janeiro, 2025</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
                 <ul className="space-y-2">
-                  <li>• Implemented first-time user domain setup flow</li>
-                  <li>• Added domain validation with real-time feedback</li>
-                  <li>• Created beautiful domain setup page with animations</li>
-                  <li>• Enhanced user onboarding experience</li>
-                  <li>• Added redirect logic based on domain configuration status</li>
+                  {t('changelog.v1.3.0.changes').split('|').map((change, index) => (
+                    <li key={index}>{change}</li>
+                  ))}
                 </ul>
               </div>
               <div className="mt-4 text-xs text-muted-foreground">
-                By Development Team
+                {t('changelog.by')} Development Team
               </div>
             </div>
 
@@ -75,21 +72,19 @@ const ChangelogContent = () => {
             <div className="border border-border rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">v1.2.0 - Interactive Demo</h3>
-                  <p className="text-sm text-muted-foreground">December 30, 2024</p>
+                  <h3 className="text-lg font-semibold">v1.2.0 - {t('changelog.v1.2.0.title')}</h3>
+                  <p className="text-sm text-muted-foreground">30 de Dezembro, 2024</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
                 <ul className="space-y-2">
-                  <li>• Built comprehensive demo page with AI analysis tabs</li>
-                  <li>• Added prompt analysis, competitor analysis, and strategic insights</li>
-                  <li>• Implemented interactive data tables and charts</li>
-                  <li>• Created sentiment analysis visualization</li>
-                  <li>• Added prompt customization and flash cards features</li>
+                  {t('changelog.v1.2.0.changes').split('|').map((change, index) => (
+                    <li key={index}>{change}</li>
+                  ))}
                 </ul>
               </div>
               <div className="mt-4 text-xs text-muted-foreground">
-                By Development Team
+                {t('changelog.by')} Development Team
               </div>
             </div>
 
@@ -97,22 +92,19 @@ const ChangelogContent = () => {
             <div className="border border-border rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">v1.1.0 - Authentication & Admin</h3>
-                  <p className="text-sm text-muted-foreground">December 28, 2024</p>
+                  <h3 className="text-lg font-semibold">v1.1.0 - {t('changelog.v1.1.0.title')}</h3>
+                  <p className="text-sm text-muted-foreground">28 de Dezembro, 2024</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
                 <ul className="space-y-2">
-                  <li>• Implemented complete authentication system with Supabase</li>
-                  <li>• Added role-based access control (admin, client)</li>
-                  <li>• Created admin dashboard with user management</li>
-                  <li>• Built invitation code system for user registration</li>
-                  <li>• Added security audit logs and login attempt tracking</li>
-                  <li>• Implemented organization management system</li>
+                  {t('changelog.v1.1.0.changes').split('|').map((change, index) => (
+                    <li key={index}>{change}</li>
+                  ))}
                 </ul>
               </div>
               <div className="mt-4 text-xs text-muted-foreground">
-                By Development Team
+                {t('changelog.by')} Development Team
               </div>
             </div>
 
@@ -120,22 +112,19 @@ const ChangelogContent = () => {
             <div className="border border-border rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">v1.0.0 - Platform Launch</h3>
-                  <p className="text-sm text-muted-foreground">December 25, 2024</p>
+                  <h3 className="text-lg font-semibold">v1.0.0 - {t('changelog.v1.0.0.title')}</h3>
+                  <p className="text-sm text-muted-foreground">25 de Dezembro, 2024</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
                 <ul className="space-y-2">
-                  <li>• Launched PromptMetrics platform with landing page</li>
-                  <li>• Implemented bilingual support (English & Portuguese)</li>
-                  <li>• Created responsive design with accessibility features</li>
-                  <li>• Built pricing, FAQ, and contact form sections</li>
-                  <li>• Added waitlist functionality with form validation</li>
-                  <li>• Established design system with Tailwind CSS</li>
+                  {t('changelog.v1.0.0.changes').split('|').map((change, index) => (
+                    <li key={index}>{change}</li>
+                  ))}
                 </ul>
               </div>
               <div className="mt-4 text-xs text-muted-foreground">
-                By Development Team
+                {t('changelog.by')} Development Team
               </div>
             </div>
           </div>
