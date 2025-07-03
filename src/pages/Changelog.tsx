@@ -25,51 +25,119 @@ const ChangelogContent = () => {
           </div>
           
           <div className="space-y-8">
-            {/* Empty state - will be populated by Lovable Git integration */}
-            <div className="text-center py-16">
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg 
-                  className="w-8 h-8 text-muted-foreground" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium mb-2">
-                Coming Soon
-              </h3>
-              <p className="text-muted-foreground">
-                {t('changelog.empty')}
-              </p>
-            </div>
-            
-            {/* Template for future changelog entries */}
-            {/* 
+            {/* Version 1.4.0 - Latest */}
             <div className="border border-border rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">Version Title</h3>
-                  <p className="text-sm text-muted-foreground">Date</p>
+                  <h3 className="text-lg font-semibold">v1.4.0 - Changelog & Transparency</h3>
+                  <p className="text-sm text-muted-foreground">January 3, 2025</p>
                 </div>
                 <span className="px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">
                   Latest
                 </span>
               </div>
-              <div className="prose prose-sm max-w-none">
-                <p>Change description will appear here.</p>
+              <div className="prose prose-sm max-w-none text-foreground">
+                <ul className="space-y-2">
+                  <li>• Added comprehensive changelog page with version history</li>
+                  <li>• Implemented footer navigation with changelog link</li>
+                  <li>• Enhanced responsive design for changelog display</li>
+                  <li>• Improved footer layout with better mobile responsiveness</li>
+                </ul>
               </div>
               <div className="mt-4 text-xs text-muted-foreground">
-                By Author Name
+                By Development Team
               </div>
             </div>
-            */}
+
+            {/* Version 1.3.0 */}
+            <div className="border border-border rounded-lg p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">v1.3.0 - Domain Management</h3>
+                  <p className="text-sm text-muted-foreground">January 2, 2025</p>
+                </div>
+              </div>
+              <div className="prose prose-sm max-w-none text-foreground">
+                <ul className="space-y-2">
+                  <li>• Implemented first-time user domain setup flow</li>
+                  <li>• Added domain validation with real-time feedback</li>
+                  <li>• Created beautiful domain setup page with animations</li>
+                  <li>• Enhanced user onboarding experience</li>
+                  <li>• Added redirect logic based on domain configuration status</li>
+                </ul>
+              </div>
+              <div className="mt-4 text-xs text-muted-foreground">
+                By Development Team
+              </div>
+            </div>
+
+            {/* Version 1.2.0 */}
+            <div className="border border-border rounded-lg p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">v1.2.0 - Interactive Demo</h3>
+                  <p className="text-sm text-muted-foreground">December 30, 2024</p>
+                </div>
+              </div>
+              <div className="prose prose-sm max-w-none text-foreground">
+                <ul className="space-y-2">
+                  <li>• Built comprehensive demo page with AI analysis tabs</li>
+                  <li>• Added prompt analysis, competitor analysis, and strategic insights</li>
+                  <li>• Implemented interactive data tables and charts</li>
+                  <li>• Created sentiment analysis visualization</li>
+                  <li>• Added prompt customization and flash cards features</li>
+                </ul>
+              </div>
+              <div className="mt-4 text-xs text-muted-foreground">
+                By Development Team
+              </div>
+            </div>
+
+            {/* Version 1.1.0 */}
+            <div className="border border-border rounded-lg p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">v1.1.0 - Authentication & Admin</h3>
+                  <p className="text-sm text-muted-foreground">December 28, 2024</p>
+                </div>
+              </div>
+              <div className="prose prose-sm max-w-none text-foreground">
+                <ul className="space-y-2">
+                  <li>• Implemented complete authentication system with Supabase</li>
+                  <li>• Added role-based access control (admin, client)</li>
+                  <li>• Created admin dashboard with user management</li>
+                  <li>• Built invitation code system for user registration</li>
+                  <li>• Added security audit logs and login attempt tracking</li>
+                  <li>• Implemented organization management system</li>
+                </ul>
+              </div>
+              <div className="mt-4 text-xs text-muted-foreground">
+                By Development Team
+              </div>
+            </div>
+
+            {/* Version 1.0.0 */}
+            <div className="border border-border rounded-lg p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">v1.0.0 - Platform Launch</h3>
+                  <p className="text-sm text-muted-foreground">December 25, 2024</p>
+                </div>
+              </div>
+              <div className="prose prose-sm max-w-none text-foreground">
+                <ul className="space-y-2">
+                  <li>• Launched PromptMetrics platform with landing page</li>
+                  <li>• Implemented bilingual support (English & Portuguese)</li>
+                  <li>• Created responsive design with accessibility features</li>
+                  <li>• Built pricing, FAQ, and contact form sections</li>
+                  <li>• Added waitlist functionality with form validation</li>
+                  <li>• Established design system with Tailwind CSS</li>
+                </ul>
+              </div>
+              <div className="mt-4 text-xs text-muted-foreground">
+                By Development Team
+              </div>
+            </div>
           </div>
         </div>
       </main>
