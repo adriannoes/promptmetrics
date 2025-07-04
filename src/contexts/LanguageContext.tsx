@@ -141,7 +141,6 @@ const translations = {
     'changelog.subtitle': 'Track all updates and improvements to PromptMetrics',
     'changelog.empty': 'No updates yet. Changes will appear here as they are made.',
     'changelog.latest': 'Latest',
-    'changelog.by': 'By',
     
     // Changelog versions
     'changelog.v1.4.0.title': 'Changelog & Transparency',
@@ -284,7 +283,6 @@ const translations = {
     'changelog.subtitle': 'Acompanhe todas as atualizações e melhorias do PromptMetrics',
     'changelog.empty': 'Nenhuma atualização ainda. As mudanças aparecerão aqui conforme são feitas.',
     'changelog.latest': 'Mais Recente',
-    'changelog.by': 'Por',
     
     // Changelog versions
     'changelog.v1.4.0.title': 'Changelog & Transparência',

@@ -43,9 +43,6 @@ const ChangelogContent = () => {
                   ))}
                 </ul>
               </div>
-              <div className="mt-4 text-xs text-muted-foreground">
-                {t('changelog.by')} Development Team
-              </div>
             </div>
 
             {/* Version 1.3.0 */}
@@ -62,9 +59,6 @@ const ChangelogContent = () => {
                     <li key={index}>{change}</li>
                   ))}
                 </ul>
-              </div>
-              <div className="mt-4 text-xs text-muted-foreground">
-                {t('changelog.by')} Development Team
               </div>
             </div>
 
@@ -83,9 +77,6 @@ const ChangelogContent = () => {
                   ))}
                 </ul>
               </div>
-              <div className="mt-4 text-xs text-muted-foreground">
-                {t('changelog.by')} Development Team
-              </div>
             </div>
 
             {/* Version 1.1.0 */}
@@ -103,9 +94,6 @@ const ChangelogContent = () => {
                   ))}
                 </ul>
               </div>
-              <div className="mt-4 text-xs text-muted-foreground">
-                {t('changelog.by')} Development Team
-              </div>
             </div>
 
             {/* Version 1.0.0 */}
@@ -122,9 +110,6 @@ const ChangelogContent = () => {
                     <li key={index}>{change}</li>
                   ))}
                 </ul>
-              </div>
-              <div className="mt-4 text-xs text-muted-foreground">
-                {t('changelog.by')} Development Team
               </div>
             </div>
           </div>
