@@ -26,13 +26,13 @@ const ChangelogContent = () => {
           
           <div className="space-y-8">
             {/* Version 1.4.0 - Latest */}
-            <div className="border border-border rounded-lg p-6">
+            <div className="border-2 border-primary/50 bg-primary/5 rounded-lg p-6 shadow-lg">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">v1.4.0 - {t('changelog.v1.4.0.title')}</h3>
-                  <p className="text-sm text-muted-foreground">3 de Janeiro, 2025</p>
+                  <h3 className="text-xl font-bold text-primary">v1.4.0 - {t('changelog.v1.4.0.title')}</h3>
+                  <p className="text-sm text-muted-foreground">2 de julho, 2025</p>
                 </div>
-                <span className="px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">
+                <span className="px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-full shadow-sm">
                   {t('changelog.latest')}
                 </span>
               </div>
@@ -50,7 +50,7 @@ const ChangelogContent = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold">v1.3.0 - {t('changelog.v1.3.0.title')}</h3>
-                  <p className="text-sm text-muted-foreground">2 de Janeiro, 2025</p>
+                  <p className="text-sm text-muted-foreground">28 de junho, 2025</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
@@ -67,7 +67,7 @@ const ChangelogContent = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold">v1.2.0 - {t('changelog.v1.2.0.title')}</h3>
-                  <p className="text-sm text-muted-foreground">30 de Dezembro, 2024</p>
+                  <p className="text-sm text-muted-foreground">25 de junho, 2025</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
@@ -84,7 +84,7 @@ const ChangelogContent = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold">v1.1.0 - {t('changelog.v1.1.0.title')}</h3>
-                  <p className="text-sm text-muted-foreground">28 de Dezembro, 2024</p>
+                  <p className="text-sm text-muted-foreground">19 de junho, 2025</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
@@ -101,7 +101,7 @@ const ChangelogContent = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold">v1.0.0 - {t('changelog.v1.0.0.title')}</h3>
-                  <p className="text-sm text-muted-foreground">25 de Dezembro, 2024</p>
+                  <p className="text-sm text-muted-foreground">13 de junho, 2025</p>
                 </div>
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
