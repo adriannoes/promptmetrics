@@ -17,6 +17,7 @@ import Test from "./pages/Test";
 import Demo from "./pages/Demo";
 import DomainSetup from "./pages/DomainSetup";
 import Changelog from "./pages/Changelog";
+import Analysis from "./pages/Analysis";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/demo" element={<Demo />} />
+            <Route path="/analysis" element={<Analysis />} />
             <Route path="/changelog" element={<Changelog />} />
             <Route 
               path="/domain-setup" 
