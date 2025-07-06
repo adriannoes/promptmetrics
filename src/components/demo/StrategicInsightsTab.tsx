@@ -16,8 +16,8 @@ interface StrategicInsightsTabProps {
   analysisData: AnalysisResult;
 }
 
-export const StrategicInsightsTab: React.FC<StrategicInsightsTabProps> = ({ analysisData }) => {
-  const strategicInsights = analysisData?.analysis_data?.strategic_insights;
+export const StrategicInsightsTab = () => {
+  const strategicInsights = null; // Static demo data
   return (
     <div className="space-y-8">
       <Card>

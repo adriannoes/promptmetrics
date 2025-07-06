@@ -93,11 +93,11 @@ const competitorOpportunities = [
   }
 ];
 
-export const CompetitorAnalysisTab: React.FC<CompetitorAnalysisTabProps> = ({ analysisData }) => {
+export const CompetitorAnalysisTab = () => {
   const [selectedCompetitor, setSelectedCompetitor] = useState('all');
 
-  // Extract data from analysisData or use defaults
-  const marketShareData = analysisData?.analysis_data?.competitor_analysis?.market_share || [
+  // Use static data for demo
+  const marketShareData = [
     { name: 'Lovable', value: 35, color: '#3B82F6' },
     { name: 'Bolt', value: 25, color: '#10B981' },
     { name: 'V0', value: 20, color: '#8B5CF6' },
@@ -105,7 +105,7 @@ export const CompetitorAnalysisTab: React.FC<CompetitorAnalysisTabProps> = ({ an
     { name: 'Other', value: 8, color: '#6B7280' },
   ];
 
-  const marketTrendsData = analysisData?.analysis_data?.competitor_analysis?.market_trends || [
+  const marketTrendsData = [
     { month: 'Jan', Lovable: 32, Bolt: 28, V0: 22, 'Figma Make': 10, Other: 8 },
     { month: 'Feb', Lovable: 33, Bolt: 27, V0: 21, 'Figma Make': 11, Other: 8 },
     { month: 'Mar', Lovable: 34, Bolt: 26, V0: 21, 'Figma Make': 11, Other: 8 },
@@ -114,7 +114,7 @@ export const CompetitorAnalysisTab: React.FC<CompetitorAnalysisTabProps> = ({ an
     { month: 'Jun', Lovable: 35, Bolt: 25, V0: 20, 'Figma Make': 12, Other: 8 },
   ];
 
-  const strategicPriorities = analysisData?.analysis_data?.competitor_analysis?.strategic_priorities || [
+  const strategicPriorities = [
     {
       id: 1,
       title: 'Expand AI-Powered Development Features',
@@ -145,7 +145,7 @@ export const CompetitorAnalysisTab: React.FC<CompetitorAnalysisTabProps> = ({ an
     },
   ];
 
-  const competitorOpportunities = analysisData?.analysis_data?.competitor_analysis?.opportunities || [
+  const competitorOpportunities = [
     {
       category: 'Product Development',
       title: 'Leverage Lovable\'s conversational AI interface to differentiate from competitors.',

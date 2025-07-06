@@ -18,7 +18,7 @@ interface PromptAnalysisTabProps {
   analysisData: AnalysisResult;
 }
 
-export const PromptAnalysisTab: React.FC<PromptAnalysisTabProps> = ({ analysisData }) => {
+export const PromptAnalysisTab = () => {
   const {
     selectedLlms,
     selectedCompetitors,

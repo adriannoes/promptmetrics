@@ -54,14 +54,14 @@ const defaultShareOfRankData = [
   { month: 'Jun', Lovable: 52, Bolt: 22, V0: 17, 'Figma Make': 9 },
 ];
 
-export const DashboardTab: React.FC<DashboardTabProps> = ({ analysisData }) => {
+export const DashboardTab = () => {
   const { recentAnalyses, loading } = useRealTimeAnalysis();
 
-  // Extract data from analysisData or use defaults
-  const sentimentTrendData = analysisData?.analysis_data?.sentiment_trends || defaultSentimentTrendData;
-  const rankingData = analysisData?.analysis_data?.ranking_data || defaultRankingData;
-  const overallSentimentData = analysisData?.analysis_data?.overall_sentiment || defaultOverallSentimentData;
-  const shareOfRankData = analysisData?.analysis_data?.share_of_rank || defaultShareOfRankData;
+  // Use static data for demo
+  const sentimentTrendData = defaultSentimentTrendData;
+  const rankingData = defaultRankingData;
+  const overallSentimentData = defaultOverallSentimentData;
+  const shareOfRankData = defaultShareOfRankData;
 
   return (
     <div className="space-y-8">
