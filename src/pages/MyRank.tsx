@@ -123,6 +123,15 @@ const MyRank = () => {
               </span>
               <button
                 onClick={() => {
+                  console.log('🔄 MyRank: Manual refresh triggered for domain:', currentDomain);
+                  refetch(currentDomain);
+                }}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Atualizar Dados
+              </button>
+              <button
+                onClick={() => {
                   const newDomain = prompt('Digite o novo domínio:', currentDomain);
                   if (newDomain && newDomain.trim()) {
                     handleDomainChange(newDomain.trim());

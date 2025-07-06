@@ -16,6 +16,7 @@ export const useAnalysisData = (domain?: string) => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchAnalysis = async (targetDomain: string) => {
+    console.log('🔍 useAnalysisData: Fetching analysis for domain:', targetDomain);
     setLoading(true);
     setError(null);
 
@@ -28,13 +29,16 @@ export const useAnalysisData = (domain?: string) => {
         .limit(1)
         .maybeSingle();
 
+      console.log('📊 useAnalysisData: Query result:', { result, fetchError });
+
       if (fetchError) {
         throw fetchError;
       }
 
       setData(result);
+      console.log('✅ useAnalysisData: Data set successfully:', result);
     } catch (err) {
-      console.error('Error fetching analysis:', err);
+      console.error('❌ useAnalysisData: Error fetching analysis:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch analysis');
     } finally {
       setLoading(false);
@@ -43,9 +47,25 @@ export const useAnalysisData = (domain?: string) => {
 
   useEffect(() => {
     if (domain) {
+      console.log('🚀 useAnalysisData: useEffect triggered for domain:', domain);
       fetchAnalysis(domain);
     }
   }, [domain]);
+
+  // Auto-refresh every 5 seconds when loading to check for new data
+  useEffect(() => {
+    if (domain && !data) {
+      console.log('🔄 useAnalysisData: Setting up auto-refresh for domain:', domain);
+      const interval = setInterval(() => {
+        fetchAnalysis(domain);
+      }, 5000);
+
+      return () => {
+        console.log('🛑 useAnalysisData: Clearing auto-refresh interval');
+        clearInterval(interval);
+      };
+    }
+  }, [domain, data]);
 
   return {
     data,
