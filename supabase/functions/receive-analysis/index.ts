@@ -1,4 +1,9 @@
+// Edge Function for Supabase - Runs on Deno runtime
+// TypeScript errors below are expected as this runs in Deno, not Node.js
+
+// @ts-ignore - Deno runtime imports
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// @ts-ignore - Deno runtime imports  
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -52,7 +57,9 @@ serve(async (req) => {
 
     // Initialize Supabase client
     const supabase = createClient(
+      // @ts-ignore - Deno global object
       Deno.env.get('SUPABASE_URL') ?? '',
+      // @ts-ignore - Deno global object
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
