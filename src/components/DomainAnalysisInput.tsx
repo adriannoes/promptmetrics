@@ -16,6 +16,8 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
 }) => {
   const [domain, setDomain] = useState('');
 
+  console.log('DomainAnalysisInput: Rendered with domain=', domain, 'loading=', loading);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('DomainAnalysisInput: handleSubmit called with domain:', domain);
@@ -51,19 +53,25 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
     }
   };
 
+  const isButtonDisabled = !domain.trim() || loading;
+  console.log('DomainAnalysisInput: Button disabled?', isButtonDisabled, 'domain.trim()=', domain.trim(), 'loading=', loading);
+
   return (
     <form onSubmit={handleSubmit} className="flex gap-4 mb-6">
       <Input
         type="text"
         placeholder="Enter domain to analyze (e.g., lovable.dev)"
         value={domain}
-        onChange={(e) => setDomain(e.target.value)}
+        onChange={(e) => {
+          console.log('DomainAnalysisInput: Input changed to:', e.target.value);
+          setDomain(e.target.value);
+        }}
         className="flex-1"
         disabled={loading}
       />
       <Button 
         type="submit" 
-        disabled={!domain.trim() || loading}
+        disabled={isButtonDisabled}
         className="px-6"
       >
         {loading ? (
