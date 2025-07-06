@@ -33,26 +33,27 @@ serve(async (req) => {
       );
     }
 
-    // Get the n8n webhook URL from environment
-    const webhookUrl = Deno.env.get('N8N_WEBHOOK_URL');
-    if (!webhookUrl) {
-      console.error('N8N_WEBHOOK_URL not configured');
-      return new Response(
-        JSON.stringify({ error: 'Webhook not configured' }), 
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
-    }
+    // Use the specific n8n webhook URL for testing
+    const webhookUrl = 'https://no-code-n8n.vf5y6u.easypanel.host/webhook-test/661b6816-1ea9-455d-82ae-b98602c9fbd7';
+    
+    console.log('Testing n8n webhook with URL:', webhookUrl);
+    
+    // Send domain to n8n webhook with additional test data
+    const testPayload = {
+      domain: domain,
+      timestamp: new Date().toISOString(),
+      source: 'promptmetrics-frontend',
+      test_mode: true
+    };
+    
+    console.log('Sending test payload to n8n:', testPayload);
 
-    // Send domain to n8n webhook
     const n8nResponse = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ domain })
+      body: JSON.stringify(testPayload)
     });
 
     if (!n8nResponse.ok) {
@@ -66,7 +67,23 @@ serve(async (req) => {
       );
     }
 
-    const n8nResult = await n8nResponse.json().catch(() => ({}));
+    let n8nResult = {};
+    try {
+      const responseText = await n8nResponse.text();
+      console.log('N8N raw response:', responseText);
+      
+      if (responseText) {
+        try {
+          n8nResult = JSON.parse(responseText);
+        } catch (parseError) {
+          console.log('N8N response is not JSON, treating as text:', responseText);
+          n8nResult = { message: responseText };
+        }
+      }
+    } catch (error) {
+      console.error('Error reading n8n response:', error);
+    }
+    
     console.log('N8N workflow triggered successfully:', n8nResult);
 
     return new Response(
