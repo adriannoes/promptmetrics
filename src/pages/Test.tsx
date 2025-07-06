@@ -5,8 +5,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Database } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Test: React.FC = () => {
+  const { t } = useLanguage();
   const [testResults, setTestResults] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [debugResults, setDebugResults] = useState<any>(null);
@@ -113,9 +116,12 @@ const Test: React.FC = () => {
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">🧪 Debug Simplificado</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold">🧪 {t('test.title')}</h1>
+          <LanguageSelector />
+        </div>
         <p className="text-gray-600">
-          Teste de conectividade básica com o Supabase.
+          {t('test.subtitle')}
         </p>
       </div>
 
@@ -125,7 +131,7 @@ const Test: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="w-5 h-5" />
-              Testes de Debug
+              {t('test.debugTests')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -136,7 +142,7 @@ const Test: React.FC = () => {
                 className="flex items-center gap-2"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
-                Testar Conectividade
+                {t('test.testConnectivity')}
               </Button>
               
               <Button
@@ -146,7 +152,7 @@ const Test: React.FC = () => {
                 className="flex items-center gap-2"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
-                Simular useAnalysisData
+                {t('test.simulateHook')}
               </Button>
               
               <Button
@@ -157,7 +163,7 @@ const Test: React.FC = () => {
                 }}
                 disabled={loading}
               >
-                Limpar
+                {t('test.clear')}
               </Button>
             </div>
           </CardContent>
@@ -167,26 +173,26 @@ const Test: React.FC = () => {
         {debugResults && (
           <Card>
             <CardHeader>
-              <CardTitle>🔍 Dados Encontrados</CardTitle>
+              <CardTitle>🔍 {t('test.dataFound')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Domínio</Badge>
+                  <Badge variant="outline">{t('test.domain')}</Badge>
                   <span>{debugResults.domain}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Status</Badge>
+                  <Badge variant="outline">{t('test.status')}</Badge>
                   <span className={debugResults.status === 'completed' ? 'text-green-600' : 'text-yellow-600'}>
                     {debugResults.status}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Score</Badge>
+                  <Badge variant="outline">{t('test.score')}</Badge>
                   <span>{(debugResults.analysis_data as any)?.score || 'N/A'}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Atualizado</Badge>
+                  <Badge variant="outline">{t('test.updated')}</Badge>
                   <span>{new Date(debugResults.updated_at).toLocaleString('pt-BR')}</span>
                 </div>
               </div>
@@ -197,11 +203,11 @@ const Test: React.FC = () => {
         {/* Test Results */}
         <Card>
           <CardHeader>
-            <CardTitle>📋 Logs de Debug</CardTitle>
+            <CardTitle>📋 {t('test.debugLogs')}</CardTitle>
           </CardHeader>
           <CardContent>
             {testResults.length === 0 ? (
-              <p className="text-gray-500">Clique em um botão para iniciar o teste.</p>
+              <p className="text-gray-500">{t('test.clickToStart')}</p>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {testResults.map((result, index) => (

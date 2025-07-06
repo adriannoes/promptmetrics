@@ -4,6 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { TrendingUp, Target, Heart, Trophy, Database } from 'lucide-react';
 import { CompleteAnalysisResult } from '@/types/analysis';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MyRankDashboardTabProps {
   analysisData: CompleteAnalysisResult;
@@ -44,10 +45,15 @@ const defaultShareOfRankData = [
 ];
 
 export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysisData }) => {
+  const { t } = useLanguage();
+  
   // Extract data from analysisData or use defaults
   const sentimentTrendData = analysisData?.analysis_data?.sentiment_trends || defaultSentimentTrendData;
   const rankingData = analysisData?.analysis_data?.ranking_data || defaultRankingData;
-  const overallSentimentData = analysisData?.analysis_data?.overall_sentiment || defaultOverallSentimentData;
+  const overallSentimentData = analysisData?.analysis_data?.overall_sentiment || defaultOverallSentimentData.map(item => ({
+    ...item,
+    name: item.name === 'Sua Marca' ? t('dashboard.yourBrand') : item.name
+  }));
   const shareOfRankData = analysisData?.analysis_data?.share_of_rank || defaultShareOfRankData;
 
   return (
@@ -58,7 +64,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="w-5 h-5 text-blue-600" />
-              Análise Atual
+              {t('dashboard.currentAnalysis')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -78,7 +84,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Pontuação Geral</CardTitle>
+            <CardTitle className="text-lg">{t('dashboard.overallScore')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-600">
@@ -95,24 +101,24 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Status</CardTitle>
+            <CardTitle className="text-lg">{t('dashboard.status')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center">
               {analysisData.status === 'completed' ? (
                 <div className="text-green-600">
                   <div className="text-2xl font-bold">✓</div>
-                  <div>Análise Completa</div>
+                  <div>{t('dashboard.analysisComplete')}</div>
                 </div>
               ) : analysisData.status === 'processing' ? (
                 <div className="text-yellow-600">
                   <div className="text-2xl font-bold">⏳</div>
-                  <div>Processando...</div>
+                  <div>{t('dashboard.processing')}</div>
                 </div>
               ) : (
                 <div className="text-red-600">
                   <div className="text-2xl font-bold">✗</div>
-                  <div>Erro na Análise</div>
+                  <div>{t('dashboard.analysisError')}</div>
                 </div>
               )}
             </div>
@@ -126,7 +132,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="w-5 h-5 text-blue-600" />
-              Ranking Médio ao Longo do Tempo
+              {t('dashboard.avgRankingOverTime')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -137,7 +143,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
                 <YAxis domain={[1, 5]} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name="Sua Marca" />
+                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
                 <Line type="monotone" dataKey="Competitor1" stroke="#10B981" strokeWidth={2} />
                 <Line type="monotone" dataKey="Competitor2" stroke="#8B5CF6" strokeWidth={2} />
               </LineChart>
@@ -150,7 +156,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-blue-600" />
-              Participação no 1º Lugar
+              {t('dashboard.shareOfFirstPlace')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -161,10 +167,10 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
                 <YAxis domain={[0, 60]} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name="Sua Marca" />
+                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
                 <Line type="monotone" dataKey="Competitor1" stroke="#10B981" strokeWidth={2} />
                 <Line type="monotone" dataKey="Competitor2" stroke="#8B5CF6" strokeWidth={2} />
-                <Line type="monotone" dataKey="Others" stroke="#6B7280" strokeWidth={2} name="Outros" />
+                <Line type="monotone" dataKey="Others" stroke="#6B7280" strokeWidth={2} name={t('dashboard.others')} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -175,7 +181,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-blue-600" />
-              Tendências de Sentimento (6 Meses)
+              {t('dashboard.sentimentTrends')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -186,7 +192,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
                 <YAxis domain={[50, 85]} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name="Sua Marca" />
+                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
                 <Line type="monotone" dataKey="Competitor1" stroke="#10B981" strokeWidth={2} />
                 <Line type="monotone" dataKey="Competitor2" stroke="#8B5CF6" strokeWidth={2} />
               </LineChart>
@@ -199,7 +205,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-blue-600" />
-              Pontuação Geral de Sentimento
+              {t('dashboard.overallSentimentScore')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -231,14 +237,14 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
       {analysisData.analysis_data?.summary && (
         <Card>
           <CardHeader>
-            <CardTitle>Resumo da Análise</CardTitle>
+            <CardTitle>{t('dashboard.analysisSummary')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 mb-4">{analysisData.analysis_data.summary}</p>
             
             {analysisData.analysis_data.recommendations && (
               <div>
-                <h4 className="font-medium mb-3">Recomendações:</h4>
+                <h4 className="font-medium mb-3">{t('dashboard.recommendations')}</h4>
                 <ul className="space-y-2">
                   {analysisData.analysis_data.recommendations.map((rec: string, index: number) => (
                     <li key={index} className="flex items-start gap-2">

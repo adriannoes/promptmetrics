@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CompleteAnalysisResult } from '@/types/analysis';
 import { MessageSquare, Brain, TrendingUp } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MyRankPromptAnalysisTabProps {
   analysisData: CompleteAnalysisResult;
 }
 
 export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = ({ analysisData }) => {
+  const { t } = useLanguage();
   const promptAnalysis = analysisData?.analysis_data?.prompt_analysis;
 
   // Default sentiment data if not available from analysis
@@ -38,7 +40,7 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total de Menções</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">{t('promptAnalysis.totalMentions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{performanceMetrics.total_mentions}</div>
@@ -47,7 +49,7 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Menções Positivas</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">{t('promptAnalysis.positiveMentions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{performanceMetrics.positive_mentions}</div>
@@ -56,7 +58,7 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Menções Neutras</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">{t('promptAnalysis.neutralMentions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">{performanceMetrics.neutral_mentions}</div>
@@ -65,7 +67,7 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Menções Negativas</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">{t('promptAnalysis.negativeMentions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{performanceMetrics.negative_mentions}</div>
@@ -78,7 +80,7 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="w-5 h-5 text-blue-600" />
-            Sentimento por IA
+            {t('promptAnalysis.sentimentByAI')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -87,7 +89,7 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis domain={[0, 100]} />
-              <Tooltip formatter={(value) => [`${value}%`, 'Sentimento']} />
+              <Tooltip formatter={(value) => [`${value}%`, t('promptAnalysis.sentiment')]} />
               <Bar dataKey="score" fill="#3B82F6" />
             </BarChart>
           </ResponsiveContainer>
@@ -100,7 +102,7 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-blue-600" />
-              Ranking por Categoria de Prompt
+              {t('promptAnalysis.rankingByPromptCategory')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -134,23 +136,23 @@ export const MyRankPromptAnalysisTab: React.FC<MyRankPromptAnalysisTabProps> = (
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-blue-600" />
-            Pontuação Geral de Sentimento
+            Score Geral de Prompts
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center">
             <div className="text-4xl font-bold text-blue-600 mb-2">
-              {performanceMetrics.sentiment_score.toFixed(1)}%
+              {Math.round(performanceMetrics.sentiment_score)}/100
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
+            <p className="text-gray-600">
+              Baseado em {performanceMetrics.total_mentions} menções analisadas
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-3 mt-4">
               <div 
                 className="bg-blue-600 h-3 rounded-full transition-all duration-500" 
                 style={{ width: `${performanceMetrics.sentiment_score}%` }}
               />
             </div>
-            <p className="text-gray-600 mt-2">
-              Baseado em {performanceMetrics.total_mentions} menções analisadas
-            </p>
           </div>
         </CardContent>
       </Card>

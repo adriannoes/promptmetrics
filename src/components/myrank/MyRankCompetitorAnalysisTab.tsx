@@ -4,20 +4,22 @@ import { CompleteAnalysisResult } from '@/types/analysis';
 import { Badge } from '@/components/ui/badge';
 import { Target, TrendingUp, Lightbulb, CheckCircle, AlertTriangle, ArrowUp } from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MyRankCompetitorAnalysisTabProps {
   analysisData: CompleteAnalysisResult;
 }
 
 export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabProps> = ({ analysisData }) => {
+  const { t } = useLanguage();
   const competitorAnalysis = analysisData?.analysis_data?.competitor_analysis;
 
   // Use real data from n8n or fallback
   const marketShareData = competitorAnalysis?.market_share || [
-    { name: 'Sua Marca', value: 35, color: '#3B82F6' },
+    { name: t('dashboard.yourBrand'), value: 35, color: '#3B82F6' },
     { name: 'Concorrente 1', value: 25, color: '#10B981' },
     { name: 'Concorrente 2', value: 20, color: '#8B5CF6' },
-    { name: 'Outros', value: 20, color: '#6B7280' },
+    { name: t('dashboard.others'), value: 20, color: '#6B7280' },
   ];
 
   const marketTrendsData = competitorAnalysis?.market_trends || [
@@ -85,6 +87,15 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
     }
   };
 
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case 'high': return t('competitorAnalysis.high');
+      case 'medium': return t('competitorAnalysis.medium');
+      case 'low': return t('competitorAnalysis.low');
+      default: return priority;
+    }
+  };
+
   const getImpactIcon = (impact: string) => {
     switch (impact) {
       case 'high': return <ArrowUp className="w-4 h-4 text-red-600" />;
@@ -98,8 +109,8 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Análise Competitiva</h2>
-        <p className="text-gray-600 mt-1">Analisando: {analysisData.domain}</p>
+        <h2 className="text-2xl font-bold text-gray-900">{t('competitorAnalysis.title')}</h2>
+        <p className="text-gray-600 mt-1">{t('competitorAnalysis.analyzing')}: {analysisData.domain}</p>
       </div>
 
       {/* Market Position & Strategic Priorities */}
@@ -109,9 +120,9 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-600" />
-                Prioridades Estratégicas
+                {t('competitorAnalysis.strategicPriorities')}
               </CardTitle>
-              <p className="text-sm text-gray-600">Baseado na análise atual da sua marca.</p>
+              <p className="text-sm text-gray-600">{t('competitorAnalysis.basedOnCurrentAnalysis')}</p>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -125,14 +136,14 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
                           </span>
                           <h3 className="font-semibold text-gray-900">{priority.title}</h3>
                           <Badge className={getPriorityColor(priority.priority)}>
-                            {priority.priority}
+                            {getPriorityLabel(priority.priority)}
                           </Badge>
                         </div>
                         <p className="text-gray-600 text-sm ml-9">{priority.description}</p>
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-medium text-gray-900">{priority.marketShare}%</div>
-                        <div className="text-xs text-gray-500">participação</div>
+                        <div className="text-xs text-gray-500">{t('competitorAnalysis.participation')}</div>
                       </div>
                     </div>
                   </div>
@@ -146,7 +157,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
         <div>
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Participação de Mercado</CardTitle>
+              <CardTitle className="text-lg">{t('competitorAnalysis.marketShare')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={200}>
@@ -164,7 +175,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value}%`, 'Participação']} />
+                  <Tooltip formatter={(value) => [`${value}%`, t('competitorAnalysis.participation')]} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="mt-4 space-y-2">
@@ -189,7 +200,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
-              Pontos Fortes
+              {t('competitorAnalysis.strengthsTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -208,7 +219,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-orange-600" />
-              Pontos de Melhoria
+              {t('competitorAnalysis.improvementAreasTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -229,7 +240,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-blue-600" />
-            Tendências de Mercado
+            {t('competitorAnalysis.marketTrends')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -237,13 +248,13 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
             <LineChart data={marketTrendsData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis domain={[0, 40]} />
+              <YAxis domain={[15, 40]} />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="Sua Marca" stroke="#3B82F6" strokeWidth={2} />
+              <Line type="monotone" dataKey="Sua Marca" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
               <Line type="monotone" dataKey="Concorrente 1" stroke="#10B981" strokeWidth={2} />
               <Line type="monotone" dataKey="Concorrente 2" stroke="#8B5CF6" strokeWidth={2} />
-              <Line type="monotone" dataKey="Outros" stroke="#6B7280" strokeWidth={2} />
+              <Line type="monotone" dataKey="Outros" stroke="#6B7280" strokeWidth={2} name={t('dashboard.others')} />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -254,50 +265,29 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-blue-600" />
-            Oportunidades Competitivas
+            {t('competitorAnalysis.opportunities')}
           </CardTitle>
-          <p className="text-sm text-gray-600 mt-1">Baseado na análise atual da sua marca.</p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             {opportunities.map((opportunity, index) => (
-              <div key={index} className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div key={index} className="border rounded-lg p-6 hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
-                    {index + 1}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {getImpactIcon(opportunity.impact)}
-                    <Badge variant="outline" className="text-xs">
-                      {opportunity.category}
-                    </Badge>
-                  </div>
-                </div>
-                
-                <h3 className="font-semibold text-gray-900 mb-3 leading-tight">
-                  {opportunity.title}
-                </h3>
-                
-                <p className="text-gray-600 text-sm mb-4">
-                  {opportunity.description}
-                </p>
-                
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Impacto:</span>
-                    <Badge className={`text-xs ${
-                      opportunity.impact === 'high' ? 'bg-red-100 text-red-800' :
-                      opportunity.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-green-100 text-green-800'
-                    }`}>
-                      {opportunity.impact}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Esforço:</span>
-                    <Badge variant="outline" className="text-xs">
-                      {opportunity.effort}
-                    </Badge>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Badge variant="outline">{opportunity.category}</Badge>
+                      <div className="flex items-center gap-2">
+                        {getImpactIcon(opportunity.impact)}
+                        <span className="text-sm font-medium text-gray-600">
+                          {t('competitorAnalysis.impact')}: {getPriorityLabel(opportunity.impact)}
+                        </span>
+                      </div>
+                      <div className="text-sm font-medium text-gray-600">
+                        {t('competitorAnalysis.effort')}: {getPriorityLabel(opportunity.effort)}
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2">{opportunity.title}</h3>
+                    <p className="text-gray-600 text-sm">{opportunity.description}</p>
                   </div>
                 </div>
               </div>

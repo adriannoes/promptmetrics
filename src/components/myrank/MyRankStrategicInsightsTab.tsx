@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CompleteAnalysisResult } from '@/types/analysis';
 import { Lightbulb, Target, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MyRankStrategicInsightsTabProps {
   analysisData: CompleteAnalysisResult;
 }
 
 export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProps> = ({ analysisData }) => {
+  const { t } = useLanguage();
   const strategicInsights = analysisData?.analysis_data?.strategic_insights;
 
   const keyInsights = strategicInsights?.key_insights || [
@@ -45,8 +47,8 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Insights Estratégicos</h2>
-        <p className="text-gray-600 mt-1">Análise estratégica para: {analysisData.domain}</p>
+        <h2 className="text-2xl font-bold text-gray-900">{t('strategicInsights.title')}</h2>
+        <p className="text-gray-600 mt-1">{t('strategicInsights.analysisFor')}: {analysisData.domain}</p>
       </div>
 
       {/* Key Insights */}
@@ -54,7 +56,7 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-blue-600" />
-            Insights Principais
+            {t('strategicInsights.keyInsights')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -75,62 +77,39 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-blue-600" />
-            Recomendações Estratégicas
+            <Target className="w-5 h-5 text-green-600" />
+            {t('strategicInsights.recommendations')}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-4 flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                Recomendações Principais
-              </h4>
-              <ul className="space-y-3">
-                {recommendations.map((recommendation, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
-                    <span className="text-gray-700">{recommendation}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4 flex items-center gap-2">
-                <Target className="w-4 h-4 text-blue-600" />
-                Ações Imediatas
-              </h4>
-              <ul className="space-y-3">
-                {actionItems.map((action, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
-                    <span className="text-gray-700">{action}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="space-y-4">
+            {recommendations.map((recommendation, index) => (
+              <div key={index} className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                <p className="text-gray-800">{recommendation}</p>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Opportunities vs Threats */}
+      {/* Action Items & Growth Opportunities */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              Oportunidades de Crescimento
+              <CheckCircle className="w-5 h-5 text-purple-600" />
+              {t('strategicInsights.actionItems')}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {growthOpportunities.map((opportunity, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                  <Badge className="bg-green-100 text-green-800 text-xs">
-                    Oportunidade
-                  </Badge>
-                  <p className="text-gray-700 text-sm flex-1">{opportunity}</p>
+            <div className="space-y-3">
+              {actionItems.map((action, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+                  <span className="w-5 h-5 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    {index + 1}
+                  </span>
+                  <span className="text-gray-700 text-sm">{action}</span>
                 </div>
               ))}
             </div>
@@ -140,18 +119,16 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
-              Ameaças Competitivas
+              <TrendingUp className="w-5 h-5 text-green-600" />
+              {t('strategicInsights.growthOpportunities')}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {competitiveThreats.map((threat, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
-                  <Badge className="bg-red-100 text-red-800 text-xs">
-                    Ameaça
-                  </Badge>
-                  <p className="text-gray-700 text-sm flex-1">{threat}</p>
+            <div className="space-y-3">
+              {growthOpportunities.map((opportunity, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">{opportunity}</span>
                 </div>
               ))}
             </div>
@@ -159,16 +136,35 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
         </Card>
       </div>
 
+      {/* Competitive Threats */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-orange-600" />
+            {t('strategicInsights.competitiveThreats')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {competitiveThreats.map((threat, index) => (
+              <div key={index} className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700 text-sm">{threat}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Strategic Summary */}
       <Card>
         <CardHeader>
-          <CardTitle>Resumo Estratégico</CardTitle>
+          <CardTitle>{t('strategicInsights.strategicSummary')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="prose max-w-none">
             <p className="text-gray-700 mb-4">
-              Com base na análise realizada, {analysisData.domain} possui uma{' '}
-              <strong>pontuação geral de {analysisData.analysis_data?.score || 0}/100</strong> nos sistemas de IA.
+              {t('strategicInsights.analysisScore').replace('{score}', String(analysisData.analysis_data?.score || 0))}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -176,21 +172,21 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
                 <div className="text-2xl font-bold text-blue-600">
                   {keyInsights.length}
                 </div>
-                <div className="text-sm text-gray-600">Insights Identificados</div>
+                <div className="text-sm text-gray-600">{t('strategicInsights.insightsIdentified')}</div>
               </div>
               
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <div className="text-2xl font-bold text-green-600">
                   {recommendations.length}
                 </div>
-                <div className="text-sm text-gray-600">Recomendações</div>
+                <div className="text-sm text-gray-600">{t('strategicInsights.recommendationsCount')}</div>
               </div>
               
               <div className="text-center p-4 bg-yellow-50 rounded-lg">
                 <div className="text-2xl font-bold text-yellow-600">
                   {actionItems.length}
                 </div>
-                <div className="text-sm text-gray-600">Ações Imediatas</div>
+                <div className="text-sm text-gray-600">{t('strategicInsights.immediateActions')}</div>
               </div>
             </div>
           </div>
