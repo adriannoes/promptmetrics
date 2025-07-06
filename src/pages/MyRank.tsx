@@ -33,12 +33,31 @@ const MyRank = () => {
     }
   }, [currentDomain, refetch]);
 
-  const handleDomainChange = (newDomain: string) => {
+  const handleDomainChange = async (newDomain: string) => {
     setCurrentDomain(newDomain);
     localStorage.setItem('lastAnalyzedDomain', newDomain);
     const url = new URL(window.location.href);
     url.searchParams.set('domain', newDomain);
     window.history.pushState({}, '', url.toString());
+    
+    // Trigger new analysis for the new domain
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { toast } = await import('sonner');
+      
+      const { error } = await supabase.functions.invoke('trigger-analysis', {
+        body: { domain: newDomain }
+      });
+
+      if (error) {
+        console.error('Error triggering analysis:', error);
+        toast.error('Failed to start analysis for new domain');
+      } else {
+        toast.success('Analysis started for new domain!');
+      }
+    } catch (error) {
+      console.error('Error triggering analysis:', error);
+    }
   };
 
   if (!currentDomain) {

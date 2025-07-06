@@ -16,18 +16,12 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
 }) => {
   const [domain, setDomain] = useState('');
 
-  console.log('DomainAnalysisInput: Rendered with domain=', domain, 'loading=', loading);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('DomainAnalysisInput: handleSubmit called with domain:', domain);
     
     if (!domain.trim()) {
-      console.log('DomainAnalysisInput: Empty domain, returning');
       return;
     }
-
-    console.log('DomainAnalysisInput: About to call trigger-analysis edge function');
 
     try {
       // Trigger analysis workflow
@@ -35,26 +29,22 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
         body: { domain: domain.trim() }
       });
 
-      console.log('DomainAnalysisInput: Edge function response:', { data, error });
-
       if (error) {
         console.error('Error triggering analysis:', error);
         toast.error('Failed to start analysis');
         return;
       }
 
-      console.log('DomainAnalysisInput: Analysis triggered successfully');
       toast.success('Analysis started! Results will appear shortly.');
       onAnalyze(domain.trim());
       
     } catch (error) {
-      console.error('DomainAnalysisInput: Catch block error:', error);
+      console.error('Error triggering analysis:', error);
       toast.error('Failed to start analysis');
     }
   };
 
   const isButtonDisabled = !domain.trim() || loading;
-  console.log('DomainAnalysisInput: Button disabled?', isButtonDisabled, 'domain.trim()=', domain.trim(), 'loading=', loading);
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-4 mb-6">
@@ -62,10 +52,7 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
         type="text"
         placeholder="Enter domain to analyze (e.g., lovable.dev)"
         value={domain}
-        onChange={(e) => {
-          console.log('DomainAnalysisInput: Input changed to:', e.target.value);
-          setDomain(e.target.value);
-        }}
+        onChange={(e) => setDomain(e.target.value)}
         className="flex-1"
         disabled={loading}
       />
