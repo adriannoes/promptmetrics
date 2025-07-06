@@ -7,6 +7,9 @@ import { CompetitorAnalysisTab } from '@/components/demo/CompetitorAnalysisTab';
 import { StrategicInsightsTab } from '@/components/demo/StrategicInsightsTab';
 import { DomainAnalysisInput } from '@/components/DomainAnalysisInput';
 import { useAnalysisData } from '@/hooks/useAnalysisData';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 const Demo = () => {
   const [currentDomain, setCurrentDomain] = useState('lovable.dev');
@@ -44,36 +47,51 @@ const Demo = () => {
           <DomainAnalysisInput onAnalyze={handleAnalyze} loading={loading} />
           
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-red-800">Error: {error}</p>
-            </div>
+            <Alert className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Error: {error}
+              </AlertDescription>
+            </Alert>
           )}
         </div>
 
-        <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
-            <TabsTrigger value="competitor-analysis">Competitor Analysis</TabsTrigger>
-            <TabsTrigger value="strategic-insights">Strategic Insights</TabsTrigger>
-          </TabsList>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <LoadingSpinner />
+          </div>
+        ) : !analysisData ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600">
+              Enter a domain above to start the analysis
+            </p>
+          </div>
+        ) : (
+          <Tabs defaultValue="dashboard" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="prompt-analysis">Prompt Analysis</TabsTrigger>
+              <TabsTrigger value="competitor-analysis">Competitor Analysis</TabsTrigger>
+              <TabsTrigger value="strategic-insights">Strategic Insights</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="dashboard">
-            <DashboardTab />
-          </TabsContent>
+            <TabsContent value="dashboard">
+              <DashboardTab analysisData={analysisData} />
+            </TabsContent>
 
-          <TabsContent value="prompt-analysis">
-            <PromptAnalysisTab />
-          </TabsContent>
+            <TabsContent value="prompt-analysis">
+              <PromptAnalysisTab analysisData={analysisData} />
+            </TabsContent>
 
-          <TabsContent value="competitor-analysis">
-            <CompetitorAnalysisTab />
-          </TabsContent>
+            <TabsContent value="competitor-analysis">
+              <CompetitorAnalysisTab analysisData={analysisData} />
+            </TabsContent>
 
-          <TabsContent value="strategic-insights">
-            <StrategicInsightsTab />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="strategic-insights">
+              <StrategicInsightsTab analysisData={analysisData} />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
     </div>
   );

@@ -3,7 +3,21 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lightbulb } from 'lucide-react';
 
-export const StrategicInsightsTab = () => {
+interface AnalysisResult {
+  id: string;
+  domain: string;
+  status: string;
+  analysis_data: any;
+  created_at: string;
+  updated_at: string;
+}
+
+interface StrategicInsightsTabProps {
+  analysisData: AnalysisResult;
+}
+
+export const StrategicInsightsTab: React.FC<StrategicInsightsTabProps> = ({ analysisData }) => {
+  const strategicInsights = analysisData?.analysis_data?.strategic_insights;
   return (
     <div className="space-y-8">
       <Card>

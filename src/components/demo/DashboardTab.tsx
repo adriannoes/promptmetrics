@@ -6,7 +6,21 @@ import { TrendingUp, Target, Heart, Trophy, Database } from 'lucide-react';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 import { Badge } from '@/components/ui/badge';
 
-const sentimentTrendData = [
+interface AnalysisResult {
+  id: string;
+  domain: string;
+  status: string;
+  analysis_data: any;
+  created_at: string;
+  updated_at: string;
+}
+
+interface DashboardTabProps {
+  analysisData: AnalysisResult;
+}
+
+// Default mock data for fallback
+const defaultSentimentTrendData = [
   { month: 'Jan', Lovable: 75, Bolt: 68, V0: 65, 'Figma Make': 58 },
   { month: 'Feb', Lovable: 76, Bolt: 69, V0: 66, 'Figma Make': 59 },
   { month: 'Mar', Lovable: 78, Bolt: 70, V0: 68, 'Figma Make': 59 },
@@ -15,7 +29,7 @@ const sentimentTrendData = [
   { month: 'Jun', Lovable: 78, Bolt: 71, V0: 68, 'Figma Make': 59 },
 ];
 
-const rankingData = [
+const defaultRankingData = [
   { month: 'Jan', Lovable: 2.1, Bolt: 2.8, V0: 3.2, 'Figma Make': 3.8 },
   { month: 'Feb', Lovable: 2.0, Bolt: 2.7, V0: 3.1, 'Figma Make': 3.9 },
   { month: 'Mar', Lovable: 1.9, Bolt: 2.6, V0: 3.0, 'Figma Make': 4.0 },
@@ -24,14 +38,14 @@ const rankingData = [
   { month: 'Jun', Lovable: 1.7, Bolt: 2.3, V0: 2.7, 'Figma Make': 4.3 },
 ];
 
-const overallSentimentData = [
+const defaultOverallSentimentData = [
   { name: 'Lovable', score: 77.6, color: '#3B82F6' },
   { name: 'Bolt', score: 73.4, color: '#10B981' },
   { name: 'V0', score: 68.8, color: '#8B5CF6' },
   { name: 'Figma Make', score: 59.6, color: '#F59E0B' },
 ];
 
-const shareOfRankData = [
+const defaultShareOfRankData = [
   { month: 'Jan', Lovable: 35, Bolt: 28, V0: 22, 'Figma Make': 15 },
   { month: 'Feb', Lovable: 38, Bolt: 26, V0: 21, 'Figma Make': 15 },
   { month: 'Mar', Lovable: 42, Bolt: 25, V0: 20, 'Figma Make': 13 },
@@ -40,8 +54,14 @@ const shareOfRankData = [
   { month: 'Jun', Lovable: 52, Bolt: 22, V0: 17, 'Figma Make': 9 },
 ];
 
-export const DashboardTab = () => {
+export const DashboardTab: React.FC<DashboardTabProps> = ({ analysisData }) => {
   const { recentAnalyses, loading } = useRealTimeAnalysis();
+
+  // Extract data from analysisData or use defaults
+  const sentimentTrendData = analysisData?.analysis_data?.sentiment_trends || defaultSentimentTrendData;
+  const rankingData = analysisData?.analysis_data?.ranking_data || defaultRankingData;
+  const overallSentimentData = analysisData?.analysis_data?.overall_sentiment || defaultOverallSentimentData;
+  const shareOfRankData = analysisData?.analysis_data?.share_of_rank || defaultShareOfRankData;
 
   return (
     <div className="space-y-8">

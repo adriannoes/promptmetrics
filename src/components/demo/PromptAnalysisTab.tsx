@@ -5,7 +5,20 @@ import { PromptTable } from './PromptTable';
 import { SentimentAnalysis } from './SentimentAnalysis';
 import { usePromptFilters } from '@/hooks/usePromptFilters';
 
-export const PromptAnalysisTab = () => {
+interface AnalysisResult {
+  id: string;
+  domain: string;
+  status: string;
+  analysis_data: any;
+  created_at: string;
+  updated_at: string;
+}
+
+interface PromptAnalysisTabProps {
+  analysisData: AnalysisResult;
+}
+
+export const PromptAnalysisTab: React.FC<PromptAnalysisTabProps> = ({ analysisData }) => {
   const {
     selectedLlms,
     selectedCompetitors,

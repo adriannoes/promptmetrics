@@ -6,6 +6,21 @@ import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Users, Target, TrendingUp, Lightbulb, AlertTriangle, CheckCircle, ArrowUp, ArrowDown, Eye } from 'lucide-react';
 
+interface AnalysisResult {
+  id: string;
+  domain: string;
+  status: string;
+  analysis_data: any;
+  created_at: string;
+  updated_at: string;
+}
+
+interface CompetitorAnalysisTabProps {
+  analysisData: AnalysisResult;
+}
+
+// Default mock data for fallback
+
 const marketShareData = [
   { name: 'Lovable', value: 35, color: '#3B82F6' },
   { name: 'Bolt', value: 25, color: '#10B981' },
@@ -78,8 +93,81 @@ const competitorOpportunities = [
   }
 ];
 
-export const CompetitorAnalysisTab = () => {
+export const CompetitorAnalysisTab: React.FC<CompetitorAnalysisTabProps> = ({ analysisData }) => {
   const [selectedCompetitor, setSelectedCompetitor] = useState('all');
+
+  // Extract data from analysisData or use defaults
+  const marketShareData = analysisData?.analysis_data?.competitor_analysis?.market_share || [
+    { name: 'Lovable', value: 35, color: '#3B82F6' },
+    { name: 'Bolt', value: 25, color: '#10B981' },
+    { name: 'V0', value: 20, color: '#8B5CF6' },
+    { name: 'Figma Make', value: 12, color: '#F59E0B' },
+    { name: 'Other', value: 8, color: '#6B7280' },
+  ];
+
+  const marketTrendsData = analysisData?.analysis_data?.competitor_analysis?.market_trends || [
+    { month: 'Jan', Lovable: 32, Bolt: 28, V0: 22, 'Figma Make': 10, Other: 8 },
+    { month: 'Feb', Lovable: 33, Bolt: 27, V0: 21, 'Figma Make': 11, Other: 8 },
+    { month: 'Mar', Lovable: 34, Bolt: 26, V0: 21, 'Figma Make': 11, Other: 8 },
+    { month: 'Apr', Lovable: 35, Bolt: 25, V0: 20, 'Figma Make': 12, Other: 8 },
+    { month: 'May', Lovable: 35, Bolt: 25, V0: 20, 'Figma Make': 12, Other: 8 },
+    { month: 'Jun', Lovable: 35, Bolt: 25, V0: 20, 'Figma Make': 12, Other: 8 },
+  ];
+
+  const strategicPriorities = analysisData?.analysis_data?.competitor_analysis?.strategic_priorities || [
+    {
+      id: 1,
+      title: 'Expand AI-Powered Development Features',
+      description: '35.52% market share—enhance Lovable\'s AI capabilities to outpace Bolt and v0.',
+      priority: 'high',
+      marketShare: 35.52
+    },
+    {
+      id: 2,
+      title: 'Target Small Development Teams',
+      description: 'Compete with Bolt and v0 (25.0% combined share) via simplified onboarding and team features.',
+      priority: 'medium',
+      marketShare: 25.0
+    },
+    {
+      id: 3,
+      title: 'Lead Visual Development Innovation',
+      description: 'Invest in advanced UI generation to surpass v0, Bolt, and Figma Make offerings.',
+      priority: 'high',
+      marketShare: 20.0
+    },
+    {
+      id: 4,
+      title: 'Strengthen Integration Ecosystem',
+      description: 'Leverage platform integrations; expand deployment options and third-party connections.',
+      priority: 'medium',
+      marketShare: 15.8
+    },
+  ];
+
+  const competitorOpportunities = analysisData?.analysis_data?.competitor_analysis?.opportunities || [
+    {
+      category: 'Product Development',
+      title: 'Leverage Lovable\'s conversational AI interface to differentiate from competitors.',
+      description: 'Lovable\'s natural language development approach continues to be unique, with competitors focusing more on template-based generation...',
+      impact: 'high',
+      effort: 'medium'
+    },
+    {
+      category: 'Market Expansion',
+      title: 'Capitalize on Lovable\'s full-stack capabilities to attract teams seeking complete solutions.',
+      description: 'Full-stack development with database integration sets it apart from many competitors. Complete project solutions are increasingly important...',
+      impact: 'medium',
+      effort: 'low'
+    },
+    {
+      category: 'Product Innovation',
+      title: 'Enhance and innovate real-time collaboration features to compete with design-focused tools.',
+      description: 'While Lovable offers live preview and instant updates, competitors like Figma Make and v0 are improving their collaborative features...',
+      impact: 'high',
+      effort: 'high'
+    }
+  ];
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
