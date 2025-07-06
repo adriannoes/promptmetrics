@@ -25,11 +25,22 @@ serve(async (req) => {
     }
 
     const payload = await req.json();
-    console.log('📥 Received analysis payload:', JSON.stringify(payload, null, 2));
+    console.log('📥 Received raw payload:', JSON.stringify(payload, null, 2));
+
+    // n8n sends data as array, extract first item
+    let analysisPayload = payload;
+    if (Array.isArray(payload)) {
+      console.log('📦 Payload is array, extracting first item...');
+      analysisPayload = payload[0];
+      console.log('📦 Extracted payload:', JSON.stringify(analysisPayload, null, 2));
+    }
 
     // Validate required fields
-    if (!payload.domain || !payload.analysis_data) {
-      console.log('❌ Missing required fields');
+    if (!analysisPayload.domain || !analysisPayload.analysis_data) {
+      console.log('❌ Missing required fields in payload:', {
+        domain: analysisPayload.domain,
+        analysis_data: !!analysisPayload.analysis_data
+      });
       return new Response(
         JSON.stringify({ error: 'Missing required fields: domain, analysis_data' }), 
         { 
@@ -46,14 +57,19 @@ serve(async (req) => {
     );
 
     console.log('💾 Attempting to save to database...');
+    console.log('💾 Data structure:', {
+      domain: analysisPayload.domain,
+      status: analysisPayload.status || 'completed',
+      analysis_data_keys: Object.keys(analysisPayload.analysis_data || {})
+    });
 
     // Insert or update analysis result
     const { data, error } = await supabase
       .from('analysis_results')
       .upsert({
-        domain: payload.domain,
-        status: payload.status || 'completed',
-        analysis_data: payload.analysis_data,
+        domain: analysisPayload.domain,
+        status: analysisPayload.status || 'completed',
+        analysis_data: analysisPayload.analysis_data,
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'domain',
@@ -73,10 +89,20 @@ serve(async (req) => {
       );
     }
 
-    console.log('✅ Analysis saved successfully:', data);
+    console.log('✅ Analysis saved successfully:', {
+      id: data.id,
+      domain: data.domain,
+      status: data.status,
+      analysis_data_keys: Object.keys(data.analysis_data || {})
+    });
 
     return new Response(
-      JSON.stringify({ success: true, id: data.id, message: 'Analysis received and saved' }), 
+      JSON.stringify({ 
+        success: true, 
+        id: data.id, 
+        domain: data.domain,
+        message: 'Analysis received and saved successfully' 
+      }), 
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
@@ -85,7 +111,11 @@ serve(async (req) => {
   } catch (error) {
     console.error('💥 Error processing request:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal server error', details: error.message }), 
+      JSON.stringify({ 
+        error: 'Internal server error', 
+        details: error.message,
+        stack: error.stack 
+      }), 
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

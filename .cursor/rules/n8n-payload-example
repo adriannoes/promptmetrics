@@ -1,0 +1,223 @@
+[
+  {
+    "domain": "pipefy.com",
+    "status": "completed",
+    "analysis_data": {
+      "summary": "Pipefy.com shows steady but secondary visibility across top LLMs in the workflow automation and process management space. The brand often appears in mid-list positions and is received with moderately positive sentiment, highlighting its flexibility and ease of use. However, compared to larger competitors like Asana and Monday.com, Pipefy has a smaller share of voice and is rarely featured first for generic team collaboration queries. There is continued opportunity to improve LLM positioning through more direct content targeting and examples, especially in collaborative and enterprise automation use cases.",
+      "score": 64,
+      "recommendations": [
+        "Create and distribute authoritative guides/case studies that LLMs can reference around workflow automation and process management.",
+        "Increase mentions and backlinks from reputable tech and SaaS directories to boost LLM awareness and trust.",
+        "Address gaps in collaboration features and seed comparative content specifically highlighting unique automation capabilities."
+      ],
+      "sentiment_trends": [
+        {
+          "month": "Jan",
+          "Pipefy": 70,
+          "Asana": 83,
+          "Monday.com": 79
+        },
+        {
+          "month": "Feb",
+          "Pipefy": 71,
+          "Asana": 82,
+          "Monday.com": 79
+        },
+        {
+          "month": "Mar",
+          "Pipefy": 73,
+          "Asana": 83,
+          "Monday.com": 80
+        },
+        {
+          "month": "Apr",
+          "Pipefy": 74,
+          "Asana": 84,
+          "Monday.com": 80
+        },
+        {
+          "month": "May",
+          "Pipefy": 73,
+          "Asana": 82,
+          "Monday.com": 79
+        },
+        {
+          "month": "Jun",
+          "Pipefy": 75,
+          "Asana": 84,
+          "Monday.com": 81
+        }
+      ],
+      "ranking_data": [
+        {
+          "month": "Jan",
+          "Pipefy": 6.5,
+          "Asana": 2.2,
+          "Monday.com": 3.1
+        },
+        {
+          "month": "Feb",
+          "Pipefy": 6.2,
+          "Asana": 2.4,
+          "Monday.com": 3
+        },
+        {
+          "month": "Mar",
+          "Pipefy": 6,
+          "Asana": 2,
+          "Monday.com": 3
+        },
+        {
+          "month": "Apr",
+          "Pipefy": 5.7,
+          "Asana": 1.9,
+          "Monday.com": 2.8
+        },
+        {
+          "month": "May",
+          "Pipefy": 5.9,
+          "Asana": 2.2,
+          "Monday.com": 3.2
+        },
+        {
+          "month": "Jun",
+          "Pipefy": 5.5,
+          "Asana": 2.1,
+          "Monday.com": 2.7
+        }
+      ],
+      "overall_sentiment": [
+        {
+          "name": "Pipefy",
+          "score": 73,
+          "color": "#3B82F6"
+        },
+        {
+          "name": "Asana",
+          "score": 83,
+          "color": "#10B981"
+        },
+        {
+          "name": "Monday.com",
+          "score": 79.7,
+          "color": "#8B5CF6"
+        }
+      ],
+      "share_of_rank": [
+        {
+          "month": "Jan",
+          "Pipefy": 13,
+          "Asana": 34,
+          "Monday.com": 25,
+          "Others": 28
+        },
+        {
+          "month": "Feb",
+          "Pipefy": 14,
+          "Asana": 33,
+          "Monday.com": 26,
+          "Others": 27
+        },
+        {
+          "month": "Mar",
+          "Pipefy": 16,
+          "Asana": 32,
+          "Monday.com": 27,
+          "Others": 25
+        },
+        {
+          "month": "Apr",
+          "Pipefy": 16,
+          "Asana": 35,
+          "Monday.com": 28,
+          "Others": 21
+        },
+        {
+          "month": "May",
+          "Pipefy": 14,
+          "Asana": 33,
+          "Monday.com": 27,
+          "Others": 26
+        },
+        {
+          "month": "Jun",
+          "Pipefy": 17,
+          "Asana": 34,
+          "Monday.com": 28,
+          "Others": 21
+        }
+      ],
+      "competitor_analysis": {
+        "market_share": [
+          {
+            "name": "Pipefy",
+            "value": 15,
+            "color": "#3B82F6"
+          },
+          {
+            "name": "Asana",
+            "value": 33,
+            "color": "#10B981"
+          },
+          {
+            "name": "Monday.com",
+            "value": 27,
+            "color": "#8B5CF6"
+          },
+          {
+            "name": "Others",
+            "value": 25,
+            "color": "#F59E0B"
+          }
+        ],
+        "strengths": [
+          "Consistently positive sentiment for process automation scenarios",
+          "Frequently recommended for streamlined workflow management",
+          "User-friendly platform frequently cited in LLM outputs"
+        ],
+        "weaknesses": [
+          "Lags in first-position presence for broad queries",
+          "Lower brand awareness in team collaboration context",
+          "Advanced features less likely to be referenced by LLMs"
+        ]
+      },
+      "prompt_analysis": {
+        "sentiment_by_llm": {
+          "ChatGPT": 74,
+          "Gemini": 72,
+          "Claude": 69,
+          "Perplexity": 76
+        },
+        "ranking_by_prompt": {
+          "workflow_automation": {
+            "Pipefy": 5,
+            "Asana": 1,
+            "Monday.com": 2
+          },
+          "process_management": {
+            "Pipefy": 3,
+            "Asana": 1,
+            "Monday.com": 2
+          },
+          "team_collaboration": {
+            "Pipefy": 7,
+            "Asana": 2,
+            "Monday.com": 1
+          }
+        }
+      },
+      "strategic_insights": {
+        "growth_opportunities": [
+          "Expand expert-led content to shape LLM outputs and training data",
+          "Highlight unique workflow automation features in head-to-head guides",
+          "Build deeper partnerships with integration providers for broader mention"
+        ],
+        "competitive_threats": [
+          "Entrenched LLM preference for Asana and Monday.com on generic prompts",
+          "Limited exposure for collaborative workflow scenarios",
+          "Greater LLM reliance on widely linked and referenced brands"
+        ]
+      }
+    }
+  }
+]

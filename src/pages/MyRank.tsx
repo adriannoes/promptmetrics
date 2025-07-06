@@ -4,15 +4,17 @@ import { MyRankDashboardTab } from '@/components/myrank/MyRankDashboardTab';
 import { MyRankPromptAnalysisTab } from '@/components/myrank/MyRankPromptAnalysisTab';
 import { MyRankCompetitorAnalysisTab } from '@/components/myrank/MyRankCompetitorAnalysisTab';
 import { MyRankStrategicInsightsTab } from '@/components/myrank/MyRankStrategicInsightsTab';
-import { useAnalysisData } from '@/hooks/useAnalysisData';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
 
 const MyRank = () => {
   const [currentDomain, setCurrentDomain] = useState<string>('');
-  const { data: analysisData, loading, error, refetch } = useAnalysisData(currentDomain);
+  const [analysisData, setAnalysisData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Get domain from URL params or localStorage
   useEffect(() => {
@@ -26,15 +28,58 @@ const MyRank = () => {
     }
   }, []);
 
-  // Fetch data when domain changes
+  // Fetch usando FETCH DIRETO (que funcionou!)
+  const fetchAnalysisData = async (domain: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // URL direta para a API do Supabase (método que funcionou)
+      const url = `https://racfoelvuhdifnekjsro.supabase.co/rest/v1/analysis_results?domain=eq.${domain}&select=*`;
+      const headers = {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0',
+        'Content-Type': 'application/json'
+      };
+      
+      const response = await fetch(url, { headers });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        setAnalysisData(data[0]);
+      } else {
+        setError('Nenhuma análise encontrada para este domínio');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (currentDomain) {
-      refetch(currentDomain);
+      fetchAnalysisData(currentDomain);
     }
-  }, [currentDomain, refetch]);
+  }, [currentDomain]);
+
+  // Auto-refresh every 5 seconds when no data exists
+  useEffect(() => {
+    if (currentDomain && !analysisData && !loading) {
+      const interval = setInterval(() => {
+        fetchAnalysisData(currentDomain);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [currentDomain, analysisData, loading]);
 
   const handleDomainChange = async (newDomain: string) => {
-    console.log('🔄 MyRank: Changing domain to:', newDomain);
     setCurrentDomain(newDomain);
     localStorage.setItem('lastAnalyzedDomain', newDomain);
     const url = new URL(window.location.href);
@@ -43,20 +88,12 @@ const MyRank = () => {
     
     // Trigger new analysis for the new domain
     try {
-      const { supabase } = await import('@/integrations/supabase/client');
-      const { toast } = await import('sonner');
-      
-      console.log('🚀 MyRank: Triggering analysis for new domain:', newDomain);
       const { error } = await supabase.functions.invoke('trigger-analysis', {
         body: { domain: newDomain }
       });
 
       if (error) {
         console.error('❌ MyRank: Error triggering analysis:', error);
-        toast.error('Failed to start analysis for new domain');
-      } else {
-        console.log('✅ MyRank: Analysis triggered successfully for:', newDomain);
-        toast.success('Analysis started for new domain!');
       }
     } catch (error) {
       console.error('💥 MyRank: Error triggering analysis:', error);
@@ -122,10 +159,7 @@ const MyRank = () => {
                 {analysisData ? `Analisando: ${analysisData.domain}` : `Domínio: ${currentDomain}`}
               </span>
               <button
-                onClick={() => {
-                  console.log('🔄 MyRank: Manual refresh triggered for domain:', currentDomain);
-                  refetch(currentDomain);
-                }}
+                onClick={() => fetchAnalysisData(currentDomain)}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
               >
                 Atualizar Dados

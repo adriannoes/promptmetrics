@@ -12,7 +12,7 @@ interface MyRankCompetitorAnalysisTabProps {
 export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabProps> = ({ analysisData }) => {
   const competitorAnalysis = analysisData?.analysis_data?.competitor_analysis;
 
-  // Default fallback data
+  // Use real data from n8n or fallback
   const marketShareData = competitorAnalysis?.market_share || [
     { name: 'Sua Marca', value: 35, color: '#3B82F6' },
     { name: 'Concorrente 1', value: 25, color: '#10B981' },
@@ -61,6 +61,19 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
       impact: 'medium' as const,
       effort: 'low' as const
     }
+  ];
+
+  // Get strengths and weaknesses from real n8n data
+  const strengths = competitorAnalysis?.strengths || [
+    'Marca possui diferenciais únicos no mercado',
+    'Boa percepção geral nos sistemas de IA',
+    'Posicionamento competitivo sólido'
+  ];
+
+  const weaknesses = competitorAnalysis?.weaknesses || [
+    'Oportunidades de melhoria em visibilidade digital',
+    'Necessidade de fortalecer estratégias de marketing',
+    'Possível gap em alguns segmentos competitivos'
   ];
 
   const getPriorityColor = (priority: string) => {
@@ -170,6 +183,47 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
         </div>
       </div>
 
+      {/* Strengths vs Weaknesses - NEW: Using real n8n data */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              Pontos Fortes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {strengths.map((strength, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">{strength}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-orange-600" />
+              Pontos de Melhoria
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {weaknesses.map((weakness, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                  <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 text-sm">{weakness}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Market Trends */}
       <Card>
         <CardHeader>
@@ -248,61 +302,6 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
                 </div>
               </div>
             ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Recommendations */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-blue-600" />
-            Recomendações Estratégicas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <ArrowUp className="w-4 h-4 text-green-600" />
-                Oportunidades de Crescimento
-              </h4>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span>Fortalecer diferenciais competitivos únicos</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span>Expandir presença em canais digitais estratégicos</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span>Desenvolver parcerias estratégicas</span>
-                </li>
-              </ul>
-            </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                Ameaças Competitivas
-              </h4>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <span>Monitorar movimentos da concorrência</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <span>Proteger participação de mercado atual</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <span>Inovar para manter vantagem competitiva</span>
-                </li>
-              </ul>
-            </div>
           </div>
         </CardContent>
       </Card>

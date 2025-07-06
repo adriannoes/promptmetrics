@@ -43,21 +43,24 @@ export interface CompetitorOpportunity {
 
 export interface CompetitorAnalysisData {
   market_share: MarketShareItem[];
-  market_trends: ChartDataPoint[];
-  strategic_priorities: StrategicPriority[];
-  opportunities: CompetitorOpportunity[];
+  market_trends?: ChartDataPoint[];
+  strategic_priorities?: StrategicPriority[];
+  opportunities?: CompetitorOpportunity[];
+  // New fields from n8n payload
+  strengths?: string[];
+  weaknesses?: string[];
 }
 
 export interface PromptAnalysisData {
   sentiment_by_llm: Record<string, number>;
-  ranking_by_prompt: Record<string, any>;
-  performance_metrics: Record<string, any>;
+  ranking_by_prompt: Record<string, Record<string, number>>;
+  performance_metrics?: Record<string, any>;
 }
 
 export interface StrategicInsightsData {
-  key_insights: string[];
-  recommendations: string[];
-  action_items: string[];
+  key_insights?: string[];
+  recommendations?: string[];
+  action_items?: string[];
   growth_opportunities: string[];
   competitive_threats: string[];
 }
@@ -92,3 +95,13 @@ export interface CompleteAnalysisResult {
   created_at: string;
   updated_at: string;
 }
+
+// Type for the raw n8n payload (comes as array)
+export interface N8nPayload {
+  domain: string;
+  status: 'processing' | 'completed' | 'failed';
+  analysis_data: AnalysisDataStructure;
+}
+
+// Type for the processed n8n payload (array of items)
+export type N8nPayloadArray = N8nPayload[];
