@@ -2,7 +2,9 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Target, Heart, Trophy } from 'lucide-react';
+import { TrendingUp, Target, Heart, Trophy, Database } from 'lucide-react';
+import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
+import { Badge } from '@/components/ui/badge';
 
 const sentimentTrendData = [
   { month: 'Jan', Lovable: 75, Bolt: 68, V0: 65, 'Figma Make': 58 },
@@ -39,8 +41,39 @@ const shareOfRankData = [
 ];
 
 export const DashboardTab = () => {
+  const { recentAnalyses, loading } = useRealTimeAnalysis();
+
   return (
     <div className="space-y-8">
+      {/* Real Analysis Data Preview */}
+      {recentAnalyses.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="w-5 h-5 text-blue-600" />
+              Análises Reais Recentes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {recentAnalyses.slice(0, 5).map((analysis) => (
+                <div key={analysis.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div>
+                    <p className="font-medium">{analysis.domain}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(analysis.created_at).toLocaleString('pt-BR')}
+                    </p>
+                  </div>
+                  <Badge variant={analysis.status === 'completed' ? 'default' : 'secondary'}>
+                    {analysis.status}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Average Ranking */}

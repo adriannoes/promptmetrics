@@ -57,6 +57,28 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
 
   useEffect(() => {
     fetchResults();
+
+    // Set up real-time subscription for analysis results
+    const channel = supabase
+      .channel('analysis-results-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'analysis_results',
+          filter: domain ? `domain=eq.${domain}` : undefined
+        },
+        (payload) => {
+          console.log('Real-time update received:', payload);
+          fetchResults(); // Refresh results when changes occur
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [domain, refreshTrigger]);
 
   const getStatusIcon = (status: string) => {
