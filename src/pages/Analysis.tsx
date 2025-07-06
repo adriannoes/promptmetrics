@@ -18,11 +18,13 @@ const AnalysisContent = () => {
   const [loading, setLoading] = useState(false);
 
   const handleAnalyze = (domain: string) => {
+    console.log('Analysis Page: handleAnalyze called with domain:', domain);
     setCurrentDomain(domain);
     setLoading(true);
     
     // Simulate analysis time and refresh results
     setTimeout(() => {
+      console.log('Analysis Page: Analysis simulation completed');
       setLoading(false);
       setRefreshTrigger(prev => prev + 1);
     }, 3000);

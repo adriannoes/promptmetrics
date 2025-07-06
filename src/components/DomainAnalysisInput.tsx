@@ -18,7 +18,14 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!domain.trim()) return;
+    console.log('DomainAnalysisInput: handleSubmit called with domain:', domain);
+    
+    if (!domain.trim()) {
+      console.log('DomainAnalysisInput: Empty domain, returning');
+      return;
+    }
+
+    console.log('DomainAnalysisInput: About to call trigger-analysis edge function');
 
     try {
       // Trigger analysis workflow
@@ -26,17 +33,20 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
         body: { domain: domain.trim() }
       });
 
+      console.log('DomainAnalysisInput: Edge function response:', { data, error });
+
       if (error) {
         console.error('Error triggering analysis:', error);
         toast.error('Failed to start analysis');
         return;
       }
 
+      console.log('DomainAnalysisInput: Analysis triggered successfully');
       toast.success('Analysis started! Results will appear shortly.');
       onAnalyze(domain.trim());
       
     } catch (error) {
-      console.error('Error:', error);
+      console.error('DomainAnalysisInput: Catch block error:', error);
       toast.error('Failed to start analysis');
     }
   };
