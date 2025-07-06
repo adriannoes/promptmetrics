@@ -17,6 +17,8 @@ const AnalysisContent = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  console.log('Analysis Page: Rendered with currentDomain=', currentDomain, 'loading=', loading);
+
   const handleAnalyze = (domain: string) => {
     console.log('Analysis Page: handleAnalyze called with domain:', domain);
     setCurrentDomain(domain);
