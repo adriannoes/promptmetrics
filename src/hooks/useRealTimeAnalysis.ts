@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 interface AnalysisResult {
   id: string;
@@ -10,59 +11,205 @@ interface AnalysisResult {
   updated_at: string;
 }
 
-export const useRealTimeAnalysis = () => {
-  const [recentAnalyses, setRecentAnalyses] = useState<AnalysisResult[]>([]);
-  const [loading, setLoading] = useState(true);
+interface UseRealTimeAnalysisReturn {
+  data: AnalysisResult | null;
+  loading: boolean;
+  error: string | null;
+  isConnected: boolean;
+  lastUpdated: Date | null;
+  refetch: (targetDomain: string) => Promise<void>;
+  hasNewData: boolean;
+  markAsRead: () => void;
+}
 
-  const fetchRecentAnalyses = async () => {
+export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn => {
+  const [data, setData] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [hasNewData, setHasNewData] = useState(false);
+  
+  // Refs para debouncing e gerenciamento de subscription
+  const channelRef = useRef<RealtimeChannel | null>(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const lastFetchTimeRef = useRef<number>(0);
+
+  // Debounced update function
+  const debouncedUpdate = useCallback((newData: AnalysisResult) => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      setData(newData);
+      setLastUpdated(new Date());
+      setHasNewData(true);
+      console.log('🔄 Real-time: Data updated for domain:', newData.domain);
+    }, 300); // 300ms debounce
+  }, []);
+
+  // Fetch analysis data
+  const fetchAnalysis = useCallback(async (targetDomain: string, silent = false) => {
+    // Evitar múltiplas chamadas muito próximas (rate limiting)
+    const now = Date.now();
+    if (now - lastFetchTimeRef.current < 2000) { // 2 segundos mínimo
+      return;
+    }
+    lastFetchTimeRef.current = now;
+
+    if (!silent) {
+      setLoading(true);
+    }
+    setError(null);
+
     try {
-      const { data, error } = await supabase
+      const { data: result, error: fetchError } = await supabase
         .from('analysis_results')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
+        .eq('domain', targetDomain)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching analyses:', error);
-        return;
+      if (fetchError) {
+        throw fetchError;
       }
 
-      setRecentAnalyses(data || []);
-    } catch (error) {
-      console.error('Error:', error);
+      if (result) {
+        setData(result);
+        setLastUpdated(new Date());
+        console.log('📊 Fetched analysis data for:', targetDomain);
+      } else {
+        setData(null);
+        console.log('📭 No analysis data found for:', targetDomain);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch analysis';
+      setError(errorMessage);
+      console.error('❌ Error fetching analysis:', err);
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    fetchRecentAnalyses();
+  // Setup Real-time subscription
+  const setupRealTimeSubscription = useCallback((targetDomain: string) => {
+    // Cleanup existing subscription
+    if (channelRef.current) {
+      channelRef.current.unsubscribe();
+      channelRef.current = null;
+    }
 
-    // Set up real-time subscription
+    console.log('🔌 Setting up Real-time subscription for:', targetDomain);
+
     const channel = supabase
-      .channel('all-analysis-changes')
+      .channel(`analysis_results:${targetDomain}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'analysis_results'
+          table: 'analysis_results',
+          filter: `domain=eq.${targetDomain}`,
         },
         (payload) => {
-          console.log('Real-time analysis update:', payload);
-          fetchRecentAnalyses();
+          console.log('🔔 Real-time update received:', payload);
+          
+          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            const newData = payload.new as AnalysisResult;
+            debouncedUpdate(newData);
+          }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('📡 Real-time subscription status:', status);
+        setIsConnected(status === 'SUBSCRIBED');
+      });
+
+    channelRef.current = channel;
+  }, [debouncedUpdate]);
+
+  // Setup optimized polling as fallback
+  const setupPolling = useCallback((targetDomain: string) => {
+    // Clear existing polling
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+
+    // Only poll if not connected to real-time or no data yet
+    if (!isConnected || !data) {
+      const interval = setInterval(() => {
+        // Polling otimizado: 
+        // - 10s se não conectado ao real-time
+        // - 30s se conectado mas sem dados ainda
+        // - Para de polling se tem dados e está conectado
+        if (!isConnected || !data) {
+          fetchAnalysis(targetDomain, true); // silent fetch
+        }
+      }, isConnected ? 30000 : 10000);
+
+      pollingIntervalRef.current = interval;
+      console.log(`⏰ Polling setup: ${isConnected ? '30s' : '10s'} interval`);
+    }
+  }, [isConnected, data, fetchAnalysis]);
+
+  // Main effect for domain changes
+  useEffect(() => {
+    if (!domain) return;
+
+    console.log('🎯 useRealTimeAnalysis: Setting up for domain:', domain);
+    
+    // Initial fetch
+    fetchAnalysis(domain);
+    
+    // Setup real-time subscription
+    setupRealTimeSubscription(domain);
+    
+    // Setup polling fallback
+    setupPolling(domain);
 
     return () => {
-      supabase.removeChannel(channel);
+      // Cleanup
+      if (channelRef.current) {
+        channelRef.current.unsubscribe();
+        channelRef.current = null;
+      }
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+        debounceTimeoutRef.current = null;
+      }
     };
+  }, [domain, fetchAnalysis, setupRealTimeSubscription, setupPolling]);
+
+  // Update polling when connection status changes
+  useEffect(() => {
+    if (domain) {
+      setupPolling(domain);
+    }
+  }, [isConnected, data, domain, setupPolling]);
+
+  // Mark new data as read
+  const markAsRead = useCallback(() => {
+    setHasNewData(false);
   }, []);
 
   return {
-    recentAnalyses,
+    data,
     loading,
-    refetch: fetchRecentAnalyses
+    error,
+    isConnected,
+    lastUpdated,
+    refetch: fetchAnalysis,
+    hasNewData,
+    markAsRead,
   };
 };
