@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { MyRankDashboardTab } from '@/components/myrank/MyRankDashboardTab';
 import { MyRankPromptAnalysisTab } from '@/components/myrank/MyRankPromptAnalysisTab';
 import { MyRankCompetitorAnalysisTab } from '@/components/myrank/MyRankCompetitorAnalysisTab';
 import { MyRankStrategicInsightsTab } from '@/components/myrank/MyRankStrategicInsightsTab';
+import { ErrorReportButton } from '@/components/ErrorReportButton';
+import { RealTimeNotification } from '@/components/RealTimeNotification';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, BarChart3 } from 'lucide-react';
+import { AlertCircle, BarChart3, ArrowLeft, Clock, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
+import { AccessibilityProvider } from '@/contexts/AccessibilityContext';
 import LanguageSelector from '@/components/LanguageSelector';
 
-const MyRank = () => {
+const MyRankContent = () => {
   const { t } = useLanguage();
   const [currentDomain, setCurrentDomain] = useState<string>('');
-  const [analysisData, setAnalysisData] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isAnalysisInProgress, setIsAnalysisInProgress] = useState(false);
 
   // Get domain from URL params or localStorage
   useEffect(() => {
@@ -31,60 +34,38 @@ const MyRank = () => {
     }
   }, []);
 
-  // Fetch usando FETCH DIRETO (que funcionou!)
-  const fetchAnalysisData = async (domain: string) => {
-    setLoading(true);
-    setError(null);
+  // Use Real-time analysis hook
+  const {
+    data: analysisData,
+    loading,
+    error,
+    isConnected,
+    lastUpdated,
+    refetch,
+    hasNewData,
+    markAsRead,
+  } = useRealTimeAnalysis(currentDomain);
 
-    try {
-      // URL direta para a API do Supabase (método que funcionou)
-      const url = `https://racfoelvuhdifnekjsro.supabase.co/rest/v1/analysis_results?domain=eq.${domain}&select=*`;
-      const headers = {
-        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0',
-        'Content-Type': 'application/json'
-      };
-      
-      const response = await fetch(url, { headers });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data && data.length > 0) {
-        setAnalysisData(data[0]);
-      } else {
-        setError(t('myrank.noAnalysisFound').replace('{domain}', domain));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('myrank.error'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (currentDomain) {
-      fetchAnalysisData(currentDomain);
-    }
-  }, [currentDomain]);
-
-  // Auto-refresh every 5 seconds when no data exists
+  // Check if analysis is in progress when no data is available
   useEffect(() => {
     if (currentDomain && !analysisData && !loading) {
-      const interval = setInterval(() => {
-        fetchAnalysisData(currentDomain);
-      }, 5000);
-
-      return () => clearInterval(interval);
+      const lastSubmissionTime = localStorage.getItem(`analysis_started_${currentDomain}`);
+      if (lastSubmissionTime) {
+        const timeDiff = Date.now() - parseInt(lastSubmissionTime);
+        if (timeDiff < 30 * 60 * 1000) { // 30 minutes
+          setIsAnalysisInProgress(true);
+        }
+      }
+    } else if (analysisData) {
+      setIsAnalysisInProgress(false);
     }
   }, [currentDomain, analysisData, loading]);
 
   const handleDomainChange = async (newDomain: string) => {
     setCurrentDomain(newDomain);
     localStorage.setItem('lastAnalyzedDomain', newDomain);
+    localStorage.setItem(`analysis_started_${newDomain}`, Date.now().toString());
+    
     const url = new URL(window.location.href);
     url.searchParams.set('domain', newDomain);
     window.history.pushState({}, '', url.toString());
@@ -97,10 +78,16 @@ const MyRank = () => {
 
       if (error) {
         console.error('❌ MyRank: Error triggering analysis:', error);
+      } else {
+        setIsAnalysisInProgress(true);
       }
     } catch (error) {
       console.error('💥 MyRank: Error triggering analysis:', error);
     }
+  };
+
+  const handleBackToAnalysis = () => {
+    window.location.href = '/analysis';
   };
 
   if (!currentDomain) {
@@ -137,9 +124,12 @@ const MyRank = () => {
                     <span key={index}>
                       {part}
                       {index === 0 && (
-                        <a href="/analysis" className="text-blue-600 hover:underline">
+                        <button 
+                          onClick={handleBackToAnalysis}
+                          className="text-blue-600 hover:underline cursor-pointer"
+                        >
                           página de análise
-                        </a>
+                        </button>
                       )}
                     </span>
                   ))}
@@ -171,8 +161,17 @@ const MyRank = () => {
               <span className="text-sm text-gray-600">
                 {analysisData ? `${t('myrank.analyzing')}: ${analysisData.domain}` : `${t('myrank.domain')}: ${currentDomain}`}
               </span>
+              <Button
+                onClick={handleBackToAnalysis}
+                variant="outline"
+                size="sm"
+                className="border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Voltar à Análise
+              </Button>
               <button
-                onClick={() => fetchAnalysisData(currentDomain)}
+                onClick={() => refetch(currentDomain)}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
               >
                 {t('myrank.updateData')}
@@ -190,12 +189,39 @@ const MyRank = () => {
               </button>
             </div>
           </div>
+
+          {/* Real-time Status and Notifications */}
+          {currentDomain && (
+            <RealTimeNotification
+              isConnected={isConnected}
+              hasNewData={hasNewData}
+              lastUpdated={lastUpdated}
+              onMarkAsRead={markAsRead}
+              onRefresh={() => refetch(currentDomain)}
+              className="mb-4"
+            />
+          )}
           
           {error && (
             <Alert className="mb-6">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                {t('myrank.error')}: {error}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <strong>{t('myrank.error')}:</strong> {error}
+                  </div>
+                  <ErrorReportButton 
+                    domain={currentDomain}
+                    error={error}
+                    additionalInfo={{
+                      page: 'my-rank',
+                      action: 'data_loading',
+                      step: 'fetch_analysis_data'
+                    }}
+                    variant="destructive"
+                    className="ml-4"
+                  />
+                </div>
               </AlertDescription>
             </Alert>
           )}
@@ -208,16 +234,76 @@ const MyRank = () => {
           </div>
         ) : !analysisData ? (
           <div className="text-center py-12">
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                {t('myrank.noAnalysisFound').replace('{domain}', currentDomain)}
-                <br />
-                <a href="/analysis" className="text-blue-600 hover:underline">
-                  {t('myrank.createNewAnalysis')}
-                </a>
-              </AlertDescription>
-            </Alert>
+            {isAnalysisInProgress ? (
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                    {t('analysis.analysisInProgress.title')}
+                  </h3>
+                  <p className="text-blue-700 mb-4">
+                    {t('analysis.analysisInProgress.desc').replace('{domain}', currentDomain)}
+                  </p>
+                  <p className="text-sm text-blue-600 mb-4">
+                    A análise pode levar alguns minutos. Esta página será atualizada automaticamente quando os dados estiverem disponíveis.
+                  </p>
+                  <div className="flex items-center justify-center gap-4">
+                    <Button
+                      onClick={() => refetch(currentDomain)}
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {t('myrank.updateData')}
+                    </Button>
+                    <Button
+                      onClick={handleBackToAnalysis}
+                      variant="outline"
+                      size="sm"
+                      className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-1" />
+                      Voltar à Análise
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-3">
+                    <div>
+                      {t('myrank.noAnalysisFound').replace('{domain}', currentDomain)}
+                      <br />
+                      <button 
+                        onClick={handleBackToAnalysis}
+                        className="text-blue-600 hover:underline cursor-pointer"
+                      >
+                        {t('myrank.createNewAnalysis')}
+                      </button>
+                    </div>
+                    <div className="pt-2">
+                      <ErrorReportButton 
+                        domain={currentDomain}
+                        error="Análise não encontrada para o domínio"
+                        additionalInfo={{
+                          page: 'my-rank',
+                          action: 'analysis_not_found',
+                          step: 'data_retrieval',
+                          expected_domain: currentDomain
+                        }}
+                        variant="outline"
+                        size="sm"
+                      />
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         ) : (
           <Tabs defaultValue="dashboard" className="w-full">
@@ -247,6 +333,16 @@ const MyRank = () => {
         )}
       </div>
     </div>
+  );
+};
+
+const MyRank = () => {
+  return (
+    <LanguageProvider>
+      <AccessibilityProvider>
+        <MyRankContent />
+      </AccessibilityProvider>
+    </LanguageProvider>
   );
 };
 
