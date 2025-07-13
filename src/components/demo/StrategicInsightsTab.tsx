@@ -16,6 +16,7 @@ interface StrategicInsightsTabProps {
   analysisData: AnalysisResult;
 }
 
+// Esta versão do StrategicInsightsTab é usada apenas na página /demo e exibe dados estáticos simulando o domínio lovable.dev. Não depende de Supabase nem de autenticação.
 export const StrategicInsightsTab = () => {
   const strategicInsights = null; // Static demo data
   return (

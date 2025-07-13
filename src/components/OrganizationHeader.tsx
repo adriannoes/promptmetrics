@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, ExternalLink } from 'lucide-react';
+import { toast } from './ui/use-toast';
 
 interface Organization {
   id: string;
@@ -18,12 +19,27 @@ interface OrganizationHeaderProps {
 
 const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const { profile, signOut } = useAuth();
+  const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOut = async () => {
-    console.log('OrganizationHeader: Initiating signOut');
+    setSigningOut(true);
     await signOut();
-    // signOut now handles the redirect internally
+    // O feedback será tratado pelo evento abaixo
   };
+
+  // Feedback visual pós-signout
+  React.useEffect(() => {
+    const onSignoutComplete = (e: any) => {
+      setSigningOut(false);
+      if (e.detail?.success) {
+        toast({ title: 'Sign out', description: 'Logout realizado com sucesso!', variant: 'default' });
+      } else {
+        toast({ title: 'Sign out', description: 'Erro ao sair. Tente novamente.', variant: 'destructive' });
+      }
+    };
+    window.addEventListener('signout-complete', onSignoutComplete);
+    return () => window.removeEventListener('signout-complete', onSignoutComplete);
+  }, []);
 
   return (
     <header className="bg-white/80 backdrop-blur-xl border-b border-white/60 shadow-lg shadow-slate-200/10">
@@ -70,8 +86,11 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
               variant="outline"
               size="sm"
               className="flex items-center gap-2"
+              disabled={signingOut}
+              aria-busy={signingOut}
+              aria-label="Sign out"
             >
-              <LogOut className="w-4 h-4" />
+              {signingOut ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true" /> : <LogOut className="w-4 h-4" />}
               <span className="hidden sm:inline">Sign out</span>
             </Button>
           </div>

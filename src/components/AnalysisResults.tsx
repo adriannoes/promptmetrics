@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { Clock, AlertCircle, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AnalysisResult {
   id: string;
@@ -24,6 +25,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
   domain, 
   refreshTrigger = 0 
 }) => {
+  const { t, language } = useLanguage();
   const [results, setResults] = useState<AnalysisResult[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,14 +44,14 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
 
       if (error) {
         console.error('Error fetching results:', error);
-        toast.error('Failed to load analysis results');
+        toast.error(t('analysisResults.loadError'));
         return;
       }
 
       setResults(data || []);
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Failed to load analysis results');
+      toast.error(t('analysisResults.loadError'));
     } finally {
       setLoading(false);
     }
@@ -108,7 +110,8 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('pt-BR', {
+    const locale = language === 'pt-BR' ? 'pt-BR' : 'en-US';
+    return new Date(dateString).toLocaleString(locale, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -120,7 +123,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
   if (loading) {
     return (
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Resultados da Análise</h3>
+        <h3 className="text-lg font-semibold">{t('analysisResults.title')}</h3>
         {[1, 2, 3].map((i) => (
           <Card key={i}>
             <CardHeader>
@@ -142,11 +145,11 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
         <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
           <AlertCircle className="w-8 h-8 text-muted-foreground" />
         </div>
-        <h3 className="text-lg font-semibold mb-2">Nenhum resultado encontrado</h3>
+        <h3 className="text-lg font-semibold mb-2">{t('analysisResults.noResults')}</h3>
         <p className="text-muted-foreground">
           {domain 
-            ? `Nenhuma análise foi encontrada para o domínio "${domain}".`
-            : 'Ainda não há análises realizadas. Faça sua primeira análise!'
+            ? t('analysisResults.noResultsForDomain').replace('{domain}', domain)
+            : t('analysisResults.noResultsDesc')
           }
         </p>
       </div>
@@ -156,8 +159,8 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Resultados da Análise</h3>
-        <Badge variant="outline">{results.length} resultado(s)</Badge>
+        <h3 className="text-lg font-semibold">{t('analysisResults.title')}</h3>
+        <Badge variant="outline">{t('analysisResults.resultsCount').replace('{count}', results.length.toString())}</Badge>
       </div>
       
       {results.map((result) => (
@@ -173,9 +176,9 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
               </Badge>
             </div>
             <CardDescription>
-              Analisado em {formatDate(result.created_at)}
+              {t('analysisResults.analyzedOn')} {formatDate(result.created_at)}
               {result.updated_at !== result.created_at && (
-                <span> • Atualizado em {formatDate(result.updated_at)}</span>
+                <span> • {t('analysisResults.updatedOn')} {formatDate(result.updated_at)}</span>
               )}
             </CardDescription>
           </CardHeader>
@@ -185,14 +188,14 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
                 {/* Preview dos dados de análise */}
                 {result.analysis_data.summary && (
                   <div>
-                    <h4 className="font-medium text-sm mb-1">Resumo:</h4>
+                    <h4 className="font-medium text-sm mb-1">{t('analysisResults.summary')}</h4>
                     <p className="text-sm text-muted-foreground">{result.analysis_data.summary}</p>
                   </div>
                 )}
                 
                 {result.analysis_data.score && (
                   <div>
-                    <h4 className="font-medium text-sm mb-1">Pontuação:</h4>
+                    <h4 className="font-medium text-sm mb-1">{t('analysisResults.score')}</h4>
                     <div className="flex items-center gap-2">
                       <div className="w-full bg-muted rounded-full h-2">
                         <div 
@@ -207,7 +210,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
 
                 {result.analysis_data.recommendations && Array.isArray(result.analysis_data.recommendations) && (
                   <div>
-                    <h4 className="font-medium text-sm mb-1">Recomendações:</h4>
+                    <h4 className="font-medium text-sm mb-1">{t('analysisResults.recommendations')}</h4>
                     <ul className="text-sm text-muted-foreground space-y-1">
                       {result.analysis_data.recommendations.slice(0, 3).map((rec: string, index: number) => (
                         <li key={index} className="flex items-start gap-2">
@@ -217,7 +220,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
                       ))}
                       {result.analysis_data.recommendations.length > 3 && (
                         <li className="text-xs text-muted-foreground italic">
-                          +{result.analysis_data.recommendations.length - 3} mais recomendações
+                          {t('analysisResults.moreRecommendations').replace('{count}', (result.analysis_data.recommendations.length - 3).toString())}
                         </li>
                       )}
                     </ul>
@@ -227,7 +230,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
                 {/* JSON compacto para dados complexos */}
                 <details className="text-xs">
                   <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                    Ver dados completos
+                    {t('analysisResults.viewFullData')}
                   </summary>
                   <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto max-h-40">
                     {JSON.stringify(result.analysis_data, null, 2)}
@@ -236,7 +239,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">
-                Dados de análise não disponíveis
+                {t('analysisResults.dataNotAvailable')}
               </p>
             )}
           </CardContent>

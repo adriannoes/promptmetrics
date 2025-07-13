@@ -6,11 +6,13 @@ import { useAuth } from '../contexts/AuthContext';
 import LanguageSelector from './LanguageSelector';
 import { Button } from './ui/button';
 import { Menu, X, Zap, LogOut } from 'lucide-react';
+import { toast } from './ui/use-toast';
 
 const MobileNav = () => {
   const { t } = useLanguage();
   const { user, profile, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const toggleNav = () => setIsOpen(!isOpen);
   const closeNav = () => setIsOpen(false);
@@ -44,9 +46,25 @@ const MobileNav = () => {
   };
 
   const handleSignOut = async () => {
+    setSigningOut(true);
     await signOut();
+    // O feedback será tratado pelo evento abaixo
     closeNav();
   };
+
+  // Feedback visual pós-signout
+  React.useEffect(() => {
+    const onSignoutComplete = (e: any) => {
+      setSigningOut(false);
+      if (e.detail?.success) {
+        toast({ title: t('nav.signOut'), description: 'Logout realizado com sucesso!', variant: 'default' });
+      } else {
+        toast({ title: t('nav.signOut'), description: 'Erro ao sair. Tente novamente.', variant: 'destructive' });
+      }
+    };
+    window.addEventListener('signout-complete', onSignoutComplete);
+    return () => window.removeEventListener('signout-complete', onSignoutComplete);
+  }, [t]);
 
   // Check if user is logged in (including demo user)
   const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
@@ -144,8 +162,11 @@ const MobileNav = () => {
                     onClick={handleSignOut}
                     variant="outline"
                     className="w-full flex items-center gap-2 justify-center"
+                    disabled={signingOut}
+                    aria-busy={signingOut}
+                    aria-label={t('nav.signOut')}
                   >
-                    <LogOut className="w-4 h-4" />
+                    {signingOut ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true" /> : <LogOut className="w-4 h-4" />}
                     {t('nav.signOut')}
                   </Button>
                 </div>

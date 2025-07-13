@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
@@ -36,7 +35,7 @@ const translations = {
 
     // Hero section
     'hero.badge': '🚀 Boost your brand\'s performance on AI chats',
-    'hero.title': 'What is AI talking about your company?',
+    'hero.title': 'What is AI saying about your company?',
     'hero.subtitle': 'Consumers are asking LLMs like ChatGPT, Gemini, and Perplexity about your brand and products. Is your company ready?',
     'hero.cta': 'Get Your AI Brand Report',
     
@@ -246,6 +245,56 @@ const translations = {
     'strategicInsights.insightsIdentified': 'Insights Identified',
     'strategicInsights.recommendationsCount': 'Recommendations',
     'strategicInsights.immediateActions': 'Immediate Actions',
+    
+    // Analysis Page
+    'analysis.title': 'Domain Analysis',
+    'analysis.subtitle': 'Analyze how your brand appears in AI systems like ChatGPT, Gemini and Perplexity',
+    'analysis.completeAnalysis.title': 'Complete Analysis',
+    'analysis.completeAnalysis.desc': 'Detailed analysis of how your brand is perceived by different AI systems',
+    'analysis.strategicInsights.title': 'Strategic Insights',
+    'analysis.strategicInsights.desc': 'Practical recommendations to improve your presence in AI systems',
+    'analysis.multiplePlatforms.title': 'Multiple Platforms',
+    'analysis.multiplePlatforms.desc': 'Cross-platform analysis including ChatGPT, Gemini, Perplexity and others',
+    'analysis.newAnalysis.title': 'New Analysis',
+    'analysis.newAnalysis.desc': 'Enter the domain you want to analyze',
+    'analysis.analysisInProgress.title': 'Analysis in progress',
+    'analysis.analysisInProgress.desc': 'Analyzing {domain}... This may take a few minutes.',
+    'analysis.howItWorks.title': 'How does it work?',
+    'analysis.step1.title': 'Enter your domain',
+    'analysis.step1.desc': 'Enter your website domain (e.g. lovable.dev)',
+    'analysis.step2.title': 'AI Processing',
+    'analysis.step2.desc': 'Our system queries multiple AIs about your brand',
+    'analysis.step3.title': 'Complete report',
+    'analysis.step3.desc': 'Receive detailed insights and recommendations',
+    'analysis.analysisHistory.title': 'Analysis History',
+    'analysis.analysisHistory.desc': 'Results from completed analyses',
+    'analysis.viewRanking': 'View My Ranking',
+    'analysis.analysisInProgressMessage': 'Analysis in progress... You can already view your ranking page.',
+    'analysis.checkResults': 'Check Results',
+    
+    // Domain Analysis Input
+    'domainInput.placeholder': 'Enter domain to analyze (e.g., lovable.dev)',
+    'domainInput.analyzing': 'Analyzing...',
+    'domainInput.analyze': 'Analyze',
+    'domainInput.startSuccess': 'Analysis started! Results will appear shortly.',
+    'domainInput.startError': 'Failed to start analysis',
+    'domainInput.domainSubmitted': 'Domain submitted for analysis',
+    
+    // Analysis Results
+    'analysisResults.title': 'Analysis Results',
+    'analysisResults.noResults': 'No results found',
+    'analysisResults.noResultsDesc': 'No analyses have been performed yet. Make your first analysis!',
+    'analysisResults.noResultsForDomain': 'No analysis was found for domain "{domain}".',
+    'analysisResults.resultsCount': '{count} result(s)',
+    'analysisResults.analyzedOn': 'Analyzed on',
+    'analysisResults.updatedOn': 'Updated on',
+    'analysisResults.summary': 'Summary:',
+    'analysisResults.score': 'Score:',
+    'analysisResults.recommendations': 'Recommendations:',
+    'analysisResults.moreRecommendations': '+{count} more recommendations',
+    'analysisResults.viewFullData': 'View complete data',
+    'analysisResults.dataNotAvailable': 'Analysis data not available',
+    'analysisResults.loadError': 'Failed to load analysis results',
   },
   'pt-BR': {
     // Navigation
@@ -481,6 +530,56 @@ const translations = {
     'strategicInsights.insightsIdentified': 'Insights Identificados',
     'strategicInsights.recommendationsCount': 'Recomendações',
     'strategicInsights.immediateActions': 'Ações Imediatas',
+    
+    // Analysis Page
+    'analysis.title': 'Análise de Domínio',
+    'analysis.subtitle': 'Analise como sua marca aparece em sistemas de IA como ChatGPT, Gemini e Perplexity',
+    'analysis.completeAnalysis.title': 'Análise Completa',
+    'analysis.completeAnalysis.desc': 'Análise detalhada de como sua marca é percebida por diferentes sistemas de IA',
+    'analysis.strategicInsights.title': 'Insights Estratégicos',
+    'analysis.strategicInsights.desc': 'Recomendações práticas para melhorar sua presença em sistemas de IA',
+    'analysis.multiplePlatforms.title': 'Múltiplas Plataformas',
+    'analysis.multiplePlatforms.desc': 'Análise cross-platform incluindo ChatGPT, Gemini, Perplexity e outros',
+    'analysis.newAnalysis.title': 'Nova Análise',
+    'analysis.newAnalysis.desc': 'Digite o domínio que deseja analisar',
+    'analysis.analysisInProgress.title': 'Análise em andamento',
+    'analysis.analysisInProgress.desc': 'Analisando {domain}... Isso pode levar alguns minutos.',
+    'analysis.howItWorks.title': 'Como funciona?',
+    'analysis.step1.title': 'Digite seu domínio',
+    'analysis.step1.desc': 'Digite o domínio do seu site (ex: lovable.dev)',
+    'analysis.step2.title': 'Processamento IA',
+    'analysis.step2.desc': 'Nosso sistema consulta múltiplas IAs sobre sua marca',
+    'analysis.step3.title': 'Relatório completo',
+    'analysis.step3.desc': 'Receba insights e recomendações detalhadas',
+    'analysis.analysisHistory.title': 'Histórico de Análises',
+    'analysis.analysisHistory.desc': 'Resultados das análises realizadas',
+    'analysis.viewRanking': 'Ver Meu Ranking',
+    'analysis.analysisInProgressMessage': 'Análise em andamento... Você já pode visualizar sua página de ranking.',
+    'analysis.checkResults': 'Ver Resultados',
+    
+    // Domain Analysis Input
+    'domainInput.placeholder': 'Digite o domínio para analisar (ex: lovable.dev)',
+    'domainInput.analyzing': 'Analisando...',
+    'domainInput.analyze': 'Analisar',
+    'domainInput.startSuccess': 'Análise iniciada! Os resultados aparecerão em breve.',
+    'domainInput.startError': 'Falha ao iniciar análise',
+    'domainInput.domainSubmitted': 'Domínio enviado para análise',
+    
+    // Analysis Results
+    'analysisResults.title': 'Resultados da Análise',
+    'analysisResults.noResults': 'Nenhum resultado encontrado',
+    'analysisResults.noResultsDesc': 'Ainda não há análises realizadas. Faça sua primeira análise!',
+    'analysisResults.noResultsForDomain': 'Nenhuma análise foi encontrada para o domínio "{domain}".',
+    'analysisResults.resultsCount': '{count} resultado(s)',
+    'analysisResults.analyzedOn': 'Analisado em',
+    'analysisResults.updatedOn': 'Atualizado em',
+    'analysisResults.summary': 'Resumo:',
+    'analysisResults.score': 'Pontuação:',
+    'analysisResults.recommendations': 'Recomendações:',
+    'analysisResults.moreRecommendations': '+{count} mais recomendações',
+    'analysisResults.viewFullData': 'Ver dados completos',
+    'analysisResults.dataNotAvailable': 'Dados de análise não disponíveis',
+    'analysisResults.loadError': 'Falha ao carregar resultados da análise',
   },
 };
 
@@ -495,12 +594,15 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('pt-BR');
+  const [language, setLanguage] = useState<Language>('en');
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'pt-BR')) {
       setLanguage(savedLanguage);
+    } else {
+      setLanguage('en');
+      localStorage.setItem('language', 'en');
     }
   }, []);
 

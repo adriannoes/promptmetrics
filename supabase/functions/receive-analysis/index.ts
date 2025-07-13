@@ -11,8 +11,48 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper function to log errors to Pipefy
+const reportErrorToPipefy = async (error: any, context: any) => {
+  try {
+    const pipefyWebhook = 'https://ipaas.pipefy.com/api/v1/webhooks/M9MMr5ClE4WJorSyUgaBD/sync';
+    
+    await fetch(pipefyWebhook, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: `Edge Function Error - receive-analysis`,
+        description: `Error occurred in receive-analysis function: ${error.message}`,
+        fields: {
+          error_type: 'Edge Function Error',
+          error_message: error.message,
+          error_stack: error.stack || 'N/A',
+          function_name: 'receive-analysis',
+          timestamp: new Date().toISOString(),
+          context: JSON.stringify(context),
+          additional_info: JSON.stringify({
+            user_agent: context.user_agent || 'N/A',
+            method: context.method || 'N/A',
+            url: context.url || 'N/A'
+          })
+        }
+      })
+    });
+  } catch (reportError) {
+    console.error('💥 Failed to report error to Pipefy:', reportError);
+  }
+};
+
 serve(async (req) => {
   console.log('🎯 Receive-analysis called:', req.method, req.url);
+  
+  const requestContext = {
+    method: req.method,
+    url: req.url,
+    user_agent: req.headers.get('user-agent') || 'unknown',
+    timestamp: new Date().toISOString()
+  };
   
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -23,14 +63,31 @@ serve(async (req) => {
   try {
     if (req.method !== 'POST') {
       console.log('❌ Method not allowed:', req.method);
+      const error = new Error(`Method ${req.method} not allowed`);
+      await reportErrorToPipefy(error, requestContext);
+      
       return new Response('Method not allowed', { 
         status: 405, 
         headers: corsHeaders 
       });
     }
 
-    const payload = await req.json();
-    console.log('📥 Received raw payload:', JSON.stringify(payload, null, 2));
+    let payload;
+    try {
+      payload = await req.json();
+      console.log('📥 Received raw payload:', JSON.stringify(payload, null, 2));
+    } catch (parseError) {
+      console.error('❌ Failed to parse JSON payload:', parseError);
+      await reportErrorToPipefy(parseError, { ...requestContext, step: 'JSON parsing' });
+      
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON payload' }), 
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
 
     // n8n sends data as array, extract first item
     let analysisPayload = payload;
@@ -41,13 +98,24 @@ serve(async (req) => {
     }
 
     // Validate required fields
-    if (!analysisPayload.domain || !analysisPayload.analysis_data) {
+    if (!analysisPayload || !analysisPayload.domain || !analysisPayload.analysis_data) {
       console.log('❌ Missing required fields in payload:', {
-        domain: analysisPayload.domain,
-        analysis_data: !!analysisPayload.analysis_data
+        domain: analysisPayload?.domain,
+        analysis_data: !!analysisPayload?.analysis_data
       });
+      
+      const validationError = new Error('Missing required fields: domain, analysis_data');
+      await reportErrorToPipefy(validationError, { 
+        ...requestContext, 
+        step: 'Payload validation',
+        received_payload: analysisPayload
+      });
+      
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: domain, analysis_data' }), 
+        JSON.stringify({ 
+          error: 'Missing required fields: domain, analysis_data',
+          received_fields: Object.keys(analysisPayload || {})
+        }), 
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -56,12 +124,26 @@ serve(async (req) => {
     }
 
     // Initialize Supabase client
-    const supabase = createClient(
-      // @ts-ignore - Deno global object
-      Deno.env.get('SUPABASE_URL') ?? '',
-      // @ts-ignore - Deno global object
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    let supabase;
+    try {
+      supabase = createClient(
+        // @ts-ignore - Deno global object
+        Deno.env.get('SUPABASE_URL') ?? '',
+        // @ts-ignore - Deno global object
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+    } catch (supabaseError) {
+      console.error('❌ Failed to initialize Supabase client:', supabaseError);
+      await reportErrorToPipefy(supabaseError, { ...requestContext, step: 'Supabase initialization' });
+      
+      return new Response(
+        JSON.stringify({ error: 'Database connection failed' }), 
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
 
     console.log('💾 Attempting to save to database...');
     console.log('💾 Data structure:', {
@@ -87,8 +169,19 @@ serve(async (req) => {
 
     if (error) {
       console.error('💥 Database error:', error);
+      await reportErrorToPipefy(error, { 
+        ...requestContext, 
+        step: 'Database operation',
+        domain: analysisPayload.domain,
+        operation: 'upsert analysis_results'
+      });
+      
       return new Response(
-        JSON.stringify({ error: 'Failed to save analysis', details: error }), 
+        JSON.stringify({ 
+          error: 'Failed to save analysis', 
+          details: error.message,
+          code: error.code
+        }), 
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -117,11 +210,15 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('💥 Error processing request:', error);
+    
+    // Report unexpected errors to Pipefy
+    await reportErrorToPipefy(error, { ...requestContext, step: 'Unexpected error' });
+    
     return new Response(
       JSON.stringify({ 
         error: 'Internal server error', 
         details: error.message,
-        stack: error.stack 
+        timestamp: new Date().toISOString()
       }), 
       { 
         status: 500, 

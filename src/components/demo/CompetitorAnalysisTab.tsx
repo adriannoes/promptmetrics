@@ -19,7 +19,7 @@ interface CompetitorAnalysisTabProps {
   analysisData: AnalysisResult;
 }
 
-// Default mock data for fallback
+// Esta versão do CompetitorAnalysisTab é usada apenas na página /demo e exibe dados estáticos simulando o domínio lovable.dev. Não depende de Supabase nem de autenticação.
 
 const marketShareData = [
   { name: 'Lovable', value: 35, color: '#3B82F6' },

@@ -24,7 +24,7 @@ const Demo = () => {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
-                Demonstração com dados simulados
+                Demo with simulated data
               </span>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 Export Report

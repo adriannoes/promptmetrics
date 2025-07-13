@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, Target, Heart, Trophy, Database } from 'lucide-react';
-import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
+// Esta versão do DashboardTab é usada apenas na página /demo e exibe dados estáticos simulando o domínio lovable.dev. Não depende de Supabase nem de autenticação.
 import { Badge } from '@/components/ui/badge';
 
 interface AnalysisResult {
@@ -55,7 +55,25 @@ const defaultShareOfRankData = [
 ];
 
 export const DashboardTab = () => {
-  const { recentAnalyses, loading } = useRealTimeAnalysis();
+  // Dados simulados de análises recentes para a demo
+  const recentAnalyses = [
+    {
+      id: '1',
+      domain: 'lovable.dev',
+      status: 'completed',
+      analysis_data: {},
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '2',
+      domain: 'bolt.com',
+      status: 'completed',
+      analysis_data: {},
+      created_at: new Date(Date.now() - 86400000).toISOString(),
+      updated_at: new Date(Date.now() - 86400000).toISOString(),
+    },
+  ];
 
   // Use static data for demo
   const sentimentTrendData = defaultSentimentTrendData;
@@ -71,7 +89,7 @@ export const DashboardTab = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="w-5 h-5 text-blue-600" />
-              Análises Reais Recentes
+              Recent Real Analyses
             </CardTitle>
           </CardHeader>
           <CardContent>

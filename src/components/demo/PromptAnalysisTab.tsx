@@ -18,6 +18,7 @@ interface PromptAnalysisTabProps {
   analysisData: AnalysisResult;
 }
 
+// Esta versão do PromptAnalysisTab é usada apenas na página /demo e exibe dados estáticos simulando o domínio lovable.dev. Não depende de Supabase nem de autenticação.
 export const PromptAnalysisTab = () => {
   const {
     selectedLlms,
