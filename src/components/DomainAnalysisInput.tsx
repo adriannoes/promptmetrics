@@ -44,13 +44,35 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
   const checkAnalysisData = async (domain: string): Promise<boolean> => {
     try {
       console.log('🔍 DomainAnalysisInput: Checking analysis data for:', domain);
-      const { data, error } = await supabase
+      
+      // Primeiro, tenta buscar pelo domínio específico
+      let { data, error } = await supabase
         .from('analysis_results')
         .select('*')
         .eq('domain', domain)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      // Se não encontrou, busca qualquer análise recente (útil para casos onde o domínio pode estar diferente)
+      if (!data) {
+        console.log('🔄 DomainAnalysisInput: Domain not found, checking for recent analysis...');
+        const result = await supabase
+          .from('analysis_results')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        
+        data = result.data;
+        error = result.error;
+        
+        if (data) {
+          console.log('📋 DomainAnalysisInput: Found recent analysis for domain:', data.domain);
+          // Atualiza o localStorage com o domínio correto
+          localStorage.setItem('lastAnalyzedDomain', data.domain);
+        }
+      }
 
       if (error) {
         console.error('❌ DomainAnalysisInput: Error checking analysis data:', error);
