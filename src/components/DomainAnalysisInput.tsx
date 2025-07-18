@@ -150,55 +150,101 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
       
       console.log('⏳ DomainAnalysisInput: Function invocation started...');
       
-      const { data, error } = await supabase.functions.invoke('trigger-analysis', {
-        body: requestBody
-      });
+      // Tentar chamada direta com fetch como alternativa
+      console.log('🔄 DomainAnalysisInput: Trying direct fetch as alternative...');
       
-      console.log('✅ DomainAnalysisInput: Function invoke completed');
-      console.log('📨 DomainAnalysisInput: Raw function result data:', data);
-      console.log('📨 DomainAnalysisInput: Raw function result error:', error);
-      console.log('📨 DomainAnalysisInput: Data type:', typeof data);
-      console.log('📨 DomainAnalysisInput: Error type:', typeof error);
-      console.log('📊 DomainAnalysisInput: Function response - data:', data, 'error:', error);
-      console.log('📊 DomainAnalysisInput: Data type:', typeof data);
-      console.log('📊 DomainAnalysisInput: Error type:', typeof error);
-
-      if (error) {
-        console.error('❌ DomainAnalysisInput: Function returned error:', error);
-        console.error('❌ DomainAnalysisInput: Error details:', JSON.stringify(error, null, 2));
-        console.error('❌ DomainAnalysisInput: Error message:', error.message);
-        console.error('❌ DomainAnalysisInput: Error status:', error.status);
+      const functionUrl = `https://racfoelvuhdifnekjsro.supabase.co/functions/v1/trigger-analysis`;
+      console.log('📍 DomainAnalysisInput: Function URL:', functionUrl);
+      
+      try {
+        const directResponse = await fetch(functionUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0`,
+          },
+          body: JSON.stringify(requestBody)
+        });
         
-        const errorMsg = error.message || t('domainInput.startError');
+        console.log('🎯 DomainAnalysisInput: Direct fetch response status:', directResponse.status);
+        console.log('🎯 DomainAnalysisInput: Direct fetch response statusText:', directResponse.statusText);
+        console.log('🎯 DomainAnalysisInput: Direct fetch response headers:', Object.fromEntries(directResponse.headers.entries()));
+        
+        const responseText = await directResponse.text();
+        console.log('📄 DomainAnalysisInput: Direct fetch response text:', responseText);
+        
+        let data = null;
+        let error = null;
+        
+        if (directResponse.ok) {
+          try {
+            data = JSON.parse(responseText);
+            console.log('✅ DomainAnalysisInput: Parsed response data:', data);
+          } catch (parseError) {
+            console.log('⚠️ DomainAnalysisInput: Response is not JSON:', responseText);
+            data = { message: responseText };
+          }
+        } else {
+          error = {
+            message: `HTTP ${directResponse.status}: ${directResponse.statusText}`,
+            status: directResponse.status,
+            body: responseText
+          };
+          console.error('❌ DomainAnalysisInput: Direct fetch error:', error);
+        }
+        
+        console.log('📊 DomainAnalysisInput: Function response - data:', data, 'error:', error);
+        console.log('📊 DomainAnalysisInput: Data type:', typeof data);
+        console.log('📊 DomainAnalysisInput: Error type:', typeof error);
+
+        if (error) {
+          console.error('❌ DomainAnalysisInput: Function returned error:', error);
+          console.error('❌ DomainAnalysisInput: Error details:', JSON.stringify(error, null, 2));
+          console.error('❌ DomainAnalysisInput: Error message:', error.message);
+          console.error('❌ DomainAnalysisInput: Error status:', error.status);
+          
+          const errorMsg = error.message || t('domainInput.startError');
+          setModalError(errorMsg);
+          setModalStatus('failed');
+          toast.error(`Erro na função: ${errorMsg}`);
+          
+          if (onError) {
+            onError(errorMsg);
+          }
+          return;
+        }
+
+        if (data) {
+          console.log('✅ DomainAnalysisInput: Function returned success data:', data);
+          console.log('🎯 DomainAnalysisInput: N8N webhook should have been triggered');
+        } else {
+          console.log('⚠️ DomainAnalysisInput: Function returned no data, but no error either');
+        }
+
+        console.log('✅ DomainAnalysisInput: Analysis triggered successfully');
+        
+        // Iniciar polling para aguardar dados
+        startPolling(trimmedDomain);
+        
+        // Call the parent callback
+        console.log('📞 DomainAnalysisInput: Calling parent onAnalyze with:', trimmedDomain);
+        onAnalyze(trimmedDomain);
+        
+        // Clear the input field
+        setDomain('');
+        
+      } catch (fetchError) {
+        console.error('💥 DomainAnalysisInput: Direct fetch error:', fetchError);
+        
+        const errorMsg = fetchError instanceof Error ? fetchError.message : t('domainInput.startError');
         setModalError(errorMsg);
         setModalStatus('failed');
-        toast.error(`Erro na função: ${errorMsg}`);
         
         if (onError) {
           onError(errorMsg);
         }
-        return;
       }
-
-      if (data) {
-        console.log('✅ DomainAnalysisInput: Function returned success data:', data);
-        console.log('🎯 DomainAnalysisInput: N8N webhook should have been triggered');
-      } else {
-        console.log('⚠️ DomainAnalysisInput: Function returned no data, but no error either');
-      }
-
-      console.log('✅ DomainAnalysisInput: Analysis triggered successfully');
-      
-      // Iniciar polling para aguardar dados
-      startPolling(trimmedDomain);
-      
-      // Call the parent callback
-      console.log('📞 DomainAnalysisInput: Calling parent onAnalyze with:', trimmedDomain);
-      onAnalyze(trimmedDomain);
-      
-      // Clear the input field
-      setDomain('');
-      
+        
     } catch (error) {
       console.error('💥 DomainAnalysisInput: Catch block - Unexpected error:', error);
       console.error('💥 DomainAnalysisInput: Error type:', typeof error);
