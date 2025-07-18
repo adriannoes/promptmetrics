@@ -202,9 +202,6 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     
     // Setup real-time subscription
     setupRealTimeSubscription(domain);
-    
-    // Setup polling fallback
-    setupPolling(domain);
 
     return () => {
       // Cleanup
@@ -221,14 +218,21 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         debounceTimeoutRef.current = null;
       }
     };
-  }, [domain, fetchAnalysis, setupRealTimeSubscription, setupPolling]);
+  }, [domain]); // Removed circular dependencies
 
-  // Update polling when connection status changes
+  // Separate effect for polling that doesn't cause loops
   useEffect(() => {
-    if (domain) {
+    if (!domain) return;
+    
+    // Setup polling after initial mount and when connection status changes
+    const timeoutId = setTimeout(() => {
       setupPolling(domain);
-    }
-  }, [isConnected, data, domain, setupPolling]);
+    }, 100); // Small delay to avoid immediate conflicts
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [domain, isConnected]); // Only depend on domain and connection status
 
   // Mark new data as read
   const markAsRead = useCallback(() => {
