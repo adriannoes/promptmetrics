@@ -159,16 +159,24 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
       const result = await Promise.race([invokePromise, timeoutPromise]);
       console.log('✅ DomainAnalysisInput: Function invoke completed');
       console.log('📨 DomainAnalysisInput: Raw function result:', result);
+      console.log('📨 DomainAnalysisInput: Result type:', typeof result);
+      console.log('📨 DomainAnalysisInput: Result keys:', result ? Object.keys(result) : 'No result');
 
       const { data, error } = result;
       console.log('📊 DomainAnalysisInput: Function response - data:', data, 'error:', error);
+      console.log('📊 DomainAnalysisInput: Data type:', typeof data);
+      console.log('📊 DomainAnalysisInput: Error type:', typeof error);
 
       if (error) {
         console.error('❌ DomainAnalysisInput: Function returned error:', error);
         console.error('❌ DomainAnalysisInput: Error details:', JSON.stringify(error, null, 2));
+        console.error('❌ DomainAnalysisInput: Error message:', error.message);
+        console.error('❌ DomainAnalysisInput: Error status:', error.status);
+        
         const errorMsg = error.message || t('domainInput.startError');
         setModalError(errorMsg);
         setModalStatus('failed');
+        toast.error(`Erro na função: ${errorMsg}`);
         
         if (onError) {
           onError(errorMsg);
