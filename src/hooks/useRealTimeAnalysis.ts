@@ -66,7 +66,10 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     setError(null);
 
     try {
-      const { data: result, error: fetchError } = await supabase
+      console.log('📊 useRealTimeAnalysis: Fetching analysis for domain:', targetDomain);
+      
+      // First try to get analysis for the specific domain
+      let { data: result, error: fetchError } = await supabase
         .from('analysis_results')
         .select('*')
         .eq('domain', targetDomain)
@@ -78,13 +81,42 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         throw fetchError;
       }
 
+      // If no data found for specific domain, get the most recent analysis
+      if (!result) {
+        console.log('📊 useRealTimeAnalysis: No data for specific domain, fetching latest analysis');
+        
+        const { data: latestResult, error: latestError } = await supabase
+          .from('analysis_results')
+          .select('*')
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (latestError) {
+          throw latestError;
+        }
+
+        result = latestResult;
+        
+        // Update localStorage with the found domain
+        if (result) {
+          console.log('📊 useRealTimeAnalysis: Found latest analysis for domain:', result.domain);
+          localStorage.setItem('lastAnalyzedDomain', result.domain);
+          
+          // Update URL if we're not already on the correct domain
+          if (window.location.pathname === '/my-rank') {
+            window.history.replaceState({}, '', `/my-rank?domain=${encodeURIComponent(result.domain)}`);
+          }
+        }
+      }
+
       if (result) {
         setData(result);
         setLastUpdated(new Date());
-        console.log('📊 Fetched analysis data for:', targetDomain);
+        console.log('📊 Fetched analysis data for:', result.domain);
       } else {
         setData(null);
-        console.log('📭 No analysis data found for:', targetDomain);
+        console.log('📭 No analysis data found');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch analysis';
