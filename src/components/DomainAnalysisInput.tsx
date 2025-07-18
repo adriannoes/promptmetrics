@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,6 +43,7 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
   // Função para verificar se os dados chegaram
   const checkAnalysisData = async (domain: string): Promise<boolean> => {
     try {
+      console.log('🔍 DomainAnalysisInput: Checking analysis data for:', domain);
       const { data, error } = await supabase
         .from('analysis_results')
         .select('*')
@@ -51,26 +53,26 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
         .maybeSingle();
 
       if (error) {
-        console.error('Error checking analysis data:', error);
+        console.error('❌ DomainAnalysisInput: Error checking analysis data:', error);
         return false;
       }
 
       if (data && data.status === 'completed' && data.analysis_data) {
-        console.log('✅ Analysis data found and completed:', data);
+        console.log('✅ DomainAnalysisInput: Analysis data found and completed:', data);
         return true;
       }
 
-      console.log('⏳ Analysis data not ready yet:', data);
+      console.log('⏳ DomainAnalysisInput: Analysis data not ready yet:', data);
       return false;
     } catch (error) {
-      console.error('Error in checkAnalysisData:', error);
+      console.error('💥 DomainAnalysisInput: Error in checkAnalysisData:', error);
       return false;
     }
   };
 
   // Função para iniciar polling
   const startPolling = (domain: string) => {
-    console.log('🔄 Starting polling for domain:', domain);
+    console.log('🔄 DomainAnalysisInput: Starting polling for domain:', domain);
     
     if (pollingInterval) {
       clearInterval(pollingInterval);
@@ -82,7 +84,7 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
       const hasData = await checkAnalysisData(domain);
       
       if (hasData) {
-        console.log('🎉 Analysis completed!');
+        console.log('🎉 DomainAnalysisInput: Analysis completed!');
         setModalStatus('completed');
         clearInterval(interval);
         return;
@@ -90,7 +92,7 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
 
       // Verificar timeout (5 minutos)
       if (modalElapsedTime >= 300) {
-        console.log('⏰ Max wait time reached');
+        console.log('⏰ DomainAnalysisInput: Max wait time reached');
         setModalStatus('failed');
         clearInterval(interval);
         setModalError('A análise está demorando mais que o esperado.');
@@ -109,6 +111,7 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
     
     if (!validateDomain(trimmedDomain)) {
       const errorMsg = t('domainInput.invalidDomain');
+      console.log('❌ DomainAnalysisInput: Invalid domain:', trimmedDomain);
       setErrorMessage(errorMsg);
       setShowError(true);
       if (onError) {
@@ -131,32 +134,38 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
 
     try {
       const requestBody = { domain: trimmedDomain };
+      console.log('📦 DomainAnalysisInput: Request body:', requestBody);
       
       // Save domain to localStorage for persistence
       localStorage.setItem('lastAnalyzedDomain', trimmedDomain);
       localStorage.setItem(`analysis_started_${trimmedDomain}`, Date.now().toString());
       
-      console.log('📡 Calling trigger-analysis function...');
-      
-      console.log('⏳ About to invoke function...');
+      console.log('📡 DomainAnalysisInput: About to call supabase.functions.invoke("trigger-analysis")...');
+      console.log('📡 DomainAnalysisInput: Using body:', JSON.stringify(requestBody));
       
       // Adicionar timeout de 30 segundos
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout: Função demorou mais de 30 segundos para responder')), 30000);
+        setTimeout(() => {
+          console.log('⏰ DomainAnalysisInput: Function call timeout after 30 seconds');
+          reject(new Error('Timeout: Função demorou mais de 30 segundos para responder'));
+        }, 30000);
       });
       
       const invokePromise = supabase.functions.invoke('trigger-analysis', {
         body: requestBody
       });
       
+      console.log('⏳ DomainAnalysisInput: Function invocation started...');
       const result = await Promise.race([invokePromise, timeoutPromise]);
-      const { data, error } = result;
-      console.log('✅ Function invoke completed');
+      console.log('✅ DomainAnalysisInput: Function invoke completed');
+      console.log('📨 DomainAnalysisInput: Raw function result:', result);
 
-      console.log('📨 Response received:', { success: !error, hasData: !!data });
+      const { data, error } = result;
+      console.log('📊 DomainAnalysisInput: Function response - data:', data, 'error:', error);
 
       if (error) {
-        console.error('❌ Error response:', error.message);
+        console.error('❌ DomainAnalysisInput: Function returned error:', error);
+        console.error('❌ DomainAnalysisInput: Error details:', JSON.stringify(error, null, 2));
         const errorMsg = error.message || t('domainInput.startError');
         setModalError(errorMsg);
         setModalStatus('failed');
@@ -167,22 +176,31 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
         return;
       }
 
-      console.log('✅ Analysis triggered successfully');
+      if (data) {
+        console.log('✅ DomainAnalysisInput: Function returned success data:', data);
+        console.log('🎯 DomainAnalysisInput: N8N webhook should have been triggered');
+      } else {
+        console.log('⚠️ DomainAnalysisInput: Function returned no data, but no error either');
+      }
+
+      console.log('✅ DomainAnalysisInput: Analysis triggered successfully');
       
       // Iniciar polling para aguardar dados
       startPolling(trimmedDomain);
       
       // Call the parent callback
-      console.log('[DEBUG] Chamando onAnalyze do pai com:', trimmedDomain);
+      console.log('📞 DomainAnalysisInput: Calling parent onAnalyze with:', trimmedDomain);
       onAnalyze(trimmedDomain);
       
       // Clear the input field
       setDomain('');
       
     } catch (error) {
-      console.error('💥 Catch block - Unexpected error:', error);
-      console.error('💥 Error type:', typeof error);
-      console.error('💥 Error details:', JSON.stringify(error, null, 2));
+      console.error('💥 DomainAnalysisInput: Catch block - Unexpected error:', error);
+      console.error('💥 DomainAnalysisInput: Error type:', typeof error);
+      console.error('💥 DomainAnalysisInput: Error details:', JSON.stringify(error, null, 2));
+      console.error('💥 DomainAnalysisInput: Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      
       const errorMsg = error instanceof Error ? error.message : t('domainInput.startError');
       setModalError(errorMsg);
       setModalStatus('failed');
