@@ -21,5 +21,5 @@ export interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
   signInWithDemo: () => Promise<{ error: any }>;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<boolean>;
 }
