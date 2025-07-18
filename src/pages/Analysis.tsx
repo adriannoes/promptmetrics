@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import SkipNav from '@/components/SkipNav';
 import { DomainAnalysisInput } from '@/components/DomainAnalysisInput';
 import { AnalysisResults } from '@/components/AnalysisResults';
+import { AnalysisHistory } from '@/components/AnalysisHistory';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -210,10 +211,14 @@ const AnalysisContent = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="max-h-[600px] overflow-y-auto">
-                    <AnalysisResults 
-                      domain={currentDomain || undefined}
-                      refreshTrigger={refreshTrigger}
-                    />
+                    {currentDomain ? (
+                      <AnalysisResults 
+                        domain={currentDomain}
+                        refreshTrigger={refreshTrigger}
+                      />
+                    ) : (
+                      <AnalysisHistory />
+                    )}
                   </div>
                 </CardContent>
               </Card>
