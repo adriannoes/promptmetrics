@@ -42,6 +42,7 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
     const trimmedDomain = domain.trim();
     
     console.log('🚀 DomainAnalysisInput: About to call trigger-analysis edge function');
+    console.log('🔍 Current supabase client:', supabase);
 
     try {
       // Log the exact request being made
@@ -55,10 +56,50 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
       localStorage.setItem(`analysis_started_${trimmedDomain}`, Date.now().toString());
       
       // Trigger analysis workflow
-      console.log('📡 DomainAnalysisInput: Calling supabase.functions.invoke...');
-      const { data, error } = await supabase.functions.invoke('trigger-analysis', {
-        body: requestBody
-      });
+            console.log('📡 DomainAnalysisInput: Calling supabase.functions.invoke...');
+      console.log('📡 Function name: trigger-analysis');
+      console.log('📡 Request body:', JSON.stringify(requestBody));
+      
+      // Teste simples para verificar se o cliente Supabase está funcionando
+      console.log('🧪 Testing Supabase client...');
+      
+      // Teste direto com fetch para comparar
+      console.log('🧪 Testing direct fetch...');
+      try {
+        const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/trigger-analysis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        });
+        
+        const directData = await directResponse.json();
+        console.log('🧪 Direct fetch response:', directResponse.status, directData);
+      } catch (directError) {
+        console.error('🧪 Direct fetch error:', directError);
+      }
+      
+      console.log('🔍 About to call supabase.functions.invoke...');
+      console.log('🔍 Function name: trigger-analysis');
+      console.log('🔍 Request body:', JSON.stringify(requestBody));
+      
+      let data, error;
+      try {
+        const result = await supabase.functions.invoke('trigger-analysis', {
+          body: requestBody
+        });
+        
+        data = result.data;
+        error = result.error;
+        
+        console.log('✅ supabase.functions.invoke completed');
+        console.log('📊 Data:', data);
+        console.log('❗ Error:', error);
+      } catch (invokeError) {
+        console.error('💥 Error in supabase.functions.invoke:', invokeError);
+        throw invokeError;
+      }
 
       // NOVO: Exibir resultado bruto em toast e log
       toast("Raw response: " + JSON.stringify({ data, error }));

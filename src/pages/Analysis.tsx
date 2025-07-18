@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
-import { AccessibilityProvider } from '../contexts/AccessibilityContext';
-import SkipNav from '../components/SkipNav';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import AccessibilityPanel from '../components/AccessibilityPanel';
-import { DomainAnalysisInput } from '../components/DomainAnalysisInput';
-import { AnalysisResults } from '../components/AnalysisResults';
-import { ErrorReportButton } from '../components/ErrorReportButton';
+import { useLanguage } from '@/contexts/LanguageContext';
+import Header from '@/components/Header';
+import SkipNav from '@/components/SkipNav';
+import { DomainAnalysisInput } from '@/components/DomainAnalysisInput';
+import { AnalysisResults } from '@/components/AnalysisResults';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, Search, TrendingUp, Globe, ArrowRight, Clock, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Search, 
+  BarChart3, 
+  TrendingUp, 
+  Globe, 
+  ArrowRight, 
+  AlertCircle, 
+  Clock,
+  CheckCircle,
+  Loader2
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { ErrorReportButton } from '@/components/ErrorReportButton';
+import { toast } from 'sonner';
 
 const AnalysisContent = () => {
   const { t } = useLanguage();
@@ -25,8 +31,86 @@ const AnalysisContent = () => {
   const [showAutoRedirect, setShowAutoRedirect] = useState(false);
   const [autoRedirectCountdown, setAutoRedirectCountdown] = useState(10);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [analysisStatus, setAnalysisStatus] = useState<'idle' | 'processing' | 'completed' | 'failed'>('idle');
+  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
+  const [maxWaitTime, setMaxWaitTime] = useState(300); // 5 minutos máximo
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  console.log('Analysis Page: Rendered with currentDomain=', currentDomain, 'loading=', loading);
+  console.log('Analysis Page: Rendered with currentDomain=', currentDomain, 'loading=', loading, 'status=', analysisStatus);
+
+  // Função para verificar se os dados chegaram
+  const checkAnalysisData = async (domain: string): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from('analysis_results')
+        .select('*')
+        .eq('domain', domain)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error checking analysis data:', error);
+        return false;
+      }
+
+      if (data && data.status === 'completed' && data.analysis_data) {
+        console.log('✅ Analysis data found and completed:', data);
+        return true;
+      }
+
+      console.log('⏳ Analysis data not ready yet:', data);
+      return false;
+    } catch (error) {
+      console.error('Error in checkAnalysisData:', error);
+      return false;
+    }
+  };
+
+  // Função para iniciar polling
+  const startPolling = (domain: string) => {
+    console.log('🔄 Starting polling for domain:', domain);
+    
+    // Limpar polling anterior
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+    }
+
+    const interval = setInterval(async () => {
+      setElapsedTime(prev => prev + 10);
+      
+      const hasData = await checkAnalysisData(domain);
+      
+      if (hasData) {
+        console.log('🎉 Analysis completed! Redirecting to results...');
+        setAnalysisStatus('completed');
+        setLoading(false);
+        setShowAutoRedirect(false);
+        clearInterval(interval);
+        
+        // Redirecionar imediatamente
+        window.location.href = `/my-rank?domain=${encodeURIComponent(domain)}`;
+        return;
+      }
+
+      // Verificar timeout
+      if (elapsedTime >= maxWaitTime) {
+        console.log('⏰ Max wait time reached, redirecting anyway...');
+        setAnalysisStatus('failed');
+        setLoading(false);
+        setShowAutoRedirect(false);
+        clearInterval(interval);
+        
+        toast.warning('A análise está demorando mais que o esperado. Você será redirecionado para verificar o status.');
+        
+        // Redirecionar mesmo sem dados
+        window.location.href = `/my-rank?domain=${encodeURIComponent(domain)}`;
+        return;
+      }
+    }, 10000); // Verificar a cada 10 segundos
+
+    setPollingInterval(interval);
+  };
 
   const handleAnalyze = (domain: string) => {
     console.log('Analysis Page: handleAnalyze called with domain:', domain);
@@ -35,16 +119,14 @@ const AnalysisContent = () => {
     setShowAutoRedirect(true);
     setAutoRedirectCountdown(10);
     setAnalysisError(null);
+    setAnalysisStatus('processing');
+    setElapsedTime(0);
     
     // Save domain to localStorage
     localStorage.setItem('lastAnalyzedDomain', domain);
     
-    // Simulate analysis time and refresh results
-    setTimeout(() => {
-      console.log('Analysis Page: Analysis simulation completed');
-      setLoading(false);
-      setRefreshTrigger(prev => prev + 1);
-    }, 3000);
+    // Iniciar polling para aguardar dados
+    startPolling(domain);
   };
 
   const handleAnalysisError = (error: string) => {
@@ -52,20 +134,37 @@ const AnalysisContent = () => {
     setAnalysisError(error);
     setLoading(false);
     setShowAutoRedirect(false);
+    setAnalysisStatus('failed');
+    
+    // Limpar polling se houver erro
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      setPollingInterval(null);
+    }
   };
 
-  // Auto-redirect countdown
+  // Auto-redirect countdown (fallback)
   useEffect(() => {
-    if (showAutoRedirect && autoRedirectCountdown > 0) {
+    if (showAutoRedirect && autoRedirectCountdown > 0 && analysisStatus === 'processing') {
       const timer = setTimeout(() => {
         setAutoRedirectCountdown(prev => prev - 1);
       }, 1000);
       return () => clearTimeout(timer);
-    } else if (showAutoRedirect && autoRedirectCountdown === 0) {
-      // Redirect automatically
+    } else if (showAutoRedirect && autoRedirectCountdown === 0 && analysisStatus === 'processing') {
+      // Fallback: redirect after countdown if still processing
+      console.log('⏰ Auto-redirect countdown finished, redirecting...');
       window.location.href = `/my-rank?domain=${encodeURIComponent(currentDomain)}`;
     }
-  }, [showAutoRedirect, autoRedirectCountdown, currentDomain]);
+  }, [showAutoRedirect, autoRedirectCountdown, currentDomain, analysisStatus]);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+    };
+  }, [pollingInterval]);
 
   const handleViewRanking = () => {
     // Navigate to /my-rank with domain parameter
@@ -75,6 +174,18 @@ const AnalysisContent = () => {
   const cancelAutoRedirect = () => {
     setShowAutoRedirect(false);
     setAutoRedirectCountdown(10);
+    
+    // Limpar polling se cancelar
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      setPollingInterval(null);
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -127,8 +238,62 @@ const AnalysisContent = () => {
             </div>
           )}
 
-          {/* Auto-redirect notification */}
-          {showAutoRedirect && (
+          {/* Processing Status */}
+          {analysisStatus === 'processing' && (
+            <div className="mb-8">
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-blue-900">
+                          🔄 Análise em andamento...
+                        </h3>
+                        <p className="text-sm text-blue-700">
+                          Processando análise para <strong>{currentDomain}</strong>
+                        </p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-300">
+                            ⏱️ {formatTime(elapsedTime)}
+                          </Badge>
+                          <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300">
+                            🔍 Verificando dados a cada 10s
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-blue-600 mt-1">
+                          Aguardando o n8n processar e retornar os dados...
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={handleViewRanking}
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        {t('analysis.viewRanking')}
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </Button>
+                      <Button 
+                        onClick={cancelAutoRedirect}
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Auto-redirect notification (fallback) */}
+          {showAutoRedirect && analysisStatus === 'idle' && (
             <div className="mb-8">
               <Card className="bg-blue-50 border-blue-200">
                 <CardContent className="pt-6">
@@ -309,23 +474,15 @@ const AnalysisContent = () => {
           </div>
         </div>
       </main>
-      <Footer />
-      <AccessibilityPanel />
-      
-      {/* Toast notifications */}
-      <Toaster />
-      <Sonner />
+      {/* Removed Footer, AccessibilityPanel, Toaster, Sonner as they are not in the new_code */}
     </div>
   );
 };
 
 const Analysis = () => {
   return (
-    <LanguageProvider>
-      <AccessibilityProvider>
-        <AnalysisContent />
-      </AccessibilityProvider>
-    </LanguageProvider>
+    // Removed LanguageProvider and AccessibilityProvider as they are not in the new_code
+    <AnalysisContent />
   );
 };
 

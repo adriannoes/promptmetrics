@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { CompleteAnalysisResult } from '@/types/analysis';
 
 interface AnalysisResult {
   id: string;
   domain: string;
-  status: string;
+  status: 'processing' | 'completed' | 'failed' | string; // Allow string for flexibility
   analysis_data: any;
   created_at: string;
   updated_at: string;

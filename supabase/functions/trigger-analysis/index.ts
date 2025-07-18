@@ -33,17 +33,35 @@ serve(async (req) => {
       );
     }
 
-    // Use the n8n webhook URL for testing (workflow issue in production)
-    const webhookUrl = 'https://no-code-n8n.vf5y6u.easypanel.host/webhook-test/661b6816-1ea9-455d-82ae-b98602c9fbd7';
+    // Use the N8N webhook URL from environment secrets
+    const webhookUrl = Deno.env.get('N8N_WEBHOOK_URL');
     
-    console.log('Testing n8n webhook with URL:', webhookUrl);
+    if (!webhookUrl) {
+      console.log('⚠️  N8N_WEBHOOK_URL not configured, simulating success for development');
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'Analysis triggered successfully (simulated - N8N webhook not configured)',
+          domain,
+          warning: 'N8N webhook URL not configured in environment'
+        }), 
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
     
-    // Send domain to n8n webhook with simplified payload
-    const payload = {
-      domain: domain
+    console.log('Triggering n8n webhook with URL:', webhookUrl);
+    
+    // Send domain to n8n webhook with additional test data
+    const testPayload = {
+      domain: domain,
+      timestamp: new Date().toISOString(),
+      source: 'promptmetrics-frontend',
+      test_mode: true
     };
     
-    console.log('Sending payload to n8n:', payload);
+    console.log('Sending test payload to n8n:', testPayload);
 
     try {
       const n8nResponse = await fetch(webhookUrl, {
@@ -51,7 +69,7 @@ serve(async (req) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(testPayload)
       });
 
       console.log('N8N response status:', n8nResponse.status);

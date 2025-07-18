@@ -1,40 +1,54 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { 
+  Search, 
+  BarChart3, 
+  ArrowLeft, 
+  RefreshCw, 
+  AlertCircle, 
+  CheckCircle,
+  Loader2,
+  Database,
+  Clock
+} from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
+import { RealTimeNotification } from '@/components/RealTimeNotification';
+import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { MyRankDashboardTab } from '@/components/myrank/MyRankDashboardTab';
 import { MyRankPromptAnalysisTab } from '@/components/myrank/MyRankPromptAnalysisTab';
 import { MyRankCompetitorAnalysisTab } from '@/components/myrank/MyRankCompetitorAnalysisTab';
 import { MyRankStrategicInsightsTab } from '@/components/myrank/MyRankStrategicInsightsTab';
-import { ErrorReportButton } from '@/components/ErrorReportButton';
-import { RealTimeNotification } from '@/components/RealTimeNotification';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, BarChart3, ArrowLeft, Clock, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
-import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
-import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
-import { AccessibilityProvider } from '@/contexts/AccessibilityContext';
-import LanguageSelector from '@/components/LanguageSelector';
+import { toast } from 'sonner';
+import Header from '@/components/Header';
+import SkipNav from '@/components/SkipNav';
 
 const MyRankContent = () => {
   const { t } = useLanguage();
+  const [searchParams] = useSearchParams();
   const [currentDomain, setCurrentDomain] = useState<string>('');
-  const [isAnalysisInProgress, setIsAnalysisInProgress] = useState(false);
+  const [showDomainInput, setShowDomainInput] = useState(false);
+  const [newDomain, setNewDomain] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Get domain from URL params or localStorage
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const domainParam = urlParams.get('domain');
+    const urlDomain = searchParams.get('domain');
     const savedDomain = localStorage.getItem('lastAnalyzedDomain');
+    const domain = urlDomain || savedDomain || '';
     
-    const targetDomain = domainParam || savedDomain || '';
-    if (targetDomain) {
-      setCurrentDomain(targetDomain);
-    }
-  }, []);
+    setCurrentDomain(domain);
+    console.log('🎯 MyRank: Domain set to:', domain);
+  }, [searchParams]);
 
-  // Use Real-time analysis hook
+  // Use real-time analysis hook
   const {
     data: analysisData,
     loading,
@@ -43,269 +57,412 @@ const MyRankContent = () => {
     lastUpdated,
     refetch,
     hasNewData,
-    markAsRead,
+    markAsRead
   } = useRealTimeAnalysis(currentDomain);
 
-  // Check if analysis is in progress when no data is available
-  useEffect(() => {
-    if (currentDomain && !analysisData && !loading) {
-      const lastSubmissionTime = localStorage.getItem(`analysis_started_${currentDomain}`);
-      if (lastSubmissionTime) {
-        const timeDiff = Date.now() - parseInt(lastSubmissionTime);
-        if (timeDiff < 30 * 60 * 1000) { // 30 minutes
-          setIsAnalysisInProgress(true);
-        }
-      }
-    } else if (analysisData) {
-      setIsAnalysisInProgress(false);
-    }
-  }, [currentDomain, analysisData, loading]);
+  const handleNewAnalysis = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDomain.trim()) return;
 
-  const handleDomainChange = async (newDomain: string) => {
-    setCurrentDomain(newDomain);
-    localStorage.setItem('lastAnalyzedDomain', newDomain);
-    localStorage.setItem(`analysis_started_${newDomain}`, Date.now().toString());
-    
-    const url = new URL(window.location.href);
-    url.searchParams.set('domain', newDomain);
-    window.history.pushState({}, '', url.toString());
-    
-    // Trigger new analysis for the new domain
+    setIsSubmitting(true);
     try {
-      const { error } = await supabase.functions.invoke('trigger-analysis', {
-        body: { domain: newDomain }
-      });
-
-      if (error) {
-        console.error('❌ MyRank: Error triggering analysis:', error);
-      } else {
-        setIsAnalysisInProgress(true);
-      }
+      // Save domain to localStorage
+      localStorage.setItem('lastAnalyzedDomain', newDomain.trim());
+      
+      // Update URL
+      window.history.pushState({}, '', `/my-rank?domain=${encodeURIComponent(newDomain.trim())}`);
+      
+      // Set new domain
+      setCurrentDomain(newDomain.trim());
+      setShowDomainInput(false);
+      setNewDomain('');
+      
+      toast.success(`Análise iniciada para ${newDomain.trim()}`);
     } catch (error) {
-      console.error('💥 MyRank: Error triggering analysis:', error);
+      console.error('Error starting new analysis:', error);
+      toast.error('Erro ao iniciar nova análise');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleBackToAnalysis = () => {
-    window.location.href = '/analysis';
+  const handleRefresh = () => {
+    if (currentDomain) {
+      refetch(currentDomain);
+      toast.info('Atualizando dados...');
+    }
   };
 
-  if (!currentDomain) {
+  const formatLastUpdated = (date: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    if (minutes > 0) {
+      return `${minutes}min atrás`;
+    }
+    return `${seconds}s atrás`;
+  };
+
+  // Loading state
+  if (loading && !analysisData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-        <div className="max-w-4xl mx-auto">
-          <Card>
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="w-8 h-8 text-blue-600" />
+      <div className="min-h-screen bg-background text-foreground">
+        <SkipNav />
+        <Header />
+        <main id="main-content" tabIndex={-1} role="main" className="pt-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
               </div>
-              <CardTitle className="text-2xl">{t('myrank.title')}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-gray-600 mb-6">
-                {t('myrank.subtitle')}
+              <h1 className="text-2xl font-bold mb-2">
+                {t('myrank.loadingAnalysis')}
+              </h1>
+              <p className="text-muted-foreground">
+                Carregando análise para <strong>{currentDomain}</strong>
               </p>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('myrank.domainPlaceholder')}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      const value = (e.target as HTMLInputElement).value.trim();
-                      if (value) {
-                        handleDomainChange(value);
-                      }
-                    }
-                  }}
-                />
-                <p className="text-sm text-gray-500">
-                  {t('myrank.analysisPageLink').split('página de análise').map((part, index) => (
-                    <span key={index}>
-                      {part}
-                      {index === 0 && (
-                        <button 
-                          onClick={handleBackToAnalysis}
-                          className="text-blue-600 hover:underline cursor-pointer"
-                        >
-                          página de análise
-                        </button>
-                      )}
-                    </span>
-                  ))}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold">
-                P
+  // No domain state
+  if (!currentDomain) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <SkipNav />
+        <Header />
+        <main id="main-content" tabIndex={-1} role="main" className="pt-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="w-8 h-8 text-primary" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">PromptMetrics</h1>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">
+              <h1 className="text-3xl font-bold mb-4">
                 {t('myrank.title')}
-              </span>
+              </h1>
+              <p className="text-xl text-muted-foreground mb-8">
+                {t('myrank.subtitle')}
+              </p>
+              
+              <div className="space-y-4">
+                <Button 
+                  onClick={() => setShowDomainInput(true)}
+                  size="lg"
+                  className="px-8"
+                >
+                  <Search className="w-5 h-5 mr-2" />
+                  Analisar Novo Domínio
+                </Button>
+                
+                <div>
+                  <Button 
+                    variant="outline"
+                    onClick={() => window.location.href = '/analysis'}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Ir para Página de Análise
+                  </Button>
+                </div>
+              </div>
+
+              {showDomainInput && (
+                <Card className="mt-8 max-w-md mx-auto">
+                  <CardHeader>
+                    <CardTitle>Analisar Novo Domínio</CardTitle>
+                    <CardDescription>
+                      Digite o domínio que você deseja analisar
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleNewAnalysis} className="space-y-4">
+                      <Input
+                        type="text"
+                        placeholder={t('myrank.domainPlaceholder')}
+                        value={newDomain}
+                        onChange={(e) => setNewDomain(e.target.value)}
+                        disabled={isSubmitting}
+                      />
+                      <div className="flex gap-2">
+                        <Button 
+                          type="submit" 
+                          disabled={!newDomain.trim() || isSubmitting}
+                          className="flex-1"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Iniciando...
+                            </>
+                          ) : (
+                            <>
+                              <Search className="w-4 h-4 mr-2" />
+                              Analisar
+                            </>
+                          )}
+                        </Button>
+                        <Button 
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowDomainInput(false)}
+                          disabled={isSubmitting}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
+              )}
             </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <SkipNav />
+        <Header />
+        <main id="main-content" tabIndex={-1} role="main" className="pt-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-red-600" />
+              </div>
+              <h1 className="text-2xl font-bold mb-4 text-red-600">
+                Erro ao Carregar Análise
+              </h1>
+              <p className="text-muted-foreground mb-6">
+                {error}
+              </p>
+              
+              <div className="space-y-4">
+                <Button 
+                  onClick={handleRefresh}
+                  variant="outline"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Tentar Novamente
+                </Button>
+                
+                <div>
+                  <Button 
+                    onClick={() => window.location.href = '/analysis'}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Voltar para Análise
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // No data state
+  if (!analysisData) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <SkipNav />
+        <Header />
+        <main id="main-content" tabIndex={-1} role="main" className="pt-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-8 h-8 text-yellow-600" />
+              </div>
+              <h1 className="text-2xl font-bold mb-4">
+                Análise em Andamento
+              </h1>
+              <p className="text-muted-foreground mb-6">
+                A análise para <strong>{currentDomain}</strong> ainda está sendo processada.
+                <br />
+                Os dados aparecerão automaticamente quando estiverem prontos.
+              </p>
+              
+              <div className="space-y-4">
+                <Button 
+                  onClick={handleRefresh}
+                  variant="outline"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Verificar Novamente
+                </Button>
+                
+                <div>
+                  <Button 
+                    onClick={() => window.location.href = '/analysis'}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Voltar para Análise
+                  </Button>
+                </div>
+              </div>
+
+              {/* Real-time status */}
+              <div className="mt-8">
+                <RealTimeNotification
+                  isConnected={isConnected}
+                  hasNewData={hasNewData}
+                  lastUpdated={lastUpdated}
+                  onMarkAsRead={markAsRead}
+                  onRefresh={handleRefresh}
+                  className="max-w-md mx-auto"
+                />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Success state - show analysis data
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <SkipNav />
+      <Header />
+      <main id="main-content" tabIndex={-1} role="main" className="pt-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-bold">
+                {t('myrank.title')}
+              </h1>
+              <p className="text-muted-foreground">
+                Análise para <strong>{analysisData.domain}</strong>
+              </p>
+            </div>
+            
             <div className="flex items-center gap-4">
-              <LanguageSelector />
-              <span className="text-sm text-gray-600">
-                {analysisData ? `${t('myrank.analyzing')}: ${analysisData.domain}` : `${t('myrank.domain')}: ${currentDomain}`}
-              </span>
-              <Button
-                onClick={handleBackToAnalysis}
+              <Button 
+                onClick={handleRefresh}
                 variant="outline"
                 size="sm"
-                className="border-gray-300 text-gray-700 hover:bg-gray-100"
               >
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                Voltar à Análise
-              </Button>
-              <button
-                onClick={() => refetch(currentDomain)}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-              >
+                <RefreshCw className="w-4 h-4 mr-2" />
                 {t('myrank.updateData')}
-              </button>
-              <button
-                onClick={() => {
-                  const newDomain = prompt(t('myrank.promptNewDomain'), currentDomain);
-                  if (newDomain && newDomain.trim()) {
-                    handleDomainChange(newDomain.trim());
-                  }
-                }}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              </Button>
+              
+              <Button 
+                onClick={() => setShowDomainInput(true)}
+                variant="outline"
+                size="sm"
               >
+                <Search className="w-4 h-4 mr-2" />
                 {t('myrank.changeDomain')}
-              </button>
+              </Button>
             </div>
           </div>
 
-          {/* Real-time Status and Notifications */}
-          {currentDomain && (
+          {/* Real-time notification */}
+          <div className="mb-6">
             <RealTimeNotification
               isConnected={isConnected}
               hasNewData={hasNewData}
               lastUpdated={lastUpdated}
               onMarkAsRead={markAsRead}
-              onRefresh={() => refetch(currentDomain)}
-              className="mb-4"
+              onRefresh={handleRefresh}
             />
-          )}
-          
-          {error && (
-            <Alert className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <strong>{t('myrank.error')}:</strong> {error}
-                  </div>
-                  <ErrorReportButton 
-                    domain={currentDomain}
-                    error={error}
-                    additionalInfo={{
-                      page: 'my-rank',
-                      action: 'data_loading',
-                      step: 'fetch_analysis_data'
-                    }}
-                    variant="destructive"
-                    className="ml-4"
-                  />
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
+          </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <LoadingSpinner />
-            <p className="ml-4 text-gray-600">{t('myrank.loadingAnalysis')}</p>
-          </div>
-        ) : !analysisData ? (
-          <div className="text-center py-12">
-            {isAnalysisInProgress ? (
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+          {/* Analysis status */}
+          <div className="mb-8">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
                     </div>
-                  </div>
-                  <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                    {t('analysis.analysisInProgress.title')}
-                  </h3>
-                  <p className="text-blue-700 mb-4">
-                    {t('analysis.analysisInProgress.desc').replace('{domain}', currentDomain)}
-                  </p>
-                  <p className="text-sm text-blue-600 mb-4">
-                    A análise pode levar alguns minutos. Esta página será atualizada automaticamente quando os dados estiverem disponíveis.
-                  </p>
-                  <div className="flex items-center justify-center gap-4">
-                    <Button
-                      onClick={() => refetch(currentDomain)}
-                      size="sm"
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      {t('myrank.updateData')}
-                    </Button>
-                    <Button
-                      onClick={handleBackToAnalysis}
-                      variant="outline"
-                      size="sm"
-                      className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-1" />
-                      Voltar à Análise
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  <div className="space-y-3">
                     <div>
-                      {t('myrank.noAnalysisFound').replace('{domain}', currentDomain)}
-                      <br />
-                      <button 
-                        onClick={handleBackToAnalysis}
-                        className="text-blue-600 hover:underline cursor-pointer"
-                      >
-                        {t('myrank.createNewAnalysis')}
-                      </button>
-                    </div>
-                    <div className="pt-2">
-                      <ErrorReportButton 
-                        domain={currentDomain}
-                        error="Análise não encontrada para o domínio"
-                        additionalInfo={{
-                          page: 'my-rank',
-                          action: 'analysis_not_found',
-                          step: 'data_retrieval',
-                          expected_domain: currentDomain
-                        }}
-                        variant="outline"
-                        size="sm"
-                      />
+                      <h3 className="font-semibold">
+                        Análise Completa
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Última atualização: {lastUpdated ? formatLastUpdated(lastUpdated) : 'Agora'}
+                      </p>
                     </div>
                   </div>
-                </AlertDescription>
-              </Alert>
-            )}
+                  
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                      {analysisData.status}
+                    </Badge>
+                    
+                    {analysisData.analysis_data?.score && (
+                      <Badge variant="default">
+                        Score: {analysisData.analysis_data.score}/100
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        ) : (
+
+          {/* Domain input modal */}
+          {showDomainInput && (
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>Analisar Novo Domínio</CardTitle>
+                <CardDescription>
+                  Digite o domínio que você deseja analisar
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleNewAnalysis} className="space-y-4">
+                  <Input
+                    type="text"
+                    placeholder={t('myrank.domainPlaceholder')}
+                    value={newDomain}
+                    onChange={(e) => setNewDomain(e.target.value)}
+                    disabled={isSubmitting}
+                  />
+                  <div className="flex gap-2">
+                    <Button 
+                      type="submit" 
+                      disabled={!newDomain.trim() || isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Iniciando...
+                        </>
+                      ) : (
+                        <>
+                          <Search className="w-4 h-4 mr-2" />
+                          Analisar
+                        </>
+                      )}
+                    </Button>
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowDomainInput(false)}
+                      disabled={isSubmitting}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Analysis Tabs */}
           <Tabs defaultValue="dashboard" className="w-full">
             <TabsList className="grid w-full grid-cols-4 mb-8">
               <TabsTrigger value="dashboard">{t('myrank.tabs.dashboard')}</TabsTrigger>
@@ -330,20 +487,14 @@ const MyRankContent = () => {
               <MyRankStrategicInsightsTab analysisData={analysisData as any} />
             </TabsContent>
           </Tabs>
-        )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
 
 const MyRank = () => {
-  return (
-    <LanguageProvider>
-      <AccessibilityProvider>
-        <MyRankContent />
-      </AccessibilityProvider>
-    </LanguageProvider>
-  );
+  return <MyRankContent />;
 };
 
 export default MyRank;
