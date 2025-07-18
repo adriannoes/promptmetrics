@@ -17,8 +17,9 @@ interface AnalysisProgressModalProps {
   status: 'processing' | 'completed' | 'failed';
   domain: string;
   elapsedTime: number;
-  onViewRanking: () => void;
+  onViewRanking?: () => void;
   onCancel: () => void;
+  error?: string | null;
 }
 
 const formatTime = (seconds: number) => {
@@ -34,7 +35,8 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
   domain,
   elapsedTime,
   onViewRanking,
-  onCancel
+  onCancel,
+  error
 }) => {
   return (
     <Dialog open={open} onOpenChange={open ? onClose : undefined}>
@@ -77,6 +79,11 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
                 A análise demorou mais que o esperado. Você pode tentar novamente ou verificar o status em "Ver sua análise".
               </>
             )}
+            {error && (
+              <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded">
+                <strong>Erro:</strong> {error}
+              </div>
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-4 mt-2">
@@ -93,7 +100,7 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
               Cancelar
             </Button>
           )}
-          {(status === 'completed' || status === 'failed') && (
+          {(status === 'completed' || status === 'failed') && onViewRanking && (
             <Button onClick={onViewRanking} className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1">
               Ver sua análise
               <ArrowRight className="w-4 h-4 ml-1" />

@@ -1,162 +1,192 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle, CheckCircle, ArrowRight } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { toast } from 'sonner';
+import AnalysisProgressModal from './AnalysisProgressModal';
 
 interface DomainAnalysisInputProps {
   onAnalyze: (domain: string) => void;
-  loading?: boolean;
-  onError?: (error: string) => void;
+  loading: boolean;
+  onError: (error: string) => void;
 }
 
 export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({ 
   onAnalyze, 
-  loading = false,
+  loading,
   onError 
 }) => {
   const { t } = useLanguage();
   const [domain, setDomain] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [lastSubmittedDomain, setLastSubmittedDomain] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [lastSubmittedDomain, setLastSubmittedDomain] = useState('');
+
+  // Estados do modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalStatus, setModalStatus] = useState<'processing' | 'completed' | 'failed'>('processing');
+  const [modalElapsedTime, setModalElapsedTime] = useState(0);
+  const [modalError, setModalError] = useState<string | null>(null);
+  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
+
+  const validateDomain = (input: string): boolean => {
+    // Validação básica - apenas verifica se não está vazio
+    // O backend fará validação mais específica
+    return input.trim().length > 0;
+  };
+
+  // Função para verificar se os dados chegaram
+  const checkAnalysisData = async (domain: string): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from('analysis_results')
+        .select('*')
+        .eq('domain', domain)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error checking analysis data:', error);
+        return false;
+      }
+
+      if (data && data.status === 'completed' && data.analysis_data) {
+        console.log('✅ Analysis data found and completed:', data);
+        return true;
+      }
+
+      console.log('⏳ Analysis data not ready yet:', data);
+      return false;
+    } catch (error) {
+      console.error('Error in checkAnalysisData:', error);
+      return false;
+    }
+  };
+
+  // Função para iniciar polling
+  const startPolling = (domain: string) => {
+    console.log('🔄 Starting polling for domain:', domain);
+    
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+    }
+
+    const interval = setInterval(async () => {
+      setModalElapsedTime(prev => prev + 10);
+      
+      const hasData = await checkAnalysisData(domain);
+      
+      if (hasData) {
+        console.log('🎉 Analysis completed!');
+        setModalStatus('completed');
+        clearInterval(interval);
+        return;
+      }
+
+      // Verificar timeout (5 minutos)
+      if (modalElapsedTime >= 300) {
+        console.log('⏰ Max wait time reached');
+        setModalStatus('failed');
+        clearInterval(interval);
+        setModalError('A análise está demorando mais que o esperado.');
+        return;
+      }
+    }, 10000); // Verificar a cada 10 segundos
+
+    setPollingInterval(interval);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('🔥 DomainAnalysisInput: Form submitted with domain:', domain);
-    
-    if (!domain.trim()) {
-      console.log('❌ DomainAnalysisInput: Empty domain, returning');
-      return;
-    }
-
-    // Reset previous states
-    setShowSuccess(false);
-    setShowError(false);
-    setErrorMessage('');
 
     const trimmedDomain = domain.trim();
     
-    console.log('🚀 DomainAnalysisInput: About to call trigger-analysis edge function');
-    console.log('🔍 Current supabase client:', supabase);
+    if (!validateDomain(trimmedDomain)) {
+      const errorMsg = t('domainInput.invalidDomain');
+      setErrorMessage(errorMsg);
+      setShowError(true);
+      if (onError) {
+        onError(errorMsg);
+      }
+      return;
+    }
+
+    setShowError(false);
+    setShowSuccess(false);
+    setErrorMessage('');
+
+    // Abrir modal imediatamente
+    setModalOpen(true);
+    setModalStatus('processing');
+    setModalElapsedTime(0);
+    setModalError(null);
+
+    console.log('🚀 DomainAnalysisInput: Triggering analysis for:', trimmedDomain);
 
     try {
-      // Log the exact request being made
       const requestBody = { domain: trimmedDomain };
-      console.log('📦 Request body:', requestBody);
       
       // Save domain to localStorage for persistence
       localStorage.setItem('lastAnalyzedDomain', trimmedDomain);
-      
-      // Save timestamp to indicate analysis was started
       localStorage.setItem(`analysis_started_${trimmedDomain}`, Date.now().toString());
       
-      // Trigger analysis workflow
-            console.log('📡 DomainAnalysisInput: Calling supabase.functions.invoke...');
-      console.log('📡 Function name: trigger-analysis');
-      console.log('📡 Request body:', JSON.stringify(requestBody));
+      console.log('📡 Calling trigger-analysis function...');
       
-      // Teste simples para verificar se o cliente Supabase está funcionando
-      console.log('🧪 Testing Supabase client...');
+      console.log('⏳ About to invoke function...');
       
-      // Teste direto com fetch para comparar
-      console.log('🧪 Testing direct fetch...');
-      try {
-        const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/trigger-analysis', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody)
-        });
-        
-        const directData = await directResponse.json();
-        console.log('🧪 Direct fetch response:', directResponse.status, directData);
-      } catch (directError) {
-        console.error('🧪 Direct fetch error:', directError);
-      }
+      // Adicionar timeout de 30 segundos
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout: Função demorou mais de 30 segundos para responder')), 30000);
+      });
       
-      console.log('🔍 About to call supabase.functions.invoke...');
-      console.log('🔍 Function name: trigger-analysis');
-      console.log('🔍 Request body:', JSON.stringify(requestBody));
+      const invokePromise = supabase.functions.invoke('trigger-analysis', {
+        body: requestBody
+      });
       
-      let data, error;
-      try {
-        const result = await supabase.functions.invoke('trigger-analysis', {
-          body: requestBody
-        });
-        
-        data = result.data;
-        error = result.error;
-        
-        console.log('✅ supabase.functions.invoke completed');
-        console.log('📊 Data:', data);
-        console.log('❗ Error:', error);
-      } catch (invokeError) {
-        console.error('💥 Error in supabase.functions.invoke:', invokeError);
-        throw invokeError;
-      }
+      const result = await Promise.race([invokePromise, timeoutPromise]);
+      const { data, error } = result;
+      console.log('✅ Function invoke completed');
 
-      // NOVO: Exibir resultado bruto em toast e log
-      toast("Raw response: " + JSON.stringify({ data, error }));
-      console.log('🟢 Raw response from trigger-analysis:', { data, error });
-
-      console.log('📤 DomainAnalysisInput: Edge function response received');
-      console.log('📊 Data:', data);
-      console.log('❗ Error:', error);
+      console.log('📨 Response received:', { success: !error, hasData: !!data });
 
       if (error) {
-        console.error('❌ Error triggering analysis:', error);
-        console.error('❌ Error message:', error.message);
-        console.error('❌ Error details:', JSON.stringify(error, null, 2));
-        
+        console.error('❌ Error response:', error.message);
         const errorMsg = error.message || t('domainInput.startError');
-        setErrorMessage(errorMsg);
-        setShowError(true);
-        toast.error(`${t('domainInput.startError')}: ${error.message}`);
+        setModalError(errorMsg);
+        setModalStatus('failed');
         
-        // Report error to parent component
         if (onError) {
           onError(errorMsg);
         }
         return;
       }
 
-      console.log('✅ DomainAnalysisInput: Analysis triggered successfully');
+      console.log('✅ Analysis triggered successfully');
       
-      // Show immediate visual feedback
-      setLastSubmittedDomain(trimmedDomain);
-      setShowSuccess(true);
-      
-      // Also show toast notification
-      toast.success(t('domainInput.startSuccess'));
+      // Iniciar polling para aguardar dados
+      startPolling(trimmedDomain);
       
       // Call the parent callback
+      console.log('[DEBUG] Chamando onAnalyze do pai com:', trimmedDomain);
       onAnalyze(trimmedDomain);
       
       // Clear the input field
       setDomain('');
       
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 5000);
-      
     } catch (error) {
-      console.error('💥 DomainAnalysisInput: Catch block error:', error);
+      console.error('💥 Catch block - Unexpected error:', error);
       console.error('💥 Error type:', typeof error);
       console.error('💥 Error details:', JSON.stringify(error, null, 2));
+      const errorMsg = error instanceof Error ? error.message : t('domainInput.startError');
+      setModalError(errorMsg);
+      setModalStatus('failed');
       
-      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      setErrorMessage(errorMsg);
-      setShowError(true);
-      toast.error(`${t('domainInput.startError')}: ${errorMsg}`);
-      
-      // Report error to parent component
       if (onError) {
         onError(errorMsg);
       }
@@ -164,72 +194,66 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
   };
 
   const handleViewRanking = () => {
-    // Navigate to /my-rank with domain parameter
-    window.location.href = `/my-rank?domain=${encodeURIComponent(lastSubmittedDomain)}`;
+    const currentDomain = localStorage.getItem('lastAnalyzedDomain');
+    if (currentDomain) {
+      window.location.href = `/my-rank?domain=${encodeURIComponent(currentDomain)}`;
+    }
   };
 
-  const isButtonDisabled = !domain.trim() || loading;
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setModalStatus('processing');
+    setModalElapsedTime(0);
+    setModalError(null);
+    
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      setPollingInterval(null);
+    }
+  };
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+    };
+  }, [pollingInterval]);
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="flex gap-4">
-        <Input
-          type="text"
-          placeholder={t('domainInput.placeholder')}
-          value={domain}
-          onChange={(e) => setDomain(e.target.value)}
-          className="flex-1"
-          disabled={loading}
-        />
-        <Button 
-          type="submit" 
-          disabled={isButtonDisabled}
-          className="px-6"
-        >
-          {loading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-              {t('domainInput.analyzing')}
-            </>
-          ) : (
-            <>
-              <Search className="w-4 h-4 mr-2" />
-              {t('domainInput.analyze')}
-            </>
-          )}
-        </Button>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            placeholder={t('domainInput.placeholder')}
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            disabled={loading}
+            className="flex-1"
+          />
+          <Button 
+            type="submit" 
+            disabled={loading || !domain.trim()}
+            className="whitespace-nowrap"
+          >
+            {loading ? t('domainInput.analyzing') : t('domainInput.analyze')}
+          </Button>
+        </div>
       </form>
 
-      {/* Success feedback with navigation button */}
-      {showSuccess && (
-        <Alert className="bg-green-50 border-green-200">
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <strong>{t('domainInput.startSuccess')}</strong>
-                <br />
-                <span className="text-sm">
-                  {t('domainInput.domainSubmitted')}: <strong>{lastSubmittedDomain}</strong>
-                </span>
-                <br />
-                <span className="text-sm text-green-700">
-                  {t('analysis.analysisInProgressMessage')}
-                </span>
-              </div>
-              <Button 
-                onClick={handleViewRanking}
-                variant="outline"
-                size="sm"
-                className="ml-4 bg-green-100 border-green-300 text-green-800 hover:bg-green-200"
-              >
-                {t('analysis.viewRanking')}
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
+      {/* Analysis Progress Modal */}
+      <AnalysisProgressModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        status={modalStatus}
+        domain={localStorage.getItem('lastAnalyzedDomain') || ''}
+        elapsedTime={modalElapsedTime}
+        onViewRanking={modalStatus === 'completed' ? handleViewRanking : undefined}
+        onCancel={handleCloseModal}
+        error={modalError}
+      />
 
       {/* Error feedback */}
       {showError && (

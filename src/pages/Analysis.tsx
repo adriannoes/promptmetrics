@@ -23,171 +23,30 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { toast } from 'sonner';
-import AnalysisProgressModal from '@/components/AnalysisProgressModal';
 
 const AnalysisContent = () => {
   const { t } = useLanguage();
   const [currentDomain, setCurrentDomain] = useState<string>('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [showAutoRedirect, setShowAutoRedirect] = useState(false);
-  const [autoRedirectCountdown, setAutoRedirectCountdown] = useState(10);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
-  const [analysisStatus, setAnalysisStatus] = useState<'idle' | 'processing' | 'completed' | 'failed'>('idle');
-  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
-  const [maxWaitTime, setMaxWaitTime] = useState(300); // 5 minutos máximo
-  const [elapsedTime, setElapsedTime] = useState(0);
 
-  console.log('Analysis Page: Rendered with currentDomain=', currentDomain, 'loading=', loading, 'status=', analysisStatus);
-
-  // Função para verificar se os dados chegaram
-  const checkAnalysisData = async (domain: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase
-        .from('analysis_results')
-        .select('*')
-        .eq('domain', domain)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error checking analysis data:', error);
-        return false;
-      }
-
-      if (data && data.status === 'completed' && data.analysis_data) {
-        console.log('✅ Analysis data found and completed:', data);
-        return true;
-      }
-
-      console.log('⏳ Analysis data not ready yet:', data);
-      return false;
-    } catch (error) {
-      console.error('Error in checkAnalysisData:', error);
-      return false;
-    }
-  };
-
-  // Função para iniciar polling
-  const startPolling = (domain: string) => {
-    console.log('🔄 Starting polling for domain:', domain);
-    
-    // Limpar polling anterior
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-    }
-
-    const interval = setInterval(async () => {
-      setElapsedTime(prev => prev + 10);
-      
-      const hasData = await checkAnalysisData(domain);
-      
-      if (hasData) {
-        console.log('🎉 Analysis completed! Redirecting to results...');
-        setAnalysisStatus('completed');
-        setLoading(false);
-        setShowAutoRedirect(false);
-        clearInterval(interval);
-        
-        // Redirecionar imediatamente
-        window.location.href = `/my-rank?domain=${encodeURIComponent(domain)}`;
-        return;
-      }
-
-      // Verificar timeout
-      if (elapsedTime >= maxWaitTime) {
-        console.log('⏰ Max wait time reached, redirecting anyway...');
-        setAnalysisStatus('failed');
-        setLoading(false);
-        setShowAutoRedirect(false);
-        clearInterval(interval);
-        
-        toast.warning('A análise está demorando mais que o esperado. Você pode verificar o status em "Ver sua análise".');
-        
-        // Redirecionar mesmo sem dados
-        window.location.href = `/my-rank?domain=${encodeURIComponent(domain)}`;
-        return;
-      }
-    }, 10000); // Verificar a cada 10 segundos
-
-    setPollingInterval(interval);
-  };
+  console.log('Analysis Page: Rendered with currentDomain=', currentDomain, 'loading=', loading);
 
   const handleAnalyze = (domain: string) => {
-    console.log('Analysis Page: handleAnalyze called with domain:', domain);
+    console.log('[DEBUG] handleAnalyze chamado com domain:', domain);
     setCurrentDomain(domain);
     setLoading(true);
-    setShowAutoRedirect(true);
-    setAutoRedirectCountdown(10);
     setAnalysisError(null);
-    setAnalysisStatus('processing');
-    setElapsedTime(0);
     
     // Save domain to localStorage
     localStorage.setItem('lastAnalyzedDomain', domain);
-    
-    // Iniciar polling para aguardar dados
-    startPolling(domain);
   };
 
   const handleAnalysisError = (error: string) => {
     console.error('Analysis Page: Analysis error:', error);
     setAnalysisError(error);
     setLoading(false);
-    setShowAutoRedirect(false);
-    setAnalysisStatus('failed');
-    
-    // Limpar polling se houver erro
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-      setPollingInterval(null);
-    }
-  };
-
-  // Auto-redirect countdown (fallback)
-  useEffect(() => {
-    if (showAutoRedirect && autoRedirectCountdown > 0 && analysisStatus === 'processing') {
-      const timer = setTimeout(() => {
-        setAutoRedirectCountdown(prev => prev - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else if (showAutoRedirect && autoRedirectCountdown === 0 && analysisStatus === 'processing') {
-      // Fallback: redirect after countdown if still processing
-      console.log('⏰ Auto-redirect countdown finished, redirecting...');
-      window.location.href = `/my-rank?domain=${encodeURIComponent(currentDomain)}`;
-    }
-  }, [showAutoRedirect, autoRedirectCountdown, currentDomain, analysisStatus]);
-
-  // Cleanup polling on unmount
-  useEffect(() => {
-    return () => {
-      if (pollingInterval) {
-        clearInterval(pollingInterval);
-      }
-    };
-  }, [pollingInterval]);
-
-  const handleViewRanking = () => {
-    // Navigate to /my-rank with domain parameter
-    window.location.href = `/my-rank?domain=${encodeURIComponent(currentDomain)}`;
-  };
-
-  const cancelAutoRedirect = () => {
-    setShowAutoRedirect(false);
-    setAutoRedirectCountdown(10);
-    
-    // Limpar polling se cancelar
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-      setPollingInterval(null);
-    }
-  };
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -238,35 +97,6 @@ const AnalysisContent = () => {
                 </AlertDescription>
               </Alert>
             </div>
-          )}
-
-          {/* Analysis Progress Modal */}
-          {['processing', 'completed', 'failed'].includes(analysisStatus) && (
-            <AnalysisProgressModal
-              open={true}
-              onClose={() => {
-                setAnalysisStatus('idle');
-                setLoading(false);
-                setShowAutoRedirect(false);
-                if (pollingInterval) {
-                  clearInterval(pollingInterval);
-                  setPollingInterval(null);
-                }
-              }}
-              status={analysisStatus as 'processing' | 'completed' | 'failed'}
-              domain={currentDomain}
-              elapsedTime={elapsedTime}
-              onViewRanking={handleViewRanking}
-              onCancel={() => {
-                setAnalysisStatus('idle');
-                setLoading(false);
-                setShowAutoRedirect(false);
-                if (pollingInterval) {
-                  clearInterval(pollingInterval);
-                  setPollingInterval(null);
-                }
-              }}
-            />
           )}
 
           {/* Features Grid */}
@@ -391,7 +221,6 @@ const AnalysisContent = () => {
           </div>
         </div>
       </main>
-      {/* Removed Footer, AccessibilityPanel, Toaster, Sonner as they are not in the new_code */}
     </div>
   );
 };

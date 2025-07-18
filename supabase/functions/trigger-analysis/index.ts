@@ -62,6 +62,10 @@ serve(async (req) => {
     };
     
     console.log('Sending test payload to n8n:', testPayload);
+    console.log('📡 About to fetch URL:', webhookUrl);
+    console.log('📡 Method: POST');
+    console.log('📡 Headers: Content-Type: application/json');
+    console.log('📡 Body:', JSON.stringify(testPayload));
 
     try {
       const n8nResponse = await fetch(webhookUrl, {
@@ -72,33 +76,30 @@ serve(async (req) => {
         body: JSON.stringify(testPayload)
       });
 
-      console.log('N8N response status:', n8nResponse.status);
+      console.log('📨 N8N response status:', n8nResponse.status);
+      console.log('📨 N8N response headers:', Object.fromEntries(n8nResponse.headers.entries()));
 
       if (!n8nResponse.ok) {
-        console.error('N8N webhook failed with status:', n8nResponse.status, n8nResponse.statusText);
+        console.error('❌ N8N webhook failed with status:', n8nResponse.status, n8nResponse.statusText);
         
         // Try to get the error message
         let errorText = '';
         try {
           errorText = await n8nResponse.text();
-          console.error('N8N error response:', errorText);
+          console.error('❌ N8N error response body:', errorText);
         } catch (e) {
-          console.error('Could not read N8N error response');
+          console.error('❌ Could not read N8N error response');
         }
         
-        // For development: simulate success when n8n fails
-        console.log('⚠️  N8N webhook failed, simulating success for development');
-        return new Response(
-          JSON.stringify({ 
-            success: true, 
-            message: 'Analysis triggered successfully (simulated - n8n workflow issue)',
-            domain,
-            warning: 'N8N workflow is currently unavailable'
-          }), 
-          { 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        );
+        // Return real error instead of simulating success
+        return new Response(JSON.stringify({
+          error: 'Failed to trigger analysis workflow',
+          details: `N8N returned ${n8nResponse.status}: ${n8nResponse.statusText}`,
+          response_body: errorText
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
       }
 
       let n8nResult = {};
