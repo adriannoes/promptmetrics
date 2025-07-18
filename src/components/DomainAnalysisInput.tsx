@@ -142,27 +142,23 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
       
       console.log('📡 DomainAnalysisInput: About to call supabase.functions.invoke("trigger-analysis")...');
       console.log('📡 DomainAnalysisInput: Using body:', JSON.stringify(requestBody));
+      console.log('📡 DomainAnalysisInput: Supabase client available?', !!supabase);
+      console.log('📡 DomainAnalysisInput: Supabase functions available?', !!supabase.functions);
       
-      // Adicionar timeout de 30 segundos
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => {
-          console.log('⏰ DomainAnalysisInput: Function call timeout after 30 seconds');
-          reject(new Error('Timeout: Função demorou mais de 30 segundos para responder'));
-        }, 30000);
-      });
+      // Teste se podemos chamar qualquer função primeiro
+      console.log('🧪 DomainAnalysisInput: Testing connection to Supabase functions...');
       
-      const invokePromise = supabase.functions.invoke('trigger-analysis', {
+      console.log('⏳ DomainAnalysisInput: Function invocation started...');
+      
+      const { data, error } = await supabase.functions.invoke('trigger-analysis', {
         body: requestBody
       });
       
-      console.log('⏳ DomainAnalysisInput: Function invocation started...');
-      const result = await Promise.race([invokePromise, timeoutPromise]);
       console.log('✅ DomainAnalysisInput: Function invoke completed');
-      console.log('📨 DomainAnalysisInput: Raw function result:', result);
-      console.log('📨 DomainAnalysisInput: Result type:', typeof result);
-      console.log('📨 DomainAnalysisInput: Result keys:', result ? Object.keys(result) : 'No result');
-
-      const { data, error } = result;
+      console.log('📨 DomainAnalysisInput: Raw function result data:', data);
+      console.log('📨 DomainAnalysisInput: Raw function result error:', error);
+      console.log('📨 DomainAnalysisInput: Data type:', typeof data);
+      console.log('📨 DomainAnalysisInput: Error type:', typeof error);
       console.log('📊 DomainAnalysisInput: Function response - data:', data, 'error:', error);
       console.log('📊 DomainAnalysisInput: Data type:', typeof data);
       console.log('📊 DomainAnalysisInput: Error type:', typeof error);
