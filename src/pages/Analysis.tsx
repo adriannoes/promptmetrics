@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
 import SkipNav from '@/components/SkipNav';
 import { DomainAnalysisInput } from '@/components/DomainAnalysisInput';
@@ -22,6 +23,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { toast } from 'sonner';
+import AnalysisProgressModal from '@/components/AnalysisProgressModal';
 
 const AnalysisContent = () => {
   const { t } = useLanguage();
@@ -101,7 +103,7 @@ const AnalysisContent = () => {
         setShowAutoRedirect(false);
         clearInterval(interval);
         
-        toast.warning('A análise está demorando mais que o esperado. Você será redirecionado para verificar o status.');
+        toast.warning('A análise está demorando mais que o esperado. Você pode verificar o status em "Ver sua análise".');
         
         // Redirecionar mesmo sem dados
         window.location.href = `/my-rank?domain=${encodeURIComponent(domain)}`;
@@ -238,104 +240,33 @@ const AnalysisContent = () => {
             </div>
           )}
 
-          {/* Processing Status */}
-          {analysisStatus === 'processing' && (
-            <div className="mb-8">
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-blue-900">
-                          🔄 Análise em andamento...
-                        </h3>
-                        <p className="text-sm text-blue-700">
-                          Processando análise para <strong>{currentDomain}</strong>
-                        </p>
-                        <div className="flex items-center gap-4 mt-2">
-                          <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-300">
-                            ⏱️ {formatTime(elapsedTime)}
-                          </Badge>
-                          <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300">
-                            🔍 Verificando dados a cada 10s
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-blue-600 mt-1">
-                          Aguardando o n8n processar e retornar os dados...
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        onClick={handleViewRanking}
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        {t('analysis.viewRanking')}
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </Button>
-                      <Button 
-                        onClick={cancelAutoRedirect}
-                        variant="outline"
-                        size="sm"
-                        className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                      >
-                        Cancelar
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {/* Auto-redirect notification (fallback) */}
-          {showAutoRedirect && analysisStatus === 'idle' && (
-            <div className="mb-8">
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Clock className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-blue-900">
-                          {t('analysis.analysisInProgress.title')}
-                        </h3>
-                        <p className="text-sm text-blue-700">
-                          {t('analysis.analysisInProgress.desc').replace('{domain}', currentDomain)}
-                        </p>
-                        <p className="text-xs text-blue-600 mt-1">
-                          Redirecionando para o ranking em {autoRedirectCountdown} segundos...
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        onClick={handleViewRanking}
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        {t('analysis.viewRanking')}
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </Button>
-                      <Button 
-                        onClick={cancelAutoRedirect}
-                        variant="outline"
-                        size="sm"
-                        className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                      >
-                        Cancelar
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          {/* Analysis Progress Modal */}
+          {['processing', 'completed', 'failed'].includes(analysisStatus) && (
+            <AnalysisProgressModal
+              open={true}
+              onClose={() => {
+                setAnalysisStatus('idle');
+                setLoading(false);
+                setShowAutoRedirect(false);
+                if (pollingInterval) {
+                  clearInterval(pollingInterval);
+                  setPollingInterval(null);
+                }
+              }}
+              status={analysisStatus as 'processing' | 'completed' | 'failed'}
+              domain={currentDomain}
+              elapsedTime={elapsedTime}
+              onViewRanking={handleViewRanking}
+              onCancel={() => {
+                setAnalysisStatus('idle');
+                setLoading(false);
+                setShowAutoRedirect(false);
+                if (pollingInterval) {
+                  clearInterval(pollingInterval);
+                  setPollingInterval(null);
+                }
+              }}
+            />
           )}
 
           {/* Features Grid */}
@@ -402,20 +333,6 @@ const AnalysisContent = () => {
                     loading={loading}
                     onError={handleAnalysisError}
                   />
-                  
-                  {loading && (
-                    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                        <div>
-                          <p className="font-medium text-blue-900">{t('analysis.analysisInProgress.title')}</p>
-                          <p className="text-sm text-blue-700">
-                            {t('analysis.analysisInProgress.desc').replace('{domain}', currentDomain)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 
@@ -481,8 +398,9 @@ const AnalysisContent = () => {
 
 const Analysis = () => {
   return (
-    // Removed LanguageProvider and AccessibilityProvider as they are not in the new_code
-    <AnalysisContent />
+    <LanguageProvider>
+      <AnalysisContent />
+    </LanguageProvider>
   );
 };
 
