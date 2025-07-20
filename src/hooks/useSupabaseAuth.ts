@@ -13,17 +13,6 @@ export const useSupabaseAuth = () => {
   useEffect(() => {
     let mounted = true;
 
-    // Handle manual logout events
-    const handleForceLogout = () => {
-      if (!mounted) return;
-      
-      console.log('Force logout event received - clearing Supabase auth state');
-      setUser(null);
-      setSession(null);
-      setProfile(null);
-      setLoading(false);
-    };
-
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -85,9 +74,6 @@ export const useSupabaseAuth = () => {
       }
     );
 
-    // Add force logout event listener
-    window.addEventListener('force-logout', handleForceLogout);
-
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
@@ -115,7 +101,6 @@ export const useSupabaseAuth = () => {
       mounted = false;
       clearTimeout(timeoutId);
       subscription.unsubscribe();
-      window.removeEventListener('force-logout', handleForceLogout);
     };
   }, []);
 
