@@ -10,7 +10,7 @@ interface LanguageContextType {
   tHTML: (key: string) => { __html: string };
 }
 
-const translations = {
+export const translations = {
   en: {
     // Navigation
     'nav.main': 'Main navigation',
