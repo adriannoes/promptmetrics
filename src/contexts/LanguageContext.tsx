@@ -4,6 +4,7 @@ interface LanguageContextProps {
   language: 'en' | 'pt-BR';
   setLanguage: (language: 'en' | 'pt-BR') => void;
   t: (key: string) => string;
+  tHTML: (key: string) => { __html: string };
 }
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
@@ -457,8 +458,12 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     return value || key;
   }, [language]);
 
+  const tHTML = useCallback((key: string): { __html: string } => {
+    return { __html: t(key) };
+  }, [t]);
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, tHTML }}>
       {children}
     </LanguageContext.Provider>
   );
