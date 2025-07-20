@@ -1,341 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
-import { cn } from '@/lib/utils';
-
-type Uniforms = {
-  [key: string]: {
-    value: number[] | number[][] | number;
-    type: string;
-  };
-};
-
-interface ShaderProps {
-  source: string;
-  uniforms: {
-    [key: string]: {
-      value: number[] | number[][] | number;
-      type: string;
-    };
-  };
-  maxFps?: number;
-}
-
-export const CanvasRevealEffect = ({
-  animationSpeed = 10,
-  opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1],
-  colors = [[0, 255, 255]],
-  containerClassName,
-  dotSize,
-  showGradient = true,
-  reverse = false,
-}: {
-  animationSpeed?: number;
-  opacities?: number[];
-  colors?: number[][];
-  containerClassName?: string;
-  dotSize?: number;
-  showGradient?: boolean;
-  reverse?: boolean;
-}) => {
-  return (
-    <div className={cn("h-full relative w-full", containerClassName)}>
-      <div className="h-full w-full">
-        <DotMatrix
-          colors={colors ?? [[0, 255, 255]]}
-          dotSize={dotSize ?? 3}
-          opacities={
-            opacities ?? [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1]
-          }
-          shader={`
-            ${reverse ? 'u_reverse_active' : 'false'}_;
-            animation_speed_factor_${animationSpeed.toFixed(1)}_;
-          `}
-          center={["x", "y"]}
-        />
-      </div>
-      {showGradient && (
-        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-      )}
-    </div>
-  );
-};
-
-interface DotMatrixProps {
-  colors?: number[][];
-  opacities?: number[];
-  totalSize?: number;
-  dotSize?: number;
-  shader?: string;
-  center?: ("x" | "y")[];
-}
-
-const DotMatrix: React.FC<DotMatrixProps> = ({
-  colors = [[0, 0, 0]],
-  opacities = [0.04, 0.04, 0.04, 0.04, 0.04, 0.08, 0.08, 0.08, 0.08, 0.14],
-  totalSize = 20,
-  dotSize = 2,
-  shader = "",
-  center = ["x", "y"],
-}) => {
-  const uniforms = React.useMemo(() => {
-    let colorsArray = [
-      colors[0],
-      colors[0],
-      colors[0],
-      colors[0],
-      colors[0],
-      colors[0],
-    ];
-    if (colors.length === 2) {
-      colorsArray = [
-        colors[0],
-        colors[0],
-        colors[0],
-        colors[1],
-        colors[1],
-        colors[1],
-      ];
-    } else if (colors.length === 3) {
-      colorsArray = [
-        colors[0],
-        colors[0],
-        colors[1],
-        colors[1],
-        colors[2],
-        colors[2],
-      ];
-    }
-    return {
-      u_colors: {
-        value: colorsArray.map((color) => [
-          color[0] / 255,
-          color[1] / 255,
-          color[2] / 255,
-        ]),
-        type: "uniform3fv",
-      },
-      u_opacities: {
-        value: opacities,
-        type: "uniform1fv",
-      },
-      u_total_size: {
-        value: totalSize,
-        type: "uniform1f",
-      },
-      u_dot_size: {
-        value: dotSize,
-        type: "uniform1f",
-      },
-      u_reverse: {
-        value: shader.includes("u_reverse_active") ? 1 : 0,
-        type: "uniform1i",
-      },
-    };
-  }, [colors, opacities, totalSize, dotSize, shader]);
-
-  return (
-    <Shader
-      source={`
-        precision mediump float;
-        in vec2 fragCoord;
-
-        uniform float u_time;
-        uniform float u_opacities[10];
-        uniform vec3 u_colors[6];
-        uniform float u_total_size;
-        uniform float u_dot_size;
-        uniform vec2 u_resolution;
-        uniform int u_reverse;
-
-        out vec4 fragColor;
-
-        float PHI = 1.61803398874989484820459;
-        float random(vec2 xy) {
-            return fract(tan(distance(xy * PHI, xy) * 0.5) * xy.x);
-        }
-        float map(float value, float min1, float max1, float min2, float max2) {
-            return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-        }
-
-        void main() {
-            vec2 st = fragCoord.xy;
-            ${
-              center.includes("x")
-                ? "st.x -= abs(floor((mod(u_resolution.x, u_total_size) - u_dot_size) * 0.5));"
-                : ""
-            }
-            ${
-              center.includes("y")
-                ? "st.y -= abs(floor((mod(u_resolution.y, u_total_size) - u_dot_size) * 0.5));"
-                : ""
-            }
-
-            float opacity = step(0.0, st.x);
-            opacity *= step(0.0, st.y);
-
-            vec2 st2 = vec2(int(st.x / u_total_size), int(st.y / u_total_size));
-
-            float frequency = 5.0;
-            float show_offset = random(st2);
-            float rand = random(st2 * floor((u_time / frequency) + show_offset + frequency));
-            opacity *= u_opacities[int(rand * 10.0)];
-            opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.x / u_total_size));
-            opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.y / u_total_size));
-
-            vec3 color = u_colors[int(show_offset * 6.0)];
-
-            float animation_speed_factor = 0.5;
-            vec2 center_grid = u_resolution / 2.0 / u_total_size;
-            float dist_from_center = distance(center_grid, st2);
-
-            float timing_offset_intro = dist_from_center * 0.01 + (random(st2) * 0.15);
-
-            float max_grid_dist = distance(center_grid, vec2(0.0, 0.0));
-            float timing_offset_outro = (max_grid_dist - dist_from_center) * 0.02 + (random(st2 + 42.0) * 0.2);
-
-            float current_timing_offset;
-            if (u_reverse == 1) {
-                current_timing_offset = timing_offset_outro;
-                 opacity *= 1.0 - step(current_timing_offset, u_time * animation_speed_factor);
-                 opacity *= clamp((step(current_timing_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
-            } else {
-                current_timing_offset = timing_offset_intro;
-                 opacity *= step(current_timing_offset, u_time * animation_speed_factor);
-                 opacity *= clamp((1.0 - step(current_timing_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
-            }
-
-            fragColor = vec4(color, opacity);
-            fragColor.rgb *= fragColor.a;
-        }`}
-      uniforms={uniforms}
-      maxFps={60}
-    />
-  );
-};
-
-const ShaderMaterial = ({
-  source,
-  uniforms,
-  maxFps = 60,
-}: {
-  source: string;
-  hovered?: boolean;
-  maxFps?: number;
-  uniforms: Uniforms;
-}) => {
-  const { size } = useThree();
-  const ref = useRef<THREE.Mesh>(null);
-  let lastFrameTime = 0;
-
-  useFrame(({ clock }) => {
-    if (!ref.current) return;
-    const timestamp = clock.getElapsedTime();
-
-    lastFrameTime = timestamp;
-
-    const material: any = ref.current.material;
-    const timeLocation = material.uniforms.u_time;
-    timeLocation.value = timestamp;
-  });
-
-  const getUniforms = () => {
-    const preparedUniforms: any = {};
-
-    for (const uniformName in uniforms) {
-      const uniform: any = uniforms[uniformName];
-
-      switch (uniform.type) {
-        case "uniform1f":
-          preparedUniforms[uniformName] = { value: uniform.value, type: "1f" };
-          break;
-        case "uniform1i":
-          preparedUniforms[uniformName] = { value: uniform.value, type: "1i" };
-          break;
-        case "uniform3f":
-          preparedUniforms[uniformName] = {
-            value: new THREE.Vector3().fromArray(uniform.value),
-            type: "3f",
-          };
-          break;
-        case "uniform1fv":
-          preparedUniforms[uniformName] = { value: uniform.value, type: "1fv" };
-          break;
-        case "uniform3fv":
-          preparedUniforms[uniformName] = {
-            value: uniform.value.map((v: number[]) =>
-              new THREE.Vector3().fromArray(v)
-            ),
-            type: "3fv",
-          };
-          break;
-        case "uniform2f":
-          preparedUniforms[uniformName] = {
-            value: new THREE.Vector2().fromArray(uniform.value),
-            type: "2f",
-          };
-          break;
-        default:
-          console.error(`Invalid uniform type for '${uniformName}'.`);
-          break;
-      }
-    }
-
-    preparedUniforms["u_time"] = { value: 0, type: "1f" };
-    preparedUniforms["u_resolution"] = {
-      value: new THREE.Vector2(size.width * 2, size.height * 2),
-    };
-    return preparedUniforms;
-  };
-
-  const material = React.useMemo(() => {
-    const materialObject = new THREE.ShaderMaterial({
-      vertexShader: `
-      precision mediump float;
-      in vec2 coordinates;
-      uniform vec2 u_resolution;
-      out vec2 fragCoord;
-      void main(){
-        float x = position.x;
-        float y = position.y;
-        gl_Position = vec4(x, y, 0.0, 1.0);
-        fragCoord = (position.xy + vec2(1.0)) * 0.5 * u_resolution;
-        fragCoord.y = u_resolution.y - fragCoord.y;
-      }
-      `,
-      fragmentShader: source,
-      uniforms: getUniforms(),
-      glslVersion: THREE.GLSL3,
-      blending: THREE.CustomBlending,
-      blendSrc: THREE.SrcAlphaFactor,
-      blendDst: THREE.OneFactor,
-    });
-
-    return materialObject;
-  }, [size.width, size.height, source]);
-
-  return (
-    <mesh ref={ref as any}>
-      <planeGeometry args={[2, 2]} />
-      <primitive object={material} attach="material" />
-    </mesh>
-  );
-};
-
-const Shader: React.FC<ShaderProps> = ({ source, uniforms, maxFps = 60 }) => {
-  return (
-    <Canvas className="absolute inset-0 h-full w-full">
-      <ShaderMaterial source={source} uniforms={uniforms} maxFps={maxFps} />
-    </Canvas>
-  );
-};
+import { AuroraBackground } from '@/components/ui/aurora-background';
+import { CTAButton } from '@/components/ui/cta-button';
+import { Globe, Sparkles } from 'lucide-react';
 
 const DomainSetup = () => {
   const [domain, setDomain] = useState('');
@@ -394,24 +67,24 @@ const DomainSetup = () => {
   };
 
   return (
-    <div className="flex w-full flex-col min-h-screen bg-background relative">
-      <div className="absolute inset-0 z-0">
-        <CanvasRevealEffect
-          animationSpeed={3}
-          containerClassName="bg-background"
-          colors={[
-            [59, 130, 246], // blue-500 RGB
-            [99, 102, 241], // indigo-500 RGB
-          ]}
-          dotSize={4}
-          reverse={false}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,0,0,0.8)_0%,_transparent_100%)]" />
-        <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-background to-transparent" />
-      </div>
+    <AuroraBackground className="bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/50 pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20 min-h-screen">
+      {/* Enhanced background decoration consistent with hero */}
+      <div className="absolute inset-0 bg-grid-slate-100/40 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10" aria-hidden="true"></div>
+      <div className="absolute top-16 sm:top-20 left-4 sm:left-10 w-64 sm:w-96 h-64 sm:h-96 bg-blue-400/15 sm:bg-blue-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse" aria-hidden="true"></div>
+      <div className="absolute bottom-16 sm:bottom-20 right-4 sm:right-10 w-80 sm:w-[500px] h-80 sm:h-[500px] bg-indigo-400/15 sm:bg-indigo-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse" style={{ animationDelay: '1s' }} aria-hidden="true"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] bg-purple-300/8 sm:bg-purple-300/10 rounded-full blur-2xl sm:blur-3xl" aria-hidden="true"></div>
       
-      <div className="relative z-10 flex flex-col flex-1 items-center justify-center px-4">
-        <div className="w-full max-w-md">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 flex items-center justify-center min-h-screen">
+        <motion.div 
+          initial={{ opacity: 0.0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.2,
+            duration: 0.6,
+            ease: "easeInOut",
+          }}
+          className="max-w-2xl mx-auto"
+        >
           <AnimatePresence mode="wait">
             {step === 'domain' ? (
               <motion.div 
@@ -420,48 +93,63 @@ const DomainSetup = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="space-y-8 text-center"
+                className="space-y-8 sm:space-y-12"
               >
-                <div className="space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center">
-                    <span className="text-2xl font-bold text-primary-foreground">🌐</span>
-                  </div>
-                  <div className="space-y-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome to PrompMetrics</h1>
-                    <p className="text-lg text-muted-foreground">Let's start by adding your website domain</p>
-                  </div>
+                {/* Enhanced badge with Sparkles icon - consistent with hero */}
+                <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-6 sm:py-3 bg-white/90 backdrop-blur-xl border border-white/60 rounded-full text-xs sm:text-sm font-medium text-slate-700 mb-6 sm:mb-8 shadow-xl shadow-blue-500/10 hover:shadow-blue-500/20 transition-all duration-300">
+                  <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" aria-hidden="true" />
+                  <span>First-time setup</span>
                 </div>
                 
-                <form onSubmit={handleDomainSubmit} className="space-y-6">
-                  <div className="space-y-2">
+                {/* Brand icon with gradient background */}
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/25 mb-6 sm:mb-8">
+                  <Globe className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+                </div>
+                
+                {/* Typography hierarchy consistent with hero */}
+                <div className="space-y-4 sm:space-y-6">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-[1.1] sm:leading-[0.95] tracking-tight">
+                    <span className="bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-800 bg-clip-text text-transparent">
+                      Welcome to PrompMetrics
+                    </span>
+                  </h1>
+                  <p className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-light">
+                    Let's start by connecting your website domain to begin analyzing your content performance
+                  </p>
+                </div>
+                
+                {/* Form with enhanced styling */}
+                <form onSubmit={handleDomainSubmit} className="space-y-6 sm:space-y-8 max-w-lg mx-auto">
+                  <div className="space-y-3">
                     <Input
                       type="text"
                       placeholder="example.com"
                       value={domain}
                       onChange={(e) => setDomain(e.target.value)}
-                      className="h-12 text-center text-lg bg-background/50 backdrop-blur-sm border-border/50"
+                      className="h-14 sm:h-16 text-center text-lg sm:text-xl bg-white/80 backdrop-blur-sm border-2 border-slate-200/50 rounded-xl sm:rounded-2xl shadow-xl shadow-slate-900/5 focus:border-blue-500/50 focus:shadow-blue-500/20 transition-all duration-300"
                       disabled={loading}
                       required
                     />
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm sm:text-base text-slate-500 leading-relaxed">
                       Enter your website domain (without http:// or https://)
                     </p>
                   </div>
                   
-                  <Button
+                  <CTAButton
                     type="submit"
                     disabled={!domain.trim() || loading}
-                    className="w-full h-12 text-lg bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
+                    size="lg"
+                    className="w-full sm:w-auto px-12 py-5 text-lg"
                   >
                     {loading ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
-                        Saving...
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
+                        Saving Domain...
                       </>
                     ) : (
-                      'Continue'
+                      'Continue Setup'
                     )}
-                  </Button>
+                  </CTAButton>
                 </form>
               </motion.div>
             ) : (
@@ -470,39 +158,52 @@ const DomainSetup = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="space-y-8 text-center"
+                className="space-y-8 sm:space-y-12"
               >
                 <motion.div 
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="space-y-4"
+                  className="space-y-6 sm:space-y-8"
                 >
-                  <div className="w-16 h-16 mx-auto bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                  {/* Success icon with enhanced styling */}
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-green-500/25 mb-6 sm:mb-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 sm:h-12 sm:w-12 text-white" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div className="space-y-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Perfect!</h1>
-                    <p className="text-lg text-muted-foreground">Your domain has been saved successfully</p>
+                  
+                  {/* Success message with consistent typography */}
+                  <div className="space-y-4 sm:space-y-6">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 leading-[1.1] tracking-tight">
+                      <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                        Perfect!
+                      </span>
+                    </h1>
+                    <p className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed font-light">
+                      Your domain has been saved successfully. You're all set to start analyzing your content!
+                    </p>
                   </div>
                 </motion.div>
                 
+                {/* Loading indicator */}
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
-                  className="text-sm text-muted-foreground"
+                  className="flex items-center justify-center gap-3 text-slate-500"
                 >
-                  Redirecting to your dashboard...
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <span className="text-sm sm:text-base ml-2">Redirecting to your dashboard...</span>
                 </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </AuroraBackground>
   );
 };
 
