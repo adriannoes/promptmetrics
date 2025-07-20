@@ -13,18 +13,30 @@ export const useSupabaseAuth = () => {
   useEffect(() => {
     let mounted = true;
 
+    // Handle manual logout events
+    const handleForceLogout = () => {
+      if (!mounted) return;
+      
+      console.log('Force logout event received - clearing Supabase auth state');
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      setLoading(false);
+    };
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
 
-        console.log('Supabase auth state change:', event, session?.user?.id);
+        console.log('Supabase auth state change:', event, 'session exists:', !!session, 'user id:', session?.user?.id);
         
         // Always update session and user state immediately
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          console.log('User authenticated, fetching profile...');
           // Only fetch profile for authenticated users
           try {
             const { data: profileData, error } = await supabase
@@ -53,7 +65,7 @@ export const useSupabaseAuth = () => {
           }
         } else {
           // Clear profile immediately when user is null
-          console.log('Clearing Supabase profile - user signed out');
+          console.log('No session detected - clearing Supabase auth state');
           setProfile(null);
           setUser(null);
           setSession(null);
@@ -72,6 +84,9 @@ export const useSupabaseAuth = () => {
         }
       }
     );
+
+    // Add force logout event listener
+    window.addEventListener('force-logout', handleForceLogout);
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -100,6 +115,7 @@ export const useSupabaseAuth = () => {
       mounted = false;
       clearTimeout(timeoutId);
       subscription.unsubscribe();
+      window.removeEventListener('force-logout', handleForceLogout);
     };
   }, []);
 

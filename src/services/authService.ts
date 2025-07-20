@@ -162,19 +162,48 @@ export const signOut = async () => {
     console.log('Dispatching demo logout event');
     window.dispatchEvent(new CustomEvent('demo-logout'));
     
-    // Sign out from Supabase immediately (no timeout!)
+    // Sign out from Supabase
     console.log('Signing out from Supabase...');
-    const { error } = await supabase.auth.signOut();
     
-    if (error) {
-      console.error('Supabase signout error:', error);
-      return { success: false, error };
+    try {
+      const { error } = await supabase.auth.signOut();
+      console.log('Supabase signOut result:', error ? 'error' : 'success', error);
+      
+      if (error) {
+        console.error('Supabase signout error:', error);
+      }
+    } catch (supabaseError) {
+      console.error('Supabase signOut exception:', supabaseError);
     }
+    
+    // Force clear the session manually
+    console.log('Force clearing auth state...');
+    
+    // Clear localStorage auth data
+    try {
+      localStorage.removeItem('supabase.auth.token');
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('sb-') && key.includes('auth-token')) {
+          localStorage.removeItem(key);
+        }
+      });
+      console.log('Cleared localStorage auth tokens');
+    } catch (storageError) {
+      console.error('Error clearing localStorage:', storageError);
+    }
+    
+    // Dispatch manual logout event to force state clearing
+    window.dispatchEvent(new CustomEvent('force-logout'));
     
     console.log('Signout completed successfully');
     return { success: true };
   } catch (error) {
     console.error('Signout error:', error);
+    
+    // Even if there's an error, try to clear state manually
+    window.dispatchEvent(new CustomEvent('force-logout'));
+    
     return { success: false, error };
   }
 };
