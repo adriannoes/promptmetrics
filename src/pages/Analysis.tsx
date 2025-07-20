@@ -1,6 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { useEnglishLanguage } from '@/hooks/useEnglishLanguage';
 import Header from '@/components/Header';
 import SkipNav from '@/components/SkipNav';
 import { DomainAnalysisInput } from '@/components/DomainAnalysisInput';
@@ -25,8 +25,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { toast } from 'sonner';
 
-const AnalysisContent = () => {
-  const { t } = useLanguage();
+const Analysis = () => {
+  const { t } = useEnglishLanguage();
   const [currentDomain, setCurrentDomain] = useState<string>('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -79,7 +79,7 @@ const AnalysisContent = () => {
                 <AlertDescription>
                   <div className="flex items-center justify-between">
                     <div>
-                      <strong className="text-red-800">Erro na análise:</strong>
+                      <strong className="text-red-800">Analysis Error:</strong>
                       <br />
                       <span className="text-red-700">{analysisError}</span>
                     </div>
@@ -227,14 +227,6 @@ const AnalysisContent = () => {
         </div>
       </main>
     </div>
-  );
-};
-
-const Analysis = () => {
-  return (
-    <LanguageProvider>
-      <AnalysisContent />
-    </LanguageProvider>
   );
 };
 
