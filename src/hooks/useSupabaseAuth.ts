@@ -10,17 +10,59 @@ export const useSupabaseAuth = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Function to fetch user profile with organization
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      console.log('Fetching user profile for:', userId);
+      setLoading(true);
+      
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          organizations (
+            id,
+            name,
+            website_url
+          )
+        `)
+        .eq('id', userId)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        return null;
+      }
+
+      const typedProfile: Profile = {
+        ...profileData,
+        role: profileData.role as 'client' | 'admin'
+      };
+
+      console.log('Profile loaded with organization:', typedProfile);
+      setProfile(typedProfile);
+      return typedProfile;
+    } catch (error) {
+      console.error('Profile fetch exception:', error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    console.log('useSupabaseAuth: Initializing simple auth...');
+    console.log('useSupabaseAuth: Initializing auth with profile...');
     
-    // Get initial session immediately
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       console.log('Initial session:', !!session, error?.message);
       if (session) {
         setSession(session);
         setUser(session.user);
+        fetchUserProfile(session.user.id);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     // Listen to auth changes
@@ -29,8 +71,13 @@ export const useSupabaseAuth = () => {
         console.log('Auth state changed:', event, !!session);
         setSession(session);
         setUser(session?.user ?? null);
-        setProfile(null); // Clear profile for now to avoid DB issues
-        setLoading(false);
+        
+        if (session?.user) {
+          fetchUserProfile(session.user.id);
+        } else {
+          setProfile(null);
+          setLoading(false);
+        }
       }
     );
 
@@ -41,7 +88,9 @@ export const useSupabaseAuth = () => {
 
   console.log('useSupabaseAuth current state:', { 
     user: !!user, 
-    session: !!session, 
+    session: !!session,
+    profile: !!profile,
+    hasOrganization: !!profile?.organization_id,
     loading 
   });
 

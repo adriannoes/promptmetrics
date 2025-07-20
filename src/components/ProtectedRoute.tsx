@@ -1,73 +1,55 @@
 
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { SmartRedirect } from './SmartRedirect';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'client' | 'admin';
+  requireAdmin?: boolean;
 }
 
-const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  children, 
+  requireAdmin = false 
+}) => {
   const { user, profile, loading } = useAuth();
+  const location = useLocation();
 
-  console.log('ProtectedRoute state:', { 
-    user: !!user, 
-    profile: !!profile, 
-    loading, 
-    requiredRole,
-    profileRole: profile?.role,
-    profileEmail: profile?.email 
+  console.log('ProtectedRoute: Checking access...', {
+    path: location.pathname,
+    hasUser: !!user,
+    hasProfile: !!profile,
+    role: profile?.role,
+    requireAdmin,
+    loading
   });
 
+  // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
+  // Redirect to login if not authenticated
   if (!user) {
-    console.log('No user found, redirecting to login');
-    return <Navigate to="/login" replace />;
+    console.log('ProtectedRoute: No user, redirecting to login');
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If we have a user but no profile yet, show loading
-  if (!profile) {
-    console.log('User found but no profile, showing loading');
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading profile...</p>
-        </div>
-      </div>
-    );
+  // Check admin requirement
+  if (requireAdmin && profile?.role !== 'admin') {
+    console.log('ProtectedRoute: Admin required but user is not admin');
+    return <Navigate to="/unauthorized" replace />;
   }
 
-  // Special handling for domain-setup page - allow both admin and client
-  if (requiredRole && window.location.pathname === '/domain-setup') {
-    // For domain-setup, allow both admin and client roles
-    if (profile.role !== 'admin' && profile.role !== 'client') {
-      console.log('Domain setup page requires admin or client role');
-      return <Navigate to="/test" replace />;
-    }
-  } else if (requiredRole && profile.role !== requiredRole) {
-    console.log('Role mismatch, redirecting based on user role');
-    // Redirect to appropriate dashboard based on user's role
-    if (profile.role === 'admin') {
-      return <Navigate to="/admin" replace />;
-    } else {
-      return <Navigate to="/test" replace />;
-    }
-  }
-
-  console.log('Access granted to protected route');
-  return <>{children}</>;
+  // Use SmartRedirect for intelligent routing based on user status
+  return (
+    <SmartRedirect>
+      {children}
+    </SmartRedirect>
+  );
 };
-
-export default ProtectedRoute;

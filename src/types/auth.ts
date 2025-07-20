@@ -10,6 +10,11 @@ export interface Profile {
   organization_id?: string;
   created_at: string;
   updated_at: string;
+  organizations?: {
+    id: string;
+    name: string;
+    website_url?: string;
+  } | null;
 }
 
 export interface AuthContextType {
