@@ -18,8 +18,9 @@ export const useSupabaseAuth = () => {
       async (event, session) => {
         if (!mounted) return;
 
-        console.log('Auth state change:', event, session?.user?.id);
+        console.log('Supabase auth state change:', event, session?.user?.id);
         
+        // Always update session and user state immediately
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -51,6 +52,7 @@ export const useSupabaseAuth = () => {
           }
         } else {
           // Clear profile immediately when user is null
+          console.log('Clearing Supabase profile - user signed out');
           setProfile(null);
         }
         
@@ -65,6 +67,7 @@ export const useSupabaseAuth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
       
+      console.log('Initial Supabase session check:', !!session);
       setSession(session);
       setUser(session?.user ?? null);
       

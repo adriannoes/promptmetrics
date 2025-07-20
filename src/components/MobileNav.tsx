@@ -46,22 +46,48 @@ const MobileNav = () => {
   };
 
   const handleSignOut = async () => {
+    console.log('Mobile nav: Starting sign out process');
     setSigningOut(true);
-    await signOut();
-    // O feedback será tratado pelo evento abaixo
-    closeNav();
+    
+    try {
+      const success = await signOut();
+      console.log('Mobile nav: Sign out result:', success);
+      closeNav();
+      
+      // Don't set loading to false here - let the event handler do it
+      // The signout-complete event will be fired by the authService
+    } catch (error) {
+      console.error('Mobile nav: Sign out error:', error);
+      setSigningOut(false);
+      toast({ 
+        title: t('nav.signOut'), 
+        description: 'Erro ao sair. Tente novamente.', 
+        variant: 'destructive' 
+      });
+    }
   };
 
   // Feedback visual pós-signout
   React.useEffect(() => {
     const onSignoutComplete = (e: any) => {
+      console.log('Mobile nav: Received signout-complete event', e.detail);
       setSigningOut(false);
+      
       if (e.detail?.success) {
-        toast({ title: t('nav.signOut'), description: 'Logout realizado com sucesso!', variant: 'default' });
+        toast({ 
+          title: t('nav.signOut'), 
+          description: 'Logout realizado com sucesso!', 
+          variant: 'default' 
+        });
       } else {
-        toast({ title: t('nav.signOut'), description: 'Erro ao sair. Tente novamente.', variant: 'destructive' });
+        toast({ 
+          title: t('nav.signOut'), 
+          description: 'Erro ao sair. Tente novamente.', 
+          variant: 'destructive' 
+        });
       }
     };
+    
     window.addEventListener('signout-complete', onSignoutComplete);
     return () => window.removeEventListener('signout-complete', onSignoutComplete);
   }, [t]);
@@ -166,7 +192,11 @@ const MobileNav = () => {
                     aria-busy={signingOut}
                     aria-label={t('nav.signOut')}
                   >
-                    {signingOut ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true" /> : <LogOut className="w-4 h-4" />}
+                    {signingOut ? (
+                      <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                    ) : (
+                      <LogOut className="w-4 h-4" />
+                    )}
                     {t('nav.signOut')}
                   </Button>
                 </div>

@@ -22,21 +22,47 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOut = async () => {
+    console.log('Organization header: Starting sign out process');
     setSigningOut(true);
-    await signOut();
-    // O feedback será tratado pelo evento abaixo
+    
+    try {
+      const success = await signOut();
+      console.log('Organization header: Sign out result:', success);
+      
+      // Don't set loading to false here - let the event handler do it
+      // The signout-complete event will be fired by the authService
+    } catch (error) {
+      console.error('Organization header: Sign out error:', error);
+      setSigningOut(false);
+      toast({ 
+        title: 'Sign out', 
+        description: 'Erro ao sair. Tente novamente.', 
+        variant: 'destructive' 
+      });
+    }
   };
 
   // Feedback visual pós-signout
   React.useEffect(() => {
     const onSignoutComplete = (e: any) => {
+      console.log('Organization header: Received signout-complete event', e.detail);
       setSigningOut(false);
+      
       if (e.detail?.success) {
-        toast({ title: 'Sign out', description: 'Logout realizado com sucesso!', variant: 'default' });
+        toast({ 
+          title: 'Sign out', 
+          description: 'Logout realizado com sucesso!', 
+          variant: 'default' 
+        });
       } else {
-        toast({ title: 'Sign out', description: 'Erro ao sair. Tente novamente.', variant: 'destructive' });
+        toast({ 
+          title: 'Sign out', 
+          description: 'Erro ao sair. Tente novamente.', 
+          variant: 'destructive' 
+        });
       }
     };
+    
     window.addEventListener('signout-complete', onSignoutComplete);
     return () => window.removeEventListener('signout-complete', onSignoutComplete);
   }, []);
@@ -90,7 +116,11 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
               aria-busy={signingOut}
               aria-label="Sign out"
             >
-              {signingOut ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true" /> : <LogOut className="w-4 h-4" />}
+              {signingOut ? (
+                <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+              ) : (
+                <LogOut className="w-4 h-4" />
+              )}
               <span className="hidden sm:inline">Sign out</span>
             </Button>
           </div>

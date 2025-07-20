@@ -158,16 +158,32 @@ export const signInWithDemo = async () => {
 export const signOut = async () => {
   try {
     console.log('Signing out user...');
-    // Clear demo user session if exists
+    
+    // Clear demo user session first
     window.dispatchEvent(new CustomEvent('demo-logout'));
-    await supabase.auth.signOut();
-    window.dispatchEvent(new CustomEvent('signout-complete', { detail: { success: true } }));
-    window.location.href = '/';
+    
+    // Sign out from Supabase
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      console.error('Supabase signout error:', error);
+      window.dispatchEvent(new CustomEvent('signout-complete', { 
+        detail: { success: false, error } 
+      }));
+      return false;
+    }
+    
+    console.log('Successfully signed out');
+    window.dispatchEvent(new CustomEvent('signout-complete', { 
+      detail: { success: true } 
+    }));
+    
     return true;
   } catch (error) {
     console.error('Signout error:', error);
-    window.dispatchEvent(new CustomEvent('signout-complete', { detail: { success: false, error } }));
-    window.location.href = '/';
+    window.dispatchEvent(new CustomEvent('signout-complete', { 
+      detail: { success: false, error } 
+    }));
     return false;
   }
 };

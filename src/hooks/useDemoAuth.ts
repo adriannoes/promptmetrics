@@ -73,7 +73,7 @@ export const useDemoAuth = () => {
     const handleDemoLogout = () => {
       if (!mounted) return;
       
-      console.log('Demo logout event received');
+      console.log('Demo logout event received - clearing demo state');
       setUser(null);
       setSession(null);
       setProfile(null);
