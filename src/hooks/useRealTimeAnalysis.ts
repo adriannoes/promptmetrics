@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealtimeChannel } from '@supabase/supabase-js';
@@ -44,10 +45,11 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     }
     
     debounceTimeoutRef.current = setTimeout(() => {
+      console.log('🔄 Real-time: About to update data:', newData);
       setData(newData);
       setLastUpdated(new Date());
       setHasNewData(true);
-      console.log('🔄 Real-time: Data updated for domain:', newData.domain);
+      console.log('🔄 Real-time: Data updated successfully for domain:', newData.domain);
     }, 300); // 300ms debounce
   }, []);
 
@@ -56,11 +58,13 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     // Evitar múltiplas chamadas muito próximas (rate limiting)
     const now = Date.now();
     if (now - lastFetchTimeRef.current < 2000) { // 2 segundos mínimo
+      console.log('🚫 Rate limited - skipping fetch');
       return;
     }
     lastFetchTimeRef.current = now;
 
     if (!silent) {
+      console.log('🔄 Setting loading to TRUE');
       setLoading(true);
     }
     setError(null);
@@ -78,8 +82,11 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         .maybeSingle();
 
       if (fetchError) {
+        console.error('❌ Supabase error:', fetchError);
         throw fetchError;
       }
+
+      console.log('📊 Raw Supabase result:', result);
 
       // If no data found for specific domain, get the most recent analysis
       if (!result) {
@@ -93,10 +100,12 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
           .maybeSingle();
 
         if (latestError) {
+          console.error('❌ Supabase latest error:', latestError);
           throw latestError;
         }
 
         result = latestResult;
+        console.log('📊 Latest result fallback:', result);
         
         // Update localStorage with the found domain
         if (result) {
@@ -111,19 +120,28 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
       }
 
       if (result) {
+        console.log('✅ Setting data in useRealTimeAnalysis:', {
+          domain: result.domain,
+          status: result.status,
+          hasAnalysisData: !!result.analysis_data,
+          analysisDataType: typeof result.analysis_data,
+          analysisDataKeys: result.analysis_data && typeof result.analysis_data === 'object' ? Object.keys(result.analysis_data) : 'not an object'
+        });
+        
         setData(result);
         setLastUpdated(new Date());
-        console.log('📊 Fetched analysis data for:', result.domain);
+        console.log('📊 Data successfully set - should trigger re-render');
       } else {
+        console.log('📭 No analysis data found - setting data to null');
         setData(null);
-        console.log('📭 No analysis data found');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch analysis';
+      console.error('❌ Error in fetchAnalysis:', err);
       setError(errorMessage);
-      console.error('❌ Error fetching analysis:', err);
     } finally {
       if (!silent) {
+        console.log('🔄 Setting loading to FALSE');
         setLoading(false);
       }
     }
@@ -182,6 +200,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         // - 30s se conectado mas sem dados ainda
         // - Para de polling se tem dados e está conectado
         if (!isConnected || !data) {
+          console.log('⏰ Polling fetch triggered');
           fetchAnalysis(targetDomain, true); // silent fetch
         }
       }, isConnected ? 30000 : 10000);
@@ -193,7 +212,10 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
 
   // Main effect for domain changes
   useEffect(() => {
-    if (!domain) return;
+    if (!domain) {
+      console.log('⚠️ No domain provided to useRealTimeAnalysis');
+      return;
+    }
 
     console.log('🎯 useRealTimeAnalysis: Setting up for domain:', domain);
     
@@ -204,6 +226,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     setupRealTimeSubscription(domain);
 
     return () => {
+      console.log('🧹 Cleaning up useRealTimeAnalysis');
       // Cleanup
       if (channelRef.current) {
         channelRef.current.unsubscribe();
@@ -238,6 +261,20 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
   const markAsRead = useCallback(() => {
     setHasNewData(false);
   }, []);
+
+  // Debug log current state
+  useEffect(() => {
+    console.log('🔍 useRealTimeAnalysis state update:', {
+      domain,
+      hasData: !!data,
+      loading,
+      error,
+      isConnected,
+      dataId: data?.id,
+      dataDomain: data?.domain,
+      dataStatus: data?.status
+    });
+  }, [domain, data, loading, error, isConnected]);
 
   return {
     data,

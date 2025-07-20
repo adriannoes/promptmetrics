@@ -44,6 +44,12 @@ const MyRankContent = () => {
     const savedDomain = localStorage.getItem('lastAnalyzedDomain');
     const domain = urlDomain || savedDomain || '';
     
+    console.log('🎯 MyRank: Domain resolution:', {
+      urlDomain,
+      savedDomain,
+      finalDomain: domain
+    });
+    
     setCurrentDomain(domain);
     console.log('🎯 MyRank: Domain set to:', domain);
   }, [searchParams]);
@@ -59,6 +65,20 @@ const MyRankContent = () => {
     hasNewData,
     markAsRead
   } = useRealTimeAnalysis(currentDomain);
+
+  // Debug log when data changes
+  useEffect(() => {
+    console.log('📊 MyRank: Analysis data changed:', {
+      hasAnalysisData: !!analysisData,
+      loading,
+      error,
+      domain: currentDomain,
+      dataId: analysisData?.id,
+      dataDomain: analysisData?.domain,
+      dataStatus: analysisData?.status,
+      hasAnalysisDataContent: !!analysisData?.analysis_data
+    });
+  }, [analysisData, loading, error, currentDomain]);
 
   const handleNewAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,8 +125,18 @@ const MyRankContent = () => {
     return `${seconds}s atrás`;
   };
 
+  // Debug: Log render conditions
+  console.log('🎨 MyRank: Render conditions:', {
+    loading: loading && !analysisData,
+    currentDomain: !currentDomain,
+    error: !!error,
+    noData: !analysisData,
+    hasData: !!analysisData
+  });
+
   // Loading state
   if (loading && !analysisData) {
+    console.log('🎨 MyRank: Rendering loading state');
     return (
       <div className="min-h-screen bg-background text-foreground">
         <SkipNav />
@@ -132,6 +162,7 @@ const MyRankContent = () => {
 
   // No domain state
   if (!currentDomain) {
+    console.log('🎨 MyRank: Rendering no domain state');
     return (
       <div className="min-h-screen bg-background text-foreground">
         <SkipNav />
@@ -227,6 +258,7 @@ const MyRankContent = () => {
 
   // Error state
   if (error) {
+    console.log('🎨 MyRank: Rendering error state:', error);
     return (
       <div className="min-h-screen bg-background text-foreground">
         <SkipNav />
@@ -271,6 +303,7 @@ const MyRankContent = () => {
 
   // No data state
   if (!analysisData) {
+    console.log('🎨 MyRank: Rendering no data state');
     return (
       <div className="min-h-screen bg-background text-foreground">
         <SkipNav />
@@ -328,6 +361,7 @@ const MyRankContent = () => {
   }
 
   // Success state - show analysis data
+  console.log('🎨 MyRank: Rendering success state with data:', analysisData);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SkipNav />
