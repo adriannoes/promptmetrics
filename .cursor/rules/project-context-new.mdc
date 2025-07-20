@@ -1,0 +1,367 @@
+
+# PromptMetrics - Updated Comprehensive Project Documentation
+
+## 1. Project Overview
+
+**PromptMetrics** is an AI brand analytics platform that analyzes how AI systems (ChatGPT, Gemini, Perplexity) perceive and describe brands across the web. Our mission is to help companies understand and optimize their digital presence in AI responses to capture the growing market of AI-driven customers.
+
+### Value Proposition
+- **AI Brand Monitoring**: Track how AI systems describe your brand vs competitors
+- **Competitive Intelligence**: Understand your position in AI-generated recommendations  
+- **Optimization Insights**: Get actionable recommendations to improve AI visibility
+- **Real-time Analysis**: Live dashboard updates from automated AI analysis workflows
+
+## 2. Technology Stack
+
+### Frontend
+- **Framework**: React 18 + TypeScript + Vite
+- **UI Library**: Shadcn/ui + Radix UI components with custom enhancements
+- **Styling**: Tailwind CSS with custom design system and Aurora effects
+- **State Management**: React Query (@tanstack/react-query) + React Context
+- **Animations**: Framer Motion + custom CSS transitions + Aurora background effects
+- **Charts**: Recharts for data visualization
+- **Routing**: React Router DOM v6
+- **Forms**: React Hook Form + Zod validation
+
+### Backend/Serverless
+- **Database**: Supabase PostgreSQL with Row Level Security (RLS)
+- **Authentication**: Hybrid Supabase Auth + Demo Mode system
+- **Edge Functions**: Supabase Edge Functions (Deno runtime)
+- **File Storage**: Supabase Storage (not currently used)
+
+### Third-party Services
+- **Workflow Automation**: n8n for AI analysis pipeline
+- **Social Auth**: Google OAuth (configured)
+- **Email**: Supabase Auth emails
+- **Monitoring**: Supabase Analytics & Audit Logs
+
+### Development & Deployment
+- **Build Tool**: Vite
+- **Package Manager**: Bun
+- **Hosting**: Lovable platform
+- **Version Control**: Git with GitHub integration
+
+## 3. Updated Folder Structure
+
+```
+├── .cursor/rules/                  # Project documentation & rules
+│   ├── project-context.mdc        # Original project context
+│   └── project-context-new.mdc    # Updated project context (this file)
+├── docs/                           # Project documentation
+├── public/                         # Static assets
+├── src/
+│   ├── components/                 # React components
+│   │   ├── ui/                    # Enhanced Shadcn/ui components
+│   │   │   ├── aurora-background.tsx  # Aurora visual effects
+│   │   │   └── cta-button.tsx     # Enhanced CTA component
+│   │   ├── admin/                 # Admin-specific components
+│   │   ├── demo/                  # Demo dashboard components
+│   │   ├── forms/                 # Form components
+│   │   ├── navigation/            # Navigation components
+│   │   │   └── DesktopNav.tsx     # Updated with improved logout
+│   │   ├── Hero.tsx               # Landing page hero with Aurora
+│   │   └── ProtectedRoute.tsx     # Enhanced route protection
+│   ├── contexts/                  # React contexts
+│   │   ├── AuthContext.tsx        # Simplified authentication state
+│   │   ├── LanguageContext.tsx    # i18n support
+│   │   └── AccessibilityContext.tsx # Accessibility features
+│   ├── hooks/                     # Custom React hooks
+│   │   ├── useAuthState.ts        # Hybrid auth state management
+│   │   ├── useDemoAuth.ts         # Demo authentication logic
+│   │   └── useSupabaseAuth.ts     # Supabase authentication with fixes
+│   ├── integrations/
+│   │   └── supabase/             # Supabase client & types
+│   ├── lib/                      # Utility libraries
+│   ├── pages/                    # Route components
+│   │   ├── DomainSetup.tsx       # Enhanced onboarding page
+│   │   └── Index.tsx             # Landing page with Hero
+│   ├── services/                 # Business logic services
+│   │   └── authService.ts        # Simplified auth service
+│   ├── types/                    # TypeScript type definitions
+│   └── utils/                    # Utility functions
+├── supabase/
+│   ├── functions/                # Edge functions
+│   │   ├── trigger-analysis/     # Triggers n8n analysis
+│   │   ├── receive-analysis/     # Receives n8n results
+│   │   └── submit-waitlist/      # Waitlist submission
+│   ├── migrations/               # Database migrations
+│   └── config.toml              # Supabase configuration
+└── tailwind.config.ts           # Tailwind with Aurora animations
+```
+
+## 4. Key Architecture Updates
+
+### Enhanced Authentication Flow
+The app now uses a sophisticated hybrid authentication system:
+
+1. **Hybrid Auth State Management**: 
+   - `useAuthState()` combines demo and Supabase authentication
+   - Prioritizes demo auth when active, falls back to Supabase
+   - Handles race conditions and loading states properly
+
+```typescript
+// New authentication hierarchy
+useAuthState() -> {
+  demoUser || supabaseUser,
+  demoSession || supabaseSession,
+  demoProfile || supabaseProfile,
+  loading: supabaseLoading && !demoUser
+}
+```
+
+2. **Improved Demo Authentication**:
+   - `useDemoAuth()` with custom events for login/logout
+   - Seamless integration with real database profiles
+   - Fallback to mock profile when database unavailable
+
+3. **Enhanced Supabase Authentication**:
+   - `useSupabaseAuth()` with improved error handling
+   - Race condition prevention in profile fetching
+   - Safety timeouts to prevent infinite loading
+
+4. **Simplified Auth Service**:
+   - Streamlined `signOut()` function without complex event handling
+   - Better error handling and state cleanup
+   - Consistent redirect behavior
+
+### Enhanced UI Components
+
+#### AuroraBackground Component
+- **Location**: `src/components/ui/aurora-background.tsx`
+- **Purpose**: Provides consistent Aurora visual effects across the app
+- **Features**:
+  - Animated gradient backgrounds with blur effects
+  - Configurable radial gradients
+  - Dark mode support
+  - Responsive design optimization
+
+```typescript
+interface AuroraBackgroundProps {
+  children: ReactNode;
+  showRadialGradient?: boolean;
+  className?: string;
+}
+```
+
+#### Enhanced CTAButton Component
+- **Location**: `src/components/ui/cta-button.tsx`
+- **Purpose**: Consistent call-to-action buttons throughout the app
+- **Features**:
+  - Multiple sizes (sm, md, lg) with proper touch targets
+  - Primary/secondary variants
+  - Gradient backgrounds with hover effects
+  - Full HTML button props support
+  - Mobile-first responsive design
+
+```typescript
+interface CTAButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary';
+}
+```
+
+### Enhanced Protected Route System
+- **Location**: `src/components/ProtectedRoute.tsx`
+- **Improvements**:
+  - Better role-based access control
+  - Special handling for `/domain-setup` (allows both admin and client)
+  - Detailed logging for debugging
+  - Safety timeout to prevent infinite loading
+  - Improved loading states and error handling
+
+### Domain Setup Experience
+- **Location**: `src/pages/DomainSetup.tsx`
+- **Features**:
+  - Aurora background with consistent visual effects
+  - Two-step process: domain input → success confirmation
+  - Form validation and error handling
+  - Automatic redirect to organization dashboard
+  - Mobile-optimized responsive design
+  - Animation steps with Framer Motion
+
+## 5. Updated User Journeys
+
+### Authentication Journey
+```mermaid
+journey
+    title Enhanced Authentication Journey
+    section Demo Access
+      Try demo dashboard: 5: Visitor
+      Access full features: 5: Demo User
+      Optional signup: 3: Demo User
+    section Registration
+      Request invite code: 3: Visitor
+      Sign up with code: 5: Prospect
+      Domain setup: 4: New User
+    section Login/Logout
+      Sign in: 5: User
+      Access dashboard: 5: User
+      Sign out reliably: 5: User
+```
+
+### Domain Setup Journey
+```mermaid
+journey
+    title New Domain Setup Journey
+    section Onboarding
+      Complete registration: 4: New User
+      Land on domain setup: 5: New User
+      Enter website domain: 4: New User
+    section Validation
+      Domain validation: 3: System
+      Save to organization: 4: System
+      Show success state: 5: New User
+    section Completion
+      Auto redirect: 5: System
+      Access main dashboard: 5: User
+```
+
+## 6. Updated Design System
+
+### Aurora Visual Effects
+- **Primary Usage**: Landing page hero, domain setup, key onboarding pages
+- **Components**: AuroraBackground with animated gradients
+- **Colors**: Blue to indigo gradients with purple accents
+- **Animations**: CSS keyframes with Tailwind integration
+
+### Enhanced Typography Hierarchy
+- **Display**: Text sizes from 2xl to 8xl with responsive scaling
+- **Gradients**: Consistent slate-to-blue-to-indigo text gradients
+- **Spacing**: Optimized line-height and tracking for readability
+
+### Responsive Design Principles
+- **Mobile-First**: All components start with mobile design
+- **Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px)
+- **Touch Targets**: Minimum 44px height for interactive elements
+- **Contrast**: Enhanced text contrast for mobile readability
+
+## 7. Critical Bug Fixes & Improvements
+
+### Authentication Fixes
+1. **Logout Issues Resolved**:
+   - Removed complex custom event handling
+   - Simplified state cleanup process
+   - Fixed race conditions in auth state updates
+
+2. **Loading State Improvements**:
+   - Added safety timeouts to prevent infinite loading
+   - Better handling of auth state transitions
+   - Improved error messaging and fallbacks
+
+3. **Route Protection Enhanced**:
+   - Fixed domain-setup access for admin users
+   - Better role-based redirects
+   - More detailed logging for debugging
+
+### UI/UX Improvements
+1. **Consistent Visual Effects**:
+   - Aurora backgrounds across key pages
+   - Unified gradient system
+   - Improved animation performance
+
+2. **Enhanced Mobile Experience**:
+   - Better touch targets and spacing
+   - Optimized text sizing and contrast
+   - Improved form interactions
+
+3. **Loading and Error States**:
+   - Better visual feedback during transitions
+   - Clearer error messages
+   - Improved accessibility
+
+## 8. Recent Architecture Decisions
+
+### Hybrid Authentication Strategy
+**Decision**: Implement parallel demo + Supabase auth systems
+**Rationale**: Allows seamless demo experience while maintaining full auth capabilities
+**Implementation**: `useAuthState` hook prioritizes demo auth when active
+
+### Aurora Design Language
+**Decision**: Adopt Aurora visual effects as primary design element
+**Rationale**: Creates distinctive brand identity and modern aesthetic
+**Implementation**: Reusable AuroraBackground component with consistent styling
+
+### Enhanced Component Architecture
+**Decision**: Create focused, reusable UI components with full prop support
+**Rationale**: Better maintainability and consistent user experience
+**Implementation**: CTAButton and AuroraBackground as foundational components
+
+### Simplified Auth Service
+**Decision**: Remove complex custom event handling from auth flows
+**Rationale**: Reduces race conditions and improves reliability
+**Implementation**: Streamlined signOut function with direct state management
+
+## 9. Updated Development Guidelines
+
+### Component Creation Rules
+1. **Always create new files** for components instead of extending existing ones
+2. **Keep components under 50 lines** when possible
+3. **Use composition over inheritance** for complex UI elements
+4. **Implement full TypeScript prop interfaces** for reusability
+
+### Authentication Best Practices
+1. **Always handle both user and session state** in auth components
+2. **Use safety timeouts** to prevent infinite loading states
+3. **Implement proper cleanup** in useEffect hooks
+4. **Log detailed state changes** for debugging
+
+### UI/UX Standards
+1. **Mobile-first responsive design** for all components
+2. **Minimum 44px touch targets** for interactive elements
+3. **Consistent Aurora gradients** for brand identity
+4. **Accessible color contrast** ratios throughout
+
+## 10. Current Status & Next Steps
+
+### Recently Completed
+- ✅ Fixed authentication and logout issues
+- ✅ Enhanced domain setup experience with Aurora effects
+- ✅ Improved mobile responsiveness across key pages
+- ✅ Implemented hybrid auth system with demo mode
+- ✅ Created reusable UI components (AuroraBackground, CTAButton)
+- ✅ Enhanced route protection with better error handling
+
+### Development Priorities
+1. **Analysis Pipeline Integration**: Complete n8n workflow integration
+2. **Real-time Dashboard**: Implement live analysis result updates
+3. **Multi-language Expansion**: Complete Portuguese localization
+4. **Admin Panel Enhancement**: Improve user management interface
+5. **Mobile App**: Consider progressive web app capabilities
+
+### Technical Debt
+1. **File Size Management**: Continue breaking down large components
+2. **Type Safety**: Ensure all components have proper TypeScript interfaces
+3. **Testing Coverage**: Implement comprehensive testing for auth flows
+4. **Performance Optimization**: Optimize Aurora animations for mobile
+
+## 11. Quick Reference - Updated
+
+### Key URLs
+- Landing: `/` (with Aurora Hero)
+- Demo: `/demo` (or click "Try Demo")
+- Domain Setup: `/domain-setup` (Aurora onboarding)
+- Analysis: `/analysis`
+- My Rank: `/my-rank`
+- Admin: `/admin` (admin role required)
+- Changelog: `/changelog`
+
+### Critical Files
+- Auth Logic: `src/contexts/AuthContext.tsx` + `src/hooks/useAuthState.ts`
+- Auth Services: `src/services/authService.ts` (simplified)
+- Route Protection: `src/components/ProtectedRoute.tsx` (enhanced)
+- UI Components: `src/components/ui/aurora-background.tsx`, `src/components/ui/cta-button.tsx`
+- Landing Page: `src/pages/Index.tsx` with `src/components/Hero.tsx`
+- Domain Setup: `src/pages/DomainSetup.tsx` (Aurora-enhanced)
+
+### External Dependencies
+- Supabase Project: `racfoelvuhdifnekjsro`
+- n8n Webhook: Configure in Supabase secrets
+- Google OAuth: Configured in Supabase Auth
+
+### Design Tokens
+- Aurora Gradients: `from-blue-600 to-indigo-600`
+- Text Gradients: `from-slate-800 via-blue-800 to-indigo-800`
+- Backgrounds: `from-slate-50 via-blue-50/40 to-indigo-50/50`
+- Interactive: `hover:scale-[1.02]` with `transition-all duration-300`
+
+This documentation provides a complete technical overview reflecting the current state of the PromptMetrics platform with all recent enhancements and architectural improvements.
