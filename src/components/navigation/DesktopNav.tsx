@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -23,15 +23,13 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
     setSigningOut(true);
     
     try {
-      const success = await signOut();
-      console.log('Desktop nav: Sign out result:', success);
+      const result = await signOut();
+      console.log('Desktop nav: Sign out result:', result);
       
-      if (success) {
+      if (result.success) {
         toast.success('Logout realizado com sucesso!');
-        // Force navigation to home after successful logout
-        setTimeout(() => {
-          navigate('/', { replace: true });
-        }, 100);
+        // Navigate directly to home after successful logout
+        navigate('/', { replace: true });
       } else {
         toast.error('Erro ao sair. Tente novamente.');
       }
@@ -42,6 +40,8 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
       setSigningOut(false);
     }
   };
+
+  // Remove the signout-complete event listener as it's no longer needed
 
   const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
 

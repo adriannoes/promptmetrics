@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, ExternalLink } from 'lucide-react';
-import { toast } from './ui/use-toast';
+import { toast } from 'sonner';
 
 interface Organization {
   id: string;
@@ -34,11 +34,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
     } catch (error) {
       console.error('Organization header: Sign out error:', error);
       setSigningOut(false);
-      toast({ 
-        title: 'Sign out', 
-        description: 'Erro ao sair. Tente novamente.', 
-        variant: 'destructive' 
-      });
+      toast.error('Erro ao sair. Tente novamente.');
     }
   };
 
@@ -49,17 +45,13 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
       setSigningOut(false);
       
       if (e.detail?.success) {
-        toast({ 
-          title: 'Sign out', 
-          description: 'Logout realizado com sucesso!', 
-          variant: 'default' 
-        });
+        toast.success('Logout realizado com sucesso!');
+        // Force navigation to home after successful logout
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
       } else {
-        toast({ 
-          title: 'Sign out', 
-          description: 'Erro ao sair. Tente novamente.', 
-          variant: 'destructive' 
-        });
+        toast.error('Erro ao sair. Tente novamente.');
       }
     };
     

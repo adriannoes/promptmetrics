@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/types/auth';
@@ -8,6 +8,7 @@ export const useDemoAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -74,9 +75,20 @@ export const useDemoAuth = () => {
       if (!mounted) return;
       
       console.log('Demo logout event received - clearing demo state');
+      setLoading(true);
+      
+      // Clear state immediately
       setUser(null);
       setSession(null);
       setProfile(null);
+      
+      // Set loading to false after a short delay to ensure state updates
+      setTimeout(() => {
+        if (mounted) {
+          setLoading(false);
+          console.log('Demo logout state cleared');
+        }
+      }, 500);
     };
 
     // Add demo login/logout event listeners
@@ -90,9 +102,20 @@ export const useDemoAuth = () => {
     };
   }, []);
 
+  // Monitor state changes for debugging
+  React.useEffect(() => {
+    console.log('useDemoAuth state changed:', { 
+      user: !!user, 
+      session: !!session, 
+      profile: !!profile, 
+      loading 
+    });
+  }, [user, session, profile, loading]);
+
   return {
     user,
     session,
-    profile
+    profile,
+    loading
   };
 };

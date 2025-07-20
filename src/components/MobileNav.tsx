@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import LanguageSelector from './LanguageSelector';
 import { Button } from './ui/button';
 import { Menu, X, Zap, LogOut } from 'lucide-react';
-import { toast } from './ui/use-toast';
+import { toast } from 'sonner';
 
 const MobileNav = () => {
   const { t } = useLanguage();
@@ -50,47 +50,26 @@ const MobileNav = () => {
     setSigningOut(true);
     
     try {
-      const success = await signOut();
-      console.log('Mobile nav: Sign out result:', success);
+      const result = await signOut();
+      console.log('Mobile nav: Sign out result:', result);
       closeNav();
       
-      // Don't set loading to false here - let the event handler do it
-      // The signout-complete event will be fired by the authService
+      if (result.success) {
+        toast.success('Logout realizado com sucesso!');
+        // Navigate directly to home after successful logout
+        window.location.href = '/';
+      } else {
+        toast.error('Erro ao sair. Tente novamente.');
+      }
     } catch (error) {
       console.error('Mobile nav: Sign out error:', error);
+      toast.error('Erro ao sair. Tente novamente.');
+    } finally {
       setSigningOut(false);
-      toast({ 
-        title: t('nav.signOut'), 
-        description: 'Erro ao sair. Tente novamente.', 
-        variant: 'destructive' 
-      });
     }
   };
 
-  // Feedback visual pós-signout
-  React.useEffect(() => {
-    const onSignoutComplete = (e: any) => {
-      console.log('Mobile nav: Received signout-complete event', e.detail);
-      setSigningOut(false);
-      
-      if (e.detail?.success) {
-        toast({ 
-          title: t('nav.signOut'), 
-          description: 'Logout realizado com sucesso!', 
-          variant: 'default' 
-        });
-      } else {
-        toast({ 
-          title: t('nav.signOut'), 
-          description: 'Erro ao sair. Tente novamente.', 
-          variant: 'destructive' 
-        });
-      }
-    };
-    
-    window.addEventListener('signout-complete', onSignoutComplete);
-    return () => window.removeEventListener('signout-complete', onSignoutComplete);
-  }, [t]);
+  // Remove the signout-complete event listener as it's no longer needed
 
   // Check if user is logged in (including demo user)
   const isLoggedIn = user || (profile && profile.email === 'demo@example.com');

@@ -110,11 +110,11 @@ const DomainSetup = () => {
                 <div className="space-y-4 sm:space-y-6">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-[1.1] sm:leading-[0.95] tracking-tight">
                     <span className="bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-800 bg-clip-text text-transparent">
-                      Welcome to PrompMetrics
+                      Welcome to PromptMetrics!
                     </span>
                   </h1>
                   <p className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-light">
-                    Let's start by connecting your website domain to begin analyzing your content performance
+                    Let's start by connecting your website domain to begin analyzing your brand's performance
                   </p>
                 </div>
                 

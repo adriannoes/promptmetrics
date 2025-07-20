@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/types/auth';
@@ -55,6 +55,15 @@ export const useSupabaseAuth = () => {
           // Clear profile immediately when user is null
           console.log('Clearing Supabase profile - user signed out');
           setProfile(null);
+          setUser(null);
+          setSession(null);
+          
+          // Ensure loading is set to false after logout
+          setTimeout(() => {
+            if (mounted) {
+              setLoading(false);
+            }
+          }, 500);
         }
         
         // Always set loading to false after processing auth change
@@ -93,6 +102,16 @@ export const useSupabaseAuth = () => {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Monitor state changes for debugging
+  React.useEffect(() => {
+    console.log('useSupabaseAuth state changed:', { 
+      user: !!user, 
+      session: !!session, 
+      profile: !!profile, 
+      loading 
+    });
+  }, [user, session, profile, loading]);
 
   return {
     user,

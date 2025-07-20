@@ -162,19 +162,19 @@ export const signOut = async () => {
     console.log('Dispatching demo logout event');
     window.dispatchEvent(new CustomEvent('demo-logout'));
     
-    // Sign out from Supabase
+    // Sign out from Supabase immediately (no timeout!)
     console.log('Signing out from Supabase...');
     const { error } = await supabase.auth.signOut();
     
     if (error) {
       console.error('Supabase signout error:', error);
-      return false;
+      return { success: false, error };
     }
     
     console.log('Signout completed successfully');
-    return true;
+    return { success: true };
   } catch (error) {
     console.error('Signout error:', error);
-    return false;
+    return { success: false, error };
   }
 };
