@@ -7,14 +7,23 @@ import { translations } from '@/contexts/LanguageContext';
  */
 export const useEnglishLanguage = () => {
   const t = (key: string): string => {
+    console.log('🔍 useEnglishLanguage: Translating key:', key);
+    
     const keys = key.split('.');
     let value: any = translations.en;
     
     for (const k of keys) {
-      value = value?.[k];
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        console.warn('🚨 useEnglishLanguage: Translation key not found:', key, 'at segment:', k);
+        return key; // Return the key if translation not found
+      }
     }
     
-    return value || key;
+    const result = typeof value === 'string' ? value : key;
+    console.log('✅ useEnglishLanguage: Translation result:', key, '->', result);
+    return result;
   };
 
   return {
