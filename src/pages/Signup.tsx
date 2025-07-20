@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Zap } from 'lucide-react';
-import { toast } from 'sonner';
+import { authToast, getCurrentLanguage } from '@/utils/toastMessages';
 
 const Signup = () => {
   const [fullName, setFullName] = useState('');
@@ -30,9 +30,10 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const currentLanguage = getCurrentLanguage();
     
     if (!inviteCode.trim()) {
-      toast.error('Invite code is required');
+      authToast.loginError(currentLanguage, currentLanguage === 'pt-br' ? 'Código de convite é obrigatório' : 'Invite code is required');
       return;
     }
 
@@ -41,9 +42,9 @@ const Signup = () => {
     const { error } = await signUp(email, password, fullName, inviteCode);
 
     if (error) {
-      toast.error(error.message);
+      authToast.loginError(currentLanguage, error.message);
     } else {
-      toast.success('Account created successfully! Please check your email to confirm your account.');
+      authToast.signupSuccess(currentLanguage);
     }
 
     setLoading(false);
@@ -52,9 +53,10 @@ const Signup = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const { error } = await signInWithGoogle();
+    const currentLanguage = getCurrentLanguage();
     
     if (error) {
-      toast.error(error.message);
+      authToast.googleSigninError(currentLanguage);
     }
     
     setLoading(false);

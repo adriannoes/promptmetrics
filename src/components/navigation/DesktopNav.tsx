@@ -1,15 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useAuth } from '../../contexts/AuthContext';
-import LanguageSelector from '../LanguageSelector';
-import { Button } from '../ui/button';
 import { LogOut } from 'lucide-react';
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import LanguageSelector from '@/components/LanguageSelector';
+import { authToast, getCurrentLanguage } from '@/utils/toastMessages';
 
 interface DesktopNavProps {
-  onSectionScroll: (sectionId: string) => void;
+  onSectionScroll?: (sectionId: string) => void;
 }
 
 export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
@@ -21,21 +21,22 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
   const handleSignOut = async () => {
     console.log('Desktop nav: Starting sign out process');
     setSigningOut(true);
+    const currentLanguage = getCurrentLanguage();
     
     try {
       const result = await signOut();
       console.log('Desktop nav: Sign out result:', result);
       
       if (result.success) {
-        toast.success('Logout realizado com sucesso!');
+        authToast.logoutSuccess(currentLanguage);
         // Navigate directly to home after successful logout
         navigate('/', { replace: true });
       } else {
-        toast.error('Erro ao sair. Tente novamente.');
+        authToast.logoutError(currentLanguage);
       }
     } catch (error) {
       console.error('Desktop nav: Sign out error:', error);
-      toast.error('Erro ao sair. Tente novamente.');
+      authToast.logoutError(currentLanguage);
     } finally {
       setSigningOut(false);
     }

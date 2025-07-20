@@ -1,14 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Menu, X, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '../contexts/LanguageContext';
-import { useAuth } from '../contexts/AuthContext';
-import LanguageSelector from './LanguageSelector';
-import { Button } from './ui/button';
-import { Menu, X, Zap, LogOut } from 'lucide-react';
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import LanguageSelector from '@/components/LanguageSelector';
+import { authToast, getCurrentLanguage } from '@/utils/toastMessages';
 
-const MobileNav = () => {
+interface MobileNavProps {
+  onSectionScroll?: (sectionId: string) => void;
+}
+
+const MobileNav: React.FC<MobileNavProps> = ({ onSectionScroll }) => {
   const { t } = useLanguage();
   const { user, profile, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -17,37 +21,17 @@ const MobileNav = () => {
   const toggleNav = () => setIsOpen(!isOpen);
   const closeNav = () => setIsOpen(false);
 
-  // Close mobile nav on escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        closeNav();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when nav is open
-      document.body.style.overflow = 'hidden';
+  const handleSectionClick = (sectionId: string) => {
+    if (onSectionScroll) {
+      onSectionScroll(sectionId);
     }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      closeNav();
-    }
+    closeNav();
   };
 
   const handleSignOut = async () => {
     console.log('Mobile nav: Starting sign out process');
     setSigningOut(true);
+    const currentLanguage = getCurrentLanguage();
     
     try {
       const result = await signOut();
@@ -55,15 +39,15 @@ const MobileNav = () => {
       closeNav();
       
       if (result.success) {
-        toast.success('Logout realizado com sucesso!');
+        authToast.logoutSuccess(currentLanguage);
         // Navigate directly to home after successful logout
         window.location.href = '/';
       } else {
-        toast.error('Erro ao sair. Tente novamente.');
+        authToast.logoutError(currentLanguage);
       }
     } catch (error) {
       console.error('Mobile nav: Sign out error:', error);
-      toast.error('Erro ao sair. Tente novamente.');
+      authToast.logoutError(currentLanguage);
     } finally {
       setSigningOut(false);
     }
@@ -108,7 +92,7 @@ const MobileNav = () => {
           <div className="flex items-center justify-between p-4 border-b border-slate-200">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <Zap className="w-4 h-4 text-white" />
+                {/* Zap icon removed as per new_code */}
               </div>
               <span className="text-lg font-bold text-slate-900 tracking-tight">PromptMetrics</span>
             </div>
@@ -125,13 +109,13 @@ const MobileNav = () => {
           <div className="flex-1 p-4 space-y-6">
             <div className="space-y-4">
               <button
-                onClick={() => scrollTo('pricing')}
+                onClick={() => handleSectionClick('pricing')}
                 className="block w-full text-left px-4 py-3 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
               >
                 {t('pricing')}
               </button>
               <button
-                onClick={() => scrollTo('faq')}
+                onClick={() => handleSectionClick('faq')}
                 className="block w-full text-left px-4 py-3 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
               >
                 {t('faq')}

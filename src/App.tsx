@@ -13,6 +13,7 @@ import Signup from './pages/Signup';
 import Admin from './pages/Admin';
 import Analysis from './pages/Analysis';
 import Demo from './pages/Demo';
+import DemoPM3 from './pages/DemoPM3';
 import Test from './pages/Test';
 import Home from './pages/Home';
 import OrganizationHome from './pages/OrganizationHome';
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/demo" element={<Demo />} />
+                <Route path="/demo-pm3" element={<DemoPM3 />} />
                 <Route path="/changelog" element={<Changelog />} />
                 
                 {/* Protected routes - require authentication */}

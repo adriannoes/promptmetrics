@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePostLoginRedirect } from '@/hooks/usePostLoginRedirect';
 import { Zap, Eye } from 'lucide-react';
-import { toast } from 'sonner';
+import { authToast, getCurrentLanguage } from '@/utils/toastMessages';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -23,11 +23,12 @@ const Login = () => {
     setLoading(true);
 
     const { error } = await signIn(email, password);
+    const currentLanguage = getCurrentLanguage();
 
     if (error) {
-      toast.error(error.message);
+      authToast.loginError(currentLanguage, error.message);
     } else {
-      toast.success('Signed in successfully!');
+      authToast.loginSuccess(currentLanguage);
     }
 
     setLoading(false);
@@ -36,9 +37,10 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const { error } = await signInWithGoogle();
+    const currentLanguage = getCurrentLanguage();
     
     if (error) {
-      toast.error(error.message);
+      authToast.googleSigninError(currentLanguage);
     }
     
     setLoading(false);
@@ -47,11 +49,12 @@ const Login = () => {
   const handleDemoSignIn = async () => {
     setLoading(true);
     const { error } = await signInWithDemo();
+    const currentLanguage = getCurrentLanguage();
     
     if (error) {
-      toast.error(error.message);
+      authToast.loginError(currentLanguage, error.message);
     } else {
-      toast.success('Welcome to the demo!');
+      authToast.demoWelcome(currentLanguage);
     }
     
     setLoading(false);

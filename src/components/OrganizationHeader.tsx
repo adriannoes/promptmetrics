@@ -1,20 +1,16 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { LogOut, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, ExternalLink } from 'lucide-react';
-import { toast } from 'sonner';
-
-interface Organization {
-  id: string;
-  name: string;
-  slug: string;
-  logo_url?: string;
-  website_url?: string;
-}
+import { authToast, getCurrentLanguage } from '@/utils/toastMessages';
 
 interface OrganizationHeaderProps {
-  organization: Organization;
+  organization: {
+    name: string;
+    slug: string;
+    logo_url?: string;
+  };
 }
 
 const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
@@ -24,17 +20,25 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const handleSignOut = async () => {
     console.log('Organization header: Starting sign out process');
     setSigningOut(true);
+    const currentLanguage = getCurrentLanguage();
     
     try {
       const success = await signOut();
       console.log('Organization header: Sign out result:', success);
       
-      // Don't set loading to false here - let the event handler do it
-      // The signout-complete event will be fired by the authService
+      if (success.success) {
+        authToast.logoutSuccess(currentLanguage);
+        // Force navigation to home after successful logout
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+      } else {
+        authToast.logoutError(currentLanguage);
+      }
     } catch (error) {
       console.error('Organization header: Sign out error:', error);
       setSigningOut(false);
-      toast.error('Erro ao sair. Tente novamente.');
+      authToast.logoutError(currentLanguage);
     }
   };
 
@@ -45,13 +49,13 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
       setSigningOut(false);
       
       if (e.detail?.success) {
-        toast.success('Logout realizado com sucesso!');
+        authToast.logoutSuccess(getCurrentLanguage());
         // Force navigation to home after successful logout
         setTimeout(() => {
           window.location.href = '/';
         }, 1000);
       } else {
-        toast.error('Erro ao sair. Tente novamente.');
+        authToast.logoutError(getCurrentLanguage());
       }
     };
     
@@ -81,7 +85,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
               <span className="text-lg font-bold text-slate-900 tracking-tight">
                 {organization.name}
               </span>
-              {organization.website_url && (
+              {/* organization.website_url && (
                 <a 
                   href={organization.website_url}
                   target="_blank"
@@ -91,7 +95,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
                   Visit website
                   <ExternalLink className="w-3 h-3" />
                 </a>
-              )}
+              ) */}
             </div>
           </div>
           

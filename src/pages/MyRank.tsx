@@ -23,7 +23,7 @@ import { MyRankDashboardTab } from '@/components/myrank/MyRankDashboardTab';
 import { MyRankPromptAnalysisTab } from '@/components/myrank/MyRankPromptAnalysisTab';
 import { MyRankCompetitorAnalysisTab } from '@/components/myrank/MyRankCompetitorAnalysisTab';
 import { MyRankStrategicInsightsTab } from '@/components/myrank/MyRankStrategicInsightsTab';
-import { toast } from 'sonner';
+import { analysisToast, getCurrentLanguage } from '@/utils/toastMessages';
 import Header from '@/components/Header';
 import SkipNav from '@/components/SkipNav';
 
@@ -34,11 +34,13 @@ const MyRankContent = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleRefreshAnalysis = async () => {
+    const currentLanguage = getCurrentLanguage();
+    
     try {
       await triggerNewAnalysis();
-      toast.success('Nova análise solicitada! Os resultados aparecerão em alguns minutos.');
+      analysisToast.newAnalysisRequested(currentLanguage);
     } catch (err) {
-      toast.error('Erro ao solicitar nova análise. Tente novamente.');
+      analysisToast.analysisError(currentLanguage);
     }
   };
 
