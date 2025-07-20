@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CompleteAnalysisResult } from '@/types/analysis';
@@ -10,34 +11,66 @@ interface MyRankCompetitorAnalysisTabProps {
   analysisData: CompleteAnalysisResult;
 }
 
+// Utility function to detect user's brand from data
+const detectUserBrand = (data: any): string => {
+  const possibleUserBrands = ['MinhaMarca', 'Brand', 'Sua Marca', 'Your Brand'];
+  
+  if (data?.market_share?.[0]) {
+    for (const brandName of possibleUserBrands) {
+      const found = data.market_share.find((item: any) => item.name === brandName);
+      if (found) return brandName;
+    }
+  }
+  
+  return 'MinhaMarca'; // fallback
+};
+
+// Utility function to map brand names for display
+const getBrandDisplayName = (brandName: string, t: any): string => {
+  if (brandName === 'MinhaMarca' || brandName === 'Brand') {
+    return t('dashboard.yourBrand') || 'Sua Marca';
+  }
+  return brandName;
+};
+
 export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabProps> = ({ analysisData }) => {
   const { t } = useLanguage();
   const competitorAnalysis = analysisData?.analysis_data?.competitor_analysis;
 
-  // Use real data from n8n or fallback
-  const marketShareData = competitorAnalysis?.market_share || [
-    { name: t('dashboard.yourBrand'), value: 35, color: '#3B82F6' },
+  console.log('🏆 Competitor Analysis Tab - Data:', competitorAnalysis);
+
+  const userBrand = detectUserBrand(competitorAnalysis);
+
+  // Use real data from analysis or fallback to reasonable defaults
+  const marketShareData = competitorAnalysis?.market_share?.map(item => ({
+    ...item,
+    name: getBrandDisplayName(item.name, t)
+  })) || [
+    { name: getBrandDisplayName(userBrand, t), value: 35, color: '#3B82F6' },
     { name: 'Concorrente 1', value: 25, color: '#10B981' },
     { name: 'Concorrente 2', value: 20, color: '#8B5CF6' },
     { name: t('dashboard.others'), value: 20, color: '#6B7280' },
   ];
 
-  const marketTrendsData = competitorAnalysis?.market_trends || [
-    { month: 'Jan', 'Sua Marca': 32, 'Concorrente 1': 28, 'Concorrente 2': 22, 'Outros': 18 },
-    { month: 'Feb', 'Sua Marca': 33, 'Concorrente 1': 27, 'Concorrente 2': 21, 'Outros': 19 },
-    { month: 'Mar', 'Sua Marca': 34, 'Concorrente 1': 26, 'Concorrente 2': 21, 'Outros': 19 },
-    { month: 'Apr', 'Sua Marca': 35, 'Concorrente 1': 25, 'Concorrente 2': 20, 'Outros': 20 },
-    { month: 'May', 'Sua Marca': 35, 'Concorrente 1': 25, 'Concorrente 2': 20, 'Outros': 20 },
-    { month: 'Jun', 'Sua Marca': 35, 'Concorrente 1': 25, 'Concorrente 2': 20, 'Outros': 20 },
-  ];
+  // Transform market trends data to use display names
+  const marketTrendsData = competitorAnalysis?.market_trends || analysisData?.analysis_data?.sentiment_trends?.map(item => {
+    const transformed: any = { month: item.month };
+    Object.keys(item).forEach(key => {
+      if (key !== 'month') {
+        transformed[getBrandDisplayName(key, t)] = item[key];
+      }
+    });
+    return transformed;
+  }) || [];
 
+  // Use real strategic priorities or create from analysis data
   const strategicPriorities = competitorAnalysis?.strategic_priorities || [
     {
       id: 1,
       title: 'Fortalecer posicionamento competitivo',
       description: 'Baseado na análise atual, focar em diferenciais únicos da marca.',
       priority: 'high' as const,
-      marketShare: 35.0
+      marketShare: marketShareData.find(item => item.name.includes('Sua Marca') || item.name.includes('Your Brand'))?.value || 35
     },
     {
       id: 2,
@@ -48,6 +81,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
     }
   ];
 
+  // Use real opportunities or create from analysis data
   const opportunities = competitorAnalysis?.opportunities || [
     {
       category: 'Desenvolvimento de Produto',
@@ -65,7 +99,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
     }
   ];
 
-  // Get strengths and weaknesses from real n8n data
+  // Get strengths and weaknesses from real analysis data
   const strengths = competitorAnalysis?.strengths || [
     'Marca possui diferenciais únicos no mercado',
     'Boa percepção geral nos sistemas de IA',
@@ -89,9 +123,9 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
 
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
-      case 'high': return t('competitorAnalysis.high');
-      case 'medium': return t('competitorAnalysis.medium');
-      case 'low': return t('competitorAnalysis.low');
+      case 'high': return t('competitorAnalysis.high') || 'Alta';
+      case 'medium': return t('competitorAnalysis.medium') || 'Média';
+      case 'low': return t('competitorAnalysis.low') || 'Baixa';
       default: return priority;
     }
   };
@@ -194,7 +228,7 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
         </div>
       </div>
 
-      {/* Strengths vs Weaknesses - NEW: Using real n8n data */}
+      {/* Strengths vs Weaknesses */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -236,29 +270,41 @@ export const MyRankCompetitorAnalysisTab: React.FC<MyRankCompetitorAnalysisTabPr
       </div>
 
       {/* Market Trends */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
-            {t('competitorAnalysis.marketTrends')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={marketTrendsData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis domain={[15, 40]} />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="Sua Marca" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
-              <Line type="monotone" dataKey="Concorrente 1" stroke="#10B981" strokeWidth={2} />
-              <Line type="monotone" dataKey="Concorrente 2" stroke="#8B5CF6" strokeWidth={2} />
-              <Line type="monotone" dataKey="Outros" stroke="#6B7280" strokeWidth={2} name={t('dashboard.others')} />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      {marketTrendsData.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-blue-600" />
+              {t('competitorAnalysis.marketTrends')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={marketTrendsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis domain={[15, 100]} />
+                <Tooltip />
+                <Legend />
+                {/* Render lines for each competitor dynamically */}
+                {Object.keys(marketTrendsData[0] || {}).filter(key => key !== 'month').map((competitor, index) => {
+                  const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#6B7280'];
+                  return (
+                    <Line 
+                      key={competitor}
+                      type="monotone" 
+                      dataKey={competitor} 
+                      stroke={colors[index % colors.length]} 
+                      strokeWidth={2} 
+                      name={competitor}
+                    />
+                  );
+                })}
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Opportunities */}
       <Card>

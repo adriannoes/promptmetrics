@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CompleteAnalysisResult } from '@/types/analysis';
@@ -13,17 +14,24 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
   const { t } = useLanguage();
   const strategicInsights = analysisData?.analysis_data?.strategic_insights;
 
-  const keyInsights = strategicInsights?.key_insights || [
-    'Marca possui boa percepção geral nos sistemas de IA',
-    'Oportunidades de melhoria em visibilidade digital',
-    'Posicionamento competitivo pode ser fortalecido'
-  ];
+  console.log('🎯 Strategic Insights Tab - Data:', strategicInsights);
 
-  const recommendations = strategicInsights?.recommendations || [
-    'Investir em conteúdo otimizado para sistemas de IA',
-    'Expandir presença em canais digitais relevantes',
-    'Fortalecer estratégias de SEO e marketing de conteúdo'
-  ];
+  // Use real data from analysis with intelligent fallbacks
+  const keyInsights = strategicInsights?.key_insights?.length > 0 
+    ? strategicInsights.key_insights 
+    : analysisData?.analysis_data?.recommendations?.slice(0, 3) || [
+        'Marca possui boa percepção geral nos sistemas de IA',
+        'Oportunidades de melhoria em visibilidade digital',
+        'Posicionamento competitivo pode ser fortalecido'
+      ];
+
+  const recommendations = strategicInsights?.recommendations?.length > 0
+    ? strategicInsights.recommendations
+    : analysisData?.analysis_data?.recommendations || [
+        'Investir em conteúdo otimizado para sistemas de IA',
+        'Expandir presença em canais digitais relevantes',
+        'Fortalecer estratégias de SEO e marketing de conteúdo'
+      ];
 
   const actionItems = strategicInsights?.action_items || [
     'Criar calendário de conteúdo focado em IA',
@@ -164,7 +172,8 @@ export const MyRankStrategicInsightsTab: React.FC<MyRankStrategicInsightsTabProp
         <CardContent>
           <div className="prose max-w-none">
             <p className="text-gray-700 mb-4">
-              {t('strategicInsights.analysisScore').replace('{score}', String(analysisData.analysis_data?.score || 0))}
+              {analysisData.analysis_data?.summary || 
+               `Análise completa para ${analysisData.domain} com score de ${analysisData.analysis_data?.score || 0}/100. A análise identifica oportunidades significativas de crescimento e áreas específicas para melhoria estratégica.`}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">

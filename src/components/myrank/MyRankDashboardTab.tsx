@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -10,51 +11,81 @@ interface MyRankDashboardTabProps {
   analysisData: CompleteAnalysisResult;
 }
 
-// Default fallback data
-const defaultSentimentTrendData = [
-  { month: 'Jan', Brand: 75, Competitor1: 68, Competitor2: 65 },
-  { month: 'Feb', Brand: 76, Competitor1: 69, Competitor2: 66 },
-  { month: 'Mar', Brand: 78, Competitor1: 70, Competitor2: 68 },
-  { month: 'Apr', Brand: 77, Competitor1: 71, Competitor2: 68 },
-  { month: 'May', Brand: 79, Competitor1: 70, Competitor2: 68 },
-  { month: 'Jun', Brand: 78, Competitor1: 71, Competitor2: 68 },
-];
+// Utility function to detect user's brand from data
+const detectUserBrand = (data: any): string => {
+  // Look for variations of user's brand name
+  const possibleUserBrands = ['MinhaMarca', 'Brand', 'Sua Marca', 'Your Brand'];
+  
+  if (data?.sentiment_trends?.[0]) {
+    const firstMonth = data.sentiment_trends[0];
+    for (const brandName of possibleUserBrands) {
+      if (brandName in firstMonth) {
+        return brandName;
+      }
+    }
+  }
+  
+  return 'MinhaMarca'; // fallback
+};
 
-const defaultRankingData = [
-  { month: 'Jan', Brand: 2.1, Competitor1: 2.8, Competitor2: 3.2 },
-  { month: 'Feb', Brand: 2.0, Competitor1: 2.7, Competitor2: 3.1 },
-  { month: 'Mar', Brand: 1.9, Competitor1: 2.6, Competitor2: 3.0 },
-  { month: 'Apr', Brand: 2.0, Competitor1: 2.5, Competitor2: 2.9 },
-  { month: 'May', Brand: 1.8, Competitor1: 2.4, Competitor2: 2.8 },
-  { month: 'Jun', Brand: 1.7, Competitor1: 2.3, Competitor2: 2.7 },
-];
+// Utility function to get all competitors from data
+const getCompetitors = (data: any): string[] => {
+  if (!data?.sentiment_trends?.[0]) return [];
+  
+  const firstMonth = data.sentiment_trends[0];
+  const userBrand = detectUserBrand(data);
+  
+  return Object.keys(firstMonth).filter(key => 
+    key !== 'month' && key !== userBrand
+  );
+};
 
-const defaultOverallSentimentData = [
-  { name: 'Sua Marca', score: 77.6, color: '#3B82F6' },
-  { name: 'Competitor1', score: 73.4, color: '#10B981' },
-  { name: 'Competitor2', score: 68.8, color: '#8B5CF6' },
-];
+// Utility function to map brand names for display
+const getBrandDisplayName = (brandName: string, t: any): string => {
+  if (brandName === 'MinhaMarca' || brandName === 'Brand') {
+    return t('dashboard.yourBrand') || 'Sua Marca';
+  }
+  return brandName;
+};
 
-const defaultShareOfRankData = [
-  { month: 'Jan', Brand: 35, Competitor1: 28, Competitor2: 22, Others: 15 },
-  { month: 'Feb', Brand: 38, Competitor1: 26, Competitor2: 21, Others: 15 },
-  { month: 'Mar', Brand: 42, Competitor1: 25, Competitor2: 20, Others: 13 },
-  { month: 'Apr', Brand: 45, Competitor1: 24, Competitor2: 19, Others: 12 },
-  { month: 'May', Brand: 48, Competitor1: 23, Competitor2: 18, Others: 11 },
-  { month: 'Jun', Brand: 52, Competitor1: 22, Competitor2: 17, Others: 9 },
-];
+// Generate colors for competitors
+const generateColors = (competitors: string[]): Record<string, string> => {
+  const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#6B7280'];
+  const colorMap: Record<string, string> = {};
+  
+  competitors.forEach((competitor, index) => {
+    colorMap[competitor] = colors[index % colors.length];
+  });
+  
+  return colorMap;
+};
 
 export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysisData }) => {
   const { t } = useLanguage();
   
-  // Extract data from analysisData or use defaults
-  const sentimentTrendData = analysisData?.analysis_data?.sentiment_trends || defaultSentimentTrendData;
-  const rankingData = analysisData?.analysis_data?.ranking_data || defaultRankingData;
-  const overallSentimentData = analysisData?.analysis_data?.overall_sentiment || defaultOverallSentimentData.map(item => ({
+  // Detect user brand and competitors dynamically
+  const userBrand = detectUserBrand(analysisData?.analysis_data);
+  const competitors = getCompetitors(analysisData?.analysis_data);
+  const allBrands = [userBrand, ...competitors];
+  const colorMap = generateColors(allBrands);
+  
+  console.log('🎯 Dashboard Tab - Detected brands:', { userBrand, competitors, allBrands });
+  
+  // Extract data from analysisData with dynamic brand detection
+  const sentimentTrendData = analysisData?.analysis_data?.sentiment_trends || [];
+  const rankingData = analysisData?.analysis_data?.ranking_data || [];
+  const shareOfRankData = analysisData?.analysis_data?.share_of_rank || [];
+  
+  // Transform overall sentiment data to use display names
+  const overallSentimentData = analysisData?.analysis_data?.overall_sentiment?.map(item => ({
     ...item,
-    name: item.name === 'Sua Marca' ? t('dashboard.yourBrand') : item.name
+    name: getBrandDisplayName(item.name, t),
+    color: item.color || colorMap[item.name] || '#6B7280'
+  })) || allBrands.map((brand, index) => ({
+    name: getBrandDisplayName(brand, t),
+    score: 75 + (index * 5), // fallback scores
+    color: colorMap[brand] || '#6B7280'
   }));
-  const shareOfRankData = analysisData?.analysis_data?.share_of_rank || defaultShareOfRankData;
 
   return (
     <div className="space-y-8">
@@ -143,9 +174,16 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
                 <YAxis domain={[1, 5]} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
-                <Line type="monotone" dataKey="Competitor1" stroke="#10B981" strokeWidth={2} />
-                <Line type="monotone" dataKey="Competitor2" stroke="#8B5CF6" strokeWidth={2} />
+                {allBrands.map((brand, index) => (
+                  <Line 
+                    key={brand}
+                    type="monotone" 
+                    dataKey={brand} 
+                    stroke={colorMap[brand]} 
+                    strokeWidth={2} 
+                    name={getBrandDisplayName(brand, t)}
+                  />
+                ))}
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -167,10 +205,25 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
                 <YAxis domain={[0, 60]} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
-                <Line type="monotone" dataKey="Competitor1" stroke="#10B981" strokeWidth={2} />
-                <Line type="monotone" dataKey="Competitor2" stroke="#8B5CF6" strokeWidth={2} />
-                <Line type="monotone" dataKey="Others" stroke="#6B7280" strokeWidth={2} name={t('dashboard.others')} />
+                {allBrands.map((brand, index) => (
+                  <Line 
+                    key={brand}
+                    type="monotone" 
+                    dataKey={brand} 
+                    stroke={colorMap[brand]} 
+                    strokeWidth={2} 
+                    name={getBrandDisplayName(brand, t)}
+                  />
+                ))}
+                {shareOfRankData.length > 0 && 'Others' in shareOfRankData[0] && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="Others" 
+                    stroke="#6B7280" 
+                    strokeWidth={2} 
+                    name={t('dashboard.others')}
+                  />
+                )}
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -189,12 +242,19 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
               <LineChart data={sentimentTrendData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis domain={[50, 85]} />
+                <YAxis domain={[50, 100]} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="Brand" stroke="#3B82F6" strokeWidth={2} name={t('dashboard.yourBrand')} />
-                <Line type="monotone" dataKey="Competitor1" stroke="#10B981" strokeWidth={2} />
-                <Line type="monotone" dataKey="Competitor2" stroke="#8B5CF6" strokeWidth={2} />
+                {allBrands.map((brand, index) => (
+                  <Line 
+                    key={brand}
+                    type="monotone" 
+                    dataKey={brand} 
+                    stroke={colorMap[brand]} 
+                    strokeWidth={2} 
+                    name={getBrandDisplayName(brand, t)}
+                  />
+                ))}
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
