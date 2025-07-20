@@ -71,6 +71,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
 
     try {
       console.log('📊 useRealTimeAnalysis: Fetching analysis for domain:', targetDomain);
+      console.log('📊 useRealTimeAnalysis: About to query Supabase...');
       
       // First try to get analysis for the specific domain
       let { data: result, error: fetchError } = await supabase
@@ -80,6 +81,9 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      console.log('📊 useRealTimeAnalysis: Supabase query completed');
+      console.log('📊 useRealTimeAnalysis: Query result:', { result, fetchError });
 
       if (fetchError) {
         console.error('❌ Supabase error:', fetchError);
