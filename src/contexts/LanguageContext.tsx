@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface LanguageContextProps {
@@ -62,11 +63,42 @@ export const translations = {
     'analysis.success': 'Analysis completed successfully!',
     'analysis.noResults': 'No analysis results available.',
     'analysis.viewResults': 'View Results',
+    'analysis.completeAnalysis': {
+      'title': 'Complete Analysis',
+      'desc': 'Deep dive into your website\'s performance, SEO, and user experience with comprehensive metrics and insights.'
+    },
+    'analysis.strategicInsights': {
+      'title': 'Strategic Insights',
+      'desc': 'Get actionable recommendations and strategic guidance to improve your website\'s performance and achieve your goals.'
+    },
+    'analysis.multiplePlatforms': {
+      'title': 'Multiple Platforms',
+      'desc': 'Analyze your presence across different platforms and channels to understand your complete digital footprint.'
+    },
+    'analysis.howItWorks': {
+      'title': 'How It Works'
+    },
+    'analysis.step1': {
+      'title': 'Enter Your Domain',
+      'desc': 'Simply enter your website URL to begin the comprehensive analysis process.'
+    },
+    'analysis.step2': {
+      'title': 'AI Analysis',
+      'desc': 'Our advanced AI analyzes your website\'s performance, SEO, and user experience.'
+    },
+    'analysis.step3': {
+      'title': 'Get Results',
+      'desc': 'Receive detailed insights and actionable recommendations to improve your website.'
+    },
     'analysis.newAnalysis': {
       'title': 'Start New Analysis',
       'description': 'Enter a domain to begin comprehensive website analysis',
       'placeholder': 'Enter domain (e.g., example.com)',
       'button': 'Analyze Website'
+    },
+    'analysis.analysisHistory': {
+      'title': 'Analysis Results',
+      'desc': 'View comprehensive analysis results and insights for your website.'
     },
     'analysis.history': {
       'title': 'Recent Analyses',
@@ -276,11 +308,42 @@ export const translations = {
     'analysis.success': 'Análise concluída com sucesso!',
     'analysis.noResults': 'Nenhum resultado de análise disponível.',
     'analysis.viewResults': 'Ver Resultados',
+    'analysis.completeAnalysis': {
+      'title': 'Análise Completa',
+      'desc': 'Mergulhe fundo na performance, SEO e experiência do usuário do seu website com métricas e insights abrangentes.'
+    },
+    'analysis.strategicInsights': {
+      'title': 'Insights Estratégicos',
+      'desc': 'Obtenha recomendações acionáveis e orientação estratégica para melhorar a performance do seu website e alcançar seus objetivos.'
+    },
+    'analysis.multiplePlatforms': {
+      'title': 'Múltiplas Plataformas',
+      'desc': 'Analise sua presença em diferentes plataformas e canais para entender sua pegada digital completa.'
+    },
+    'analysis.howItWorks': {
+      'title': 'Como Funciona'
+    },
+    'analysis.step1': {
+      'title': 'Digite Seu Domínio',
+      'desc': 'Simplesmente digite a URL do seu website para começar o processo de análise abrangente.'
+    },
+    'analysis.step2': {
+      'title': 'Análise por IA',
+      'desc': 'Nossa IA avançada analisa a performance, SEO e experiência do usuário do seu website.'
+    },
+    'analysis.step3': {
+      'title': 'Obtenha Resultados',
+      'desc': 'Receba insights detalhados e recomendações acionáveis para melhorar seu website.'
+    },
     'analysis.newAnalysis': {
       'title': 'Iniciar Nova Análise',
       'description': 'Digite um domínio para começar a análise abrangente do website',
       'placeholder': 'Digite o domínio (ex: exemplo.com)',
       'button': 'Analisar Website'
+    },
+    'analysis.analysisHistory': {
+      'title': 'Resultados da Análise',
+      'desc': 'Veja resultados e insights abrangentes da análise para seu website.'
     },
     'analysis.history': {
       'title': 'Análises Recentes',
