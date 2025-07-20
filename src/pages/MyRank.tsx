@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,7 +17,7 @@ import {
   Database,
   Clock
 } from 'lucide-react';
-import { useEnglishLanguage } from '@/hooks/useEnglishLanguage';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 import { RealTimeNotification } from '@/components/RealTimeNotification';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
@@ -31,8 +30,8 @@ import { toast } from 'sonner';
 import Header from '@/components/Header';
 import SkipNav from '@/components/SkipNav';
 
-const MyRank = () => {
-  const { t } = useEnglishLanguage();
+const MyRankContent = () => {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const [currentDomain, setCurrentDomain] = useState<string>('');
   const [showDomainInput, setShowDomainInput] = useState(false);
@@ -98,10 +97,10 @@ const MyRank = () => {
       setShowDomainInput(false);
       setNewDomain('');
       
-      toast.success(`Analysis started for ${newDomain.trim()}`);
+      toast.success(`Análise iniciada para ${newDomain.trim()}`);
     } catch (error) {
       console.error('Error starting new analysis:', error);
-      toast.error('Error starting new analysis');
+      toast.error('Erro ao iniciar nova análise');
     } finally {
       setIsSubmitting(false);
     }
@@ -110,7 +109,7 @@ const MyRank = () => {
   const handleRefresh = () => {
     if (currentDomain) {
       refetch(currentDomain);
-      toast.info('Updating data...');
+      toast.info('Atualizando dados...');
     }
   };
 
@@ -121,9 +120,9 @@ const MyRank = () => {
     const seconds = Math.floor((diff % 60000) / 1000);
 
     if (minutes > 0) {
-      return `${minutes}min ago`;
+      return `${minutes}min atrás`;
     }
-    return `${seconds}s ago`;
+    return `${seconds}s atrás`;
   };
 
   // Debug: Log render conditions
@@ -152,7 +151,7 @@ const MyRank = () => {
                 {t('myrank.loadingAnalysis')}
               </h1>
               <p className="text-muted-foreground">
-                Loading analysis for <strong>{currentDomain}</strong>
+                Carregando análise para <strong>{currentDomain}</strong>
               </p>
             </div>
           </div>
@@ -188,7 +187,7 @@ const MyRank = () => {
                   className="px-8"
                 >
                   <Search className="w-5 h-5 mr-2" />
-                  Analyze New Domain
+                  Analisar Novo Domínio
                 </Button>
                 
                 <div>
@@ -197,7 +196,7 @@ const MyRank = () => {
                     onClick={() => window.location.href = '/analysis'}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Go to Analysis Page
+                    Ir para Página de Análise
                   </Button>
                 </div>
               </div>
@@ -205,9 +204,9 @@ const MyRank = () => {
               {showDomainInput && (
                 <Card className="mt-8 max-w-md mx-auto">
                   <CardHeader>
-                    <CardTitle>Analyze New Domain</CardTitle>
+                    <CardTitle>Analisar Novo Domínio</CardTitle>
                     <CardDescription>
-                      Enter the domain you want to analyze
+                      Digite o domínio que você deseja analisar
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -228,12 +227,12 @@ const MyRank = () => {
                           {isSubmitting ? (
                             <>
                               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Starting...
+                              Iniciando...
                             </>
                           ) : (
                             <>
                               <Search className="w-4 h-4 mr-2" />
-                              Analyze
+                              Analisar
                             </>
                           )}
                         </Button>
@@ -243,7 +242,7 @@ const MyRank = () => {
                           onClick={() => setShowDomainInput(false)}
                           disabled={isSubmitting}
                         >
-                          Cancel
+                          Cancelar
                         </Button>
                       </div>
                     </form>
@@ -271,7 +270,7 @@ const MyRank = () => {
                 <AlertCircle className="w-8 h-8 text-red-600" />
               </div>
               <h1 className="text-2xl font-bold mb-4 text-red-600">
-                Error Loading Analysis
+                Erro ao Carregar Análise
               </h1>
               <p className="text-muted-foreground mb-6">
                 {error}
@@ -283,7 +282,7 @@ const MyRank = () => {
                   variant="outline"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Try Again
+                  Tentar Novamente
                 </Button>
                 
                 <div>
@@ -291,7 +290,7 @@ const MyRank = () => {
                     onClick={() => window.location.href = '/analysis'}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Analysis
+                    Voltar para Análise
                   </Button>
                 </div>
               </div>
@@ -316,12 +315,12 @@ const MyRank = () => {
                 <Clock className="w-8 h-8 text-yellow-600" />
               </div>
               <h1 className="text-2xl font-bold mb-4">
-                Analysis in Progress
+                Análise em Andamento
               </h1>
               <p className="text-muted-foreground mb-6">
-                The analysis for <strong>{currentDomain}</strong> is still being processed.
+                A análise para <strong>{currentDomain}</strong> ainda está sendo processada.
                 <br />
-                Data will appear automatically when ready.
+                Os dados aparecerão automaticamente quando estiverem prontos.
               </p>
               
               <div className="space-y-4">
@@ -330,7 +329,7 @@ const MyRank = () => {
                   variant="outline"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Check Again
+                  Verificar Novamente
                 </Button>
                 
                 <div>
@@ -338,7 +337,7 @@ const MyRank = () => {
                     onClick={() => window.location.href = '/analysis'}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Analysis
+                    Voltar para Análise
                   </Button>
                 </div>
               </div>
@@ -376,7 +375,7 @@ const MyRank = () => {
                 {t('myrank.title')}
               </h1>
               <p className="text-muted-foreground">
-                Analysis for <strong>{analysisData.domain}</strong>
+                Análise para <strong>{analysisData.domain}</strong>
               </p>
             </div>
             
@@ -423,10 +422,10 @@ const MyRank = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold">
-                        Analysis Complete
+                        Análise Completa
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        Last updated: {lastUpdated ? formatLastUpdated(lastUpdated) : 'Now'}
+                        Última atualização: {lastUpdated ? formatLastUpdated(lastUpdated) : 'Agora'}
                       </p>
                     </div>
                   </div>
@@ -452,9 +451,9 @@ const MyRank = () => {
           {showDomainInput && (
             <Card className="mb-8">
               <CardHeader>
-                <CardTitle>Analyze New Domain</CardTitle>
+                <CardTitle>Analisar Novo Domínio</CardTitle>
                 <CardDescription>
-                  Enter the domain you want to analyze
+                  Digite o domínio que você deseja analisar
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -474,12 +473,12 @@ const MyRank = () => {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Starting...
+                          Iniciando...
                         </>
                       ) : (
                         <>
                           <Search className="w-4 h-4 mr-2" />
-                          Analyze
+                          Analisar
                         </>
                       )}
                     </Button>
@@ -489,7 +488,7 @@ const MyRank = () => {
                       onClick={() => setShowDomainInput(false)}
                       disabled={isSubmitting}
                     >
-                      Cancel
+                      Cancelar
                     </Button>
                   </div>
                 </form>
@@ -526,6 +525,10 @@ const MyRank = () => {
       </main>
     </div>
   );
+};
+
+const MyRank = () => {
+  return <MyRankContent />;
 };
 
 export default MyRank;
