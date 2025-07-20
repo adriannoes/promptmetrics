@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -77,7 +76,7 @@ const App = () => {
             <Route 
               path="/domain-setup" 
               element={
-                <ProtectedRoute requiredRole="client">
+                <ProtectedRoute>
                   <DomainSetup />
                 </ProtectedRoute>
               } 

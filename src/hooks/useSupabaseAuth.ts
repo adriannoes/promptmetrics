@@ -44,6 +44,7 @@ export const useSupabaseAuth = () => {
                 ...profileData,
                 role: profileData.role as 'client' | 'admin'
               };
+              console.log('Profile loaded:', typedProfile);
               setProfile(typedProfile);
             }
           } catch (error) {
@@ -73,12 +74,22 @@ export const useSupabaseAuth = () => {
       
       // If no session, set loading to false immediately
       if (!session && mounted) {
+        console.log('No initial session, setting loading to false');
         setLoading(false);
       }
     });
 
+    // Safety timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (mounted && loading) {
+        console.warn('Auth loading timeout - forcing loading to false');
+        setLoading(false);
+      }
+    }, 5000);
+
     return () => {
       mounted = false;
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);

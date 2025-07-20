@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
 import LanguageSelector from '../LanguageSelector';
 import { Button } from '../ui/button';
 import { LogOut } from 'lucide-react';
-import { toast } from '../ui/use-toast';
+import { toast } from 'sonner';
 
 interface DesktopNavProps {
   onSectionScroll: (sectionId: string) => void;
@@ -16,6 +16,7 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
   const { t } = useLanguage();
   const { user, profile, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     console.log('Desktop nav: Starting sign out process');
@@ -25,43 +26,22 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
       const success = await signOut();
       console.log('Desktop nav: Sign out result:', success);
       
-      // Don't set loading to false here - let the event handler do it
-      // The signout-complete event will be fired by the authService
+      if (success) {
+        toast.success('Logout realizado com sucesso!');
+        // Force navigation to home after successful logout
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 100);
+      } else {
+        toast.error('Erro ao sair. Tente novamente.');
+      }
     } catch (error) {
       console.error('Desktop nav: Sign out error:', error);
+      toast.error('Erro ao sair. Tente novamente.');
+    } finally {
       setSigningOut(false);
-      toast({ 
-        title: t('nav.signOut'), 
-        description: 'Erro ao sair. Tente novamente.', 
-        variant: 'destructive' 
-      });
     }
   };
-
-  // Feedback visual pós-signout
-  React.useEffect(() => {
-    const onSignoutComplete = (e: any) => {
-      console.log('Desktop nav: Received signout-complete event', e.detail);
-      setSigningOut(false);
-      
-      if (e.detail?.success) {
-        toast({ 
-          title: t('nav.signOut'), 
-          description: 'Logout realizado com sucesso!', 
-          variant: 'default' 
-        });
-      } else {
-        toast({ 
-          title: t('nav.signOut'), 
-          description: 'Erro ao sair. Tente novamente.', 
-          variant: 'destructive' 
-        });
-      }
-    };
-    
-    window.addEventListener('signout-complete', onSignoutComplete);
-    return () => window.removeEventListener('signout-complete', onSignoutComplete);
-  }, [t]);
 
   const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
 

@@ -118,7 +118,7 @@ export const signInWithGoogle = async () => {
 
 export const signInWithDemo = async () => {
   try {
-    console.log('Bypassing authentication for demo user...');
+    console.log('Initiating demo login...');
     
     // Create a mock session for the demo user
     const demoUser = {
@@ -133,8 +133,7 @@ export const signInWithDemo = async () => {
       }
     };
 
-    // Bypass Supabase auth and directly trigger the auth state change
-    // This simulates a successful login without actual authentication
+    // Dispatch demo login event
     window.dispatchEvent(new CustomEvent('demo-login', { 
       detail: { 
         user: demoUser,
@@ -157,33 +156,25 @@ export const signInWithDemo = async () => {
 
 export const signOut = async () => {
   try {
-    console.log('Signing out user...');
+    console.log('Starting signout process...');
     
     // Clear demo user session first
+    console.log('Dispatching demo logout event');
     window.dispatchEvent(new CustomEvent('demo-logout'));
     
     // Sign out from Supabase
+    console.log('Signing out from Supabase...');
     const { error } = await supabase.auth.signOut();
     
     if (error) {
       console.error('Supabase signout error:', error);
-      window.dispatchEvent(new CustomEvent('signout-complete', { 
-        detail: { success: false, error } 
-      }));
       return false;
     }
     
-    console.log('Successfully signed out');
-    window.dispatchEvent(new CustomEvent('signout-complete', { 
-      detail: { success: true } 
-    }));
-    
+    console.log('Signout completed successfully');
     return true;
   } catch (error) {
     console.error('Signout error:', error);
-    window.dispatchEvent(new CustomEvent('signout-complete', { 
-      detail: { success: false, error } 
-    }));
     return false;
   }
 };

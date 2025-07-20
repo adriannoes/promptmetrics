@@ -11,7 +11,14 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const { user, profile, loading } = useAuth();
 
-  console.log('ProtectedRoute state:', { user: !!user, profile: !!profile, loading, requiredRole });
+  console.log('ProtectedRoute state:', { 
+    user: !!user, 
+    profile: !!profile, 
+    loading, 
+    requiredRole,
+    profileRole: profile?.role,
+    profileEmail: profile?.email 
+  });
 
   if (loading) {
     return (
@@ -42,7 +49,14 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     );
   }
 
-  if (requiredRole && profile.role !== requiredRole) {
+  // Special handling for domain-setup page - allow both admin and client
+  if (requiredRole && window.location.pathname === '/domain-setup') {
+    // For domain-setup, allow both admin and client roles
+    if (profile.role !== 'admin' && profile.role !== 'client') {
+      console.log('Domain setup page requires admin or client role');
+      return <Navigate to="/test" replace />;
+    }
+  } else if (requiredRole && profile.role !== requiredRole) {
     console.log('Role mismatch, redirecting based on user role');
     // Redirect to appropriate dashboard based on user's role
     if (profile.role === 'admin') {
