@@ -24,6 +24,45 @@ interface UseRealTimeAnalysisReturn {
   markAsRead: () => void;
 }
 
+// Helper function to create a timeout promise
+const createTimeoutPromise = (ms: number) => {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error(`Query timeout after ${ms}ms`)), ms);
+  });
+};
+
+// Helper function to add retry logic
+const retryQuery = async (queryFn: () => Promise<any>, maxRetries = 3, baseDelay = 1000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 Query attempt ${attempt}/${maxRetries}`);
+      const startTime = Date.now();
+      
+      // Race between the query and timeout
+      const result = await Promise.race([
+        queryFn(),
+        createTimeoutPromise(10000) // 10 second timeout
+      ]);
+      
+      const endTime = Date.now();
+      console.log(`✅ Query completed in ${endTime - startTime}ms`);
+      
+      return result;
+    } catch (error) {
+      console.error(`❌ Query attempt ${attempt} failed:`, error);
+      
+      if (attempt === maxRetries) {
+        throw error; // Last attempt, throw the error
+      }
+      
+      // Wait before retrying (exponential backoff)
+      const delay = baseDelay * Math.pow(2, attempt - 1);
+      console.log(`⏳ Retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+};
+
 export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn => {
   const [data, setData] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -53,7 +92,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     }, 300); // 300ms debounce
   }, []);
 
-  // Fetch analysis data
+  // Fetch analysis data with retry logic and timeout
   const fetchAnalysis = useCallback(async (targetDomain: string, silent = false) => {
     // Evitar múltiplas chamadas muito próximas (rate limiting)
     const now = Date.now();
@@ -71,57 +110,59 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
 
     try {
       console.log('📊 useRealTimeAnalysis: Fetching analysis for domain:', targetDomain);
-      console.log('📊 useRealTimeAnalysis: About to query Supabase...');
       
-      // First try to get analysis for the specific domain
-      let { data: result, error: fetchError } = await supabase
-        .from('analysis_results')
-        .select('*')
-        .eq('domain', targetDomain)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      console.log('📊 useRealTimeAnalysis: Supabase query completed');
-      console.log('📊 useRealTimeAnalysis: Query result:', { result, fetchError });
-
-      if (fetchError) {
-        console.error('❌ Supabase error:', fetchError);
-        throw fetchError;
-      }
-
-      console.log('📊 Raw Supabase result:', result);
-
-      // If no data found for specific domain, get the most recent analysis
-      if (!result) {
-        console.log('📊 useRealTimeAnalysis: No data for specific domain, fetching latest analysis');
+      // Create the query function for retry logic
+      const queryFunction = async () => {
+        console.log('📊 useRealTimeAnalysis: About to query Supabase...');
         
-        const { data: latestResult, error: latestError } = await supabase
+        // Try specific domain first
+        const specificQuery = supabase
           .from('analysis_results')
           .select('*')
+          .eq('domain', targetDomain)
           .order('updated_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
+          .limit(1);
 
-        if (latestError) {
-          console.error('❌ Supabase latest error:', latestError);
-          throw latestError;
-        }
-
-        result = latestResult;
-        console.log('📊 Latest result fallback:', result);
+        console.log('📊 useRealTimeAnalysis: Executing specific domain query...');
+        const { data: result, error: fetchError } = await specificQuery.maybeSingle();
         
-        // Update localStorage with the found domain
-        if (result) {
-          console.log('📊 useRealTimeAnalysis: Found latest analysis for domain:', result.domain);
-          localStorage.setItem('lastAnalyzedDomain', result.domain);
-          
-          // Update URL if we're not already on the correct domain
-          if (window.location.pathname === '/my-rank') {
-            window.history.replaceState({}, '', `/my-rank?domain=${encodeURIComponent(result.domain)}`);
-          }
+        console.log('📊 useRealTimeAnalysis: Specific query completed');
+        console.log('📊 useRealTimeAnalysis: Query result:', { result, fetchError });
+
+        if (fetchError) {
+          console.error('❌ Supabase specific query error:', fetchError);
+          throw fetchError;
         }
-      }
+
+        // If no data found for specific domain, get latest analysis
+        if (!result) {
+          console.log('📊 useRealTimeAnalysis: No data for specific domain, fetching latest analysis');
+          
+          const latestQuery = supabase
+            .from('analysis_results')
+            .select('*')
+            .order('updated_at', { ascending: false })
+            .limit(1);
+
+          console.log('📊 useRealTimeAnalysis: Executing latest query...');
+          const { data: latestResult, error: latestError } = await latestQuery.maybeSingle();
+          
+          console.log('📊 useRealTimeAnalysis: Latest query completed');
+          console.log('📊 Latest result fallback:', latestResult);
+
+          if (latestError) {
+            console.error('❌ Supabase latest query error:', latestError);
+            throw latestError;
+          }
+
+          return latestResult;
+        }
+
+        return result;
+      };
+
+      // Execute query with retry logic
+      const result = await retryQuery(queryFunction);
 
       if (result) {
         console.log('✅ Setting data in useRealTimeAnalysis:', {
@@ -135,6 +176,17 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         setData(result);
         setLastUpdated(new Date());
         console.log('📊 Data successfully set - should trigger re-render');
+        
+        // Update localStorage and URL if we found a different domain
+        if (result.domain !== targetDomain) {
+          console.log('📊 useRealTimeAnalysis: Found analysis for domain:', result.domain);
+          localStorage.setItem('lastAnalyzedDomain', result.domain);
+          
+          // Update URL if we're not already on the correct domain
+          if (window.location.pathname === '/my-rank') {
+            window.history.replaceState({}, '', `/my-rank?domain=${encodeURIComponent(result.domain)}`);
+          }
+        }
       } else {
         console.log('📭 No analysis data found - setting data to null');
         setData(null);
