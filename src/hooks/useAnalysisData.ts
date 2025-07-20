@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { AnalysisDataStructure } from '@/types/analysis';
 
 interface AnalysisResult {
   id: string;
   domain: string;
   status: string;
-  analysis_data: any;
+  analysis_data: AnalysisDataStructure;
   created_at: string;
   updated_at: string;
 }
@@ -38,18 +39,19 @@ export const useAnalysisData = (domain?: string) => {
       console.log('📊 useAnalysisData: Raw result from Supabase:', result);
 
       if (result) {
+        const analysisData = result.analysis_data as unknown as AnalysisDataStructure;
         console.log('📊 useAnalysisData: Analysis data structure:', {
           domain: result.domain,
           status: result.status,
           hasAnalysisData: !!result.analysis_data,
-          analysisDataKeys: result.analysis_data ? Object.keys(result.analysis_data) : [],
-          sentiment_trends: result.analysis_data?.sentiment_trends?.length || 0,
-          competitor_analysis: !!result.analysis_data?.competitor_analysis,
-          prompt_analysis: !!result.analysis_data?.prompt_analysis
+          analysisDataKeys: result.analysis_data && typeof result.analysis_data === 'object' ? Object.keys(result.analysis_data) : [],
+          sentiment_trends: analysisData?.sentiment_trends?.length || 0,
+          competitor_analysis: !!analysisData?.competitor_analysis,
+          prompt_analysis: !!analysisData?.prompt_analysis
         });
       }
 
-      setData(result);
+      setData(result ? { ...result, analysis_data: result.analysis_data as unknown as AnalysisDataStructure } : null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch analysis';
       setError(errorMessage);
