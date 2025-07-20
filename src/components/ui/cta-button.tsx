@@ -2,9 +2,8 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface CTAButtonProps {
+interface CTAButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  onClick?: () => void;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'secondary';
@@ -12,10 +11,10 @@ interface CTAButtonProps {
 
 export function CTAButton({ 
   children, 
-  onClick, 
   className,
   size = 'md',
-  variant = 'primary'
+  variant = 'primary',
+  ...props
 }: CTAButtonProps) {
   const sizeClasses = {
     sm: 'px-4 py-2 sm:px-6 sm:py-3 text-sm',
@@ -30,7 +29,7 @@ export function CTAButton({
 
   return (
     <button
-      onClick={onClick}
+      {...props}
       className={cn(
         'group inline-flex items-center gap-3 sm:gap-4 font-semibold rounded-xl sm:rounded-2xl transform hover:scale-[1.02] transition-all duration-300 border border-blue-500/20 backdrop-blur-sm min-h-[44px]',
         sizeClasses[size],
