@@ -12,8 +12,13 @@ export const useSupabaseAuth = () => {
 
   useEffect(() => {
     let mounted = true;
+    console.log('useSupabaseAuth: Starting initialization...');
 
-    // Set up auth state listener
+    // Start with loading = false, let onAuthStateChange handle everything
+    setLoading(false);
+
+    // Set up auth state listener - this will handle initial state too
+    console.log('useSupabaseAuth: Setting up onAuthStateChange listener...');
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
@@ -26,7 +31,8 @@ export const useSupabaseAuth = () => {
         
         if (session?.user) {
           console.log('User authenticated, fetching profile...');
-          // Only fetch profile for authenticated users
+          setLoading(true);
+          
           try {
             const { data: profileData, error } = await supabase
               .from('profiles')
@@ -40,7 +46,6 @@ export const useSupabaseAuth = () => {
                 setProfile(null);
               }
             } else {
-              // Type assert the role to ensure it matches our Profile type
               const typedProfile: Profile = {
                 ...profileData,
                 role: profileData.role as 'client' | 'admin'
@@ -51,56 +56,32 @@ export const useSupabaseAuth = () => {
           } catch (error) {
             console.error('Profile fetch error:', error);
             setProfile(null);
+          } finally {
+            setLoading(false);
           }
         } else {
-          // Clear profile immediately when user is null
-          console.log('No session detected - clearing Supabase auth state');
+          console.log('No session - clearing auth state');
           setProfile(null);
           setUser(null);
           setSession(null);
-          
-          // Ensure loading is set to false after logout
-          setTimeout(() => {
-            if (mounted) {
-              setLoading(false);
-            }
-          }, 500);
-        }
-        
-        // Always set loading to false after processing auth change
-        if (mounted) {
           setLoading(false);
         }
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!mounted) return;
-      
-      console.log('Initial Supabase session check:', !!session);
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      // If no session, set loading to false immediately
-      if (!session && mounted) {
-        console.log('No initial session, setting loading to false');
+    // Set a brief timeout to ensure auth is initialized
+    const initTimeout = setTimeout(() => {
+      if (mounted) {
+        console.log('Auth initialization timeout reached');
         setLoading(false);
       }
-    });
-
-    // Safety timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      if (mounted && loading) {
-        console.warn('Auth loading timeout - forcing loading to false');
-        setLoading(false);
-      }
-    }, 5000);
+    }, 1000);
 
     return () => {
       mounted = false;
-      clearTimeout(timeoutId);
+      clearTimeout(initTimeout);
       subscription.unsubscribe();
+      console.log('useSupabaseAuth: Cleanup completed');
     };
   }, []);
 
