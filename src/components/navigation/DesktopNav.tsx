@@ -42,8 +42,6 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
     }
   };
 
-  // Remove the signout-complete event listener as it's no longer needed
-
   const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
 
   return (
@@ -61,17 +59,16 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
         {t('faq')}
       </button>
       
-      <Link 
-        to="/analysis"
-        className="text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
-      >
-        {t('analysis.title')}
-      </Link>
-      
       <div className="flex items-center gap-4">
         <LanguageSelector />
         {isLoggedIn ? (
           <div className="flex items-center gap-4">
+            <Link 
+              to="/analysis"
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+            >
+              {t('analysis.title')}
+            </Link>
             <span className="text-sm text-slate-600">
               {profile?.full_name || user?.email || 'Demo User'}
             </span>

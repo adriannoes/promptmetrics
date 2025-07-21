@@ -53,8 +53,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ onSectionScroll }) => {
     }
   };
 
-  // Remove the signout-complete event listener as it's no longer needed
-
   // Check if user is logged in (including demo user)
   const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
 
@@ -120,14 +118,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ onSectionScroll }) => {
               >
                 {t('faq')}
               </button>
-              
-              <Link 
-                to="/analysis" 
-                onClick={closeNav}
-                className="block w-full text-left px-4 py-3 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-              >
-                Análise
-              </Link>
             </div>
 
             {/* Language Selector */}
@@ -142,6 +132,13 @@ const MobileNav: React.FC<MobileNavProps> = ({ onSectionScroll }) => {
             <div className="pt-4 border-t border-slate-200">
               {isLoggedIn ? (
                 <div className="space-y-4">
+                  <Link 
+                    to="/analysis" 
+                    onClick={closeNav}
+                    className="block w-full text-left px-4 py-3 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                  >
+                    {t('analysis.title')}
+                  </Link>
                   <div className="px-4">
                     <span className="text-sm text-slate-600">
                       {profile?.full_name || user?.email || 'Demo User'}
