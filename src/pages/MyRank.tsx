@@ -128,9 +128,8 @@ const MyRankContent = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <SkipNav targetId="main-content" />
+      <SkipNav />
       <Header />
-      <RealTimeNotification />
       
       <main id="main-content" className="container mx-auto px-4 py-8">
         {/* Header Section */}
@@ -198,28 +197,24 @@ const MyRankContent = () => {
 
             <TabsContent value="dashboard">
               <MyRankDashboardTab 
-                domain={domain}
                 analysisData={analysisData?.analysis_data}
               />
             </TabsContent>
 
             <TabsContent value="prompts">
               <MyRankPromptAnalysisTab 
-                domain={domain}
                 analysisData={analysisData?.analysis_data}
               />
             </TabsContent>
 
             <TabsContent value="competitors">
               <MyRankCompetitorAnalysisTab 
-                domain={domain}
                 analysisData={analysisData?.analysis_data}
               />
             </TabsContent>
 
             <TabsContent value="insights">
               <MyRankStrategicInsightsTab 
-                domain={domain}
                 analysisData={analysisData?.analysis_data}
               />
             </TabsContent>
