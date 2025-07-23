@@ -31,8 +31,8 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
     if (!profile.organization_id) {
       console.warn('Client user has no organization_id');
       return {
-        path: '/test',
-        reason: 'Client user without organization redirected to fallback'
+        path: '/domain-setup',
+        reason: 'Client user without organization redirected to domain setup'
       };
     }
 
@@ -47,16 +47,16 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
       if (error) {
         console.error('Failed to fetch organization:', error);
         return {
-          path: '/test',
-          reason: 'Organization lookup failed, redirected to fallback'
+          path: '/domain-setup',
+          reason: 'Organization lookup failed, redirected to domain setup'
         };
       }
 
       if (!organization) {
         console.warn('Organization not found');
         return {
-          path: '/test',
-          reason: 'Organization not found, redirected to fallback'
+          path: '/domain-setup',
+          reason: 'Organization not found, redirected to domain setup'
         };
       }
 
@@ -71,8 +71,8 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
       if (!organization.slug) {
         console.warn('Organization exists but has no slug');
         return {
-          path: '/test',
-          reason: 'Organization has no slug, redirected to fallback'
+          path: '/domain-setup',
+          reason: 'Organization has no slug, redirected to domain setup'
         };
       }
 
@@ -84,8 +84,8 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
     } catch (error) {
       console.error('Error during organization lookup:', error);
       return {
-        path: '/test',
-        reason: 'Error during organization lookup, redirected to fallback'
+        path: '/domain-setup',
+        reason: 'Error during organization lookup, redirected to domain setup'
       };
     }
   }
@@ -93,7 +93,7 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
   // Unknown role fallback
   console.warn('Unknown user role:', profile.role);
   return {
-    path: '/test',
-    reason: 'Unknown role, redirected to fallback'
+    path: '/domain-setup',
+    reason: 'Unknown role, redirected to domain setup'
   };
 };

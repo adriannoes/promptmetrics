@@ -14,7 +14,7 @@ import Admin from './pages/Admin';
 import Analysis from './pages/Analysis';
 import Demo from './pages/Demo';
 import DemoPM3 from './pages/DemoPM3';
-import Test from './pages/Test';
+
 import Home from './pages/Home';
 import OrganizationHome from './pages/OrganizationHome';
 import DomainSetup from './pages/DomainSetup';
@@ -45,11 +45,6 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                <Route path="/test" element={
-                  <ProtectedRoute>
-                    <Test />
-                  </ProtectedRoute>
-                } />
                 
                 <Route path="/home" element={
                   <ProtectedRoute>

@@ -36,7 +36,8 @@ const DomainSetup = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase
+      // First, update the organization with the domain
+      const { error: updateError } = await supabase
         .from('organizations')
         .update({ 
           website_url: `https://${cleanDomain}`,
@@ -44,18 +45,41 @@ const DomainSetup = () => {
         })
         .eq('id', profile.organization_id);
 
-      if (error) {
-        console.error('Error updating organization:', error);
+      if (updateError) {
+        console.error('Error updating organization:', updateError);
         toast.error('Failed to save domain. Please try again.');
         return;
       }
 
+      console.log('Domain saved successfully, triggering analysis...');
+
+      // Trigger the analysis webhook
+      const { error: webhookError } = await supabase.functions.invoke('trigger-analysis', {
+        body: { domain: cleanDomain }
+      });
+
+      if (webhookError) {
+        console.error('Error triggering analysis:', webhookError);
+        toast.error('Domain saved but analysis failed to start. Please contact support.');
+        return;
+      }
+
+      console.log('Analysis webhook triggered successfully');
       setStep('success');
-      toast.success('Domain saved successfully!');
-      
-      // Redirect to dashboard after a short delay
+      toast.success('Domain saved and analysis started!');
+
+      // Get organization slug for redirection
+      const { data: organization } = await supabase
+        .from('organizations')
+        .select('slug')
+        .eq('id', profile.organization_id)
+        .single();
+
+      // Redirect to organization home using slug
       setTimeout(() => {
-        navigate(`/home/${profile.organization_id}`, { replace: true });
+        const redirectPath = organization?.slug ? `/home/${organization.slug}` : '/home';
+        console.log('Redirecting to:', redirectPath);
+        navigate(redirectPath, { replace: true });
       }, 2000);
 
     } catch (error) {
