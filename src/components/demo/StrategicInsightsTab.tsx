@@ -23,10 +23,10 @@ export const StrategicInsightsTab = () => {
       "Expand into enterprise market with team collaboration features"
     ],
     timeline: [
-      { quarter: "Q1 2024", focus: "Aprimorar capacidades de AI e natural language processing", status: "in-progress" },
-      { quarter: "Q2 2024", focus: "Lançar programa de certificação e expandir templates", status: "planned" },
-      { quarter: "Q3 2024", focus: "Implementar recursos avançados de colaboração e integração", status: "planned" },
-      { quarter: "Q4 2024", focus: "Escalar para mercado empresarial e otimizar performance", status: "planned" }
+      { quarter: "Q1 2024", focus: "Enhance AI capabilities and natural language processing", status: "in-progress" },
+      { quarter: "Q2 2024", focus: "Launch certification program and expand template library", status: "planned" },
+      { quarter: "Q3 2024", focus: "Implement advanced collaboration and integration features", status: "planned" },
+      { quarter: "Q4 2024", focus: "Scale to enterprise market and optimize performance", status: "planned" }
     ],
     metrics: [
       { label: "Market Share Target", value: "15%", trend: "up", icon: Target },
@@ -120,7 +120,7 @@ export const StrategicInsightsTab = () => {
                   variant={item.status === 'in-progress' ? 'default' : 'outline'}
                   className={item.status === 'in-progress' ? 'bg-blue-100 text-blue-800' : ''}
                 >
-                  {item.status === 'in-progress' ? 'Em Andamento' : 'Planejado'}
+                  {item.status === 'in-progress' ? 'In Progress' : 'Planned'}
                 </Badge>
               </div>
             ))}
@@ -153,9 +153,9 @@ export const StrategicInsightsTab = () => {
                       'text-gray-700 border-gray-200'
                     }`}
                   >
-                    {metric.trend === 'up' ? '↗ Crescimento' : 
-                     metric.trend === 'down' ? '↘ Declínio' : 
-                     '→ Estável'}
+                    {metric.trend === 'up' ? '↗ Growth' : 
+                     metric.trend === 'down' ? '↘ Decline' : 
+                     '→ Stable'}
                   </Badge>
                 </div>
               );
