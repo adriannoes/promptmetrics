@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAccessibility } from '../contexts/AccessibilityContext';
-import { supabase } from '../integrations/supabase/client';
 import { validateField, sanitizeInput, ValidationError } from '../utils/ContactFormValidator';
 
 interface FormData {
@@ -113,58 +112,45 @@ export const useContactForm = () => {
 
       console.log('Submitting sanitized data:', sanitizedData);
 
-      // Try Supabase function invoke first
-      let response;
-      try {
-        response = await supabase.functions.invoke('submit-waitlist', {
-          body: sanitizedData
-        });
-        console.log('Supabase function response:', response);
-      } catch (supabaseError) {
-        console.error('Supabase function error:', supabaseError);
-        
-        // Fallback to direct HTTP call
-        console.log('Trying direct HTTP call as fallback...');
-        const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/submit-waitlist', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0',
-            'x-my-custom-header': 'rank-me-llm'
-          },
-          body: JSON.stringify(sanitizedData)
-        });
-        
-        if (!directResponse.ok) {
-          throw new Error(`HTTP ${directResponse.status}: ${directResponse.statusText}`);
-        }
-        
-        response = { data: await directResponse.json(), error: null };
-        console.log('Direct HTTP response:', response);
+      // Submit directly to Pipefy webhook
+      const webhookUrl = 'https://app.pipefy.com/public/api/v1/web_hooks/98472/automation'; // Replace with your actual webhook URL
+      
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sanitizedData)
+      });
+      
+      console.log('Webhook response status:', response.status);
+      console.log('Webhook response:', response);
+
+      if (!response.ok) {
+        throw new Error(`Webhook returned status ${response.status}`);
       }
 
-      if (response?.error) {
-        throw response.error;
+      // Wait for 200 response to show success
+      if (response.status === 200) {
+        console.log('Form submitted successfully to Pipefy!');
+        setSubmitted(true);
+        setFormData({ name: '', email: '', phone: '' });
+        announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
+      } else {
+        throw new Error('Unexpected response from webhook');
       }
-
-      console.log('Form submitted successfully!');
-      setSubmitted(true);
-      setFormData({ name: '', email: '', phone: '' });
-      announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
     } catch (error: any) {
       console.error('Error submitting form:', error);
       
       // More specific error messages based on error type
-      let errorMessage = t('form.error.submit');
+      let errorMessage = 'Error submitting form. Please try again.';
       
-      if (error?.message?.includes('Network')) {
+      if (error?.message?.includes('Failed to fetch')) {
         errorMessage = 'Connection error. Please check your internet and try again.';
       } else if (error?.message?.includes('timeout')) {
         errorMessage = 'Request timed out. Please try again.';
-      } else if (error?.message?.includes('Webhook')) {
+      } else if (error?.message?.includes('status')) {
         errorMessage = 'Service temporarily unavailable. Please try again in a moment.';
-      } else if (error?.message?.includes('HTTP')) {
-        errorMessage = 'Server error. Please try again in a moment.';
       }
       
       setSubmitError(errorMessage);
