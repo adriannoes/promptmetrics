@@ -69,7 +69,7 @@ const Footer = () => {
               <img 
                 src={nvidiaInceptionImage} 
                 alt="NVIDIA Inception Program"
-                className="h-16 lg:h-20 w-auto hover:opacity-80 transition-opacity cursor-pointer"
+                className="h-20 lg:h-28 w-auto hover:opacity-80 transition-opacity cursor-pointer"
                 onClick={() => window.open('https://www.nvidia.com/en-us/startups/', '_blank')}
               />
             </div>
