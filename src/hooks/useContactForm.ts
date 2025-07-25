@@ -1,8 +1,6 @@
-
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAccessibility } from '../contexts/AccessibilityContext';
-import { anonymousSupabase } from '../integrations/supabase/anonymous-client';
 import { validateField, sanitizeInput, ValidationError } from '../utils/ContactFormValidator';
 
 interface FormData {
@@ -111,48 +109,48 @@ export const useContactForm = () => {
         phone: sanitizeInput(formData.phone)
       };
 
-      console.log('=== STARTING FORM SUBMISSION ===');
+      console.log('=== SUBMITTING DIRECTLY TO PIPEFY WEBHOOK ===');
       console.log('Submitting sanitized data:', sanitizedData);
 
-      // Direct HTTP call to edge function (avoiding Supabase client issues)
-      console.log('=== MAKING DIRECT HTTP CALL ===');
-      const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/submit-waitlist', {
+      // Direct submission to Pipefy webhook
+      const pipefyWebhookUrl = 'https://ipaas.pipefy.com/api/v1/webhooks/1NlP7fuovl3qx5FSJsBBI/sync';
+      
+      const response = await fetch(pipefyWebhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0`,
-          'x-my-custom-header': 'rank-me-llm-direct',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0'
         },
         body: JSON.stringify(sanitizedData)
       });
 
-      console.log('=== DIRECT HTTP RESPONSE ===');
-      console.log('Response status:', directResponse.status);
-      console.log('Response status text:', directResponse.statusText);
-      console.log('Response headers:', Object.fromEntries(directResponse.headers.entries()));
+      console.log('=== PIPEFY WEBHOOK RESPONSE ===');
+      console.log('Response status:', response.status);
+      console.log('Response status text:', response.statusText);
 
-      if (!directResponse.ok) {
-        const errorText = await directResponse.text();
-        console.error('=== HTTP ERROR RESPONSE ===');
-        console.error('Error status:', directResponse.status);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('=== PIPEFY WEBHOOK ERROR ===');
+        console.error('Error status:', response.status);
         console.error('Error text:', errorText);
-        throw new Error(`HTTP error! status: ${directResponse.status} - ${errorText}`);
+        throw new Error(`Failed to submit to Pipefy: ${response.status} - ${errorText}`);
       }
 
-      const directResult = await directResponse.json();
-      console.log('=== SUCCESS RESPONSE ===');
-      console.log('Direct HTTP response:', directResult);
-
-      if (directResult.success) {
-        console.log('=== FORM SUBMITTED SUCCESSFULLY ===');
-        setSubmitted(true);
-        setFormData({ name: '', email: '', phone: '' });
-        announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
-        return;
+      // Pipefy webhook might return different response formats
+      let result;
+      try {
+        result = await response.json();
+        console.log('=== PIPEFY SUCCESS RESPONSE ===');
+        console.log('Response data:', result);
+      } catch (parseError) {
+        // Some webhooks return plain text or empty response on success
+        console.log('=== PIPEFY SUCCESS (No JSON) ===');
+        console.log('Response was successful but not JSON');
       }
-      
-      throw new Error('Form submission failed - no success flag in response');
+
+      console.log('=== FORM SUBMITTED SUCCESSFULLY TO PIPEFY ===');
+      setSubmitted(true);
+      setFormData({ name: '', email: '', phone: '' });
+      announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
     } catch (error: any) {
       console.error('Error submitting form:', error);
       
