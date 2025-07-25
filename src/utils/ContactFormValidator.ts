@@ -19,25 +19,12 @@ export const sanitizeInput = (input: string): string => {
 export const validatePhoneNumber = (phoneValue: string): boolean => {
   if (!phoneValue.trim()) return false;
   
-  // Extract country code and number
-  const dialCodes = ['+55', '+1', '+44', '+49', '+33'];
-  const country = dialCodes.find(code => phoneValue.startsWith(code));
+  // Much more relaxed validation - just check for basic phone format
+  const cleanPhone = phoneValue.replace(/[^\d+\-\s\(\)]/g, '');
   
-  if (!country) return false;
-  
-  const numberPart = phoneValue.replace(country + ' ', '');
-  
-  // Basic validation patterns for each country
-  const patterns = {
-    '+55': /^\d{2}\s\d{5}-\d{4}$/, // Brazil
-    '+1': /^\(\d{3}\)\s\d{3}-\d{4}$/, // US/Canada
-    '+44': /^\d{2}\s\d{4}\s\d{4}$/, // UK
-    '+49': /^\d{2}\s\d{8}$/, // Germany
-    '+33': /^\d\s\d{2}\s\d{2}\s\d{2}\s\d{2}$/ // France
-  };
-  
-  const pattern = patterns[country as keyof typeof patterns];
-  return pattern ? pattern.test(numberPart) : false;
+  // Must have at least 8 digits and no more than 20 characters total
+  const digitCount = cleanPhone.replace(/\D/g, '').length;
+  return digitCount >= 8 && digitCount <= 15 && cleanPhone.length <= 20;
 };
 
 export const validateField = (name: string, value: string, errors: ValidationError, t: (key: string) => string): ValidationError => {

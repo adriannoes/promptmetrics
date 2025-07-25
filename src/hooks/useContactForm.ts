@@ -75,6 +75,8 @@ export const useContactForm = () => {
     e.preventDefault();
     setSubmitError('');
     
+    console.log('Form submission started', { formData });
+    
     // Rate limiting - prevent rapid submissions
     const now = Date.now();
     if (now - lastSubmitTime < 5000) { // 5 second cooldown
@@ -88,6 +90,8 @@ export const useContactForm = () => {
       newErrors = validateField(key, formData[key as keyof typeof formData], newErrors, t);
     });
     setErrors(newErrors);
+    
+    console.log('Validation results:', { newErrors, hasErrors: Object.keys(newErrors).length > 0 });
     
     // Check if there are any validation errors
     if (Object.keys(newErrors).length > 0) {
@@ -107,14 +111,43 @@ export const useContactForm = () => {
         phone: sanitizeInput(formData.phone)
       };
 
-      const { data, error } = await supabase.functions.invoke('submit-waitlist', {
-        body: sanitizedData
-      });
+      console.log('Submitting sanitized data:', sanitizedData);
 
-      if (error) {
-        throw error;
+      // Try Supabase function invoke first
+      let response;
+      try {
+        response = await supabase.functions.invoke('submit-waitlist', {
+          body: sanitizedData
+        });
+        console.log('Supabase function response:', response);
+      } catch (supabaseError) {
+        console.error('Supabase function error:', supabaseError);
+        
+        // Fallback to direct HTTP call
+        console.log('Trying direct HTTP call as fallback...');
+        const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/submit-waitlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0',
+            'x-my-custom-header': 'rank-me-llm'
+          },
+          body: JSON.stringify(sanitizedData)
+        });
+        
+        if (!directResponse.ok) {
+          throw new Error(`HTTP ${directResponse.status}: ${directResponse.statusText}`);
+        }
+        
+        response = { data: await directResponse.json(), error: null };
+        console.log('Direct HTTP response:', response);
       }
 
+      if (response?.error) {
+        throw response.error;
+      }
+
+      console.log('Form submitted successfully!');
       setSubmitted(true);
       setFormData({ name: '', email: '', phone: '' });
       announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
@@ -130,6 +163,8 @@ export const useContactForm = () => {
         errorMessage = 'Request timed out. Please try again.';
       } else if (error?.message?.includes('Webhook')) {
         errorMessage = 'Service temporarily unavailable. Please try again in a moment.';
+      } else if (error?.message?.includes('HTTP')) {
+        errorMessage = 'Server error. Please try again in a moment.';
       }
       
       setSubmitError(errorMessage);
