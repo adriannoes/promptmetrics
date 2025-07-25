@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAccessibility } from '../contexts/AccessibilityContext';
+import { supabase } from '../integrations/supabase/client';
 import { validateField, sanitizeInput, ValidationError } from '../utils/ContactFormValidator';
 
 interface FormData {
@@ -112,33 +113,21 @@ export const useContactForm = () => {
 
       console.log('Submitting sanitized data:', sanitizedData);
 
-      // Submit directly to Pipefy webhook
-      const webhookUrl = 'https://app.pipefy.com/public/api/v1/web_hooks/98472/automation'; // Replace with your actual webhook URL
-      
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sanitizedData)
+      // Submit via Supabase edge function (handles CORS)
+      const response = await supabase.functions.invoke('submit-waitlist', {
+        body: sanitizedData
       });
       
-      console.log('Webhook response status:', response.status);
-      console.log('Webhook response:', response);
+      console.log('Supabase function response:', response);
 
-      if (!response.ok) {
-        throw new Error(`Webhook returned status ${response.status}`);
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to submit form');
       }
 
-      // Wait for 200 response to show success
-      if (response.status === 200) {
-        console.log('Form submitted successfully to Pipefy!');
-        setSubmitted(true);
-        setFormData({ name: '', email: '', phone: '' });
-        announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
-      } else {
-        throw new Error('Unexpected response from webhook');
-      }
+      console.log('Form submitted successfully to Pipefy!');
+      setSubmitted(true);
+      setFormData({ name: '', email: '', phone: '' });
+      announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
     } catch (error: any) {
       console.error('Error submitting form:', error);
       

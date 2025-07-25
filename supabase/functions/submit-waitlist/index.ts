@@ -35,18 +35,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const webhookUrl = Deno.env.get('WAITLIST_WEBHOOK_URL');
-    
-    if (!webhookUrl) {
-      console.error('WAITLIST_WEBHOOK_URL not configured');
-      return new Response(
-        JSON.stringify({ error: 'Webhook URL not configured' }),
-        { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders }
-        }
-      );
-    }
+    // Use the correct Pipefy webhook URL
+    const webhookUrl = 'https://ipaas.pipefy.com/api/v1/webhooks/1NlP7fuovl3qx5FSJsBBI/sync';
+    console.log('Using webhook URL:', webhookUrl);
 
     const formData: WaitlistFormData = await req.json();
     console.log('Form data received:', { name: formData.name, email: formData.email });
