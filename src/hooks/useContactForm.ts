@@ -114,14 +114,22 @@ export const useContactForm = () => {
       console.log('Submitting sanitized data:', sanitizedData);
 
       // Submit via Supabase edge function (handles CORS)
+      console.log('Calling supabase.functions.invoke...');
       const response = await supabase.functions.invoke('submit-waitlist', {
         body: sanitizedData
       });
       
-      console.log('Supabase function response:', response);
+      console.log('Supabase function response data:', response.data);
+      console.log('Supabase function response error:', response.error);
 
       if (response.error) {
+        console.error('Supabase function error details:', response.error);
         throw new Error(response.error.message || 'Failed to submit form');
+      }
+
+      // Check if we got a successful response
+      if (!response.data || !response.data.success) {
+        throw new Error('Unexpected response from function');
       }
 
       console.log('Form submitted successfully to Pipefy!');
