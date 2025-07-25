@@ -111,64 +111,48 @@ export const useContactForm = () => {
         phone: sanitizeInput(formData.phone)
       };
 
+      console.log('=== STARTING FORM SUBMISSION ===');
       console.log('Submitting sanitized data:', sanitizedData);
 
-      try {
-        // First attempt: Try Supabase client
-        console.log('Calling anonymousSupabase.functions.invoke...');
-        const response = await anonymousSupabase.functions.invoke('submit-waitlist', {
-          body: sanitizedData
-        });
-        
-        console.log('Supabase function response data:', response.data);
-        console.log('Supabase function response error:', response.error);
+      // Direct HTTP call to edge function (avoiding Supabase client issues)
+      console.log('=== MAKING DIRECT HTTP CALL ===');
+      const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/submit-waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0`,
+          'x-my-custom-header': 'rank-me-llm-direct',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0'
+        },
+        body: JSON.stringify(sanitizedData)
+      });
 
-        if (response.error) {
-          console.error('Supabase function error details:', response.error);
-          throw new Error('Supabase client error');
-        }
+      console.log('=== DIRECT HTTP RESPONSE ===');
+      console.log('Response status:', directResponse.status);
+      console.log('Response status text:', directResponse.statusText);
+      console.log('Response headers:', Object.fromEntries(directResponse.headers.entries()));
 
-        // Check if we got a successful response
-        if (response.data && response.data.success) {
-          console.log('Form submitted successfully to Pipefy via Supabase!');
-          setSubmitted(true);
-          setFormData({ name: '', email: '', phone: '' });
-          announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
-          return;
-        }
-        
-        throw new Error('Unexpected response from function');
-      } catch (supabaseError) {
-        console.warn('Supabase client failed, trying direct HTTP:', supabaseError);
-        
-        // Fallback: Direct HTTP call to edge function
-        const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/submit-waitlist', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0`,
-            'x-my-custom-header': 'rank-me-llm-direct'
-          },
-          body: JSON.stringify(sanitizedData)
-        });
-
-        if (!directResponse.ok) {
-          throw new Error(`HTTP error! status: ${directResponse.status}`);
-        }
-
-        const directResult = await directResponse.json();
-        console.log('Direct HTTP response:', directResult);
-
-        if (directResult.success) {
-          console.log('Form submitted successfully to Pipefy via direct HTTP!');
-          setSubmitted(true);
-          setFormData({ name: '', email: '', phone: '' });
-          announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
-          return;
-        }
-        
-        throw new Error('Direct HTTP submission failed');
+      if (!directResponse.ok) {
+        const errorText = await directResponse.text();
+        console.error('=== HTTP ERROR RESPONSE ===');
+        console.error('Error status:', directResponse.status);
+        console.error('Error text:', errorText);
+        throw new Error(`HTTP error! status: ${directResponse.status} - ${errorText}`);
       }
+
+      const directResult = await directResponse.json();
+      console.log('=== SUCCESS RESPONSE ===');
+      console.log('Direct HTTP response:', directResult);
+
+      if (directResult.success) {
+        console.log('=== FORM SUBMITTED SUCCESSFULLY ===');
+        setSubmitted(true);
+        setFormData({ name: '', email: '', phone: '' });
+        announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
+        return;
+      }
+      
+      throw new Error('Form submission failed - no success flag in response');
     } catch (error: any) {
       console.error('Error submitting form:', error);
       
