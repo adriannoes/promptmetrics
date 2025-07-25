@@ -113,29 +113,62 @@ export const useContactForm = () => {
 
       console.log('Submitting sanitized data:', sanitizedData);
 
-      // Submit via anonymous Supabase client (public endpoint, no auth required)
-      console.log('Calling anonymousSupabase.functions.invoke...');
-      const response = await anonymousSupabase.functions.invoke('submit-waitlist', {
-        body: sanitizedData
-      });
-      
-      console.log('Supabase function response data:', response.data);
-      console.log('Supabase function response error:', response.error);
+      try {
+        // First attempt: Try Supabase client
+        console.log('Calling anonymousSupabase.functions.invoke...');
+        const response = await anonymousSupabase.functions.invoke('submit-waitlist', {
+          body: sanitizedData
+        });
+        
+        console.log('Supabase function response data:', response.data);
+        console.log('Supabase function response error:', response.error);
 
-      if (response.error) {
-        console.error('Supabase function error details:', response.error);
-        throw new Error(response.error.message || 'Failed to submit form');
-      }
+        if (response.error) {
+          console.error('Supabase function error details:', response.error);
+          throw new Error('Supabase client error');
+        }
 
-      // Check if we got a successful response
-      if (!response.data || !response.data.success) {
+        // Check if we got a successful response
+        if (response.data && response.data.success) {
+          console.log('Form submitted successfully to Pipefy via Supabase!');
+          setSubmitted(true);
+          setFormData({ name: '', email: '', phone: '' });
+          announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
+          return;
+        }
+        
         throw new Error('Unexpected response from function');
-      }
+      } catch (supabaseError) {
+        console.warn('Supabase client failed, trying direct HTTP:', supabaseError);
+        
+        // Fallback: Direct HTTP call to edge function
+        const directResponse = await fetch('https://racfoelvuhdifnekjsro.supabase.co/functions/v1/submit-waitlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0`,
+            'x-my-custom-header': 'rank-me-llm-direct'
+          },
+          body: JSON.stringify(sanitizedData)
+        });
 
-      console.log('Form submitted successfully to Pipefy!');
-      setSubmitted(true);
-      setFormData({ name: '', email: '', phone: '' });
-      announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
+        if (!directResponse.ok) {
+          throw new Error(`HTTP error! status: ${directResponse.status}`);
+        }
+
+        const directResult = await directResponse.json();
+        console.log('Direct HTTP response:', directResult);
+
+        if (directResult.success) {
+          console.log('Form submitted successfully to Pipefy via direct HTTP!');
+          setSubmitted(true);
+          setFormData({ name: '', email: '', phone: '' });
+          announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
+          return;
+        }
+        
+        throw new Error('Direct HTTP submission failed');
+      }
     } catch (error: any) {
       console.error('Error submitting form:', error);
       
