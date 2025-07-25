@@ -14,13 +14,17 @@ interface WaitlistFormData {
 
 const handler = async (req: Request): Promise<Response> => {
   console.log('Waitlist submission handler called');
+  console.log('Request method:', req.method);
+  console.log('Request headers:', Object.fromEntries(req.headers.entries()));
 
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   if (req.method !== 'POST') {
+    console.log('Invalid method:', req.method);
     return new Response(
       JSON.stringify({ error: 'Method not allowed' }),
       { 
@@ -46,12 +50,14 @@ const handler = async (req: Request): Promise<Response> => {
 
     const formData: WaitlistFormData = await req.json();
     console.log('Form data received:', { name: formData.name, email: formData.email });
+    console.log('Webhook URL:', webhookUrl);
 
     // Submit to webhook with timeout and retry logic
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
     try {
+      console.log('Sending request to webhook...');
       const webhookResponse = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -63,6 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       clearTimeout(timeoutId);
       console.log('Webhook response status:', webhookResponse.status);
+      console.log('Webhook response headers:', Object.fromEntries(webhookResponse.headers.entries()));
 
       if (!webhookResponse.ok) {
         const errorText = await webhookResponse.text();

@@ -118,9 +118,21 @@ export const useContactForm = () => {
       setSubmitted(true);
       setFormData({ name: '', email: '', phone: '' });
       announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting form:', error);
-      setSubmitError(t('form.error.submit'));
+      
+      // More specific error messages based on error type
+      let errorMessage = t('form.error.submit');
+      
+      if (error?.message?.includes('Network')) {
+        errorMessage = 'Connection error. Please check your internet and try again.';
+      } else if (error?.message?.includes('timeout')) {
+        errorMessage = 'Request timed out. Please try again.';
+      } else if (error?.message?.includes('Webhook')) {
+        errorMessage = 'Service temporarily unavailable. Please try again in a moment.';
+      }
+      
+      setSubmitError(errorMessage);
       announceToScreenReader('Form submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
