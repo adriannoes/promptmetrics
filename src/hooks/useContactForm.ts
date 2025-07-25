@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAccessibility } from '../contexts/AccessibilityContext';
-import { supabase } from '../integrations/supabase/client';
+import { anonymousSupabase } from '../integrations/supabase/anonymous-client';
 import { validateField, sanitizeInput, ValidationError } from '../utils/ContactFormValidator';
 
 interface FormData {
@@ -113,9 +113,9 @@ export const useContactForm = () => {
 
       console.log('Submitting sanitized data:', sanitizedData);
 
-      // Submit via Supabase edge function (handles CORS)
-      console.log('Calling supabase.functions.invoke...');
-      const response = await supabase.functions.invoke('submit-waitlist', {
+      // Submit via anonymous Supabase client (public endpoint, no auth required)
+      console.log('Calling anonymousSupabase.functions.invoke...');
+      const response = await anonymousSupabase.functions.invoke('submit-waitlist', {
         body: sanitizedData
       });
       
