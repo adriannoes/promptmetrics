@@ -133,7 +133,9 @@ const translations = {
     'footer.terms': 'Terms of Service',
     'footer.privacy': 'Privacy Policy',
     'footer.changelog': 'Changelog',
-    'footer.copyright': '© 2024 PromptMetrics. All rights reserved.',
+    'footer.copyright': '© 2025 PromptMetrics, built on Lovable',
+    'footer.contact': 'info@promptmetrics.io',
+    'footer.proudMemberOf': 'Proud member of',
     
     // Changelog page
     'changelog.title': 'Changelog & Release Notes',
@@ -418,7 +420,9 @@ const translations = {
     'footer.terms': 'Termos de Serviço',
     'footer.privacy': 'Política de Privacidade',
     'footer.changelog': 'Changelog',
-    'footer.copyright': '© 2024 PromptMetrics. Todos os direitos reservados.',
+    'footer.copyright': '© 2025 PromptMetrics, built on Lovable',
+    'footer.contact': 'info@promptmetrics.io',
+    'footer.proudMemberOf': 'Membro orgulhoso do',
     
     // Changelog page
     'changelog.title': 'Changelog & Notas de Versão',
