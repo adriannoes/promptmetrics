@@ -2,7 +2,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import nvidiaInceptionBadge from '../assets/nvidia-inception-badge.png';
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -68,7 +67,7 @@ const Footer = () => {
                 {t('footer.proudMemberOf')}
               </p>
               <img 
-                src={nvidiaInceptionBadge} 
+                src="/lovable-uploads/e8b2ea4b-a8af-4de7-96ae-c18decd3545b.png" 
                 alt="NVIDIA Inception Program"
                 className="max-w-[160px] h-auto hover:opacity-80 transition-opacity cursor-pointer"
                 onClick={() => window.open('https://www.nvidia.com/en-us/startups/', '_blank')}
