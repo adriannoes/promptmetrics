@@ -67,7 +67,7 @@ const Footer = () => {
                 {t('footer.proudMemberOf')}
               </p>
               <img 
-                src="/lovable-uploads/e8b2ea4b-a8af-4de7-96ae-c18decd3545b.png" 
+                src="/lovable-uploads/da0be20f-7a45-4fae-9de3-47d3dda52033.png" 
                 alt="NVIDIA Inception Program"
                 className="max-w-[160px] h-auto hover:opacity-80 transition-opacity cursor-pointer"
                 onClick={() => window.open('https://www.nvidia.com/en-us/startups/', '_blank')}
