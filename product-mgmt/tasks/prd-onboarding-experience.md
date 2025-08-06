@@ -160,9 +160,10 @@ Login → /domain-setup (se necessário) → /home (personalizado por domínio) 
    - **Manter rotas**: `/`, `/login`, `/signup`, `/demo`, `/demo-pm3`, `/domain-setup`, `/home`, `/analysis`, `/admin`
 
 6. **Lógica de Personalização da Home**:
-   - Consultar domínio do usuário no Supabase
+   - Consultar domínio (único) do usuário no Supabase
    - Renderizar dashboard específico baseado no `website_url` da organização
-   - Manter componente OrganizationDashboard mas integrado à Home principal
+   - Sem suporte a múltiplas organizações/invites nesta fase
+   - Manter componente OrganizationDashboard integrado à Home principal
 
 ## Métricas de Sucesso
 
@@ -185,6 +186,7 @@ Login → /domain-setup (se necessário) → /home (personalizado por domínio) 
 2. **Implementar estados visuais** (análise disponível, em progresso, erro)
 3. **Integrar com Edge Functions** existentes
 4. **Adicionar feedback em tempo real**
+5. **Garantir suporte a reanálise manual** caso usuário deseje atualizar indicadores
 
 ### Fase 3: Otimizar Análise (Semana 3)
 1. **Melhorar contexto organizacional** na página /analysis
@@ -195,7 +197,7 @@ Login → /domain-setup (se necessário) → /home (personalizado por domínio) 
 ## Questões Abertas
 
 1. ~~Devemos permitir múltiplos domínios por organização no futuro?~~ **Resolvido**: Não para v1
-2. Como lidar com análises que demoram mais de 10 minutos?
+2. ~~Como lidar com análises que demoram mais de 10 minutos?~~ **Resolvido**: Usuário permanece na Home; sem timeout/retry automático nesta fase.
 3. ~~Precisamos de um tutorial interativo para primeiro uso?~~ **Resolvido**: Não, foco em simplicidade
 4. ~~Devemos adicionar templates de domínio para facilitar?~~ **Resolvido**: Não para v1
 5. Como integrar com planos de assinatura (limites de análise)?
