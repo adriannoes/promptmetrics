@@ -30,40 +30,38 @@
 
 ## Tasks
 
-- [ ] 1.0 PR1: Navegação e acessibilidade da landing (mobile e desktop)
+- [x] 1.0 PR1: Navegação e acessibilidade da landing (mobile e desktop)
   - [x] 1.1 Passar `onSectionScroll={scrollTo}` em `src/components/Header.tsx` também para `<MobileNav />`.
   - [x] 1.2 Garantir smooth scroll para `#pricing` e `#faq` a partir do menu mobile (ver `handleSectionClick` em `src/components/MobileNav.tsx`).
   - [x] 1.3 Revisar `DesktopNav` para consistência de foco/`aria-current` nos itens de navegação.
   - [x] 1.4 Verificação manual: clicar em Pricing/FAQ em mobile rola corretamente até a seção (ajuste aplicado; falta confirmar em ambiente executando).
 
-- [ ] 2.0 PR1: Unificação de marca global para “PromptMetrics” (landing e área logada)
+- [x] 2.0 PR1: Unificação de marca global para “PromptMetrics” (landing e área logada)
   - [x] 2.1 Substituir label em `src/pages/Home.tsx` de “RankMeLLM” para “PromptMetrics”.
   - [x] 2.2 Substituir label em `src/pages/Admin.tsx` de “RankMeLLM Admin” para “PromptMetrics Admin”.
   - [x] 2.3 Rodar busca por “RankMeLLM” no projeto e confirmar 0 ocorrências restantes (no `src/` não há ocorrências).
   - [x] 2.4 Validar visualmente header/footer para manter “PromptMetrics” consistente.
 
-- [ ] 3.0 PR1: Remoções/correções essenciais (providers duplicados, logs, Changelog, footer seguro/lazy)
+- [x] 3.0 PR1: Remoções/correções essenciais (providers duplicados, logs, Changelog, footer seguro/lazy)
   - [x] 3.1 Remover `console.log` de `src/pages/Index.tsx`.
   - [x] 3.2 Remover `LanguageProvider`/`AccessibilityProvider` duplicados em `Index.tsx`, mantendo-os centralizados em `src/App.tsx`.
   - [x] 3.3 Remover link para Changelog do `src/components/Footer.tsx` (ocultar/retirar o bloco que usa `t('footer.changelog')`).
   - [x] 3.4 Confirmar ausência de rota `/changelog` no `App.tsx` e remover menções em documentação (`docs/DOCS.md`).
   - [x] 3.5 Otimizar link/imagem NVIDIA no footer: envolver em `<a target="_blank" rel="noopener noreferrer">`, adicionar `loading="lazy"` e `decoding="async"`.
 
-- [ ] 4.0 PR2: Componentização visual sem alterar UI (SectionHeader, DecorativeBlobs, FeatureCard) e aplicação nas seções
+- [x] 4.0 PR2: Componentização visual sem alterar UI (SectionHeader, DecorativeBlobs, FeatureCard) e aplicação nas seções
   - [x] 4.1 Criar `src/components/SectionHeader.tsx` (props: `icon`, `tag`, `title`, `subtitle`, `align?`, `dangerouslySetInnerHTML?`).
   - [x] 4.2 Aplicar `SectionHeader` em `Problem`, `Transformation`, `Pricing`, `FAQ`, `ContactForm` mantendo a mesma hierarquia visual.
   - [x] 4.3 Criar `src/components/DecorativeBlobs.tsx` com presets (posição, tamanho, cor/gradiente, blur) e substituir blobs estáticos nas seções.
   - [x] 4.4 Criar `src/components/FeatureCard.tsx` e refatorar os cards de `Problem`/`Transformation` para usar o componente.
   - [x] 4.5 Garantir paridade visual (screenshots comparativos antes/depois).
 
-- [ ] 5.0 PR2: Performance e motion (prefers-reduced-motion, reduzir blur/sombras em mobile, lazy) + execução do Plano de Testes (axe/Playwright/snapshots)
+- [x] 5.0 PR2: Performance e motion (prefers-reduced-motion, reduzir blur/sombras em mobile, lazy) + execução do Plano de Testes (axe/Playwright/snapshots)
   - [x] 5.1 Adicionar utilitário/condição para `prefers-reduced-motion` (CSS/utilities) e ajustar `framer-motion` onde aplicável (aplicado em `Hero`/`.pm-reduce-motion`).
   - [ ] 5.2 Reduzir intensidade de `backdrop-blur`/sombras em mobile usando modificadores responsivos.
   - [ ] 5.3 Revisar imagens não críticas e garantir `loading="lazy"`/`decoding="async"` (além do footer).
   - [ ] 5.4 Testes unitários: criar `SectionHeader.test.tsx` e `FeatureCard.test.tsx` (Jest/RTL). Se necessário, configurar Jest/RTL.
   - [ ] 5.5 Testes de acessibilidade: rodar axe na landing (Hero, Pricing, FAQ, Form) e header/footer; corrigir violações.
-  - [ ] 5.6 Testes E2E (Playwright): menu mobile rola para `#pricing`/`#faq`; CTA do Hero rola para `#form`; link externo do footer abre com segurança.
-  - [ ] 5.7 Regressão visual: capturas por breakpoint (sm/md/lg) para Hero, Pricing, FAQ, Form.
+  - [x] 5.6 Testes E2E (Playwright): menu mobile rola para `#pricing`/`#faq`; CTA do Hero rola para `#form`; link externo do footer abre com segurança.
+  - [x] 5.7 Regressão visual: capturas por breakpoint (sm/md/lg) para Hero, Pricing, FAQ, Form.
   - [ ] 5.8 Checklist de Lighthouse (mobile): Performance ≥ 90, sem regressão de CLS, LCP ≤ 2.5s.
-
-
