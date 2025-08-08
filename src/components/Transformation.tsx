@@ -55,7 +55,7 @@ const Transformation = () => {
           {features.map((feature, index) => (
             <div key={index} className="text-center animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
               <div className="relative mb-6 sm:mb-8 md:mb-10">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-white/80 to-blue-50/80 backdrop-blur-lg border border-white/50 rounded-xl sm:rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto pm-reduce-motion">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-white to-blue-50 md:from-white/80 md:to-blue-50/80 backdrop-blur-none md:backdrop-blur-lg border border-white/50 rounded-xl sm:rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto pm-reduce-motion">
                   <feature.icon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-blue-600" aria-hidden="true" />
                 </div>
               </div>

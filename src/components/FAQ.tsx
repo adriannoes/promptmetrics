@@ -64,7 +64,7 @@ const FAQ = () => {
           {faqItems.map((item, index) => (
             <div 
               key={index} 
-              className="bg-white/70 backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden border border-white/50 hover:shadow-xl transition-all duration-300 shadow-lg animate-fade-in"
+              className="bg-white md:bg-white/70 backdrop-blur-none md:backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden border border-white/50 md:hover:shadow-xl transition-all duration-300 shadow-md md:shadow-lg animate-fade-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <button

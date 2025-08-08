@@ -58,7 +58,7 @@
 
 - [x] 5.0 PR2: Performance e motion (prefers-reduced-motion, reduzir blur/sombras em mobile, lazy) + execução do Plano de Testes (axe/Playwright/snapshots)
   - [x] 5.1 Adicionar utilitário/condição para `prefers-reduced-motion` (CSS/utilities) e ajustar `framer-motion` onde aplicável (aplicado em `Hero`/`.pm-reduce-motion`).
-  - [ ] 5.2 Reduzir intensidade de `backdrop-blur`/sombras em mobile usando modificadores responsivos.
+  - [x] 5.2 Reduzir intensidade de `backdrop-blur`/sombras em mobile usando modificadores responsivos. (Aplicado em `FAQ`, `Problem`, `Transformation`)
   - [x] 5.3 Revisar imagens não críticas e garantir `loading="lazy"`/`decoding="async"` (além do footer). (Aplicado em `OrganizationHeader` logo)
   - [ ] 5.4 Testes unitários: criar `SectionHeader.test.tsx` e `FeatureCard.test.tsx` (Jest/RTL). Se necessário, configurar Jest/RTL.
   - [x] 5.5 Testes de acessibilidade: rodar axe na landing (Hero, Pricing, FAQ, Form) e header/footer; corrigir violações. (Observação: contraste fino ainda será otimizado em 5.2)

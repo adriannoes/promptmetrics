@@ -68,7 +68,7 @@ const Problem = () => {
               title={problem.title}
               description={problem.description}
               containerClasses={`bg-gradient-to-br ${problem.color} border-white/40 shadow-xl shadow-slate-200/10 hover:shadow-2xl hover:shadow-slate-300/20 animate-fade-in`}
-              iconWrapperClasses={`${problem.iconBg} backdrop-blur-sm shadow-lg`}
+              iconWrapperClasses={`${problem.iconBg} backdrop-blur-none md:backdrop-blur-sm shadow-md md:shadow-lg`}
               iconClasses={problem.iconColor}
             />
           ))}
