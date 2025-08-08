@@ -24,7 +24,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   return (
     <div className={`pm-reduce-motion ${alignment} animate-fade-in`}>
       {tag && (
-        <div className={`inline-flex items-center gap-2 px-3 py-2 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 md:mb-8 shadow-lg ${tagClasses}`}>
+        <div className={`inline-flex items-center gap-2 px-3 py-2 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 md:mb-8 shadow md:shadow-lg ${tagClasses} bg-slate-200 border border-slate-500 text-slate-900`}>
           {Icon ? <Icon className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" /> : null}
           <span>{tag}</span>
         </div>

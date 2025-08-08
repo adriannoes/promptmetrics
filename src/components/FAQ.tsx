@@ -56,7 +56,7 @@ const FAQ = () => {
             tag={t('tags.faq')}
             title={t('faq.title')}
             align="center"
-            tagClasses="bg-white/70 backdrop-blur-lg border border-slate-200/50 text-purple-800"
+            tagClasses="bg-slate-200 border border-slate-600 text-slate-900"
           />
         </div>
         

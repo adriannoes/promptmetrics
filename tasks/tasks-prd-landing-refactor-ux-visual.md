@@ -61,7 +61,7 @@
   - [ ] 5.2 Reduzir intensidade de `backdrop-blur`/sombras em mobile usando modificadores responsivos.
   - [x] 5.3 Revisar imagens não críticas e garantir `loading="lazy"`/`decoding="async"` (além do footer). (Aplicado em `OrganizationHeader` logo)
   - [ ] 5.4 Testes unitários: criar `SectionHeader.test.tsx` e `FeatureCard.test.tsx` (Jest/RTL). Se necessário, configurar Jest/RTL.
-  - [ ] 5.5 Testes de acessibilidade: rodar axe na landing (Hero, Pricing, FAQ, Form) e header/footer; corrigir violações.
+  - [x] 5.5 Testes de acessibilidade: rodar axe na landing (Hero, Pricing, FAQ, Form) e header/footer; corrigir violações. (Observação: contraste fino ainda será otimizado em 5.2)
   - [x] 5.6 Testes E2E (Playwright): menu mobile rola para `#pricing`/`#faq`; CTA do Hero rola para `#form`; link externo do footer abre com segurança.
   - [x] 5.7 Regressão visual: capturas por breakpoint (sm/md/lg) para Hero, Pricing, FAQ, Form.
   - [ ] 5.8 Checklist de Lighthouse (mobile): Performance ≥ 90, sem regressão de CLS, LCP ≤ 2.5s.

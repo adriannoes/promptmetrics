@@ -35,7 +35,7 @@ const ContactForm = () => {
       id="form" 
       className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-gradient-to-br from-blue-50/50 to-indigo-50/40 relative overflow-hidden"
       aria-labelledby="form-title"
-      role="region"
+      
     >
       <DecorativeBlobs
         blobs={[
@@ -44,7 +44,7 @@ const ContactForm = () => {
         ]}
       />
       
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" role="form" aria-labelledby="form-title">
         <div className="mb-8 sm:mb-12 md:mb-16">
           <SectionHeader
             icon={Send}
@@ -52,7 +52,7 @@ const ContactForm = () => {
             title={t('form.title')}
             subtitle={t('form.subtitle')}
             align="center"
-            tagClasses="bg-white/70 backdrop-blur-lg border border-white/50 text-blue-800"
+            tagClasses="bg-slate-200 border border-slate-600 text-slate-900"
           />
         </div>
 

@@ -32,7 +32,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
         <h3 id={`feature-${title.replace(/\s+/g, '-').toLowerCase()}-title`} className="text-base sm:text-lg md:text-xl font-semibold text-slate-900 mb-3 sm:mb-4 md:mb-6 leading-snug">
           {title}
         </h3>
-        <p className="text-slate-700 leading-relaxed opacity-90 text-sm sm:text-base">{description}</p>
+        <p className="text-slate-800 leading-relaxed text-sm sm:text-base">{description}</p>
       </div>
     </div>
   );

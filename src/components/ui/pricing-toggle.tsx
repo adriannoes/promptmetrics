@@ -49,13 +49,15 @@ export function PricingToggle({ isMonthly, onToggle }: PricingToggleProps) {
 
   return (
     <div className="flex justify-center items-center gap-4 mb-10 sm:mb-12 md:mb-14">
-      <span className="font-semibold text-slate-700 text-sm sm:text-base">{t('pricing.monthly')}</span>
-      <Label>
+      <span className="font-semibold text-slate-700 text-sm sm:text-base" id="pricing-billing-label">{t('pricing.monthly')}</span>
+      <Label htmlFor="pricing-billing-toggle">
         <Switch
           ref={switchRef as any}
           checked={!isMonthly}
           onCheckedChange={handleToggle}
           className="relative"
+          id="pricing-billing-toggle"
+          aria-labelledby="pricing-billing-label"
         />
       </Label>
       <span className="font-semibold text-slate-700 text-sm sm:text-base">

@@ -150,7 +150,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
       
       <div className="flex rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
         <Select value={selectedCountry.code} onValueChange={handleCountryChange}>
-          <SelectTrigger className={`w-28 sm:w-32 rounded-none border-r-0 pl-10 sm:pl-12 pr-2 ${
+          <SelectTrigger aria-label="Country code" className={`w-28 sm:w-32 rounded-none border-r-0 pl-10 sm:pl-12 pr-2 ${
             error ? 'border-red-300 bg-red-50/50' : 'border-slate-200/60'
           } bg-white/50 backdrop-blur-sm hover:bg-white/70 focus:bg-white/80 h-[48px] sm:h-[52px] flex items-center justify-center`}>
             <SelectValue>

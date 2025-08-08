@@ -47,7 +47,7 @@ const Transformation = () => {
             titleHTML={tHTML('transformation.title').__html}
             subtitle={t('transformation.subtitle')}
             align="center"
-            tagClasses="bg-white/70 backdrop-blur-lg border border-slate-200/50 text-blue-800"
+            tagClasses="bg-slate-200 border border-slate-600 text-slate-900"
           />
         </div>
         
