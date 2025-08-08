@@ -1,73 +1,93 @@
-# Welcome to your Lovable project
+## PromptMetrics – Analytics de Marca com IA
 
-## Project info
+Plataforma que analisa como sistemas de IA (ChatGPT, Gemini, Perplexity) descrevem sua marca na web. O objetivo é dar visibilidade competitiva e recomendações acionáveis para melhorar sua presença em respostas de IA.
 
-**URL**: https://lovable.dev/projects/f7f9381f-ef1d-491b-bfc3-dadb313a13c9
+### Sumário
+- Visão Geral
+- Tecnologias
+- URLs e Navegação
+- Como rodar localmente
+- Estrutura de pastas
+- Fluxos principais
+- Testes
+- Segurança e variáveis de ambiente
+- Deploy
+- Links úteis
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+### Visão Geral
+O PromptMetrics oferece:
+- Monitoramento de marca assistido por IA (comparativo com concorrentes)
+- Inteligência competitiva baseada em recomendações geradas por IA
+- Dashboard em tempo real com resultados de análise automatizada
 
-**Use Lovable**
+Mais detalhes em `docs/DOCS.md`.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f7f9381f-ef1d-491b-bfc3-dadb313a13c9) and start prompting.
+### Tecnologias
+- Frontend: React 18 + TypeScript + Vite
+- UI: Shadcn/ui + Radix UI + Tailwind CSS
+- Estado/Dados: React Query (@tanstack/react-query) + React Context
+- Autenticação/DB: Supabase (Auth, Postgres com RLS, Edge Functions)
+- Workflow: n8n (pipeline de análise)
+- Testes: Vitest + React Testing Library, Playwright (E2E)
 
-Changes made via Lovable will be committed automatically to this repo.
+### URLs e Navegação
+- Landing: `/`
+- Demo: `/demo`
+- Home (dashboard): `/home`
+- Analysis: `/analysis`
+- Domain Setup (onboarding): `/domain-setup`
+- Admin: `/admin` (apenas admin)
 
-**Use your preferred IDE**
+### Como rodar localmente
+Pré‑requisitos:
+- Node.js 18+
+- npm
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Passos:
+```bash
+npm ci
 npm run dev
 ```
+Acesse `http://localhost:8080`.
 
-**Edit a file directly in GitHub**
+Variáveis de ambiente:
+- Crie `.env.local` com base em `.env.example` (nunca comite segredos).
+- Necessárias: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `N8N_WEBHOOK_URL`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Estrutura de pastas (resumo)
+- `src/contexts/` – Autenticação, idioma e acessibilidade
+- `src/integrations/supabase/` – Cliente Supabase e tipos
+- `src/pages/` – Páginas de rota (Home, Analysis, DomainSetup, etc.)
+- `src/components/` – Componentes UI (Shadcn/ui) e específicos (ex.: `OrganizationDashboard`)
+- `supabase/functions/` – Edge Functions (`trigger-analysis`, `receive-analysis`, `submit-waitlist`)
+- `supabase/migrations/` – Schema do banco
 
-**Use GitHub Codespaces**
+### Fluxos principais
+- Autenticação: Supabase Auth + modo Demo
+- Onboarding: `/domain-setup` → configura domínio → redireciona para `/home`
+- Análise: `trigger-analysis` chama n8n → resultados inseridos por `receive-analysis` → `Home` exibe progresso/resultado
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Testes
+Scripts úteis:
+```bash
+npm run test:unit      # Vitest + RTL
+npm run test:e2e       # Playwright
+npm run lighthouse:mobile && npm run lighthouse:check
+```
 
-## What technologies are used for this project?
+### Segurança e variáveis de ambiente
+- Nunca exponha chaves sensíveis; use `.env.local` e mantenha um `.env.example` de referência.
+- Recomendado uso de HTTPS/TLS para chamadas externas (n8n, APIs, etc.).
 
-This project is built with:
+### Deploy
+- Build: `npm run build`
+- Preview estático: `npm run preview`
+- Hospedagem atual: Lovable. Supabase gerencia DB/Auth/Functions.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/f7f9381f-ef1d-491b-bfc3-dadb313a13c9) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Links úteis
+- Documentação detalhada: `docs/DOCS.md`
+- Edge Functions: `supabase/functions/`
+- Banco de dados e migrações: `supabase/migrations/`
+- UI base: `src/components/ui/`
