@@ -39,7 +39,7 @@ Documentação & Planos
 
 - [ ] **1.0 Limpeza da Codebase**
   - [x] 1.1 Remover páginas: `demo-airbnb`, `Lovable`, `MyRank`, `Changelog`.
-  - [ ] 1.2 Remover diretórios de componentes órfãos: `components/lovable`, `components/myrank`.
+  - [x] 1.2 Remover diretórios de componentes órfãos: `components/lovable`, `components/myrank`.
   - [ ] 1.3 Atualizar `cleanup-plan.md` marcando itens concluídos.
   - [ ] 1.4 Garantir que o build roda sem referências quebradas.
 
