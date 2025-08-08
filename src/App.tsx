@@ -7,21 +7,17 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Toaster } from './components/ui/sonner';
 
 // Pages
-import Index from './pages/Index';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Admin from './pages/Admin';
-import Analysis from './pages/Analysis';
-import Demo from './pages/Demo';
-// import Lovable from './pages/Lovable';
-import DemoPM3 from './pages/DemoPM3';
-
-import Home from './pages/Home';
-// import OrganizationHome from './pages/OrganizationHome';
-import DomainSetup from './pages/DomainSetup';
-// import MyRank from './pages/MyRank';
-// import Changelog from './pages/Changelog';
-import NotFound from './pages/NotFound';
+import React from 'react';
+const Index = React.lazy(() => import('./pages/Index'));
+const Login = React.lazy(() => import('./pages/Login'));
+const Signup = React.lazy(() => import('./pages/Signup'));
+const Admin = React.lazy(() => import('./pages/Admin'));
+const Analysis = React.lazy(() => import('./pages/Analysis'));
+const Demo = React.lazy(() => import('./pages/Demo'));
+const DemoPM3 = React.lazy(() => import('./pages/DemoPM3'));
+const Home = React.lazy(() => import('./pages/Home'));
+const DomainSetup = React.lazy(() => import('./pages/DomainSetup'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 
 function App() {
   return (
@@ -30,6 +26,7 @@ function App() {
         <LanguageProvider>
           <AccessibilityProvider>
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+              <React.Suspense fallback={<div className="p-6 text-slate-600">Carregando…</div>}>
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />
@@ -72,6 +69,7 @@ function App() {
                 {/* 404 page */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </React.Suspense>
             </div>
             <Toaster />
           </AccessibilityProvider>
