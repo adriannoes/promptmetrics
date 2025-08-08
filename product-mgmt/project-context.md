@@ -67,6 +67,17 @@ O projeto adota uma filosofia de simplicidade extrema, evitando complexidade des
 - **Lovable**: Plataforma de desenvolvimento
 - **Bun**: Package manager alternativo
 
+### Conexão com Supabase (via MCP)
+- **Padrão do projeto**: Toda interação com Supabase deve ser feita via MCP (Model Context Protocol), não via CLI local
+- **Operações suportadas (exemplos)**:
+  - Listar/selecionar projeto: `mcp_supabase_list_projects`, `mcp_supabase_get_project`
+  - Obter credenciais públicas: `mcp_supabase_get_project_url`, `mcp_supabase_get_anon_key` (popular `.env.local` a partir de `.env.example`)
+  - Deploy de Edge Functions: `mcp_supabase_deploy_edge_function`
+  - Logs e observabilidade: `mcp_supabase_get_logs` (api, edge-function, postgres, realtime), `mcp_supabase_get_advisors`
+  - Tipos TypeScript: `mcp_supabase_generate_typescript_types`
+- **Segurança**: Nunca commitar segredos; sempre usar HTTPS/TLS; variáveis sensíveis devem estar em `.env.local` e documentadas em `.env.example`
+- **Fluxo recomendado**: Configurar envs → desenvolver → deploy/teste via MCP → acompanhar logs e advisors
+
 ---
 
 ## 📁 Estrutura de Arquivos Detalhada
