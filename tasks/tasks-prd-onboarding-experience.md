@@ -38,7 +38,7 @@ Documentação & Planos
   Obs.: `get-analysis-data` já ativo (v17). `trigger-analysis` (v38), `receive-analysis` (v41) e `submit-waitlist` (v43) implantadas.
 
 - [ ] **1.0 Limpeza da Codebase**
-  - [ ] 1.1 Remover páginas: `demo-airbnb`, `Lovable`, `MyRank`, `Changelog`.
+  - [x] 1.1 Remover páginas: `demo-airbnb`, `Lovable`, `MyRank`, `Changelog`.
   - [ ] 1.2 Remover diretórios de componentes órfãos: `components/lovable`, `components/myrank`.
   - [ ] 1.3 Atualizar `cleanup-plan.md` marcando itens concluídos.
   - [ ] 1.4 Garantir que o build roda sem referências quebradas.
