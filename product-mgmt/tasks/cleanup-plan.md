@@ -40,7 +40,7 @@ Simplificar drasticamente a experiência inicial do usuário removendo páginas,
 
 ## 🗂 Arquivos para Remoção
 
-### 1. Páginas Desnecessárias (4 arquivos)
+### 1. Páginas Desnecessárias (4 arquivos) — Status: Concluído ✅
 ```bash
 rm src/pages/demo-airbnb.tsx
 rm src/pages/Lovable.tsx
@@ -48,13 +48,13 @@ rm src/pages/MyRank.tsx
 rm src/pages/Changelog.tsx
 ```
 
-### 2. Componentes Órfãos (2 diretórios)
+### 2. Componentes Órfãos (2 diretórios) — Status: Concluído ✅
 ```bash
 rm -rf src/components/lovable/
 rm -rf src/components/myrank/
 ```
 
-### 3. Refatoração (1 arquivo)
+### 3. Refatoração (1 arquivo) — Status: Pendente ⏳
 ```bash
 # Renomear OrganizationHome.tsx para Home.tsx
 mv src/pages/OrganizationHome.tsx src/pages/Home.tsx
@@ -68,7 +68,7 @@ mv src/pages/OrganizationHome.tsx src/pages/Home.tsx
 
 ## 🔄 Atualizações Necessárias
 
-### 1. App.tsx - Atualizar Rotas
+### 1. App.tsx - Atualizar Rotas — Status: Pendente ⏳
 ```typescript
 // REMOVER estas rotas:
 <Route path="/lovable" element={<Lovable />} />
