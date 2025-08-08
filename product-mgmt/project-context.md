@@ -64,6 +64,10 @@ O projeto adota uma filosofia de simplicidade extrema, evitando complexidade des
 
 ### Ferramentas de Desenvolvimento
 - **ESLint**: Linting com configuração TypeScript
+- **Vitest + React Testing Library**: Testes unitários de componentes
+- **Playwright**: Testes E2E, regressão visual e integração com `axe-core`
+- **axe-core/playwright**: Verificações automáticas de acessibilidade (WCAG)
+- **Lighthouse**: Auditoria de Performance/CLS/LCP em modo mobile
 - **Lovable**: Plataforma de desenvolvimento
 - **Bun**: Package manager alternativo
 
@@ -498,6 +502,9 @@ Baseado em Shadcn/ui com customizações:
 - **RealTimeNotification**: Notificações via Supabase Realtime
 - **LanguageSelector**: Seletor de idioma
 - **PhoneInput**: Input de telefone internacionalizado
+ - **SectionHeader**: Cabeçalhos de seção reutilizáveis (badge/título/subtítulo)
+ - **FeatureCard**: Cartões com ícone/título/descrição (hover responsivo)
+ - **DecorativeBlobs**: Elementos decorativos reutilizáveis de fundo
 
 ### Componentes Demo (`src/components/demo/`)
 - **DashboardTab**: Métricas principais e trends
@@ -570,7 +577,8 @@ Lógica de redirecionamento:
 - Plugin React SWC
 - Path aliases (@/)
 - Build optimization
-- Dev server configuration
+- Dev server configuration (porta 8080; cabeçalhos relaxados em dev)
+- Bloco `test` com Vitest (environment jsdom, setup file e exclusão de `e2e/**`)
 ```
 
 ### Tailwind (`tailwind.config.ts`)
@@ -581,6 +589,15 @@ Lógica de redirecionamento:
 - Animation extensions
 - Component layer organization
 ```
+
+### Scripts (`package.json`)
+- `dev`: inicia Vite em `http://localhost:8080`
+- `test:unit`: executa Vitest + RTL
+- `test:e2e`: executa Playwright
+- `lighthouse:mobile`: roda Lighthouse mobile (JSON)
+- `lighthouse:check`: valida limites (Perf ≥ 90, LCP ≤ 2.5s, CLS ≤ 0.1)
+- `preview`: preview de produção em `8080` (usar para testes manuais)
+
 
 ### Supabase (`supabase/config.toml`)
 ```toml
@@ -598,6 +615,7 @@ Lógica de redirecionamento:
 - Path mapping
 - Modern target (ES2020)
 - JSX: react-jsx
+ - Tipos adicionados em app para testes: "vitest/globals", "@testing-library/jest-dom"
 ```
 
 ---
@@ -708,8 +726,11 @@ Lógica de redirecionamento:
 ## 📈 Performance
 
 ### Frontend
-- Code splitting por rota
-- Lazy loading de componentes
+- Code splitting por rota (rotas em `App.tsx` via `React.lazy` + `Suspense`)
+- Lazy loading de componentes e seções da landing (`Index.tsx`)
+- `prefers-reduced-motion`: utilitário `.pm-reduce-motion` + ajustes no `Hero`
+- Redução de `backdrop-blur`/sombras em mobile com classes responsivas
+- Imagens não críticas com `loading="lazy"` e `decoding="async"` (ex.: logo de organização e selo NVIDIA no footer)
 - React Query cache
 - Image optimization
 
@@ -722,6 +743,9 @@ Lógica de redirecionamento:
 - TanStack Query para dados
 - Supabase cache automático
 - CDN para assets
+
+### Resultados Lighthouse (mobile)
+- Preview estático da build de produção servida em `http-server`: Performance 100, CLS 0, LCP ~0.95s
 
 ---
 
