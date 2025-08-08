@@ -1,82 +1,143 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Zap, LogOut } from 'lucide-react';
+import OrganizationHeader from '@/components/OrganizationHeader';
+import OrganizationDashboard from '@/components/OrganizationDashboard';
+import UnauthorizedAccess from '@/components/UnauthorizedAccess';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Clock, Zap, TrendingUp } from 'lucide-react';
 
 const Home = () => {
-  const { profile, signOut } = useAuth();
-  const navigate = useNavigate();
+  const { profile } = useAuth();
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
+  const { data: organization, isLoading, error } = useQuery({
+    queryKey: ['organization-by-id', profile?.organization_id],
+    queryFn: async () => {
+      if (!profile?.organization_id) {
+        throw new Error('Organization id is required');
+      }
+
+      const { data, error } = await supabase
+        .from('organizations')
+        .select('*')
+        .eq('id', profile.organization_id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile?.organization_id,
+  });
+
+  // Check for analysis results
+  const { data: analysisData, isLoading: analysisLoading } = useQuery({
+    queryKey: ['analysis-results', organization?.website_url],
+    queryFn: async () => {
+      if (!organization?.website_url) return null;
+
+      const domain = organization.website_url
+        .replace(/^https?:\/\//, '')
+        .replace(/\/$/, '');
+
+      const { data, error } = await supabase
+        .from('analysis_results')
+        .select('*')
+        .eq('domain', domain)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching analysis results:', error);
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!organization?.website_url,
+    refetchInterval: 30000, // Poll every 30 seconds when analysis is not complete
+  });
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error || !organization) {
+    return <UnauthorizedAccess message="Organization not found" />;
+  }
+
+  // Check if user belongs to this organization
+  if (profile?.organization_id !== organization.id) {
+    return <UnauthorizedAccess message="You don't have access to this organization" />;
+  }
+
+  // Show analysis in progress if no data available
+  const showAnalysisProgress = organization?.website_url && !analysisData && !analysisLoading;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <header className="bg-white/80 backdrop-blur-xl border-b border-white/60 shadow-lg shadow-slate-200/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <Zap className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-lg font-bold text-slate-900 tracking-tight">PromptMetrics</span>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-600">Welcome, {profile?.full_name}</span>
-              <Button
-                onClick={handleSignOut}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <OrganizationHeader organization={organization} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            Welcome to your Dashboard
-          </h1>
-          <p className="text-xl text-slate-600 mb-8">
-            Start evaluating and comparing LLMs with precision
-          </p>
-          
-          <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-semibold text-slate-900 mb-4">
-              Getting Started
-            </h2>
-            <p className="text-slate-600 mb-6">
-              Your evaluation platform is ready. Here you'll be able to run benchmarks, 
-              compare models, and get actionable insights for your LLM strategy.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-blue-900 mb-2">Run Benchmarks</h3>
-                <p className="text-blue-700 text-sm">Test multiple models simultaneously</p>
+      {showAnalysisProgress ? (
+        <div className="container mx-auto px-4 py-8">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                <Zap className="w-8 h-8 text-white" />
               </div>
-              <div className="p-4 bg-indigo-50 rounded-lg">
-                <h3 className="font-semibold text-indigo-900 mb-2">Compare Results</h3>
-                <p className="text-indigo-700 text-sm">Analyze performance metrics</p>
+              <CardTitle className="text-2xl">Analysis in Progress</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-center space-y-2">
+                <p className="text-gray-600">
+                  We're analyzing your website and generating comprehensive insights.
+                </p>
+                <p className="text-sm text-gray-500">
+                  This usually takes about 5 minutes for the first analysis.
+                </p>
               </div>
-              <div className="p-4 bg-purple-50 rounded-lg">
-                <h3 className="font-semibold text-purple-900 mb-2">Get Insights</h3>
-                <p className="text-purple-700 text-sm">Optimize your LLM strategy</p>
+
+              <div className="space-y-3">
+                <Progress value={75} className="h-2" />
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                  <Clock className="w-4 h-4" />
+                  <span>Processing your data...</span>
+                </div>
               </div>
-            </div>
-          </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div className="text-center p-4 rounded-lg bg-blue-50">
+                  <TrendingUp className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                  <p className="text-sm font-medium text-blue-900">SEO Analysis</p>
+                  <p className="text-xs text-blue-700">Scanning content</p>
+                </div>
+                <div className="text-center p-4 rounded-lg bg-indigo-50">
+                  <Zap className="w-6 h-6 mx-auto mb-2 text-indigo-600" />
+                  <p className="text-sm font-medium text-indigo-900">Performance</p>
+                  <p className="text-xs text-indigo-700">Testing speed</p>
+                </div>
+                <div className="text-center p-4 rounded-lg bg-purple-50">
+                  <Clock className="w-6 h-6 mx-auto mb-2 text-purple-600" />
+                  <p className="text-sm font-medium text-purple-900">Competitors</p>
+                  <p className="text-xs text-purple-700">Analyzing market</p>
+                </div>
+              </div>
+
+              <div className="text-center pt-4 border-t">
+                <p className="text-sm text-gray-500">
+                  You can refresh this page to check for updates, or we'll automatically refresh the data.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </main>
+      ) : (
+        <OrganizationDashboard organization={organization} />
+      )}
     </div>
   );
 };

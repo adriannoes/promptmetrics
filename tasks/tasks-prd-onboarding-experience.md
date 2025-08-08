@@ -44,11 +44,18 @@ Documentação & Planos
   - [x] 1.4 Garantir que o build roda sem referências quebradas.
 
 - [ ] **2.0 Refatorar OrganizationHome → Home**
-  - [ ] 2.1 Renomear arquivo `OrganizationHome.tsx` para `Home.tsx`.
+  - [x] 2.1 Renomear arquivo `OrganizationHome.tsx` para `Home.tsx`.
   - [ ] 2.2 Ajustar todos os imports que apontam para `OrganizationHome`.
   - [ ] 2.3 Atualizar rotas em `App.tsx` – remover rota antiga `/organization`, manter `/home`.
   - [ ] 2.4 Atualizar `redirectService.ts` (padronizar retorno `/home`).
   - [ ] 2.5 Revisar `SmartRedirect.tsx` para respeitar regra: sem domínio → `/domain-setup`; com domínio → `/home`.
+
+  Relevant Files (progresso 2.0)
+  - `src/pages/Home.tsx` – substituído pelo conteúdo adaptado do antigo `OrganizationHome` (sem dependência de `slug`).
+  - `src/pages/OrganizationHome.tsx` – removido.
+  - `src/pages/Home.test.tsx` – testes unitários para carregamento de organização e estados de autorização/analítica.
+  - `src/services/redirectService.test.ts` – testes unitários de redirecionamento pós-login.
+  - `src/components/SmartRedirect.test.tsx` – teste de integração leve de navegação.
 
 - [ ] **3.0 Fluxo de Análise (happy-path)**
   - [ ] 3.1 Em `DomainSetup.tsx`, confirmar chamada a `trigger-analysis` após salvar domínio.
