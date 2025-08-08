@@ -21,6 +21,8 @@
 - **Charts**: Recharts for data visualization
 - **Routing**: React Router DOM v6
 - **Forms**: React Hook Form + Zod validation
+ - **Code Splitting**: Routes via React.lazy + Suspense; landing sections lazy-loaded
+ - **A11y & Motion**: prefers-reduced-motion utility (.pm-reduce-motion) aplicado nas animações principais
 
 ### Backend/Serverless
 - **Database**: Supabase PostgreSQL with Row Level Security (RLS)
@@ -48,6 +50,9 @@
 ├── src/
 │   ├── components/                 # React components
 │   │   ├── ui/                    # Shadcn/ui base components
+│   │   ├── SectionHeader.tsx      # Shared: section headers (badge/title/subtitle)
+│   │   ├── FeatureCard.tsx        # Shared: feature cards (icon/title/description)
+│   │   ├── DecorativeBlobs.tsx    # Shared: decorative background blobs
 │   │   ├── admin/                 # Admin-specific components
 │   │   ├── demo/                  # Demo dashboard components
 │   │   ├── forms/                 # Form components
