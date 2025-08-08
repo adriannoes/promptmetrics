@@ -42,14 +42,14 @@ const Hero = () => {
           </div>
           
           {/* Optimized typography hierarchy for mobile */}
-          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl xl:text-8xl font-bold text-slate-900 mb-6 sm:mb-8 md:mb-12 leading-[1.1] sm:leading-[0.95] md:leading-[0.85] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl xl:text-8xl font-bold text-slate-900 mb-6 sm:mb-8 md:mb-12 leading-[1.1] sm:leading-[0.95] md:leading-[0.85] tracking-tight" style={{ contain: 'content' }}>
             <span className="bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-800 bg-clip-text text-transparent">
               {t('hero.title')}
             </span>
           </h1>
           
           {/* Improved subtitle readability on mobile */}
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-slate-600 mb-8 sm:mb-12 md:mb-16 leading-relaxed max-w-4xl mx-auto font-light px-2 sm:px-0">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-slate-600 mb-8 sm:mb-12 md:mb-16 leading-relaxed max-w-4xl mx-auto font-light px-2 sm:px-0" style={{ contain: 'content' }}>
             {t('hero.subtitle')}
           </p>
           
