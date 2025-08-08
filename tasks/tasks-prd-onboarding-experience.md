@@ -29,7 +29,7 @@ Documentação & Planos
 
 ### MVP (rodar localmente com fluxo completo)
 
-- [ ] **0.0 Setup Local Mínimo (via MCP)**
+- [x] **0.0 Setup Local Mínimo (via MCP)**
   - [x] 0.1 Criar/atualizar `.env.example` e `.env.local` com `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `N8N_WEBHOOK_URL`.
   - [x] 0.2 Obter URL e anon key via MCP: `mcp_supabase_get_project_url` e `mcp_supabase_get_anon_key`.
   - [x] 0.3 Deployar/atualizar Edge Functions via MCP (`mcp_supabase_deploy_edge_function`).
@@ -37,7 +37,7 @@ Documentação & Planos
   
   Obs.: `get-analysis-data` já ativo (v17). `trigger-analysis` (v38), `receive-analysis` (v41) e `submit-waitlist` (v43) implantadas.
 
-- [ ] **1.0 Limpeza da Codebase**
+- [x] **1.0 Limpeza da Codebase**
   - [x] 1.1 Remover páginas: `demo-airbnb`, `Lovable`, `MyRank`, `Changelog`.
   - [x] 1.2 Remover diretórios de componentes órfãos: `components/lovable`, `components/myrank`.
   - [ ] 1.3 Atualizar `cleanup-plan.md` marcando itens concluídos.

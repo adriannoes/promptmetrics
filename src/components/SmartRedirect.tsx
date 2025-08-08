@@ -37,8 +37,8 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
     if (allowedPaths.includes(currentPath)) {
       // If user has domain and is on domain-setup, redirect to their analysis
       if (hasDomain && currentPath === '/domain-setup') {
-        console.log('SmartRedirect: User has domain, redirecting from domain-setup to my-rank');
-        navigate('/my-rank', { replace: true });
+        console.log('SmartRedirect: User has domain, redirecting from domain-setup to home');
+        navigate('/home', { replace: true });
       }
       return;
     }
@@ -48,11 +48,10 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
       console.log('SmartRedirect: User has no domain, redirecting to domain-setup');
       navigate('/domain-setup', { replace: true });
     } else {
-      // User has domain, redirect to their analysis page for most routes
-      const personalRoutes = ['/my-rank'];
-      if (!personalRoutes.includes(currentPath) && currentPath !== '/') {
-        console.log('SmartRedirect: User has domain, redirecting to my-rank');
-        navigate('/my-rank', { replace: true });
+      // User has domain, ensure they land on /home for most routes
+      if (currentPath !== '/' && currentPath !== '/home') {
+        console.log('SmartRedirect: User has domain, redirecting to home');
+        navigate('/home', { replace: true });
       }
     }
   }, [profile, loading, location.pathname, navigate]);

@@ -77,8 +77,8 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
       }
 
       return {
-        path: `/home/${organization.slug}`,
-        reason: `Client redirected to organization: ${organization.slug}`
+        path: `/home`,
+        reason: `Client redirected to home (personalized)`
       };
 
     } catch (error) {

@@ -13,14 +13,14 @@ import Signup from './pages/Signup';
 import Admin from './pages/Admin';
 import Analysis from './pages/Analysis';
 import Demo from './pages/Demo';
-import Lovable from './pages/Lovable';
+// import Lovable from './pages/Lovable';
 import DemoPM3 from './pages/DemoPM3';
 
 import Home from './pages/Home';
-import OrganizationHome from './pages/OrganizationHome';
+// import OrganizationHome from './pages/OrganizationHome';
 import DomainSetup from './pages/DomainSetup';
-import MyRank from './pages/MyRank';
-import Changelog from './pages/Changelog';
+// import MyRank from './pages/MyRank';
+// import Changelog from './pages/Changelog';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -36,9 +36,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/demo" element={<Demo />} />
-                <Route path="/lovable" element={<Lovable />} />
                 <Route path="/demo-pm3" element={<DemoPM3 />} />
-                <Route path="/changelog" element={<Changelog />} />
                 
                 {/* Protected routes - require authentication */}
                 <Route path="/analysis" element={
@@ -54,11 +52,7 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                <Route path="/organization" element={
-                  <ProtectedRoute>
-                    <OrganizationHome />
-                  </ProtectedRoute>
-                } />
+                {/* /organization removida (consolidado em /home) */}
                 
                 <Route path="/domain-setup" element={
                   <ProtectedRoute>
@@ -66,11 +60,7 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                <Route path="/my-rank" element={
-                  <ProtectedRoute>
-                    <MyRank />
-                  </ProtectedRoute>
-                } />
+                {/* /my-rank removida (consolidado em /home + /analysis) */}
                 
                 {/* Admin only routes */}
                 <Route path="/admin" element={
