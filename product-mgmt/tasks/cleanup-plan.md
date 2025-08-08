@@ -68,7 +68,7 @@ mv src/pages/OrganizationHome.tsx src/pages/Home.tsx
 
 ## 🔄 Atualizações Necessárias
 
-### 1. App.tsx - Atualizar Rotas — Status: Pendente ⏳
+### 1. App.tsx - Atualizar Rotas — Status: Concluído ✅
 ```typescript
 // REMOVER estas rotas:
 <Route path="/lovable" element={<Lovable />} />

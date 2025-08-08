@@ -40,8 +40,8 @@ Documentação & Planos
 - [x] **1.0 Limpeza da Codebase**
   - [x] 1.1 Remover páginas: `demo-airbnb`, `Lovable`, `MyRank`, `Changelog`.
   - [x] 1.2 Remover diretórios de componentes órfãos: `components/lovable`, `components/myrank`.
-  - [ ] 1.3 Atualizar `cleanup-plan.md` marcando itens concluídos.
-  - [ ] 1.4 Garantir que o build roda sem referências quebradas.
+  - [x] 1.3 Atualizar `cleanup-plan.md` marcando itens concluídos.
+  - [x] 1.4 Garantir que o build roda sem referências quebradas.
 
 - [ ] **2.0 Refatorar OrganizationHome → Home**
   - [ ] 2.1 Renomear arquivo `OrganizationHome.tsx` para `Home.tsx`.
