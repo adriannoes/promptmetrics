@@ -33,7 +33,7 @@ const Hero = () => {
             duration: 0.6,
             ease: "easeInOut",
           }}
-          className="max-w-5xl mx-auto"
+          className="max-w-5xl mx-auto pm-reduce-motion"
         >
           {/* Enhanced badge with better mobile contrast */}
           <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-6 sm:py-3 bg-white/90 backdrop-blur-xl border border-white/60 rounded-full text-xs sm:text-sm font-medium text-slate-700 mb-6 sm:mb-8 md:mb-12 shadow-xl shadow-blue-500/10 hover:shadow-blue-500/20 transition-all duration-300">

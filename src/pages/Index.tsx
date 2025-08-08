@@ -14,27 +14,23 @@ import Footer from '../components/Footer';
 import AccessibilityPanel from '../components/AccessibilityPanel';
 
 const Index = () => {
-  console.log('Index component rendering...');
+  
   
   return (
-    <LanguageProvider>
-      <AccessibilityProvider>
-        <div className="min-h-screen bg-white">
-          <SkipNav />
-          <Header />
-          <main id="main-content" tabIndex={-1} role="main">
-            <Hero />
-            <Problem />
-            <Transformation />
-            <Pricing />
-            <FAQ />
-            <ContactForm />
-          </main>
-          <Footer />
-          <AccessibilityPanel />
-        </div>
-      </AccessibilityProvider>
-    </LanguageProvider>
+    <div className="min-h-screen bg-white">
+      <SkipNav />
+      <Header />
+      <main id="main-content" tabIndex={-1} role="main">
+        <Hero />
+        <Problem />
+        <Transformation />
+        <Pricing />
+        <FAQ />
+        <ContactForm />
+      </main>
+      <Footer />
+      <AccessibilityPanel />
+    </div>
   );
 };
 

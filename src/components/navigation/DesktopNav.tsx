@@ -17,6 +17,7 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
   const { user, profile, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
   const navigate = useNavigate();
+  const currentHash = typeof window !== 'undefined' ? window.location.hash : '';
 
   const handleSignOut = async () => {
     console.log('Desktop nav: Starting sign out process');
@@ -47,14 +48,18 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
   return (
     <nav className="hidden md:flex items-center gap-8" role="navigation" aria-label={t('nav.main')}>
       <button 
+        type="button"
         onClick={() => onSectionScroll('pricing')}
-        className="text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+        className="text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm md:hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+        aria-current={currentHash === '#pricing' ? 'location' : undefined}
       >
         {t('pricing')}
       </button>
       <button 
+        type="button"
         onClick={() => onSectionScroll('faq')}
-        className="text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+        className="text-slate-600 hover:text-slate-900 transition-all duration-200 font-medium text-sm md:hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1"
+        aria-current={currentHash === '#faq' ? 'location' : undefined}
       >
         {t('faq')}
       </button>

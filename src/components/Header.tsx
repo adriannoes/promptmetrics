@@ -21,7 +21,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <HeaderBrand />
           <DesktopNav onSectionScroll={scrollTo} />
-          <MobileNav />
+          <MobileNav onSectionScroll={scrollTo} />
         </div>
       </div>
     </header>

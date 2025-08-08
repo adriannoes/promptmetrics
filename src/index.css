@@ -77,6 +77,13 @@ body {
   .animate-fade-in {
     animation: fadeIn 0.6s ease-in-out;
   }
+  /* Reduce motion utility: neutraliza animações pesadas quando o usuário prefere menos movimento */
+  @media (prefers-reduced-motion: reduce) {
+    .pm-reduce-motion, .pm-reduce-motion * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
 }
 
 @keyframes fadeIn {

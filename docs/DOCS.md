@@ -414,23 +414,19 @@ Deployed via Lovable platform:
 3. Verify webhook triggers n8n workflow
 4. Confirm results appear in database and dashboard
 
-## 10. Changelog & Versioning
+## 10. Versioning
 
-### Changelog Location
-Visit `/changelog` for detailed release history and feature updates.
-
-### Auto-Versioning
+### Version Tracking
 - Version tracking via Git commits
-- Feature releases documented in changelog
 - Migration scripts versioned with timestamps
-- Supabase schema changes tracked in migrations
+- Supabase schema changes acompanhadas em `migrations/`
 
-### Recent Major Updates
-- **Analysis Pipeline**: Complete n8n integration with real-time results
-- **Demo Dashboard**: Comprehensive analytics interface with AI insights
-- **Multi-language Support**: English and Portuguese localization
-- **Admin Panel**: User management and invitation system
-- **Security Enhancements**: Audit logging and rate limiting
+### Recent Major Updates (resumo)
+- Analysis Pipeline: n8n integration com resultados em tempo real
+- Demo Dashboard: interface analítica com AI insights
+- Multi-language Support: EN e PT-BR
+- Admin Panel: gerenciamento de usuários e convites
+- Security Enhancements: audit logging e rate limiting
 
 ---
 
@@ -441,7 +437,6 @@ Visit `/changelog` for detailed release history and feature updates.
 - Demo: `/demo` (or click "Try Demo")
 - Analysis: `/analysis`
 - Admin: `/admin` (admin role required)
-- Changelog: `/changelog`
 
 ### Important Files
 - Auth Logic: `src/contexts/AuthContext.tsx`

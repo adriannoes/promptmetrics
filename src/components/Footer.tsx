@@ -42,12 +42,6 @@ const Footer = () => {
                 >
                   {t('footer.privacy')}
                 </button>
-                <Link 
-                  to="/changelog"
-                  className="text-slate-400 hover:text-white transition-colors font-medium"
-                >
-                  {t('footer.changelog')}
-                </Link>
               </div>
             </nav>
             
@@ -60,20 +54,28 @@ const Footer = () => {
             </a>
           </div>
 
-          {/* Right Column - NVIDIA Partnership */}
-          <div className="flex flex-col items-center lg:items-end text-center lg:text-right">
-            <div className="flex flex-col items-center lg:items-end gap-4">
-              <p className="text-sm text-slate-400 font-medium">
-                {t('footer.proudMemberOf')}
-              </p>
-              <img 
-                src="/lovable-uploads/da0be20f-7a45-4fae-9de3-47d3dda52033.png" 
-                alt="NVIDIA Inception Program"
-                className="max-w-[160px] h-auto hover:opacity-80 transition-opacity cursor-pointer"
-                onClick={() => window.open('https://www.nvidia.com/en-us/startups/', '_blank')}
-              />
+            {/* Right Column - NVIDIA Partnership */}
+            <div className="flex flex-col items-center lg:items-end text-center lg:text-right">
+              <div className="flex flex-col items-center lg:items-end gap-4">
+                <p className="text-sm text-slate-400 font-medium">
+                  {t('footer.proudMemberOf')}
+                </p>
+                <a
+                  href="https://www.nvidia.com/en-us/startups/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="NVIDIA Inception Program - abre em nova aba"
+                >
+                  <img 
+                    src="/lovable-uploads/da0be20f-7a45-4fae-9de3-47d3dda52033.png" 
+                    alt="NVIDIA Inception Program"
+                    className="max-w-[160px] h-auto hover:opacity-80 transition-opacity"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
+              </div>
             </div>
-          </div>
         </div>
       </div>
     </footer>

@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ChevronDown, HelpCircle } from 'lucide-react';
+import SectionHeader from './SectionHeader';
+import DecorativeBlobs from './DecorativeBlobs';
 
 const FAQ = () => {
   const { t } = useLanguage();
@@ -40,22 +42,22 @@ const FAQ = () => {
       className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white relative overflow-hidden"
       aria-labelledby="faq-heading"
     >
-      {/* Optimized background decoration */}
-      <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-64 sm:w-96 h-64 sm:h-96 bg-purple-200/15 sm:bg-purple-200/20 rounded-full blur-2xl sm:blur-3xl" aria-hidden="true"></div>
-      <div className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-48 sm:w-72 h-48 sm:h-72 bg-blue-200/15 sm:bg-blue-200/20 rounded-full blur-2xl sm:blur-3xl" aria-hidden="true"></div>
+      <DecorativeBlobs
+        blobs={[
+          { className: 'absolute top-10 sm:top-20 left-10 sm:left-20 w-64 sm:w-96 h-64 sm:h-96 bg-purple-200/15 sm:bg-purple-200/20 rounded-full blur-2xl sm:blur-3xl' },
+          { className: 'absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-48 sm:w-72 h-48 sm:h-72 bg-blue-200/15 sm:bg-blue-200/20 rounded-full blur-2xl sm:blur-3xl' },
+        ]}
+      />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12 sm:mb-16 md:mb-20 lg:mb-24 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-6 sm:py-3 bg-white/70 backdrop-blur-lg border border-slate-200/50 text-purple-800 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 md:mb-8 shadow-lg">
-            <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
-            <span>{t('tags.faq')}</span>
-          </div>
-          <h2 
-            id="faq-heading"
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 mb-4 sm:mb-6 md:mb-8 tracking-tight leading-tight px-2 sm:px-0"
-          >
-            {t('faq.title')}
-          </h2>
+        <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">
+          <SectionHeader
+            icon={HelpCircle}
+            tag={t('tags.faq')}
+            title={t('faq.title')}
+            align="center"
+            tagClasses="bg-white/70 backdrop-blur-lg border border-slate-200/50 text-purple-800"
+          />
         </div>
         
         <div className="space-y-3 sm:space-y-4 md:space-y-6">
