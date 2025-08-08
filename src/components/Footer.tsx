@@ -9,7 +9,7 @@ const Footer = () => {
   return (
     <footer className="bg-slate-900 text-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Column - Brand and Legal */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
             {/* Brand Identity */}
@@ -56,7 +56,7 @@ const Footer = () => {
 
             {/* Right Column - NVIDIA Partnership */}
             <div className="flex flex-col items-center lg:items-end text-center lg:text-right">
-              <div className="flex flex-col items-center lg:items-end gap-4">
+              <div className="flex flex-col items-center lg:items-end gap-3 sm:gap-4">
                 <p className="text-sm text-slate-400 font-medium">
                   {t('footer.proudMemberOf')}
                 </p>
@@ -65,11 +65,12 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="NVIDIA Inception Program - abre em nova aba"
+                  className="block max-w-[200px] w-full min-h-[80px] mx-auto lg:mx-0"
                 >
-                  <img 
-                    src="/lovable-uploads/da0be20f-7a45-4fae-9de3-47d3dda52033.png" 
+                  <img
+                    src="/lovable-uploads/da0be20f-7a45-4fae-9de3-47d3dda52033.png"
                     alt="NVIDIA Inception Program"
-                    className="max-w-[160px] h-auto hover:opacity-80 transition-opacity"
+                    className="block w-full h-auto hover:opacity-80 transition-opacity"
                     loading="lazy"
                     decoding="async"
                   />
