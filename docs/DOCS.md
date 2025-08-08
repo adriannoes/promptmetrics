@@ -35,8 +35,8 @@
 - **Monitoring**: Supabase Analytics & Audit Logs
 
 ### Development & Deployment
-- **Build Tool**: Vite
-- **Package Manager**: Bun
+- **Build Tool**: Vite (dev server na porta 8080)
+- **Package Manager**: npm (scripts padronizados)
 - **Hosting**: Lovable platform
 - **Version Control**: Git with GitHub integration
 
@@ -362,18 +362,18 @@ git clone <repository-url>
 cd promptmetrics
 ```
 
-2. **Install Dependencies**
+2. **Install Dependencies (reprodutível)**
 ```bash
-bun install
+npm ci
 ```
 
 3. **Start Development Server**
 ```bash
-bun run dev
+npm run dev
 ```
 
 4. **Access Application**
-- Local: `http://localhost:5173`
+- Local: `http://localhost:8080`
 - Demo mode: Click "Try Demo" on landing page
 - Admin access: Use admin invite code
 
@@ -396,6 +396,25 @@ Deployed via Lovable platform:
 
 ### Testing
 
+Scripts úteis (package.json):
+```bash
+npm run test:unit           # Vitest + React Testing Library
+npm run test:e2e            # Playwright (sobe dev server em 8080)
+npm run test:e2e:update     # Atualiza snapshots visuais
+npm run lighthouse:mobile   # Gera relatório Lighthouse (mobile)
+npm run lighthouse:check    # Valida Performance ≥ 90, LCP ≤ 2.5s, CLS ≤ 0.1
+```
+
+Playwright está configurado com:
+- `webServer`: `npm run dev` em `http://localhost:8080`
+- Projetos: `chromium-mobile` (Pixel 5) e `chromium-desktop`
+- Acessibilidade: `axe-core/playwright` integrada (regra de contraste verificada manualmente)
+
+Atualização de snapshots visuais:
+```bash
+npm run test:e2e:update
+```
+
 #### Demo Mode Testing
 1. Visit landing page
 2. Click "Try Demo" 
@@ -409,6 +428,17 @@ Deployed via Lovable platform:
 4. Test organization isolation
 
 #### Analysis Pipeline Testing
+#### Performance (Lighthouse Mobile)
+1. Gerar build e subir preview/estático
+```bash
+npm run build && npm run preview  # ou
+npx --yes http-server dist -p 8080 -s
+```
+2. Rodar Lighthouse e checar limites
+```bash
+npm run lighthouse:mobile && npm run lighthouse:check
+```
+3. Resultado esperado (build atual): Performance 100, CLS 0, LCP ~0.95s
 1. Configure n8n webhook URL in Supabase secrets
 2. Submit domain for analysis via `/analysis` page
 3. Verify webhook triggers n8n workflow
