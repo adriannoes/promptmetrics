@@ -55,6 +55,25 @@ const footerLinks: FooterSection[] = [
 ];
 
 export function Footer() {
+  const handleAnchorClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+    const anchor = e.currentTarget;
+    const url = new URL(anchor.href, window.location.origin);
+    const hash = url.hash;
+    if (url.pathname === '/' && hash) {
+      e.preventDefault();
+      const id = hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        const header = document.querySelector('header');
+        const offset = (header instanceof HTMLElement ? header.offsetHeight : 0) + 16; // padding extra
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      } else {
+        // Se a âncora não existe (por exemplo, vindo de outra rota), navega para a home com hash
+        window.location.assign(`/${hash}`);
+      }
+    }
+  };
   return (
     <footer className="relative w-full max-w-7xl mx-auto flex flex-col items-center justify-center border-t border-slate-200 bg-[radial-gradient(35%_128px_at_50%_0%,theme(backgroundColor.white/8%),transparent)] px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
       <div className="bg-slate-300/60 absolute top-0 right-1/2 left-1/2 h-px w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur" />
@@ -77,6 +96,7 @@ export function Footer() {
                     <li key={link.title}>
                       <a
                         href={link.href}
+                        onClick={link.href.startsWith('/#') ? handleAnchorClick : undefined}
                         className="hover:text-slate-900 inline-flex items-center transition-all duration-300"
                       >
                         {link.icon && <link.icon className="me-1 h-4 w-4" />}
