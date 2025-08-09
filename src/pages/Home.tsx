@@ -3,6 +3,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import OrganizationHeader from '@/components/OrganizationHeader';
 import OrganizationDashboard from '@/components/OrganizationDashboard';
 import UnauthorizedAccess from '@/components/UnauthorizedAccess';
@@ -13,6 +14,7 @@ import { Clock, Zap, TrendingUp } from 'lucide-react';
 
 const Home = () => {
   const { profile } = useAuth();
+  const { t } = useLanguage();
 
   const { data: organization, isLoading, error } = useQuery({
     queryKey: ['organization-by-id', profile?.organization_id],
@@ -34,6 +36,9 @@ const Home = () => {
   });
 
   // Check for analysis results
+  const isTestEnv = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.MODE === 'test';
+  const pollIntervalMs = isTestEnv ? 50 : 30000;
+
   const { data: analysisData, isLoading: analysisLoading } = useQuery({
     queryKey: ['analysis-results', organization?.website_url],
     queryFn: async () => {
@@ -59,7 +64,9 @@ const Home = () => {
       return data;
     },
     enabled: !!organization?.website_url,
-    refetchInterval: 30000, // Poll every 30 seconds when analysis is not complete
+    // Poll until data exists, then stop
+    refetchInterval: (query) => (query.state.data ? false : pollIntervalMs),
+    refetchIntervalInBackground: true,
   });
 
   if (isLoading) {
@@ -75,62 +82,61 @@ const Home = () => {
     return <UnauthorizedAccess message="You don't have access to this organization" />;
   }
 
-  // Show analysis in progress if no data available
-  const showAnalysisProgress = organization?.website_url && !analysisData && !analysisLoading;
+  // Show analysis in progress if no data available (or still loading the first check)
+  const showAnalysisProgress = Boolean(organization?.website_url) && !analysisData;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <OrganizationHeader organization={organization} />
 
       {showAnalysisProgress ? (
-        <div className="container mx-auto px-4 py-8">
+        <div
+          className="container mx-auto px-4 py-8"
+          data-testid="analysis-progress"
+          role="status"
+          aria-live="polite"
+        >
           <Card className="max-w-2xl mx-auto">
             <CardHeader className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-2xl">Analysis in Progress</CardTitle>
+              <CardTitle className="text-2xl">{t('home.analysisInProgress.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center space-y-2">
-                <p className="text-gray-600">
-                  We're analyzing your website and generating comprehensive insights.
-                </p>
-                <p className="text-sm text-gray-500">
-                  This usually takes about 5 minutes for the first analysis.
-                </p>
+                <p className="text-gray-600">{t('home.analysisInProgress.body1')}</p>
+                <p className="text-sm text-gray-500">{t('home.analysisInProgress.body2')}</p>
               </div>
 
               <div className="space-y-3">
                 <Progress value={75} className="h-2" />
                 <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
                   <Clock className="w-4 h-4" />
-                  <span>Processing your data...</span>
+                  <span>{t('home.analysisInProgress.processing')}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                 <div className="text-center p-4 rounded-lg bg-blue-50">
                   <TrendingUp className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                  <p className="text-sm font-medium text-blue-900">SEO Analysis</p>
-                  <p className="text-xs text-blue-700">Scanning content</p>
+                  <p className="text-sm font-medium text-blue-900">{t('home.analysisInProgress.seoTitle')}</p>
+                  <p className="text-xs text-blue-700">{t('home.analysisInProgress.seoDesc')}</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-indigo-50">
                   <Zap className="w-6 h-6 mx-auto mb-2 text-indigo-600" />
-                  <p className="text-sm font-medium text-indigo-900">Performance</p>
-                  <p className="text-xs text-indigo-700">Testing speed</p>
+                  <p className="text-sm font-medium text-indigo-900">{t('home.analysisInProgress.performanceTitle')}</p>
+                  <p className="text-xs text-indigo-700">{t('home.analysisInProgress.performanceDesc')}</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-purple-50">
                   <Clock className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-                  <p className="text-sm font-medium text-purple-900">Competitors</p>
-                  <p className="text-xs text-purple-700">Analyzing market</p>
+                  <p className="text-sm font-medium text-purple-900">{t('home.analysisInProgress.competitorsTitle')}</p>
+                  <p className="text-xs text-purple-700">{t('home.analysisInProgress.competitorsDesc')}</p>
                 </div>
               </div>
 
               <div className="text-center pt-4 border-t">
-                <p className="text-sm text-gray-500">
-                  You can refresh this page to check for updates, or we'll automatically refresh the data.
-                </p>
+                <p className="text-sm text-gray-500">{t('home.analysisInProgress.refreshHint')}</p>
               </div>
             </CardContent>
           </Card>

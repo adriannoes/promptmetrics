@@ -1,7 +1,10 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, Users, Zap, Settings } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Organization {
   id: string;
@@ -16,6 +19,23 @@ interface OrganizationDashboardProps {
 }
 
 const OrganizationDashboard = ({ organization }: OrganizationDashboardProps) => {
+  const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  const handleMyAnalysis = () => {
+    if (!organization.website_url) return;
+    const cleanDomain = organization.website_url
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .replace(/\/$/, '');
+    try {
+      localStorage.setItem('userDomain', cleanDomain);
+    } catch (e) {
+      // ignore storage errors in non-browser contexts
+    }
+    navigate(`/analysis?domain=${cleanDomain}`);
+  };
+
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Section */}
@@ -57,11 +77,20 @@ const OrganizationDashboard = ({ organization }: OrganizationDashboardProps) => 
 
         {/* Quick Actions Sidebar */}
         <div className="space-y-6">
-          <Card className="bg-white/60 backdrop-blur-sm border-white/60 shadow-xl">
+              <Card className="bg-white/60 backdrop-blur-sm border-white/60 shadow-xl">
             <CardHeader>
               <CardTitle className="text-lg text-slate-900">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+                  <Button
+                    data-testid="my-analysis-btn"
+                    aria-label={t('dashboard.cta.myAnalysis')}
+                    className="w-full justify-center"
+                    onClick={handleMyAnalysis}
+                  >
+                    {t('dashboard.cta.myAnalysis')}
+                  </Button>
+
               <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer">
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Users className="w-4 h-4 text-blue-600" />

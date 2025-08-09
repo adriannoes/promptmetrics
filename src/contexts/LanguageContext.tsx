@@ -12,6 +12,21 @@ interface LanguageContextType {
 
 const translations = {
   en: {
+    // Home - Analysis In Progress
+    'home.analysisInProgress.title': 'Analysis in Progress',
+    'home.analysisInProgress.body1': "We're analyzing your website and generating comprehensive insights.",
+    'home.analysisInProgress.body2': 'This usually takes about 5 minutes for the first analysis.',
+    'home.analysisInProgress.processing': 'Processing your data...',
+    'home.analysisInProgress.seoTitle': 'SEO Analysis',
+    'home.analysisInProgress.seoDesc': 'Scanning content',
+    'home.analysisInProgress.performanceTitle': 'Performance',
+    'home.analysisInProgress.performanceDesc': 'Testing speed',
+    'home.analysisInProgress.competitorsTitle': 'Competitors',
+    'home.analysisInProgress.competitorsDesc': 'Analyzing market',
+    'home.analysisInProgress.refreshHint': "You can refresh this page to check for updates, or we'll automatically refresh the data.",
+
+    // Dashboard - CTA
+    'dashboard.cta.myAnalysis': 'My Analysis',
     // Navigation
     'nav.main': 'Main navigation',
     'nav.open': 'Open navigation menu',
@@ -299,6 +314,21 @@ const translations = {
     'analysisResults.loadError': 'Failed to load analysis results',
   },
   'pt-BR': {
+    // Home - Analysis In Progress
+    'home.analysisInProgress.title': 'Análise em andamento',
+    'home.analysisInProgress.body1': 'Estamos analisando seu site e gerando insights completos.',
+    'home.analysisInProgress.body2': 'A primeira análise costuma levar cerca de 5 minutos.',
+    'home.analysisInProgress.processing': 'Processando seus dados...',
+    'home.analysisInProgress.seoTitle': 'Análise de SEO',
+    'home.analysisInProgress.seoDesc': 'Escaneando conteúdo',
+    'home.analysisInProgress.performanceTitle': 'Performance',
+    'home.analysisInProgress.performanceDesc': 'Testando velocidade',
+    'home.analysisInProgress.competitorsTitle': 'Concorrentes',
+    'home.analysisInProgress.competitorsDesc': 'Analisando mercado',
+    'home.analysisInProgress.refreshHint': 'Você pode atualizar a página para ver novidades, ou atualizaremos automaticamente os dados.',
+
+    // Dashboard - CTA
+    'dashboard.cta.myAnalysis': 'Minha Análise',
     // Navigation
     'nav.main': 'Navegação principal',
     'nav.open': 'Abrir menu de navegação',
