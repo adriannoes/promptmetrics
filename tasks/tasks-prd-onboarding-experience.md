@@ -60,18 +60,17 @@ Documentação & Planos
   - `src/services/redirectService.test.ts` – testes unitários de redirecionamento pós-login.
   - `src/components/SmartRedirect.test.tsx` – testes de integração leves cobrindo sem domínio → `/domain-setup` e com domínio em `/domain-setup` → `/home`.
 
-- [ ] **3.0 Fluxo de Análise (happy-path)**
+- [x] **3.0 Fluxo de Análise (happy-path)**
   - [x] 3.1 Em `DomainSetup.tsx`, confirmar chamada a `trigger-analysis` após salvar domínio.
     - [x] 3.1.1 Criar `src/pages/DomainSetup.test.tsx` cobrindo sucesso (2xx/simulado) e erro no invoke.
   - [x] 3.2 Verificar variável de ambiente `N8N_WEBHOOK_URL` em `.env.local`.
   - [x] 3.3 Garantir que `trigger-analysis` retorna 2xx ou simulador dev.
     - [x] 3.3.1 Documentar smoke test com `curl` e leitura de logs das Edge Functions.
-  - [ ] 3.4 Garantir que `receive-analysis` faz upsert correto em `analysis_results`.
+  - [x] 3.4 Garantir que `receive-analysis` faz upsert correto em `analysis_results`.
     - [x] 3.4.1 Criar migração adicionando UNIQUE em `analysis_results(domain)` para suportar `onConflict: 'domain'`.
     - [x] 3.4.2 Smoke test via `curl` no `receive-analysis` verificando upsert idempotente por domínio.
-  - [ ] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
-    - [x] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
-  - [ ] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
+  - [x] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
+  - [x] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
     - [x] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
       - Procedimento sugerido:
         1) Acesse `/domain-setup`, informe `example.com` e conclua. Isso salva `organizations.website_url` e dispara `trigger-analysis` (simulada se `N8N_WEBHOOK_URL` não estiver definida).
