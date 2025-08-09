@@ -67,7 +67,7 @@ Documentação & Planos
   - [x] 3.3 Garantir que `trigger-analysis` retorna 2xx ou simulador dev.
     - [x] 3.3.1 Documentar smoke test com `curl` e leitura de logs das Edge Functions.
   - [ ] 3.4 Garantir que `receive-analysis` faz upsert correto em `analysis_results`.
-    - [ ] 3.4.1 Criar migração adicionando UNIQUE em `analysis_results(domain)` para suportar `onConflict: 'domain'`.
+    - [x] 3.4.1 Criar migração adicionando UNIQUE em `analysis_results(domain)` para suportar `onConflict: 'domain'`.
     - [ ] 3.4.2 Smoke test via `curl` no `receive-analysis` verificando upsert idempotente por domínio.
   - [ ] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
   - [ ] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
@@ -79,6 +79,7 @@ Documentação & Planos
   - `supabase/functions/trigger-analysis/index.ts` – integração com n8n (ou simulação em dev).
   - `supabase/functions/receive-analysis/index.ts` – upsert dos resultados no DB.
   - `supabase/migrations/<timestamp>-add-unique-constraint-analysis-results-domain.sql` – adiciona UNIQUE(domain) em `analysis_results`.
+  - `supabase/migrations/20250809194000-add-unique-constraint-analysis-results-domain.sql` – adiciona UNIQUE(domain) com limpeza de duplicados.
   - `supabase/seed/analysis_results_sample.sql` – seed de exemplo para testes locais.
   - `docs/n8n-payload-structure.md` – adicionada nota sobre fallback de simulação quando `N8N_WEBHOOK_URL` não está configurada.
 
