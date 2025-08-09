@@ -72,6 +72,16 @@ Documentação & Planos
   - [ ] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
     - [x] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
   - [ ] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
+    - [x] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
+      - Procedimento sugerido:
+        1) Acesse `/domain-setup`, informe `example.com` e conclua. Isso salva `organizations.website_url` e dispara `trigger-analysis` (simulada se `N8N_WEBHOOK_URL` não estiver definida).
+        2) Vá para `/home` e confirme o estado de "Análise em Progresso".
+        3) Para concluir a análise:
+           - Opção A (seed local): executar `supabase/seed/analysis_results_sample.sql` no banco local (idempotente por domínio).
+           - Opção B (via Edge Function): enviar POST para `receive-analysis` com payload mínimo válido.
+        4) Recarregue `/home` e verifique o estado "Ver Análise" habilitado.
+      - Exemplo de POST seguro (usar HTTPS/TLS e variáveis de ambiente):
+        - `curl -i -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "apikey: $SUPABASE_ANON_KEY" -d '{"domain":"example.com","analysis_data":{"summary":"ok","score":80,"recommendations":[]}}' https://<project-ref>.functions.supabase.co/receive-analysis` — Envia resultado mínimo e aciona o upsert por domínio.
 
   Relevant Files (progresso 3.0)
   - `src/pages/DomainSetup.tsx` – submit salva domínio e dispara `trigger-analysis`.
