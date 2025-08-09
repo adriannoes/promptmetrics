@@ -68,7 +68,7 @@ Documentação & Planos
     - [x] 3.3.1 Documentar smoke test com `curl` e leitura de logs das Edge Functions.
   - [ ] 3.4 Garantir que `receive-analysis` faz upsert correto em `analysis_results`.
     - [x] 3.4.1 Criar migração adicionando UNIQUE em `analysis_results(domain)` para suportar `onConflict: 'domain'`.
-    - [ ] 3.4.2 Smoke test via `curl` no `receive-analysis` verificando upsert idempotente por domínio.
+    - [x] 3.4.2 Smoke test via `curl` no `receive-analysis` verificando upsert idempotente por domínio.
   - [ ] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
   - [ ] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
 
