@@ -14,7 +14,7 @@ Edge Functions
 
 Documentação & Planos
 - `product-mgmt/tasks/cleanup-plan.md` – Plano de remoção/refatoração.
-- `product-mgmt/project-context.md` – Contexto geral do projeto.
+- `docs/DOCS.md` – Contexto geral do projeto.
 - `.env.example` – Variáveis de ambiente (adicionar `N8N_WEBHOOK_URL`).
 - `supabase/config.toml` – Configuração local do Supabase.
 
@@ -22,6 +22,7 @@ Documentação & Planos
 
 - Crie/atualize testes ao lado dos arquivos (`*.test.tsx`).
 - Use `npm test` para rodar a suíte Jest.
+- Chamadas externas (ex.: n8n) devem usar HTTPS/TLS; nunca expor segredos em código.
 
 ---
 
@@ -45,25 +46,40 @@ Documentação & Planos
 
 - [ ] **2.0 Refatorar OrganizationHome → Home**
   - [x] 2.1 Renomear arquivo `OrganizationHome.tsx` para `Home.tsx`.
-  - [ ] 2.2 Ajustar todos os imports que apontam para `OrganizationHome`.
-  - [ ] 2.3 Atualizar rotas em `App.tsx` – remover rota antiga `/organization`, manter `/home`.
-  - [ ] 2.4 Atualizar `redirectService.ts` (padronizar retorno `/home`).
-  - [ ] 2.5 Revisar `SmartRedirect.tsx` para respeitar regra: sem domínio → `/domain-setup`; com domínio → `/home`.
+  - [x] 2.2 Ajustar todos os imports que apontam para `OrganizationHome`.
+  - [x] 2.3 Atualizar rotas em `App.tsx` – remover rota antiga `/organization`, manter `/home`.
+  - [x] 2.4 Atualizar `redirectService.ts` (padronizar retorno `/home`).
+  - [x] 2.5 Revisar `SmartRedirect.tsx` para respeitar regra: sem domínio → `/domain-setup`; com domínio → `/home`.
+  - [ ] 2.6 Ajustar redirecionamento em `DomainSetup.tsx` para usar `/home` (sem slug), alinhado com rotas e `redirectService`.
 
   Relevant Files (progresso 2.0)
   - `src/pages/Home.tsx` – substituído pelo conteúdo adaptado do antigo `OrganizationHome` (sem dependência de `slug`).
   - `src/pages/OrganizationHome.tsx` – removido.
+  - `src/App.tsx` – confirmado `/home` como rota protegida; `/organization` removida.
   - `src/pages/Home.test.tsx` – testes unitários para carregamento de organização e estados de autorização/analítica.
   - `src/services/redirectService.test.ts` – testes unitários de redirecionamento pós-login.
-  - `src/components/SmartRedirect.test.tsx` – teste de integração leve de navegação.
+  - `src/components/SmartRedirect.test.tsx` – testes de integração leves cobrindo sem domínio → `/domain-setup` e com domínio em `/domain-setup` → `/home`.
 
 - [ ] **3.0 Fluxo de Análise (happy-path)**
-  - [ ] 3.1 Em `DomainSetup.tsx`, confirmar chamada a `trigger-analysis` após salvar domínio.
+  - [x] 3.1 Em `DomainSetup.tsx`, confirmar chamada a `trigger-analysis` após salvar domínio.
+    - [x] 3.1.1 Criar `src/pages/DomainSetup.test.tsx` cobrindo sucesso (2xx/simulado) e erro no invoke.
   - [ ] 3.2 Verificar variável de ambiente `N8N_WEBHOOK_URL` em `.env.local`.
   - [ ] 3.3 Garantir que `trigger-analysis` retorna 2xx ou simulador dev.
+    - [ ] 3.3.1 Documentar smoke test com `curl` e leitura de logs das Edge Functions.
   - [ ] 3.4 Garantir que `receive-analysis` faz upsert correto em `analysis_results`.
+    - [ ] 3.4.1 Criar migração adicionando UNIQUE em `analysis_results(domain)` para suportar `onConflict: 'domain'`.
+    - [ ] 3.4.2 Smoke test via `curl` no `receive-analysis` verificando upsert idempotente por domínio.
   - [ ] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
   - [ ] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
+
+  Relevant Files (progresso 3.0)
+  - `src/pages/DomainSetup.tsx` – submit salva domínio e dispara `trigger-analysis`.
+  - `src/pages/DomainSetup.test.tsx` – testes de sucesso/erro do invoke e validação de domínio.
+  - `src/tests/setup.ts` – polyfills de `IntersectionObserver`/`ResizeObserver` para suportar `framer-motion` nos testes.
+  - `supabase/functions/trigger-analysis/index.ts` – integração com n8n (ou simulação em dev).
+  - `supabase/functions/receive-analysis/index.ts` – upsert dos resultados no DB.
+  - `supabase/migrations/<timestamp>-add-unique-constraint-analysis-results-domain.sql` – adiciona UNIQUE(domain) em `analysis_results`.
+  - `supabase/seed/analysis_results_sample.sql` – seed de exemplo para testes locais.
 
 - [ ] **4.0 Home Personalizado**
   - [ ] 4.1 No novo `Home.tsx`, buscar organização pelo `organization_id` do usuário.

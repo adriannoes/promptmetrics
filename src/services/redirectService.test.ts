@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getPostLoginRedirect } from './redirectService';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -12,6 +12,10 @@ const base = {
 } as const;
 
 describe('getPostLoginRedirect', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('redireciona admin para /admin', async () => {
     const result = await getPostLoginRedirect({ ...base, role: 'admin' });
     expect(result.path).toBe('/admin');
@@ -46,6 +50,11 @@ describe('getPostLoginRedirect', () => {
 
     const result = await getPostLoginRedirect({ ...base, role: 'client', organization_id: 'org1', email: 'client@test.com' } as any);
     expect(result.path).toBe('/home');
+  });
+
+  it('usuario demo vai para /demo', async () => {
+    const result = await getPostLoginRedirect({ ...base, role: 'client', email: 'demo@example.com' } as any);
+    expect(result.path).toBe('/demo');
   });
 });
 
