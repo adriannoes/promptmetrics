@@ -10,7 +10,7 @@ const Transformation = React.lazy(() => import('../components/Transformation'));
 const Pricing = React.lazy(() => import('../components/Pricing'));
 const FAQ = React.lazy(() => import('../components/FAQ'));
 const ContactForm = React.lazy(() => import('../components/ContactForm'));
-import Footer from '../components/Footer';
+import Footer from '../components/ui/footer-section';
 import AccessibilityPanel from '../components/AccessibilityPanel';
 
 const Index = () => {
@@ -23,10 +23,10 @@ const Index = () => {
       <main id="main-content" tabIndex={-1} role="main">
         <Hero />
         <React.Suspense fallback={<div className="px-4 py-8 text-slate-600">Carregando…</div>}>
-          <Problem />
-          <Transformation />
-          <Pricing />
-          <FAQ />
+          <section id="features"><Problem /></section>
+          <section id="integration"><Transformation /></section>
+          <section id="pricing"><Pricing /></section>
+          <section id="testimonials"><FAQ /></section>
           <ContactForm />
         </React.Suspense>
       </main>

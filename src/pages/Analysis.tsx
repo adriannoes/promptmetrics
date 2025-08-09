@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
@@ -24,6 +25,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { toast } from 'sonner';
+import { extractDomain } from '@/utils/domain';
 
 const AnalysisContent = () => {
   const { t } = useLanguage();
@@ -31,6 +33,8 @@ const AnalysisContent = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const location = useLocation();
+  const mainRef = useRef<HTMLElement | null>(null);
 
   console.log('Analysis Page: Rendered with currentDomain=', currentDomain, 'loading=', loading);
 
@@ -50,12 +54,32 @@ const AnalysisContent = () => {
     setLoading(false);
   };
 
+  // 5.1.1/5.1.2/5.1.3: Ler domínio (query param > localStorage) e normalizar
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const domainParam = params.get('domain');
+    if (domainParam) {
+      setCurrentDomain(extractDomain(domainParam));
+    } else {
+      // 5.1.2: Fallback para localStorage
+      const stored = localStorage.getItem('lastAnalyzedDomain');
+      if (stored) {
+        setCurrentDomain(extractDomain(stored));
+      }
+    }
+  }, [location.search]);
+
+  // Acessibilidade: focar no main após montar
+  useEffect(() => {
+    mainRef.current?.focus();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SkipNav />
       <Header />
-      <main id="main-content" tabIndex={-1} role="main" className="pt-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main ref={mainRef} id="main-content" tabIndex={-1} role="main" className="pt-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-testid="analysis-container">
           {/* Header Section */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
@@ -100,8 +124,13 @@ const AnalysisContent = () => {
             </div>
           )}
 
+          {/* Live region for domain updates */}
+          <div data-testid="analysis-live-region" role="status" aria-live="polite" className="sr-only">
+            {currentDomain}
+          </div>
+
           {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-3 gap-6 mb-12" data-testid="features-grid">
             <Card className="text-center">
               <CardHeader>
                 <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
@@ -146,7 +175,7 @@ const AnalysisContent = () => {
           </div>
 
           {/* Analysis Section */}
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8" data-testid="analysis-grid">
             <div className="space-y-6">
               <Card>
                 <CardHeader>

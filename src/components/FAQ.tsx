@@ -38,7 +38,7 @@ const FAQ = () => {
 
   return (
     <section 
-      id="faq" 
+      id="testimonials" 
       className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white relative overflow-hidden"
       aria-labelledby="faq-heading"
     >

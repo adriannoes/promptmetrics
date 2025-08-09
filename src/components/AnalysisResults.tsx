@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { Clock, AlertCircle, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -28,12 +29,14 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
   const { t, language } = useLanguage();
   const [results, setResults] = useState<AnalysisResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchResults = async () => {
     try {
       let query = supabase
         .from('analysis_results')
         .select('*')
+        .order('updated_at', { ascending: false })
         .order('created_at', { ascending: false });
       
       if (domain) {
@@ -44,13 +47,16 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
 
       if (error) {
         console.error('Error fetching results:', error);
+        setLoadError(t('analysisResults.loadError'));
         toast.error(t('analysisResults.loadError'));
         return;
       }
 
       setResults(data || []);
+      setLoadError(null);
     } catch (error) {
       console.error('Error:', error);
+      setLoadError(t('analysisResults.loadError'));
       toast.error(t('analysisResults.loadError'));
     } finally {
       setLoading(false);
@@ -122,7 +128,7 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4" data-testid="analysis-results-skeleton">
         <h3 className="text-lg font-semibold">{t('analysisResults.title')}</h3>
         {[1, 2, 3].map((i) => (
           <Card key={i}>
@@ -135,6 +141,16 @@ export const AnalysisResults: React.FC<AnalysisResultsProps> = ({
             </CardContent>
           </Card>
         ))}
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="mb-4" data-testid="analysis-results-error" role="alert">
+        <Alert>
+          <AlertDescription>{loadError}</AlertDescription>
+        </Alert>
       </div>
     );
   }

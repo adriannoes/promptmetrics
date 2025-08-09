@@ -136,11 +136,43 @@ Documentação & Planos
   - `src/services/redirectService.ts` – Garantir compatibilidade do fluxo pós-login.
 
 - [ ] **5.0 Página Analysis (primeiro resultado)**
-  - [ ] 5.1 Receber domínio via state / localStorage.
-  - [ ] 5.2 Buscar dados em `analysis_results` e exibir.
-  - [ ] 5.3 Mostrar skeleton enquanto carrega & mensagem de erro se falhar.
-  - [ ] 5.4 Garantir responsividade e acessibilidade básica.
-  - [ ] 5.5 Validar com um dataset real (por ex., payload do `demo-pm3`) para conferir layout mínimo.
+  - Objetivo: exibir o primeiro resultado de análise para um domínio recebido da Home, com UX acessível e responsiva, usando dados de `analysis_results`.
+  - Critérios (DoD):
+    - Recebe domínio via query param `?domain=`; fallback para `localStorage.lastAnalyzedDomain`.
+    - Consulta `analysis_results` filtrando por `domain` e exibe o resultado mais recente.
+    - Exibe skeleton enquanto carrega e mensagem de erro amigável em falhas.
+    - UI responsiva; atributos mínimos de acessibilidade (role/aria) e navegação por teclado.
+    - Testes unitários cobrindo parsing do domínio, carregamento, erro e render do preview.
+    - Smoke test manual com payload real via `receive-analysis`.
+
+  Subtasks:
+  - [ ] 5.1 Domínio de entrada (parsing e prioridades)
+    - [x] 5.1.1 Ler `?domain=` dos query params (prioridade 1)
+    - [x] 5.1.2 Fallback: `localStorage.lastAnalyzedDomain` (prioridade 2)
+    - [x] 5.1.3 Normalizar domínio removendo protocolo/`www.`
+  - [ ] 5.2 Buscar e exibir dados
+    - [x] 5.2.1 Reutilizar `AnalysisResults` passando `domain` para filtrar
+    - [x] 5.2.2 Garantir exibição do resultado mais recente (order por `updated_at`/`created_at`)
+  - [ ] 5.3 Estados de carregamento e erro
+    - [x] 5.3.1 Skeleton durante a query (já suportado por `AnalysisResults`)
+    - [x] 5.3.2 Mensagem de erro com `role="alert"` e suporte a `ErrorReportButton`
+  - [ ] 5.4 Acessibilidade e Responsividade
+    - [x] 5.4.1 `role`, `aria-live`, foco visível no conteúdo principal
+    - [x] 5.4.2 Layout responsivo (classes utilitárias existentes)
+  - [ ] 5.5 Dados reais (validação)
+    - [ ] 5.5.1 Smoke test: enviar payload real à `receive-analysis` e verificar render
+    - [x] 5.5.2 Conferir preview mínimo: `summary`, `score`, `recommendations`
+  - [ ] 5.6 Testes (TDD)
+    - [x] 5.6.1 `src/pages/Analysis.test.tsx`: domínio via query param e via localStorage
+    - [x] 5.6.2 Skeleton e erro quando a consulta falha
+    - [x] 5.6.3 Render do preview (summary/score/recommendations)
+
+  Relevant Files (progresso 5.0)
+  - `src/pages/Analysis.tsx` – Recebe domínio (query/localStorage), normaliza e injeta em `AnalysisResults`.
+  - `src/pages/Analysis.test.tsx` – Testes de parsing, estados e render do preview (novo).
+  - `src/components/AnalysisResults.tsx` – Já lista e filtra por domínio; validar ordering e skeleton.
+  - `src/utils/domain.ts` – Utilitário `extractDomain` para normalização (novo).
+  - `docs/n8n-payload-structure.md` – Referência de payload real para smoke test.
 
 ---
 
