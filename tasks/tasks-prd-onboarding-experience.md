@@ -50,7 +50,7 @@ Documentação & Planos
   - [x] 2.3 Atualizar rotas em `App.tsx` – remover rota antiga `/organization`, manter `/home`.
   - [x] 2.4 Atualizar `redirectService.ts` (padronizar retorno `/home`).
   - [x] 2.5 Revisar `SmartRedirect.tsx` para respeitar regra: sem domínio → `/domain-setup`; com domínio → `/home`.
-  - [ ] 2.6 Ajustar redirecionamento em `DomainSetup.tsx` para usar `/home` (sem slug), alinhado com rotas e `redirectService`.
+  - [x] 2.6 Ajustar redirecionamento em `DomainSetup.tsx` para usar `/home` (sem slug), alinhado com rotas e `redirectService`.
 
   Relevant Files (progresso 2.0)
   - `src/pages/Home.tsx` – substituído pelo conteúdo adaptado do antigo `OrganizationHome` (sem dependência de `slug`).

@@ -68,18 +68,10 @@ const DomainSetup = () => {
       setStep('success');
       toast.success('Domain saved and analysis started!');
 
-      // Get organization slug for redirection
-      const { data: organization } = await supabase
-        .from('organizations')
-        .select('slug')
-        .eq('id', profile.organization_id)
-        .single();
-
-      // Redirect to organization home using slug
+      // Redirect to home (route consolidated without slug)
       setTimeout(() => {
-        const redirectPath = organization?.slug ? `/home/${organization.slug}` : '/home';
-        console.log('Redirecting to:', redirectPath);
-        navigate(redirectPath, { replace: true });
+        console.log('Redirecting to: /home');
+        navigate('/home', { replace: true });
       }, 2000);
 
     } catch (error) {
