@@ -70,6 +70,7 @@ Documentação & Planos
     - [x] 3.4.1 Criar migração adicionando UNIQUE em `analysis_results(domain)` para suportar `onConflict: 'domain'`.
     - [x] 3.4.2 Smoke test via `curl` no `receive-analysis` verificando upsert idempotente por domínio.
   - [ ] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
+    - [x] 3.5 Criar seed SQL opcional com exemplo de `analysis_results` para testes locais.
   - [ ] 3.6 Documentar teste manual: (a) salvar domínio → (b) observar Home em progresso → (c) inserir um `analysis_results` ou postar no `receive-analysis` → (d) ver Home mudar para "Ver Análise".
 
   Relevant Files (progresso 3.0)

@@ -232,6 +232,18 @@ curl -i -X POST \
 
 Se `N8N_WEBHOOK_URL` não estiver configurada, a função responderá 2xx simulando sucesso em desenvolvimento.
 
+### Seed local de exemplo
+
+Para popular rapidamente `analysis_results` em ambiente local sem depender de n8n:
+
+```bash
+psql "$SUPABASE_DB_URL" -f supabase/seed/analysis_results_sample.sql
+```
+
+Observações:
+- Defina `SUPABASE_DB_URL` de forma segura (não comitar); use HTTPS/TLS ou conexões seguras.
+- O seed usa `ON CONFLICT (domain) DO UPDATE` e é idempotente.
+
 ---
 
 ## Nota sobre `N8N_WEBHOOK_URL` e ambiente de desenvolvimento
