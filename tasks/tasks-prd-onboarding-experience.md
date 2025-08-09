@@ -64,8 +64,8 @@ Documentação & Planos
   - [x] 3.1 Em `DomainSetup.tsx`, confirmar chamada a `trigger-analysis` após salvar domínio.
     - [x] 3.1.1 Criar `src/pages/DomainSetup.test.tsx` cobrindo sucesso (2xx/simulado) e erro no invoke.
   - [x] 3.2 Verificar variável de ambiente `N8N_WEBHOOK_URL` em `.env.local`.
-  - [ ] 3.3 Garantir que `trigger-analysis` retorna 2xx ou simulador dev.
-    - [ ] 3.3.1 Documentar smoke test com `curl` e leitura de logs das Edge Functions.
+  - [x] 3.3 Garantir que `trigger-analysis` retorna 2xx ou simulador dev.
+    - [x] 3.3.1 Documentar smoke test com `curl` e leitura de logs das Edge Functions.
   - [ ] 3.4 Garantir que `receive-analysis` faz upsert correto em `analysis_results`.
     - [ ] 3.4.1 Criar migração adicionando UNIQUE em `analysis_results(domain)` para suportar `onConflict: 'domain'`.
     - [ ] 3.4.2 Smoke test via `curl` no `receive-analysis` verificando upsert idempotente por domínio.

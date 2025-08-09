@@ -209,6 +209,29 @@ Esta documentação define a estrutura completa do payload que o N8N deve retorn
 2. Acesse `/demo` para ver os dados em tempo real
 3. Verifique se todos os gráficos foram atualizados corretamente
 
+### Smoke test da `trigger-analysis` (curl)
+
+Observação de segurança: use HTTPS/TLS e não exponha sua chave anon. Prefira variáveis de ambiente.
+
+1) Exporte sua chave anon localmente (nunca comite):
+
+```bash
+export SUPABASE_ANON_KEY="<sua-anon-key>"
+```
+
+2) Dispare a função (substitua `<project-ref>`):
+
+```bash
+curl -i -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+  -H "apikey: $SUPABASE_ANON_KEY" \
+  -d '{"domain":"example.com"}' \
+  https://<project-ref>.functions.supabase.co/trigger-analysis
+```
+
+Se `N8N_WEBHOOK_URL` não estiver configurada, a função responderá 2xx simulando sucesso em desenvolvimento.
+
 ---
 
 ## Nota sobre `N8N_WEBHOOK_URL` e ambiente de desenvolvimento
