@@ -63,7 +63,7 @@ Documentação & Planos
 - [ ] **3.0 Fluxo de Análise (happy-path)**
   - [x] 3.1 Em `DomainSetup.tsx`, confirmar chamada a `trigger-analysis` após salvar domínio.
     - [x] 3.1.1 Criar `src/pages/DomainSetup.test.tsx` cobrindo sucesso (2xx/simulado) e erro no invoke.
-  - [ ] 3.2 Verificar variável de ambiente `N8N_WEBHOOK_URL` em `.env.local`.
+  - [x] 3.2 Verificar variável de ambiente `N8N_WEBHOOK_URL` em `.env.local`.
   - [ ] 3.3 Garantir que `trigger-analysis` retorna 2xx ou simulador dev.
     - [ ] 3.3.1 Documentar smoke test com `curl` e leitura de logs das Edge Functions.
   - [ ] 3.4 Garantir que `receive-analysis` faz upsert correto em `analysis_results`.
@@ -80,6 +80,7 @@ Documentação & Planos
   - `supabase/functions/receive-analysis/index.ts` – upsert dos resultados no DB.
   - `supabase/migrations/<timestamp>-add-unique-constraint-analysis-results-domain.sql` – adiciona UNIQUE(domain) em `analysis_results`.
   - `supabase/seed/analysis_results_sample.sql` – seed de exemplo para testes locais.
+  - `docs/n8n-payload-structure.md` – adicionada nota sobre fallback de simulação quando `N8N_WEBHOOK_URL` não está configurada.
 
 - [ ] **4.0 Home Personalizado**
   - [ ] 4.1 No novo `Home.tsx`, buscar organização pelo `organization_id` do usuário.

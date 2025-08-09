@@ -208,3 +208,14 @@ Esta documentação define a estrutura completa do payload que o N8N deve retorn
 1. Envie o payload via POST para a edge function `receive-analysis`
 2. Acesse `/demo` para ver os dados em tempo real
 3. Verifique se todos os gráficos foram atualizados corretamente
+
+---
+
+## Nota sobre `N8N_WEBHOOK_URL` e ambiente de desenvolvimento
+
+- A Edge Function `trigger-analysis` utiliza a variável de ambiente `N8N_WEBHOOK_URL` para chamar o webhook do n8n (recomendado via HTTPS/TLS).
+- Quando `N8N_WEBHOOK_URL` não está configurada (ou há falha de rede), a função entra em modo de simulação e retorna sucesso (2xx) para permitir desenvolvimento local sem o n8n ativo.
+- Boas práticas:
+  - Nunca commitar segredos reais; use `.env.local` para valores locais.
+  - Mantenha um `.env.example` com placeholders para facilitar o setup.
+  - Em produção, configure `N8N_WEBHOOK_URL` com HTTPS.
