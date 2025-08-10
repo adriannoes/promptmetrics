@@ -44,42 +44,25 @@ const DomainSetup = () => {
       let organizationId = profile?.organization_id as string | null;
       if (!organizationId) {
         console.log('No organization detected. Creating a new organization for user...');
-        const { data: newOrg, error: createOrgError } = await supabase
-          .from('organizations')
-          .insert([{ 
-            name: cleanDomain,
-            website_url: `https://${cleanDomain}`,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }])
-          .select()
-          .single();
+        const token = (await supabase.auth.getSession()).data.session?.access_token;
+        const res = await fetch('/functions/v1/create-organization', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ domain: cleanDomain })
+        });
 
-        if (createOrgError || !newOrg) {
-          console.error('Error creating organization:', createOrgError);
+        if (!res.ok) {
+          const txt = await res.text();
+          console.error('create-organization failed:', res.status, txt);
           toast.error('Failed to create organization. Please try again.');
           return;
         }
-
-        organizationId = newOrg.id;
-        const userId = profile?.id || (await supabase.auth.getUser()).data.user?.id;
-        if (!userId) {
-          toast.error('Not authenticated. Please login again.');
-          return;
-        }
-
-        const { error: assignError } = await supabase
-          .from('profiles')
-          .update({ organization_id: organizationId, updated_at: new Date().toISOString() })
-          .eq('id', userId);
-
-        if (assignError) {
-          console.error('Error assigning organization to profile:', assignError);
-          toast.error('Failed to link organization to your profile.');
-          return;
-        }
-
-        console.log('Organization created and assigned to profile:', { organizationId });
+        const json = await res.json();
+        organizationId = json.organization_id as string;
+        console.log('Organization created via edge function:', { organizationId });
       } else {
         // Update existing organization with the domain
         const { error: updateError } = await supabase
