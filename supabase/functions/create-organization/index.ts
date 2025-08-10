@@ -56,9 +56,14 @@ serve(async (req) => {
     );
 
     // Create organization (domain optional)
+    const slugify = (s: string) => s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
     const insertPayload: any = {
       name: orgNameInput || normalizedDomain || 'My Organization',
     };
+    insertPayload.slug = slugify(insertPayload.name);
     if (normalizedDomain) {
       insertPayload.website_url = `https://${normalizedDomain}`;
     }
