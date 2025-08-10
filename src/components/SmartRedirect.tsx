@@ -40,7 +40,13 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
     const allowedPaths = ['/organization-setup', '/domain-setup', '/login', '/signup', '/', '/demo'];
     const isAllowed = allowedPaths.some((p) => currentPath === p || currentPath.startsWith(p + '/'));
     if (isAllowed) {
-      // Always allow staying on domain-setup to avoid interrupting setup flows
+      // Se estamos na domain-setup e há setup em progresso, force ir para /home
+      if (currentPath === '/domain-setup' && setupInProgress) {
+        console.log('SmartRedirect: Forcing redirect to /home during domain setup');
+        navigate('/home', { replace: true });
+        return;
+      }
+      // Sempre permitir permanência nas rotas permitidas
       return;
     }
 
