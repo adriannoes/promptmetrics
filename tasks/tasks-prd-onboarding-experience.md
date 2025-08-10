@@ -214,6 +214,12 @@ Documentação & Planos
       - [ ] 6.4.2 Atualizar `Home.test.tsx` cobrindo estados de conexão/eventos.
       - [ ] 6.4.3 Planejar e2e leve: seed local ou POST em `receive-analysis` para validar atualização visual na Home.
 
+  - [ ] 6.5 Organization Setup antes do Domain Setup
+    - [x] 6.5.1 Criar página `src/pages/OrganizationSetup.tsx` com formulário mínimo (name obrigatório; industry/size opcionais) e fluxo de submit invocando `create-organization`.
+    - [x] 6.5.2 Ajustar roteamento em `src/App.tsx` e `SmartRedirect` para priorizar `/organization-setup` quando não houver `organization_id`.
+    - [x] 6.5.3 Atualizar Edge Function `create-organization` para aceitar `name` opcional e `domain` opcional.
+    - [x] 6.5.4 Adicionar testes `src/pages/OrganizationSetup.test.tsx` (sucesso com redirect; erro mantém na página).
+
     - [ ] 6.5 Documentação e operacional
       - [ ] 6.5.1 Documentar smoke test: inserção/upsert em `analysis_results` e verificação na Home.
       - [ ] 6.5.2 Documentar rollback: como reativar polling-only (flag/env) sem alteração de código.

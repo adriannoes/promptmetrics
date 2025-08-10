@@ -17,6 +17,7 @@ const Demo = React.lazy(() => import('./pages/Demo'));
 const DemoPM3 = React.lazy(() => import('./pages/DemoPM3'));
 const Home = React.lazy(() => import('./pages/Home'));
 const DomainSetup = React.lazy(() => import('./pages/DomainSetup'));
+  const OrganizationSetup = React.lazy(() => import('./pages/OrganizationSetup'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
   const Features = React.lazy(() => import('./pages/Features'));
   const PricingPage = React.lazy(() => import('./pages/Pricing'));
@@ -84,6 +85,11 @@ function App() {
                   <Route path="/linkedin" element={<LinkedIn />} />
                   
                   {/* Protected routes - require authentication */}
+                  <Route path="/organization-setup" element={
+                    <ProtectedRoute>
+                      <OrganizationSetup />
+                    </ProtectedRoute>
+                  } />
                   <Route path="/analysis" element={
                     <ProtectedRoute>
                       <Analysis />

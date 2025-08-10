@@ -30,20 +30,24 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
 
     // For non-admin users, check if they have a domain set up
     const hasDomain = profile.organization_id && profile.organizations?.website_url;
+    const hasOrganization = !!profile.organization_id;
     const setupInProgress = (() => {
       try { return localStorage.getItem('domainSetupInProgress') === 'true'; } catch { return false; }
     })();
     const currentPath = location.pathname;
 
     // Allow access to certain pages regardless of domain status
-    const allowedPaths = ['/domain-setup', '/login', '/signup', '/', '/demo'];
+    const allowedPaths = ['/organization-setup', '/domain-setup', '/login', '/signup', '/', '/demo'];
     if (allowedPaths.includes(currentPath)) {
       // Always allow staying on domain-setup to avoid interrupting setup flows
       return;
     }
 
     // For protected pages, check domain status
-    if (!hasDomain) {
+    if (!hasOrganization) {
+      console.log('SmartRedirect: User has no organization, redirecting to organization-setup');
+      navigate('/organization-setup', { replace: true });
+    } else if (!hasDomain) {
       console.log('SmartRedirect: User has no domain, redirecting to domain-setup');
       navigate('/domain-setup', { replace: true });
     } else {

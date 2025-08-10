@@ -47,21 +47,24 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const domainRaw = body?.domain as string | undefined;
-    if (!domainRaw) {
-      return new Response(JSON.stringify({ error: 'domain is required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
-
-    const normalizedDomain = normalizeDomain(domainRaw);
+    const orgNameInput = (body?.name as string | undefined)?.trim();
+    const normalizedDomain = domainRaw ? normalizeDomain(domainRaw) : undefined;
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Create organization
+    // Create organization (domain optional)
+    const insertPayload: any = {
+      name: orgNameInput || normalizedDomain || 'My Organization',
+    };
+    if (normalizedDomain) {
+      insertPayload.website_url = `https://${normalizedDomain}`;
+    }
     const { data: org, error: orgError } = await supabase
       .from('organizations')
-      .insert({ name: normalizedDomain, website_url: `https://${normalizedDomain}` })
+      .insert(insertPayload)
       .select()
       .single();
 
