@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,6 +18,7 @@ import { extractDomain } from '@/utils/domain';
 const Home = () => {
   const { profile } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const { data: organization, isLoading, error } = useQuery({
     queryKey: ['organization-by-id', profile?.organization_id],
@@ -40,6 +42,7 @@ const Home = () => {
   // Realtime analysis results
   const normalizedDomain = organization?.website_url ? extractDomain(organization.website_url) : undefined;
   const { data: analysisData } = useRealTimeAnalysis(normalizedDomain);
+  const isReady = Boolean(analysisData);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -60,6 +63,41 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <OrganizationHeader organization={organization} />
+
+      {/* CTA de status sempre visível */}
+      <div className="container mx-auto px-4 mt-4 mb-0">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            data-testid="analysis-cta"
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium ${isReady ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-200 text-slate-600 cursor-not-allowed'}`}
+            disabled={!isReady || !normalizedDomain}
+            aria-disabled={!isReady}
+            aria-busy={!isReady}
+            onClick={() => {
+              if (normalizedDomain) {
+                navigate(`/analysis?domain=${normalizedDomain}`);
+              }
+            }}
+          >
+            {!isReady ? (
+              <>
+                <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Preparing analysis…</span>
+              </>
+            ) : (
+              <>
+                <span>View my analysis</span>
+              </>
+            )}
+          </button>
+          {!isReady && (
+            <span role="status" aria-live="polite" className="text-sm text-slate-600">
+              Your first analysis will be ready in a few minutes
+            </span>
+          )}
+        </div>
+      </div>
 
       {showAnalysisProgress ? (
         <div

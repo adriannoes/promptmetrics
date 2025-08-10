@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act } from 'react-dom/test-utils';
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -80,11 +81,13 @@ describe('Home', () => {
       },
     });
     return render(
-      <LanguageProvider>
-        <QueryClientProvider client={queryClient}>
-          <Home />
-        </QueryClientProvider>
-      </LanguageProvider>
+      <MemoryRouter>
+        <LanguageProvider>
+          <QueryClientProvider client={queryClient}>
+            <Home />
+          </QueryClientProvider>
+        </LanguageProvider>
+      </MemoryRouter>
     );
   };
 
@@ -138,6 +141,8 @@ describe('Home', () => {
 
     await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
     await waitFor(() => expect(screen.queryByTestId('analysis-progress')).not.toBeInTheDocument());
+    // CTA deve estar habilitado
+    expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'false');
     expect(screen.getByTestId('org-dashboard')).toBeInTheDocument();
   });
 
@@ -150,6 +155,8 @@ describe('Home', () => {
 
     await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
     expect(screen.getByTestId('analysis-progress')).toBeInTheDocument();
+    // CTA inicialmente desabilitado
+    expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'true');
 
     // Emite evento realtime indicando que chegou um resultado
     emitRealtimeInsert({ id: 'ar-2', domain: 'example.com', status: 'completed', analysis_data: {} });
@@ -157,6 +164,8 @@ describe('Home', () => {
     await new Promise((r) => setTimeout(r, 350));
 
     await waitFor(() => expect(screen.queryByTestId('analysis-progress')).not.toBeInTheDocument());
+    // CTA habilitado após evento
+    expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'false');
     expect(screen.getByTestId('org-dashboard')).toBeInTheDocument();
   });
 

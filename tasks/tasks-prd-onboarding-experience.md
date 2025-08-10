@@ -203,6 +203,10 @@ Documentação & Planos
       - [x] 6.2.2 Manter acessibilidade: `role`, `aria-live`, skeleton/loader quando apropriado; preservar fluxo existente de CTA e navegação.
       - [x] 6.2.3 Atualizar `src/pages/Home.test.tsx` para mockar o cliente realtime (conectar, emitir evento) e cobrir: sem dados → progresso; ao receber evento → CTA habilitado; desconexão → fallback polling.
       - [x] 6.2.4 Remover/neutralizar o `refetchInterval` antigo para não conflitar com realtime.
+      - [x] 6.2.5 UX: adicionar CTA persistente no topo da Home com estados
+        - [x] Loading: botão desabilitado com spinner + texto “Your first analysis will be ready in a few minutes”.
+        - [x] Ready: botão habilitado “View my analysis” que navega para `/analysis?domain=<domain>`.
+        - [x] Acessibilidade: `aria-disabled`, `aria-busy`, `role="status"` (mensagem de progresso).
 
     - [ ] 6.3 Configuração e segurança
       - [ ] 6.3.1 Verificar configuração do Realtime no cliente Supabase (`src/integrations/supabase/client.ts`) e parâmetros (`eventsPerSecond`).
@@ -221,8 +225,8 @@ Documentação & Planos
     - [x] 6.5.4 Adicionar testes `src/pages/OrganizationSetup.test.tsx` (sucesso com redirect; erro mantém na página).
 
     - [ ] 6.5 Documentação e operacional
-      - [ ] 6.5.1 Documentar smoke test: inserção/upsert em `analysis_results` e verificação na Home.
-      - [ ] 6.5.2 Documentar rollback: como reativar polling-only (flag/env) sem alteração de código.
+      - [x] 6.5.1 Documentar smoke test: inserção/upsert em `analysis_results` e verificação na Home.
+      - [x] 6.5.2 Documentar rollback: como reativar polling-only (flag/env) sem alteração de código.
 
   - Relevant Files (6.0):
     - `src/hooks/useRealTimeAnalysis.ts` – Hook de realtime + fallback polling.

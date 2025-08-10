@@ -21,9 +21,9 @@ describe('getPostLoginRedirect', () => {
     expect(result.path).toBe('/admin');
   });
 
-  it('cliente sem organization_id vai para /domain-setup', async () => {
+  it('cliente sem organization_id vai para /organization-setup', async () => {
     const result = await getPostLoginRedirect({ ...base, role: 'client' });
-    expect(result.path).toBe('/domain-setup');
+    expect(result.path).toBe('/organization-setup');
   });
 
   it('cliente com org sem website_url vai para /domain-setup', async () => {
