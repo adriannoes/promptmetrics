@@ -24,7 +24,7 @@ const DomainSetup = () => {
 
   const handleDomainSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!domain.trim() || !profile?.organization_id) return;
+    if (!domain.trim()) return;
 
     const cleanDomain = domain.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
     
@@ -40,19 +40,61 @@ const DomainSetup = () => {
     } catch {}
 
     try {
-      // First, update the organization with the domain
-      const { error: updateError } = await supabase
-        .from('organizations')
-        .update({ 
-          website_url: `https://${cleanDomain}`,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', profile.organization_id);
+      // Ensure user has an organization. If not, create one and assign it.
+      let organizationId = profile?.organization_id as string | null;
+      if (!organizationId) {
+        console.log('No organization detected. Creating a new organization for user...');
+        const { data: newOrg, error: createOrgError } = await supabase
+          .from('organizations')
+          .insert([{ 
+            name: cleanDomain,
+            website_url: `https://${cleanDomain}`,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }])
+          .select()
+          .single();
 
-      if (updateError) {
-        console.error('Error updating organization:', updateError);
-        toast.error('Failed to save domain. Please try again.');
-        return;
+        if (createOrgError || !newOrg) {
+          console.error('Error creating organization:', createOrgError);
+          toast.error('Failed to create organization. Please try again.');
+          return;
+        }
+
+        organizationId = newOrg.id;
+        const userId = profile?.id || (await supabase.auth.getUser()).data.user?.id;
+        if (!userId) {
+          toast.error('Not authenticated. Please login again.');
+          return;
+        }
+
+        const { error: assignError } = await supabase
+          .from('profiles')
+          .update({ organization_id: organizationId, updated_at: new Date().toISOString() })
+          .eq('id', userId);
+
+        if (assignError) {
+          console.error('Error assigning organization to profile:', assignError);
+          toast.error('Failed to link organization to your profile.');
+          return;
+        }
+
+        console.log('Organization created and assigned to profile:', { organizationId });
+      } else {
+        // Update existing organization with the domain
+        const { error: updateError } = await supabase
+          .from('organizations')
+          .update({ 
+            website_url: `https://${cleanDomain}`,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', organizationId);
+
+        if (updateError) {
+          console.error('Error updating organization:', updateError);
+          toast.error('Failed to save domain. Please try again.');
+          return;
+        }
       }
 
       console.log('Domain saved successfully, triggering analysis...');
