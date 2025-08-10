@@ -49,6 +49,11 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
       console.log('SmartRedirect: User has no organization, redirecting to organization-setup');
       navigate('/organization-setup', { replace: true });
     } else if (!hasDomain) {
+      // Allow staying on /home if a domain setup is in progress to avoid ping-pong
+      if (currentPath === '/home' && setupInProgress) {
+        console.log('SmartRedirect: Domain setup in progress, staying on /home');
+        return;
+      }
       console.log('SmartRedirect: User has no domain, redirecting to domain-setup');
       navigate('/domain-setup', { replace: true });
     } else {
