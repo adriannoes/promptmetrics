@@ -179,8 +179,62 @@ Documentação & Planos
 ### Melhorias Pós-MVP
 
 - [ ] **6.0 Realtime Completo**
-  - [ ] 6.1 Substituir polling por Supabase Realtime no canal `analysis_results`.
-  - [ ] 6.2 Testar latência e fallback para polling quando websocket falhar.
+  - Objetivo: substituir o polling da Home por Supabase Realtime no canal da tabela `analysis_results`, com fallback automático para polling quando o websocket não conectar ou perder a conexão. Garantir UX acessível, responsiva e testes cobrindo estados principais.
+  
+  - Critérios de aceite (DoD):
+    - Home deixa de usar `refetchInterval` e passa a reagir a eventos realtime filtrados por `domain` do usuário.
+    - Fallback automático para polling ocorre quando `isConnected === false` ou em perda de conexão, com backoff adequado e limpeza no unmount.
+    - Debounce de updates (≥300ms) para evitar re-render em rajadas; throttling de fetch (≥2s) para evitar flood.
+    - Ordering consistente por `updated_at desc` com persistência em `localStorage.lastAnalyzedDomain` quando aplicável.
+    - Acessibilidade preservada: `role="status"`, `aria-live="polite"` enquanto em progresso; foco e navegação por teclado do CTA intactos.
+    - Testes unitários do hook e testes de integração na Home cobrindo: conexão, recepção de evento, fallback de polling, limpeza de recursos, e fluxo feliz.
+    - Documentação de smoke test (insert/upsert em `analysis_results`) e de rollback para polling-only.
+
+  - Subtasks:
+    - [x] 6.1 Hook consolidado de realtime e fallback
+      - [x] 6.1.1 Revisar `src/hooks/useRealTimeAnalysis.ts` (já existente) para confirmar: filtro por `domain=eq.<alvo>`, debounce (300ms), throttle de fetch (≥2s), ordering por `updated_at desc`, cleanup completo (unsubscribe/clearInterval/clearTimeout) e sinalização `isConnected`, `hasNewData` e `lastUpdated`.
+      - [x] 6.1.2 Ajustar normalização do domínio (remover protocolo/`www.`; trailing slash) e expor utilitário para reuso.
+      - [x] 6.1.3 Garantir fallback de polling 10s quando sem conexão e 30s quando conectado mas sem dados; pausar polling quando conectado e com dados.
+      - [x] 6.1.4 Testes do hook: conexão, evento INSERT/UPDATE, debounce, throttle, fallback de polling, cleanup no unmount e erro de consulta com retries/backoff.
+      - [x] 6.1.5 Observabilidade mínima: logs de estado sob flag de debug, sem poluir produção.
+    
+    - [ ] 6.2 Integração Realtime na Home
+      - [ ] 6.2.1 Substituir a query com `refetchInterval` em `src/pages/Home.tsx` pelo uso de `useRealTimeAnalysis(domain)` para decidir entre estado "Em Progresso" e CTA "Minha Análise".
+      - [ ] 6.2.2 Manter acessibilidade: `role`, `aria-live`, skeleton/loader quando apropriado; preservar fluxo existente de CTA e navegação.
+      - [ ] 6.2.3 Atualizar `src/pages/Home.test.tsx` para mockar o cliente realtime (conectar, emitir evento) e cobrir: sem dados → progresso; ao receber evento → CTA habilitado; desconexão → fallback polling.
+      - [ ] 6.2.4 Remover/neutralizar o `refetchInterval` antigo para não conflitar com realtime.
+
+    - [ ] 6.3 Configuração e segurança
+      - [ ] 6.3.1 Verificar configuração do Realtime no cliente Supabase (`src/integrations/supabase/client.ts`) e parâmetros (`eventsPerSecond`).
+      - [ ] 6.3.2 Confirmar que conexões usam HTTPS/WSS; documentar orientação de TLS e não exposição de segredos (usar variáveis via `.env.example`).
+      - [ ] 6.3.3 Opcional: flag de runtime `VITE_DISABLE_REALTIME` para forçar polling-only em cenários de diagnóstico.
+
+    - [ ] 6.4 Testes e2e e cobertura
+      - [x] 6.4.1 Adicionar testes unitários do hook (`src/hooks/useRealTimeAnalysis.test.ts`) com timers falsos e mocks do cliente Supabase.
+      - [ ] 6.4.2 Atualizar `Home.test.tsx` cobrindo estados de conexão/eventos.
+      - [ ] 6.4.3 Planejar e2e leve: seed local ou POST em `receive-analysis` para validar atualização visual na Home.
+
+    - [ ] 6.5 Documentação e operacional
+      - [ ] 6.5.1 Documentar smoke test: inserção/upsert em `analysis_results` e verificação na Home.
+      - [ ] 6.5.2 Documentar rollback: como reativar polling-only (flag/env) sem alteração de código.
+
+  - Relevant Files (6.0):
+    - `src/hooks/useRealTimeAnalysis.ts` – Hook de realtime + fallback polling.
+    - `src/hooks/useRealTimeAnalysis.test.ts` – Novos testes unitários do hook.
+    - `src/pages/Home.tsx` – Integração do hook; remoção do polling reativo por query.
+    - `src/pages/Home.test.tsx` – Testes de integração dos estados na Home.
+    - `src/tests/setup.ts` – Mocks/Polyfills para timers/Observers e cliente Supabase, se necessário.
+    - `src/integrations/supabase/client.ts` – Verificação de parâmetros de realtime e WSS/headers.
+    - `docs/DOCS.md` – Guia de smoke test/rollback.
+    - `.env.example` – Flags/variáveis opcionais (`VITE_DISABLE_REALTIME`).
+
+  - Riscos e mitigação:
+    - Realtime flakey em algumas redes: fallback automático para polling; flag para polling-only.
+    - Flood de eventos/consultas: debounce + throttle + filtros por domínio.
+    - Vazamento de recursos: garantir cleanup de subscription/intervalos/timeouts no unmount.
+
+  - Rollback:
+    - Ativar `VITE_DISABLE_REALTIME=true` e reabilitar polling-only na Home até estabilização.
 
 - [ ] **7.0 Hardening de Edge Functions**
   - [ ] 7.1 Implementar idempotência em `trigger-analysis` (tabela `analysis_requests`).

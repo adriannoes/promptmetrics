@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { extractDomain } from '@/utils/domain';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { CompleteAnalysisResult } from '@/types/analysis';
 
@@ -94,6 +95,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
 
   // Fetch analysis data with retry logic and timeout
   const fetchAnalysis = useCallback(async (targetDomain: string, silent = false) => {
+    const normalizedDomain = extractDomain(targetDomain);
     // Evitar múltiplas chamadas muito próximas (rate limiting)
     const now = Date.now();
     if (now - lastFetchTimeRef.current < 2000) { // 2 segundos mínimo
@@ -109,17 +111,17 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     setError(null);
 
     try {
-      console.log('📊 useRealTimeAnalysis: Fetching analysis for domain:', targetDomain);
+      console.log('📊 useRealTimeAnalysis: Fetching analysis for domain:', normalizedDomain);
       
       // Create the query function for retry logic
       const queryFunction = async () => {
         console.log('📊 useRealTimeAnalysis: About to query Supabase...');
         
         // Try specific domain first
-        const specificQuery = supabase
+         const specificQuery = supabase
           .from('analysis_results')
           .select('*')
-          .eq('domain', targetDomain)
+           .eq('domain', normalizedDomain)
           .order('updated_at', { ascending: false })
           .limit(1);
 
@@ -178,7 +180,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         console.log('📊 Data successfully set - should trigger re-render');
         
         // Update localStorage and URL if we found a different domain
-        if (result.domain !== targetDomain) {
+        if (result.domain !== normalizedDomain) {
           console.log('📊 useRealTimeAnalysis: Found analysis for domain:', result.domain);
           localStorage.setItem('lastAnalyzedDomain', result.domain);
           
@@ -205,23 +207,24 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
 
   // Setup Real-time subscription
   const setupRealTimeSubscription = useCallback((targetDomain: string) => {
+    const normalizedDomain = extractDomain(targetDomain);
     // Cleanup existing subscription
     if (channelRef.current) {
       channelRef.current.unsubscribe();
       channelRef.current = null;
     }
 
-    console.log('🔌 Setting up Real-time subscription for:', targetDomain);
+    console.log('🔌 Setting up Real-time subscription for:', normalizedDomain);
 
     const channel = supabase
-      .channel(`analysis_results:${targetDomain}`)
+      .channel(`analysis_results:${normalizedDomain}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'analysis_results',
-          filter: `domain=eq.${targetDomain}`,
+          filter: `domain=eq.${normalizedDomain}`,
         },
         (payload) => {
           console.log('🔔 Real-time update received:', payload);
