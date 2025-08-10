@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
     ...(mode === 'development' && {
       headers: {
         // Only essential headers for development
-        'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws:; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' data: https:;",
+        'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https: wss: ws:; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' data: https://fonts.gstatic.com;",
       }
     })
   },

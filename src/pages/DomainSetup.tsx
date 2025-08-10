@@ -58,9 +58,10 @@ const DomainSetup = () => {
       console.log('Domain saved successfully, triggering analysis...');
 
       // Trigger the analysis webhook
-      const { error: webhookError } = await supabase.functions.invoke('trigger-analysis', {
+      const { error: webhookError, data: webhookData } = await supabase.functions.invoke('trigger-analysis', {
         body: { domain: cleanDomain }
       });
+      console.log('trigger-analysis response:', { webhookError, webhookData });
 
       if (webhookError) {
         console.error('Error triggering analysis:', webhookError);

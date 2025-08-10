@@ -38,11 +38,7 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
     // Allow access to certain pages regardless of domain status
     const allowedPaths = ['/domain-setup', '/login', '/signup', '/', '/demo'];
     if (allowedPaths.includes(currentPath)) {
-      // If user has domain and is on domain-setup, redirect to home
-      if (hasDomain && currentPath === '/domain-setup' && !setupInProgress) {
-        console.log('SmartRedirect: User has domain, redirecting from domain-setup to home');
-        navigate('/home', { replace: true });
-      }
+      // Always allow staying on domain-setup to avoid interrupting setup flows
       return;
     }
 

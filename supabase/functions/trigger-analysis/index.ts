@@ -31,6 +31,17 @@ serve(async (req) => {
     console.log('📦 trigger-analysis: Request body received:', requestBody);
 
     const { domain } = requestBody;
+    const normalizeDomain = (input: string) => {
+      if (!input) return input;
+      let v = String(input).trim().toLowerCase();
+      v = v.replace(/^https?:\/\//, '');
+      v = v.replace(/^www\./, '');
+      const slash = v.indexOf('/');
+      if (slash !== -1) v = v.substring(0, slash);
+      v = v.replace(/\/$/, '');
+      return v;
+    };
+    const normalizedDomain = normalizeDomain(domain);
     console.log('🎯 trigger-analysis: Extracted domain:', domain);
 
     // Validate domain
@@ -69,7 +80,7 @@ serve(async (req) => {
     
     // Send domain to n8n webhook with additional test data
     const testPayload = {
-      domain: domain,
+      domain: normalizedDomain,
       timestamp: new Date().toISOString(),
       source: 'promptmetrics-frontend-analysis-page',
       test_mode: true,
