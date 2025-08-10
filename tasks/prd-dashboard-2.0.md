@@ -50,6 +50,18 @@ Escopo v1: replicar as abas do `/demo` (Dashboard, AI Analysis/Prompts, Competit
 - i18n: strings EN/PT‑BR no front; payload fiel em EN para termos técnicos quando aplicável.
 - Performance: payload deve limitar-se a ~6 meses por série; sem limite rígido, mas evitar objetos gigantes sem necessidade.
 
+##### Ajustes recomendados nas Edge Functions (Supabase)
+- `receive-analysis` (ingestão do n8n)
+  - Normalizar domínio (já implementado) e validar campos essenciais (já implementado: summary/score/recommendations).
+  - Injetar metadados quando ausentes: `analysis_data.version = 1`, `analysis_data.generated_at = now()`, `analysis_data.request_id = uuid()`.
+  - Verificação de integridade/HMAC (recomendado): validar cabeçalho `x-signature` = HMAC-SHA256(body, `N8N_HMAC_SECRET`) para aceitar apenas chamadas do n8n. Em desenvolvimento, permitir bypass por flag de ambiente. Todas as chamadas devem usar HTTPS/TLS.
+  - Persistência: manter `upsert` por domínio (UNIQUE(domain) já existente). Para v1, gravar `version/generated_at/request_id` dentro de `analysis_data`. Futuro (v1.2+): avaliar migração para colunas top‑level (`version`, `generated_at`, `request_id`) para facilitar indexação/consulta.
+  - Observabilidade: manter resumo `data_summary` no response para troubleshooting.
+- `trigger-analysis` (chama n8n)
+  - Enviar `domain` normalizado (já implementado) e incluir `request_id` (uuid) no payload para rastreio ponta-a-ponta.
+  - Em produção, desabilitar simulação de sucesso. Tratar falhas do n8n com mensagens claras. Reforçar HTTPS/TLS.
+  - Opcional: incluir `callback_context` (e.g., organização/usuário) somente se não sensível e necessário ao workflow; senão, manter mínimo indispensável.
+
 #### 8) Especificação de Payload (n8n → Edge → Supabase)
 Formato salvo em `analysis_results` (coluna `analysis_data`). O conteúdo abaixo define os campos necessários para o Dashboard 2.0.
 
@@ -58,9 +70,11 @@ Topo do item salvo:
 {
   "domain": "pipefy.com",                // string, normalizado
   "status": "completed",                 // "processing" | "completed" | "failed"
-  "request_id": "uuid-...",             // string opcional (rastreio)
-  "generated_at": "2025-08-10T23:10Z",  // ISO datetime do processamento
-  "version": 1,                           // inteiro, versão do schema
+  // Para v1, estes metadados podem residir dentro de analysis_data (preferível),
+  // porém já aceitos também no topo para compatibilidade futura
+  "request_id": "uuid-...",              // opcional (rastreio)
+  "generated_at": "2025-08-10T23:10Z",   // opcional (ISO)
+  "version": 1,                            // opcional (inteiro)
   "analysis_data": { ... }
 }
 ```
@@ -120,8 +134,8 @@ Observações:
 - Todos os blocos acima são obrigatórios no v1; campos sinalizados como `?` podem ser vazios, mas o objeto deve existir.
 - Meses: fornecer 6 pontos (Jan..Jun, por exemplo) em `sentiment_trends` e `ranking_data`.
 - Cores: se não fornecidas, o front aplicará paleta padrão.
-- Versionamento: `version` começa em 1; mudanças futuras no schema incrementam este inteiro.
-- Rastreabilidade: preencher `request_id` e `generated_at` ajuda suporte e auditoria.
+- Versionamento: `version` começa em 1; mudanças futuras no schema incrementam este inteiro. Se ausente no payload, a Edge function preenche com `1`.
+- Rastreabilidade: `request_id` (uuid) e `generated_at` (ISO). Se ausentes, a Edge function preenche valores padrão.
 
 Exemplo resumido do `analysis_data` (omitidos arrays longos):
 ```
@@ -170,7 +184,7 @@ Compatibilidade com payload atual (n8n):
 Observação: enviar apenas metadados não sensíveis; usar HTTPS/TLS.
 
 #### 11) Versionamento do Payload (proposta)
-- `version` (inteiro) em `analysis_data` e `generated_at` ISO string.
+- `version` (inteiro) em `analysis_data` (preferido) e `generated_at` ISO string.
 - `request_id` (string) para correlacionar DomainSetup → trigger → receive-analysis.
 - Política: mudanças breaking incrementam `version` e o front aplica mapeamento por versão quando necessário.
 
@@ -202,5 +216,50 @@ Observação: enviar apenas metadados não sensíveis; usar HTTPS/TLS.
 - Precisamos padronizar nomes de séries (ex.: usar o nome do domínio do cliente como primeira série em trends/ranking)?
 - Limites de exibição para número de competidores simultâneos (ex.: top 4 + Others)?
 - Precisamos de “last_updated” exibido no UI (ex.: "Last updated: YYYY‑MM‑DD")?
+
+---
+
+### Plano de Ajuste do Fluxo n8n → Supabase (para Dashboard 2.0)
+
+1) Preparação/Normalização
+- Receber domínio de `trigger-analysis` e normalizar (lowercase, remover protocolo/www, slug do host).
+- Gerar `request_id` (uuid v4) e `generated_at` (ISO) no início do fluxo.
+
+2) Montagem do `analysis_data`
+- Preencher obrigatórios: `summary` (string), `score` (0–100), `recommendations` (string[]).
+- Dashboard (6 meses): `sentiment_trends`, `ranking_data`, `overall_sentiment`, `share_of_rank`.
+- Competitors: `competitor_analysis.market_share` (e opcional trends/priorities/opportunities).
+- Prompts: `prompt_analysis.sentiment_by_llm`, `prompt_analysis.ranking_by_prompt`, `prompt_analysis.performance_metrics`.
+- Strategic: `strategic_insights.key_insights`, `strategic_insights.recommendations`, `strategic_insights.action_items`.
+- Metadados: `analysis_data.version = 1`, `analysis_data.generated_at`, `analysis_data.request_id`.
+
+3) Validação & Qualidade
+- Garantir arrays com 6 meses em trends/ranking.
+- Garantir coerência de chaves (nomes das séries e entidades).
+- Optionally calcular um `completeness_score` interno no n8n (espelhar o que a Edge também calcula).
+
+4) Assinatura/HMAC
+- Calcular `x-signature = base64(HMAC_SHA256(body, N8N_HMAC_SECRET))` sobre o body JSON final enviado para a Edge.
+- Headers: `Content-Type: application/json`, `x-signature: <assinatura>`, `User-Agent: n8n-workflow/<versão>`.
+- Sempre via HTTPS/TLS.
+
+5) POST para `receive-analysis`
+- URL: `https://<project-ref>.functions.supabase.co/receive-analysis`.
+- Body: `{ domain, status: "completed", analysis_data }` (metadados também podem vir no topo, mas v1 prioriza dentro de `analysis_data`).
+- Requisições com retry (ex.: 3 tentativas, backoff exponencial 1s/2s/4s) e timeout (ex.: 15s).
+
+6) Tratamento de Erros
+- Em caso de 4xx (validação), logar payload inválido e encerrar com alerta.
+- Em caso de 5xx/transiente, aplicar retries e notificar canal de monitoramento (ex.: Slack/Email).
+
+7) Observabilidade
+- Log estruturado por etapa (preparação, montagem, validação, assinatura, POST, resposta).
+- Anexar `request_id` aos logs.
+
+8) Testes do fluxo
+- Cenário feliz com payload completo.
+- Payload parcial (faltando campos opcionais) — ainda assim montar todos os objetos.
+- Domínio inválido — rejeitar antes do POST.
+- HMAC inválido — garantir que a Edge rejeita (200 apenas quando assinatura OK ou bypass em dev).
 
 
