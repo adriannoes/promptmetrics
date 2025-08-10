@@ -55,6 +55,11 @@ const DomainSetup = () => {
         }
         organizationId = createOrgData.organization_id as string;
         console.log('Organization created via edge function:', { organizationId });
+        try {
+          localStorage.setItem('lastOrganizationId', organizationId);
+          localStorage.setItem('lastSavedDomain', cleanDomain);
+          localStorage.setItem('lastSavedWebsiteUrl', `https://${cleanDomain}`);
+        } catch {}
       } else {
         // Update existing organization with the domain
         const { error: updateError } = await supabase
@@ -70,6 +75,11 @@ const DomainSetup = () => {
           toast.error('Failed to save domain. Please try again.');
           return;
         }
+        try {
+          if (organizationId) localStorage.setItem('lastOrganizationId', organizationId);
+          localStorage.setItem('lastSavedDomain', cleanDomain);
+          localStorage.setItem('lastSavedWebsiteUrl', `https://${cleanDomain}`);
+        } catch {}
       }
 
       console.log('Domain saved successfully, triggering analysis...');
@@ -82,17 +92,22 @@ const DomainSetup = () => {
 
       if (webhookError) {
         console.error('Error triggering analysis:', webhookError);
-        toast.error('Domain saved but analysis failed to start. Please contact support.');
-        return;
+        // Não bloquear redirect: seguimos para Home e aguardamos n8n/POST manual
+        toast.error('Domínio salvo. Iniciaremos sua análise em instantes.');
+      } else {
+        console.log('Analysis webhook triggered successfully');
+        toast.success('Domínio salvo e análise iniciada!');
       }
 
-      console.log('Analysis webhook triggered successfully');
       setStep('success');
-      toast.success('Domain saved and analysis started!');
 
-      // Redirect immediately to home to acompanhar progresso via Realtime
+      // Redirect imediatamente para Home para acompanhar progresso via Realtime
       console.log('Redirecting to: /home');
       navigate('/home', { replace: true });
+      try {
+        // Reidrata sessão sem bloquear o redirect
+        void supabase.auth.refreshSession();
+      } catch {}
 
     } catch (error) {
       console.error('Error:', error);

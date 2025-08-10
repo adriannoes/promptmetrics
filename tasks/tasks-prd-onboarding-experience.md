@@ -246,6 +246,24 @@ Documentação & Planos
   - Rollback:
     - Ativar `VITE_DISABLE_REALTIME=true` e reabilitar polling-only na Home até estabilização.
 
+- [x] Ajustes de fluxo (2025-08-10) – DomainSetup/Home/Analysis/SmartRedirect
+  - Motivo: durante smoke test, após enviar domínio, redirect para `/home` às vezes retornava para `/domain-setup`; ao clicar no CTA “View my analysis” a navegação ia para `/domain-setup` por `website_url` ainda não reidratado no `profile`.
+  - Alterações:
+    - `src/pages/DomainSetup.tsx`:
+      - Persistir `lastOrganizationId`, `lastSavedDomain`, `lastSavedWebsiteUrl` em `localStorage`.
+      - Não bloquear redirect se `trigger-analysis` falhar (toast + segue para `/home`).
+      - `refreshSession()` não-bloqueante após `navigate('/home')`.
+    - `src/components/SmartRedirect.tsx`:
+      - Adiciona `'/analysis'` em `allowedPaths`.
+      - Mantém `/home` quando `domainSetupInProgress` ou `lastSavedDomain`/`lastSavedWebsiteUrl` existirem.
+    - `src/pages/Home.tsx`:
+      - Fallback para `lastSavedWebsiteUrl`/`lastSavedDomain` ao calcular `normalizedDomain` e exibir estado “Preparing analysis…”.
+    - `src/pages/Analysis.tsx`:
+      - Fallback em cascata para domínio: `?domain=` > `lastAnalyzedDomain` > `lastSavedWebsiteUrl` > `lastSavedDomain` (com `extractDomain`).
+  - Testes/validação:
+    - Unit `npm run test:unit` verde; realtime/polling coberto em `useRealTimeAnalysis.test.tsx` e estados de Home em `Home.test.tsx`.
+    - Smoke manual: `/domain-setup` → `/home` (preparing) → POST `receive-analysis` → CTA habilita → `/analysis?domain=<domínio>` renderiza preview.
+
 - [ ] **7.0 Hardening de Edge Functions**
   - [ ] 7.1 Implementar idempotência em `trigger-analysis` (tabela `analysis_requests`).
   - [ ] 7.2 Adicionar assinatura HMAC (n8n → `receive-analysis`).

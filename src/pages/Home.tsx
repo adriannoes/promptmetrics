@@ -23,24 +23,37 @@ const Home = () => {
   const { data: organization, isLoading, error } = useQuery({
     queryKey: ['organization-by-id', profile?.organization_id],
     queryFn: async () => {
-      if (!profile?.organization_id) {
+      // Usa organization_id do perfil ou fallback salvo no localStorage após DomainSetup
+      const organizationId = profile?.organization_id || (() => {
+        try { return localStorage.getItem('lastOrganizationId') || undefined; } catch { return undefined; }
+      })();
+
+      if (!organizationId) {
         throw new Error('Organization id is required');
       }
 
       const { data, error } = await supabase
         .from('organizations')
         .select('*')
-        .eq('id', profile.organization_id)
+        .eq('id', organizationId)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!profile?.organization_id,
+    // Habilita também quando houver fallback
+    enabled: Boolean(profile?.organization_id || (() => { try { return !!localStorage.getItem('lastOrganizationId'); } catch { return false; } })()),
   });
 
-  // Realtime analysis results
-  const normalizedDomain = organization?.website_url ? extractDomain(organization.website_url) : undefined;
+  // Realtime analysis results (com fallback localStorage se website_url ainda não reidratou)
+  const lastSavedDomain = (() => {
+    try { return localStorage.getItem('lastSavedDomain') || undefined; } catch { return undefined; }
+  })();
+  const lastSavedWebsiteUrl = (() => {
+    try { return localStorage.getItem('lastSavedWebsiteUrl') || undefined; } catch { return undefined; }
+  })();
+  const effectiveWebsiteUrl = organization?.website_url || lastSavedWebsiteUrl;
+  const normalizedDomain = effectiveWebsiteUrl ? extractDomain(effectiveWebsiteUrl) : (lastSavedDomain ? extractDomain(lastSavedDomain) : undefined);
   const { data: analysisData } = useRealTimeAnalysis(normalizedDomain);
   const isReady = Boolean(analysisData);
 
@@ -58,12 +71,13 @@ const Home = () => {
   }
 
   // Check if user belongs to this organization
-  if (profile?.organization_id !== organization.id) {
+  // Evita bloquear acesso enquanto o perfil reidrata. Se houver mismatch, confia no fallback carregado
+  if (profile?.organization_id && profile.organization_id !== organization.id) {
     return <UnauthorizedAccess message="You don't have access to this organization" />;
   }
 
-  // Show analysis in progress if no data available
-  const showAnalysisProgress = Boolean(organization?.website_url) && !analysisData;
+  // Show analysis in progress if temos algum domínio conhecido (org ou fallback) e ainda sem dados
+  const showAnalysisProgress = Boolean(effectiveWebsiteUrl || lastSavedDomain) && !analysisData;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">

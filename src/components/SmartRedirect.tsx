@@ -34,10 +34,16 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
     const setupInProgress = (() => {
       try { return localStorage.getItem('domainSetupInProgress') === 'true'; } catch { return false; }
     })();
+    const lastSavedDomain = (() => {
+      try { return localStorage.getItem('lastSavedDomain'); } catch { return null; }
+    })();
+    const lastSavedWebsiteUrl = (() => {
+      try { return localStorage.getItem('lastSavedWebsiteUrl'); } catch { return null; }
+    })();
     const currentPath = location.pathname;
 
     // Allow access to certain pages regardless of domain status
-    const allowedPaths = ['/organization-setup', '/domain-setup', '/login', '/signup', '/', '/demo'];
+    const allowedPaths = ['/organization-setup', '/domain-setup', '/login', '/signup', '/', '/demo', '/analysis'];
     const isAllowed = allowedPaths.some((p) => currentPath === p || currentPath.startsWith(p + '/'));
     if (isAllowed) {
       // Se estamos na domain-setup e há setup em progresso, force ir para /home
@@ -56,7 +62,7 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
       navigate('/organization-setup', { replace: true });
     } else if (!hasDomain) {
       // Allow staying on /home if a domain setup is in progress to avoid ping-pong
-      if (currentPath === '/home' && setupInProgress) {
+      if (currentPath === '/home' && (setupInProgress || lastSavedDomain || lastSavedWebsiteUrl)) {
         console.log('SmartRedirect: Domain setup in progress, staying on /home');
         return;
       }

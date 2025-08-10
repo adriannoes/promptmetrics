@@ -60,12 +60,27 @@ const AnalysisContent = () => {
     const domainParam = params.get('domain');
     if (domainParam) {
       setCurrentDomain(extractDomain(domainParam));
-    } else {
-      // 5.1.2: Fallback para localStorage
-      const stored = localStorage.getItem('lastAnalyzedDomain');
-      if (stored) {
-        setCurrentDomain(extractDomain(stored));
-      }
+      try { localStorage.setItem('lastAnalyzedDomain', extractDomain(domainParam)); } catch {}
+      return;
+    }
+
+    // Fallbacks em cascata
+    const stored = localStorage.getItem('lastAnalyzedDomain');
+    if (stored) {
+      setCurrentDomain(extractDomain(stored));
+      return;
+    }
+
+    const lastSavedWebsiteUrl = localStorage.getItem('lastSavedWebsiteUrl');
+    const lastSavedDomain = localStorage.getItem('lastSavedDomain');
+    if (lastSavedWebsiteUrl) {
+      setCurrentDomain(extractDomain(lastSavedWebsiteUrl));
+      try { localStorage.setItem('lastAnalyzedDomain', extractDomain(lastSavedWebsiteUrl)); } catch {}
+      return;
+    }
+    if (lastSavedDomain) {
+      setCurrentDomain(extractDomain(lastSavedDomain));
+      try { localStorage.setItem('lastAnalyzedDomain', extractDomain(lastSavedDomain)); } catch {}
     }
   }, [location.search]);
 
