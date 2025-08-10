@@ -7,6 +7,12 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+let capturedRealtimeCb: ((payload: any) => void) | null = null;
+let subscribeStatus: 'SUBSCRIBED' | 'CLOSED' = 'SUBSCRIBED';
+const emitRealtimeInsert = (row: any) => {
+  capturedRealtimeCb?.({ eventType: 'INSERT', new: row });
+};
+
 vi.mock('@/integrations/supabase/client', () => {
   const api: any = {
     from: vi.fn().mockReturnThis(),
@@ -17,12 +23,14 @@ vi.mock('@/integrations/supabase/client', () => {
     single: vi.fn(),
     maybeSingle: vi.fn(),
     channel: vi.fn().mockReturnValue({
-      on: vi.fn().mockReturnValue({
-        subscribe: vi.fn().mockImplementation((cb: any) => {
-          // imediatamente sinaliza SUBSCRIBED
-          cb('SUBSCRIBED');
-          return { unsubscribe: vi.fn() } as any;
-        }),
+      on: vi.fn().mockImplementation((_evt: any, _filter: any, cb: any) => {
+        capturedRealtimeCb = cb;
+        return {
+          subscribe: vi.fn().mockImplementation((cbStatus: any) => {
+            cbStatus(subscribeStatus);
+            return { unsubscribe: vi.fn() } as any;
+          }),
+        } as any;
       }),
     }),
   };
@@ -82,6 +90,8 @@ describe('Home', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    capturedRealtimeCb = null;
+    subscribeStatus = 'SUBSCRIBED';
   });
 
   it('carrega organização por organization_id e renderiza dashboard', async () => {
@@ -127,6 +137,25 @@ describe('Home', () => {
     setup();
 
     await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('analysis-progress')).not.toBeInTheDocument());
+    expect(screen.getByTestId('org-dashboard')).toBeInTheDocument();
+  });
+
+  it('atualiza de "Em Progresso" para dashboard ao receber evento realtime', async () => {
+    (supabase.single as any).mockResolvedValue({ data: { id: 'org-1', name: 'Org Test', website_url: 'https://example.com' }, error: null });
+    // Sem dados inicialmente
+    (supabase.maybeSingle as any).mockResolvedValue({ data: null, error: null });
+
+    setup();
+
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+    expect(screen.getByTestId('analysis-progress')).toBeInTheDocument();
+
+    // Emite evento realtime indicando que chegou um resultado
+    emitRealtimeInsert({ id: 'ar-2', domain: 'example.com', status: 'completed', analysis_data: {} });
+    // Aguarda debounce interno do hook (~300ms)
+    await new Promise((r) => setTimeout(r, 350));
+
     await waitFor(() => expect(screen.queryByTestId('analysis-progress')).not.toBeInTheDocument());
     expect(screen.getByTestId('org-dashboard')).toBeInTheDocument();
   });

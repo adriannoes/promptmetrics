@@ -200,9 +200,9 @@ Documentação & Planos
     
     - [ ] 6.2 Integração Realtime na Home
       - [x] 6.2.1 Substituir a query com `refetchInterval` em `src/pages/Home.tsx` pelo uso de `useRealTimeAnalysis(domain)` para decidir entre estado "Em Progresso" e CTA "Minha Análise".
-      - [ ] 6.2.2 Manter acessibilidade: `role`, `aria-live`, skeleton/loader quando apropriado; preservar fluxo existente de CTA e navegação.
-      - [ ] 6.2.3 Atualizar `src/pages/Home.test.tsx` para mockar o cliente realtime (conectar, emitir evento) e cobrir: sem dados → progresso; ao receber evento → CTA habilitado; desconexão → fallback polling.
-      - [ ] 6.2.4 Remover/neutralizar o `refetchInterval` antigo para não conflitar com realtime.
+      - [x] 6.2.2 Manter acessibilidade: `role`, `aria-live`, skeleton/loader quando apropriado; preservar fluxo existente de CTA e navegação.
+      - [x] 6.2.3 Atualizar `src/pages/Home.test.tsx` para mockar o cliente realtime (conectar, emitir evento) e cobrir: sem dados → progresso; ao receber evento → CTA habilitado; desconexão → fallback polling.
+      - [x] 6.2.4 Remover/neutralizar o `refetchInterval` antigo para não conflitar com realtime.
 
     - [ ] 6.3 Configuração e segurança
       - [ ] 6.3.1 Verificar configuração do Realtime no cliente Supabase (`src/integrations/supabase/client.ts`) e parâmetros (`eventsPerSecond`).
