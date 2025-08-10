@@ -26,6 +26,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { toast } from 'sonner';
 import { extractDomain } from '@/utils/domain';
+import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
+import type { CompleteAnalysisResult } from '@/types/analysis';
 
 const AnalysisContent = () => {
   const { t } = useLanguage();
@@ -33,6 +35,8 @@ const AnalysisContent = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<CompleteAnalysisResult | null>(null);
+  const [resultLoading, setResultLoading] = useState(false);
   const location = useLocation();
   const mainRef = useRef<HTMLElement | null>(null);
 
@@ -88,6 +92,41 @@ const AnalysisContent = () => {
   useEffect(() => {
     mainRef.current?.focus();
   }, []);
+
+  // Buscar último resultado para o domínio atual quando disponível
+  useEffect(() => {
+    const loadLatestForDomain = async (domain: string) => {
+      try {
+        setResultLoading(true);
+        const normalized = extractDomain(domain);
+        const { data, error } = await supabase
+          .from('analysis_results')
+          .select('*')
+          .eq('domain', normalized)
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Analysis: erro ao buscar resultado', error);
+          setAnalysisResult(null);
+          return;
+        }
+        setAnalysisResult((data as any) || null);
+      } catch (err) {
+        console.error('Analysis: exceção ao buscar resultado', err);
+        setAnalysisResult(null);
+      } finally {
+        setResultLoading(false);
+      }
+    };
+
+    if (currentDomain) {
+      loadLatestForDomain(currentDomain);
+    } else {
+      setAnalysisResult(null);
+    }
+  }, [currentDomain]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -189,85 +228,91 @@ const AnalysisContent = () => {
             </Card>
           </div>
 
-          {/* Analysis Section */}
-          <div className="grid lg:grid-cols-2 gap-8" data-testid="analysis-grid">
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Search className="w-5 h-5" />
-                    {t('analysis.newAnalysis.title')}
-                  </CardTitle>
-                  <CardDescription>
-                    {t('analysis.newAnalysis.desc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <DomainAnalysisInput 
-                    onAnalyze={handleAnalyze}
-                    loading={loading}
-                    onError={handleAnalysisError}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Instructions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">{t('analysis.howItWorks.title')}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">1</Badge>
-                    <div>
-                      <p className="font-medium">{t('analysis.step1.title')}</p>
-                      <p className="text-sm text-muted-foreground">{t('analysis.step1.desc')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">2</Badge>
-                    <div>
-                      <p className="font-medium">{t('analysis.step2.title')}</p>
-                      <p className="text-sm text-muted-foreground">{t('analysis.step2.desc')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">3</Badge>
-                    <div>
-                      <p className="font-medium">{t('analysis.step3.title')}</p>
-                      <p className="text-sm text-muted-foreground">{t('analysis.step3.desc')}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Quando existir análise completa, mostrar o dashboard. Caso contrário, manter o layout com histórico/preview. */}
+          {analysisResult && analysisResult.status === 'completed' && analysisResult.analysis_data ? (
+            <div data-testid="analysis-dashboard">
+              <AnalysisDashboard result={analysisResult as any} />
             </div>
+          ) : (
+            <div className="grid lg:grid-cols-2 gap-8" data-testid="analysis-grid">
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Search className="w-5 h-5" />
+                      {t('analysis.newAnalysis.title')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('analysis.newAnalysis.desc')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <DomainAnalysisInput 
+                      onAnalyze={handleAnalyze}
+                      loading={loading}
+                      onError={handleAnalysisError}
+                    />
+                  </CardContent>
+                </Card>
 
-            <div>
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    {t('analysis.analysisHistory.title')}
-                  </CardTitle>
-                  <CardDescription>
-                    {t('analysis.analysisHistory.desc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="max-h-[600px] overflow-y-auto">
-                    {currentDomain ? (
-                      <AnalysisResults 
-                        domain={currentDomain}
-                        refreshTrigger={refreshTrigger}
-                      />
-                    ) : (
-                      <AnalysisHistory />
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                {/* Instructions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{t('analysis.howItWorks.title')}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">1</Badge>
+                      <div>
+                        <p className="font-medium">{t('analysis.step1.title')}</p>
+                        <p className="text-sm text-muted-foreground">{t('analysis.step1.desc')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">2</Badge>
+                      <div>
+                        <p className="font-medium">{t('analysis.step2.title')}</p>
+                        <p className="text-sm text-muted-foreground">{t('analysis.step2.desc')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">3</Badge>
+                      <div>
+                        <p className="font-medium">{t('analysis.step3.title')}</p>
+                        <p className="text-sm text-muted-foreground">{t('analysis.step3.desc')}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div>
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5" />
+                      {t('analysis.analysisHistory.title')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('analysis.analysisHistory.desc')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="max-h-[600px] overflow-y-auto">
+                      {currentDomain ? (
+                        <AnalysisResults 
+                          domain={currentDomain}
+                          refreshTrigger={refreshTrigger}
+                        />
+                      ) : (
+                        <AnalysisHistory />
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>

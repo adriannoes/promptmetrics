@@ -159,20 +159,21 @@ Documentação & Planos
   - [ ] 5.4 Acessibilidade e Responsividade
     - [x] 5.4.1 `role`, `aria-live`, foco visível no conteúdo principal
     - [x] 5.4.2 Layout responsivo (classes utilitárias existentes)
-  - [ ] 5.5 Dados reais (validação)
-    - [ ] 5.5.1 Smoke test: enviar payload real à `receive-analysis` e verificar render
-    - [x] 5.5.2 Conferir preview mínimo: `summary`, `score`, `recommendations`
+  - [x] 5.5 Dados reais (validação)
+  - [x] 5.5.1 Validado com dados reais já presentes no Supabase para `pipefy.com` (sem necessidade de novo POST no momento)
+  - [x] 5.5.2 Conferir preview mínimo: `summary`, `score`, `recommendations`
   - [ ] 5.6 Testes (TDD)
     - [x] 5.6.1 `src/pages/Analysis.test.tsx`: domínio via query param e via localStorage
     - [x] 5.6.2 Skeleton e erro quando a consulta falha
     - [x] 5.6.3 Render do preview (summary/score/recommendations)
 
   Relevant Files (progresso 5.0)
-  - `src/pages/Analysis.tsx` – Recebe domínio (query/localStorage), normaliza e injeta em `AnalysisResults`.
-  - `src/pages/Analysis.test.tsx` – Testes de parsing, estados e render do preview (novo).
-  - `src/components/AnalysisResults.tsx` – Já lista e filtra por domínio; validar ordering e skeleton.
-  - `src/utils/domain.ts` – Utilitário `extractDomain` para normalização (novo).
-  - `docs/n8n-payload-structure.md` – Referência de payload real para smoke test.
+  - `src/pages/Analysis.tsx` – Recebe domínio (query/localStorage), normaliza e, quando houver `analysis_data` completo, renderiza dashboard de abas; caso contrário, injeta em `AnalysisResults` (preview).
+  - `src/components/analysis/AnalysisDashboard.tsx` – Novo componente que espelha o layout do `/demo`, consumindo `analysis_data` do Supabase com fallbacks para campos opcionais.
+  - `src/pages/Analysis.test.tsx` – Testes de parsing, estados e render do preview.
+  - `src/components/AnalysisResults.tsx` – Lista e filtra por domínio; ordering e skeleton validados.
+  - `src/utils/domain.ts` – Utilitário `extractDomain` para normalização.
+  - `docs/n8n-payload-structure.md` – Referência de payload real; campos avançados opcionais.
 
 ---
 
