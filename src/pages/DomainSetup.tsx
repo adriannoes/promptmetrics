@@ -99,9 +99,7 @@ const DomainSetup = () => {
       toast.error('An unexpected error occurred');
     } finally {
       setLoading(false);
-      try {
-        localStorage.removeItem('domainSetupInProgress');
-      } catch {}
+      // Mantemos a flag até a Home montar para evitar redireciono de volta
     }
   };
 

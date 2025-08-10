@@ -44,6 +44,11 @@ const Home = () => {
   const { data: analysisData } = useRealTimeAnalysis(normalizedDomain);
   const isReady = Boolean(analysisData);
 
+  // Ao montar a Home, limpar a flag de setup em progresso
+  React.useEffect(() => {
+    try { localStorage.removeItem('domainSetupInProgress'); } catch {}
+  }, []);
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
