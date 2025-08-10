@@ -34,6 +34,10 @@ const DomainSetup = () => {
     }
 
     setLoading(true);
+    // Sinaliza ao SmartRedirect que o setup está em progresso
+    try {
+      localStorage.setItem('domainSetupInProgress', 'true');
+    } catch {}
 
     try {
       // First, update the organization with the domain
@@ -79,6 +83,9 @@ const DomainSetup = () => {
       toast.error('An unexpected error occurred');
     } finally {
       setLoading(false);
+      try {
+        localStorage.removeItem('domainSetupInProgress');
+      } catch {}
     }
   };
 

@@ -231,6 +231,22 @@ serve(async (req) => {
       console.log('📦 Extracted payload:', JSON.stringify(analysisPayload, null, 2));
     }
 
+    // Normalize domain to ensure consistency across the system
+    const normalizeDomain = (input: string) => {
+      try {
+        if (!input) return input;
+        let value = String(input).trim().toLowerCase();
+        value = value.replace(/^https?:\/\//, '');
+        value = value.replace(/^www\./, '');
+        const slash = value.indexOf('/');
+        if (slash !== -1) value = value.substring(0, slash);
+        value = value.replace(/\/$/, '');
+        return value;
+      } catch {
+        return input;
+      }
+    };
+
     // Enhanced validation with flexible data structure support
     if (!analysisPayload || !analysisPayload.domain || !analysisPayload.analysis_data) {
       console.log('❌ Missing required fields in payload:', {
@@ -285,6 +301,14 @@ serve(async (req) => {
       );
     }
 
+    const normalizedDomain = normalizeDomain(analysisPayload.domain);
+    if (normalizedDomain !== analysisPayload.domain) {
+      console.log('🧹 Normalizing domain:', {
+        original: analysisPayload.domain,
+        normalized: normalizedDomain
+      });
+    }
+
     // Process and enhance analysis data
     const { processed: enhancedAnalysisData, competitors } = processAnalysisData(analysisPayload.analysis_data);
     const dataMetrics = calculateDataMetrics(enhancedAnalysisData, competitors);
@@ -314,7 +338,7 @@ serve(async (req) => {
     // Enhanced logging with data flexibility metrics
     console.log('💾 Attempting to save to database...');
     console.log('📊 Data Flexibility Analysis:', {
-      domain: analysisPayload.domain,
+      domain: normalizedDomain,
       status: analysisPayload.status || 'completed',
       llms_analyzed: dataMetrics.llmsAnalyzed,
       competitors_found: dataMetrics.competitorsFound,
@@ -331,7 +355,7 @@ serve(async (req) => {
     const { data, error } = await supabase
       .from('analysis_results')
       .upsert({
-        domain: analysisPayload.domain,
+        domain: normalizedDomain,
         status: analysisPayload.status || 'completed',
         analysis_data: enhancedAnalysisData, // Use enhanced data with fallbacks
         updated_at: new Date().toISOString()
@@ -372,11 +396,11 @@ serve(async (req) => {
     });
 
     // Return enhanced response with detailed data summary
-    return new Response(
+      return new Response(
       JSON.stringify({ 
         success: true, 
         id: data.id, 
-        domain: data.domain,
+          domain: data.domain,
         message: 'Analysis received and saved successfully',
         data_summary: {
           llms_analyzed: dataMetrics.llmsAnalyzed,
