@@ -15,6 +15,8 @@ const OrganizationSetup: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { profile } = useAuth();
+  // Permitir teste sem login quando em DEV
+  const allowWithoutAuth = import.meta.env.DEV && !profile;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -84,6 +84,11 @@ function App() {
                   <Route path="/youtube" element={<Youtube />} />
                   <Route path="/linkedin" element={<LinkedIn />} />
                   
+                  {/* Dev-only public route to testar Organization Setup sem login */}
+                  {import.meta.env.DEV && (
+                    <Route path="/dev/organization-setup" element={<OrganizationSetup />} />
+                  )}
+
                   {/* Protected routes - require authentication */}
                   <Route path="/organization-setup" element={
                     <ProtectedRoute>
