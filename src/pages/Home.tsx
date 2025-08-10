@@ -11,6 +11,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, Zap, TrendingUp } from 'lucide-react';
+import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
+import { extractDomain } from '@/utils/domain';
 
 const Home = () => {
   const { profile } = useAuth();
@@ -35,39 +37,9 @@ const Home = () => {
     enabled: !!profile?.organization_id,
   });
 
-  // Check for analysis results
-  const isTestEnv = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.MODE === 'test';
-  const pollIntervalMs = isTestEnv ? 50 : 30000;
-
-  const { data: analysisData, isLoading: analysisLoading } = useQuery({
-    queryKey: ['analysis-results', organization?.website_url],
-    queryFn: async () => {
-      if (!organization?.website_url) return null;
-
-      const domain = organization.website_url
-        .replace(/^https?:\/\//, '')
-        .replace(/\/$/, '');
-
-      const { data, error } = await supabase
-        .from('analysis_results')
-        .select('*')
-        .eq('domain', domain)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching analysis results:', error);
-        return null;
-      }
-
-      return data;
-    },
-    enabled: !!organization?.website_url,
-    // Poll until data exists, then stop
-    refetchInterval: (query) => (query.state.data ? false : pollIntervalMs),
-    refetchIntervalInBackground: true,
-  });
+  // Realtime analysis results
+  const normalizedDomain = organization?.website_url ? extractDomain(organization.website_url) : undefined;
+  const { data: analysisData } = useRealTimeAnalysis(normalizedDomain);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -82,7 +54,7 @@ const Home = () => {
     return <UnauthorizedAccess message="You don't have access to this organization" />;
   }
 
-  // Show analysis in progress if no data available (or still loading the first check)
+  // Show analysis in progress if no data available
   const showAnalysisProgress = Boolean(organization?.website_url) && !analysisData;
 
   return (

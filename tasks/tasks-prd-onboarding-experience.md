@@ -199,7 +199,7 @@ Documentação & Planos
       - [x] 6.1.5 Observabilidade mínima: logs de estado sob flag de debug, sem poluir produção.
     
     - [ ] 6.2 Integração Realtime na Home
-      - [ ] 6.2.1 Substituir a query com `refetchInterval` em `src/pages/Home.tsx` pelo uso de `useRealTimeAnalysis(domain)` para decidir entre estado "Em Progresso" e CTA "Minha Análise".
+      - [x] 6.2.1 Substituir a query com `refetchInterval` em `src/pages/Home.tsx` pelo uso de `useRealTimeAnalysis(domain)` para decidir entre estado "Em Progresso" e CTA "Minha Análise".
       - [ ] 6.2.2 Manter acessibilidade: `role`, `aria-live`, skeleton/loader quando apropriado; preservar fluxo existente de CTA e navegação.
       - [ ] 6.2.3 Atualizar `src/pages/Home.test.tsx` para mockar o cliente realtime (conectar, emitir evento) e cobrir: sem dados → progresso; ao receber evento → CTA habilitado; desconexão → fallback polling.
       - [ ] 6.2.4 Remover/neutralizar o `refetchInterval` antigo para não conflitar com realtime.

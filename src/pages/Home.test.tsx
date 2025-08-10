@@ -8,17 +8,25 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 vi.mock('@/integrations/supabase/client', () => {
-  return {
-    supabase: {
-      from: vi.fn().mockReturnThis(),
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn(),
-      maybeSingle: vi.fn(),
-    },
+  const api: any = {
+    from: vi.fn().mockReturnThis(),
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    single: vi.fn(),
+    maybeSingle: vi.fn(),
+    channel: vi.fn().mockReturnValue({
+      on: vi.fn().mockReturnValue({
+        subscribe: vi.fn().mockImplementation((cb: any) => {
+          // imediatamente sinaliza SUBSCRIBED
+          cb('SUBSCRIBED');
+          return { unsubscribe: vi.fn() } as any;
+        }),
+      }),
+    }),
   };
+  return { supabase: api };
 });
 
 vi.mock('@/contexts/AuthContext', async () => {
@@ -78,7 +86,8 @@ describe('Home', () => {
 
   it('carrega organização por organization_id e renderiza dashboard', async () => {
     (supabase.single as any).mockResolvedValue({ data: { id: 'org-1', name: 'Org Test', website_url: 'https://example.com' }, error: null });
-    (supabase.maybeSingle as any).mockResolvedValue({ data: { id: 'ar-1' }, error: null });
+    // Realtime hook buscará via channel, mas fará fetch inicial; retornamos dado existente
+    (supabase.maybeSingle as any).mockResolvedValue({ data: { id: 'ar-1', domain: 'example.com' }, error: null });
 
     const utils = setup();
 
