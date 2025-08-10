@@ -90,11 +90,9 @@ const DomainSetup = () => {
       setStep('success');
       toast.success('Domain saved and analysis started!');
 
-      // Redirect to home (route consolidated without slug)
-      setTimeout(() => {
-        console.log('Redirecting to: /home');
-        navigate('/home', { replace: true });
-      }, 2000);
+      // Redirect immediately to home to acompanhar progresso via Realtime
+      console.log('Redirecting to: /home');
+      navigate('/home', { replace: true });
 
     } catch (error) {
       console.error('Error:', error);
