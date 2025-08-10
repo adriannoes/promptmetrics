@@ -43,25 +43,17 @@ const DomainSetup = () => {
       // Ensure user has an organization. If not, create one and assign it.
       let organizationId = profile?.organization_id as string | null;
       if (!organizationId) {
-        console.log('No organization detected. Creating a new organization for user...');
-        const token = (await supabase.auth.getSession()).data.session?.access_token;
-        const res = await fetch('/functions/v1/create-organization', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ domain: cleanDomain })
+        console.log('No organization detected. Creating a new organization for user via Supabase function...');
+        const { data: createOrgData, error: createOrgError } = await supabase.functions.invoke('create-organization', {
+          body: { domain: cleanDomain }
         });
 
-        if (!res.ok) {
-          const txt = await res.text();
-          console.error('create-organization failed:', res.status, txt);
+        if (createOrgError || !createOrgData?.organization_id) {
+          console.error('create-organization failed:', createOrgError || createOrgData);
           toast.error('Failed to create organization. Please try again.');
           return;
         }
-        const json = await res.json();
-        organizationId = json.organization_id as string;
+        organizationId = createOrgData.organization_id as string;
         console.log('Organization created via edge function:', { organizationId });
       } else {
         // Update existing organization with the domain
