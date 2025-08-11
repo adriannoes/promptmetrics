@@ -215,7 +215,7 @@ Documentação & Planos
       - [x] 6.3.2 Confirmar que conexões usam HTTPS/WSS; documentar orientação de TLS e não exposição de segredos (usar variáveis via `.env.example`).
       - [x] 6.3.3 Opcional: flag de runtime `VITE_DISABLE_REALTIME` para forçar polling-only em cenários de diagnóstico.
 
-    - [ ] 6.4 Testes e2e e cobertura
+    - [x] 6.4 Testes e2e e cobertura
       - [x] 6.4.1 Adicionar testes unitários do hook (`src/hooks/useRealTimeAnalysis.test.ts`) com timers falsos e mocks do cliente Supabase.
       - [x] 6.4.2 Atualizar `Home.test.tsx` cobrindo estados de conexão/eventos.
       - [x] 6.4.3 Planejar e2e leve: seed local ou POST em `receive-analysis` para validar atualização visual na Home.

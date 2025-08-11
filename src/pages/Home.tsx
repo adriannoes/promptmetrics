@@ -110,6 +110,28 @@ const Home = () => {
               </>
             )}
           </button>
+          {/* Nova Análise */}
+          <button
+            type="button"
+            data-testid="new-analysis-cta"
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium ${normalizedDomain ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-slate-200 text-slate-600 cursor-not-allowed'}`}
+            disabled={!normalizedDomain}
+            aria-disabled={!normalizedDomain}
+            aria-busy={false}
+            onClick={async () => {
+              try {
+                if (!normalizedDomain) return;
+                // Dispara nova análise via Edge Function (idempotência futura no backend)
+                await supabase.functions.invoke('trigger-analysis', {
+                  body: { domain: normalizedDomain },
+                });
+              } catch (e) {
+                // noop: UX mínima, logs já ficam nas functions; podemos adicionar toast futuramente
+              }
+            }}
+          >
+            <span>Nova Análise</span>
+          </button>
           {!isReady && (
             <span role="status" aria-live="polite" className="text-sm text-slate-600">
               Your first analysis will be ready in a few minutes

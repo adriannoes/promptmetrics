@@ -26,6 +26,9 @@ vi.mock('@/integrations/supabase/client', () => {
     limit: vi.fn().mockReturnThis(),
     single: vi.fn(),
     maybeSingle: vi.fn(),
+    functions: {
+      invoke: vi.fn().mockResolvedValue({ data: { success: true }, error: null }),
+    },
     channel: vi.fn().mockReturnValue({
       on: vi.fn().mockImplementation((_evt: any, _filter: any, cb: any) => {
         capturedRealtimeCb = cb;
@@ -185,6 +188,25 @@ describe('Home', () => {
     await new Promise((r) => setTimeout(r, 350));
     await waitFor(() => expect(screen.queryByTestId('analysis-progress')).not.toBeInTheDocument());
     expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'false');
+  });
+
+  it('CTA "Nova Análise" chama trigger-analysis com o domínio normalizado', async () => {
+    (supabase.single as any).mockResolvedValue({ data: { id: 'org-1', name: 'Org Test', website_url: 'https://www.example.com' }, error: null });
+    (supabase.maybeSingle as any).mockResolvedValue({ data: { id: 'ar-1', domain: 'example.com' }, error: null });
+
+    setup();
+
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+
+    const btn = screen.getByTestId('new-analysis-cta');
+    expect(btn).toHaveAttribute('aria-disabled', 'false');
+    btn.click();
+
+    await waitFor(() => {
+      expect((supabase.functions.invoke as any)).toHaveBeenCalledWith('trigger-analysis', {
+        body: { domain: 'example.com' },
+      });
+    });
   });
 
   it('quando realtime inicia fechado, ainda renderiza CTA se fetch inicial retorna dados', async () => {
