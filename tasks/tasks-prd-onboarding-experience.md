@@ -135,7 +135,7 @@ Documentação & Planos
   - `src/utils/toastMessages.ts` – Centralização de mensagens PT-BR (se aplicável).
   - `src/services/redirectService.ts` – Garantir compatibilidade do fluxo pós-login.
 
-- [ ] **5.0 Página Analysis (primeiro resultado)**
+- [x] **5.0 Página Analysis (primeiro resultado)**
   - Objetivo: exibir o primeiro resultado de análise para um domínio recebido da Home, com UX acessível e responsiva, usando dados de `analysis_results`.
   - Critérios (DoD):
     - Recebe domínio via query param `?domain=`; fallback para `localStorage.lastAnalyzedDomain`.
@@ -146,7 +146,7 @@ Documentação & Planos
     - Smoke test manual com payload real via `receive-analysis`.
 
   Subtasks:
-  - [ ] 5.1 Domínio de entrada (parsing e prioridades)
+  - [x] 5.1 Domínio de entrada (parsing e prioridades)
     - [x] 5.1.1 Ler `?domain=` dos query params (prioridade 1)
     - [x] 5.1.2 Fallback: `localStorage.lastAnalyzedDomain` (prioridade 2)
     - [x] 5.1.3 Normalizar domínio removendo protocolo/`www.`
@@ -225,7 +225,7 @@ Documentação & Planos
     - [x] 6.5.3 Atualizar Edge Function `create-organization` para aceitar `name` opcional e `domain` opcional.
     - [x] 6.5.4 Adicionar testes `src/pages/OrganizationSetup.test.tsx` (sucesso com redirect; erro mantém na página).
 
-    - [ ] 6.5 Documentação e operacional
+    - [x] 6.5 Documentação e operacional
       - [x] 6.5.1 Documentar smoke test: inserção/upsert em `analysis_results` e verificação na Home.
       - [x] 6.5.2 Documentar rollback: como reativar polling-only (flag/env) sem alteração de código.
 
