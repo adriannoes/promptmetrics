@@ -359,6 +359,14 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 SUPABASE_DB_URL=postgresql://...
 ```
 
+#### TLS/HTTPS e Segurança de Variáveis
+
+- Todas as chamadas externas devem usar HTTPS/TLS em produção. Isso inclui webhooks (`N8N_WEBHOOK_URL`, `WAITLIST_WEBHOOK_URL`) e o endpoint do Supabase.
+- O cliente em tempo real usará WSS automaticamente quando a URL do projeto for `https://<ref>.supabase.co`.
+- Nunca commitar segredos reais. Utilize variáveis de ambiente e um arquivo `\.env.example` com placeholders.
+- Para desenvolvimento local, prefira configurar segredos via Supabase Dashboard ou CLI. No frontend, apenas a anon key (publishable) deve ser exposta via `VITE_SUPABASE_ANON_KEY`.
+- Flag opcional de diagnóstico (polling-only): `VITE_DISABLE_REALTIME=true` (também pode ser habilitada em runtime com `localStorage.setItem('VITE_DISABLE_REALTIME','true')`).
+
 ### Local Development
 
 1. **Clone Repository**
@@ -433,6 +441,29 @@ npm run test:e2e:update
 4. Test organization isolation
 
 #### Analysis Pipeline Testing
+##### Smoke test e2e leve (Analysis/Home)
+
+Objetivo: validar fluxo do onboarding sem dependência de UI extensa.
+
+1) Salvar domínio em `/domain-setup` (ex.: `example.com`).
+2) Ir para `/home` e verificar estado “Preparing analysis…” e CTA desabilitado.
+3) Concluir análise por uma das opções:
+   - Opção A (seed local): executar `supabase/seed/analysis_results_sample.sql` no banco local.
+   - Opção B (Edge Function): enviar POST para `receive-analysis` com HTTPS/TLS.
+
+Exemplo de POST seguro (use variáveis e HTTPS):
+
+```bash
+curl -i -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+  -H "apikey: $SUPABASE_ANON_KEY" \
+  -d '{"domain":"example.com","analysis_data":{"summary":"ok","score":80,"recommendations":[]}}' \
+  https://<project-ref>.functions.supabase.co/receive-analysis
+```
+
+4) Recarregar `/home` e verificar CTA habilitado “View my analysis”.
+5) Clicar no CTA e confirmar que `/analysis?domain=example.com` renderiza o preview (summary/score/recommendations).
 #### Performance (Lighthouse Mobile)
 1. Gerar build e subir preview/estático
 ```bash

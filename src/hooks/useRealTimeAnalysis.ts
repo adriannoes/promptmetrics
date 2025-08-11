@@ -71,6 +71,16 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [hasNewData, setHasNewData] = useState(false);
+  const [isRealtimeDisabled, setIsRealtimeDisabled] = useState<boolean>(() => {
+    try {
+      // Support both build-time env and a runtime override for diagnostics
+      const envFlag = (import.meta as any)?.env?.VITE_DISABLE_REALTIME;
+      const runtimeFlag = typeof localStorage !== 'undefined' ? localStorage.getItem('VITE_DISABLE_REALTIME') : null;
+      return String(envFlag).toLowerCase() === 'true' || String(runtimeFlag).toLowerCase() === 'true';
+    } catch {
+      return false;
+    }
+  });
   
   // Refs para debouncing e gerenciamento de subscription
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -207,6 +217,11 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
 
   // Setup Real-time subscription
   const setupRealTimeSubscription = useCallback((targetDomain: string) => {
+    if (isRealtimeDisabled) {
+      console.log('⚠️ Real-time disabled via VITE_DISABLE_REALTIME. Skipping subscription.');
+      setIsConnected(false);
+      return;
+    }
     const normalizedDomain = extractDomain(targetDomain);
     // Cleanup existing subscription
     if (channelRef.current) {
@@ -241,7 +256,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
       });
 
     channelRef.current = channel;
-  }, [debouncedUpdate]);
+  }, [debouncedUpdate, isRealtimeDisabled]);
 
   // Setup optimized polling as fallback
   const setupPolling = useCallback((targetDomain: string) => {
@@ -281,7 +296,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
     // Initial fetch
     fetchAnalysis(domain);
     
-    // Setup real-time subscription
+    // Setup real-time subscription (may be skipped if disabled)
     setupRealTimeSubscription(domain);
 
     return () => {
@@ -300,7 +315,7 @@ export const useRealTimeAnalysis = (domain?: string): UseRealTimeAnalysisReturn 
         debounceTimeoutRef.current = null;
       }
     };
-  }, [domain]); // Removed circular dependencies
+  }, [domain, setupRealTimeSubscription]); // Removed circular dependencies
 
   // Separate effect for polling that doesn't cause loops
   useEffect(() => {

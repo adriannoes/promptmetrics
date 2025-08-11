@@ -200,7 +200,7 @@ Documentação & Planos
       - [x] 6.1.4 Testes do hook: conexão, evento INSERT/UPDATE, debounce, throttle, fallback de polling, cleanup no unmount e erro de consulta com retries/backoff.
       - [x] 6.1.5 Observabilidade mínima: logs de estado sob flag de debug, sem poluir produção.
     
-    - [ ] 6.2 Integração Realtime na Home
+    - [x] 6.2 Integração Realtime na Home
       - [x] 6.2.1 Substituir a query com `refetchInterval` em `src/pages/Home.tsx` pelo uso de `useRealTimeAnalysis(domain)` para decidir entre estado "Em Progresso" e CTA "Minha Análise".
       - [x] 6.2.2 Manter acessibilidade: `role`, `aria-live`, skeleton/loader quando apropriado; preservar fluxo existente de CTA e navegação.
       - [x] 6.2.3 Atualizar `src/pages/Home.test.tsx` para mockar o cliente realtime (conectar, emitir evento) e cobrir: sem dados → progresso; ao receber evento → CTA habilitado; desconexão → fallback polling.
@@ -210,17 +210,17 @@ Documentação & Planos
         - [x] Ready: botão habilitado “View my analysis” que navega para `/analysis?domain=<domain>`.
         - [x] Acessibilidade: `aria-disabled`, `aria-busy`, `role="status"` (mensagem de progresso).
 
-    - [ ] 6.3 Configuração e segurança
-      - [ ] 6.3.1 Verificar configuração do Realtime no cliente Supabase (`src/integrations/supabase/client.ts`) e parâmetros (`eventsPerSecond`).
-      - [ ] 6.3.2 Confirmar que conexões usam HTTPS/WSS; documentar orientação de TLS e não exposição de segredos (usar variáveis via `.env.example`).
-      - [ ] 6.3.3 Opcional: flag de runtime `VITE_DISABLE_REALTIME` para forçar polling-only em cenários de diagnóstico.
+    - [x] 6.3 Configuração e segurança
+      - [x] 6.3.1 Verificar configuração do Realtime no cliente Supabase (`src/integrations/supabase/client.ts`) e parâmetros (`eventsPerSecond`).
+      - [x] 6.3.2 Confirmar que conexões usam HTTPS/WSS; documentar orientação de TLS e não exposição de segredos (usar variáveis via `.env.example`).
+      - [x] 6.3.3 Opcional: flag de runtime `VITE_DISABLE_REALTIME` para forçar polling-only em cenários de diagnóstico.
 
     - [ ] 6.4 Testes e2e e cobertura
       - [x] 6.4.1 Adicionar testes unitários do hook (`src/hooks/useRealTimeAnalysis.test.ts`) com timers falsos e mocks do cliente Supabase.
-      - [ ] 6.4.2 Atualizar `Home.test.tsx` cobrindo estados de conexão/eventos.
-      - [ ] 6.4.3 Planejar e2e leve: seed local ou POST em `receive-analysis` para validar atualização visual na Home.
+      - [x] 6.4.2 Atualizar `Home.test.tsx` cobrindo estados de conexão/eventos.
+      - [x] 6.4.3 Planejar e2e leve: seed local ou POST em `receive-analysis` para validar atualização visual na Home.
 
-  - [ ] 6.5 Organization Setup antes do Domain Setup
+    - [x] 6.5 Organization Setup antes do Domain Setup
     - [x] 6.5.1 Criar página `src/pages/OrganizationSetup.tsx` com formulário mínimo (name obrigatório; industry/size opcionais) e fluxo de submit invocando `create-organization`.
     - [x] 6.5.2 Ajustar roteamento em `src/App.tsx` e `SmartRedirect` para priorizar `/organization-setup` quando não houver `organization_id`.
     - [x] 6.5.3 Atualizar Edge Function `create-organization` para aceitar `name` opcional e `domain` opcional.

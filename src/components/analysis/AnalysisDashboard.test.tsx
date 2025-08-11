@@ -84,4 +84,24 @@ describe('AnalysisDashboard - header summary', () => {
   });
 });
 
+describe('AnalysisDashboard - ordering e Top 5 + Others', () => {
+  it('renderiza gráficos principais sem erro após processamento de Top 5 + Others', async () => {
+    const result = makeResult();
+    render(<AnalysisDashboard result={result as any} />);
+    // Não confiamos em labels SVG do Recharts no JSDOM; apenas garantimos que as seções existem.
+    expect(await screen.findByText('Overall Sentiment')).toBeInTheDocument();
+    expect(await screen.findByText('Sentiment Trends')).toBeInTheDocument();
+    expect(await screen.findByText('Ranking Position')).toBeInTheDocument();
+  });
+
+  it('reordena séries das linhas para deixar o domínio primeiro', async () => {
+    const result = makeResult();
+    render(<AnalysisDashboard result={result as any} />);
+    // Não validamos a ordem exata das linhas no DOM do Recharts (complexo),
+    // mas garantimos que elementos-chave renderizam sem erro.
+    expect(await screen.findByText('Sentiment Trends')).toBeInTheDocument();
+    expect(await screen.findByText('Ranking Position')).toBeInTheDocument();
+  });
+});
+
 

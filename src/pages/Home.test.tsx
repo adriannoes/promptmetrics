@@ -13,6 +13,9 @@ let subscribeStatus: 'SUBSCRIBED' | 'CLOSED' = 'SUBSCRIBED';
 const emitRealtimeInsert = (row: any) => {
   capturedRealtimeCb?.({ eventType: 'INSERT', new: row });
 };
+const emitRealtimeUpdate = (row: any) => {
+  capturedRealtimeCb?.({ eventType: 'UPDATE', new: row });
+};
 
 vi.mock('@/integrations/supabase/client', () => {
   const api: any = {
@@ -167,6 +170,45 @@ describe('Home', () => {
     // CTA habilitado após evento
     expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'false');
     expect(screen.getByTestId('org-dashboard')).toBeInTheDocument();
+  });
+
+  it('processa evento UPDATE (não apenas INSERT) para habilitar CTA', async () => {
+    (supabase.single as any).mockResolvedValue({ data: { id: 'org-1', name: 'Org Test', website_url: 'https://example.com' }, error: null });
+    (supabase.maybeSingle as any).mockResolvedValue({ data: null, error: null });
+
+    setup();
+
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+    expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'true');
+
+    emitRealtimeUpdate({ id: 'ar-9', domain: 'example.com', status: 'completed', analysis_data: {} });
+    await new Promise((r) => setTimeout(r, 350));
+    await waitFor(() => expect(screen.queryByTestId('analysis-progress')).not.toBeInTheDocument());
+    expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'false');
+  });
+
+  it('quando realtime inicia fechado, ainda renderiza CTA se fetch inicial retorna dados', async () => {
+    subscribeStatus = 'CLOSED';
+    (supabase.single as any).mockResolvedValue({ data: { id: 'org-1', name: 'Org Test', website_url: 'https://example.com' }, error: null });
+    (supabase.maybeSingle as any).mockResolvedValue({ data: { id: 'ar-1', domain: 'example.com' }, error: null });
+
+    setup();
+
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('analysis-progress')).not.toBeInTheDocument());
+    expect(screen.getByTestId('analysis-cta')).toHaveAttribute('aria-disabled', 'false');
+  });
+
+  it('não abre canal realtime quando VITE_DISABLE_REALTIME=true (localStorage override)', async () => {
+    try { localStorage.setItem('VITE_DISABLE_REALTIME', 'true'); } catch {}
+    (supabase.single as any).mockResolvedValue({ data: { id: 'org-1', name: 'Org Test', website_url: 'https://example.com' }, error: null });
+    (supabase.maybeSingle as any).mockResolvedValue({ data: null, error: null });
+
+    setup();
+
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument());
+    expect((supabase.channel as any).mock.calls.length).toBe(0);
+    try { localStorage.removeItem('VITE_DISABLE_REALTIME'); } catch {}
   });
 
   it.skip('faz polling a cada 30s e para quando encontrar dados', async () => {

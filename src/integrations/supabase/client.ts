@@ -2,8 +2,9 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://racfoelvuhdifnekjsro.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0";
+// Preferir variáveis de ambiente (Vite) com fallback para valores existentes
+const SUPABASE_URL = (import.meta as any)?.env?.VITE_SUPABASE_URL ?? "https://racfoelvuhdifnekjsro.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = (import.meta as any)?.env?.VITE_SUPABASE_ANON_KEY ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0";
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
@@ -24,3 +25,15 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   },
   // Remove custom global headers to avoid CORS preflight failures in Edge Functions
 });
+
+// Aviso em desenvolvimento se URL não estiver usando HTTPS
+if (typeof window !== 'undefined' && import.meta.env?.MODE !== 'production') {
+  try {
+    if (typeof SUPABASE_URL === 'string' && !SUPABASE_URL.startsWith('https://')) {
+      // eslint-disable-next-line no-console
+      console.warn('[security] SUPABASE_URL não usa HTTPS. Configure VITE_SUPABASE_URL com https://<ref>.supabase.co');
+    }
+  } catch {
+    // noop
+  }
+}
