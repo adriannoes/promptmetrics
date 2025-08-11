@@ -32,6 +32,9 @@ Escopo v1: replicar as abas do `/demo` (Dashboard, AI Analysis/Prompts, Competit
 6. Estados de erro/skeleton mínimos: enquanto carrega, exibir skeleton; em erro de busca, exibir alerta amigável.
 7. A `/analysis` não deve ser acessível sem autenticação; `/demo` continua público.
 8. Export (PDF/PNG/CSV) não faz parte do v1.
+9. O nome/série do domínio do cliente deve aparecer sempre primeiro nas legendas/listas/gráficos e com destaque visual (ex.: negrito ou badge diferenciada), independentemente da ordem dos dados no payload.
+10. Exibir “Last updated” no cabeçalho do dashboard. Fonte preferida: `analysis_data.generated_at` (ISO). Fallback: `analysis_results.updated_at` do banco.
+11. Competidores: exibir no máximo Top 5 competidores por visão/gráfico. Quando houver mais do que 5, agregar o restante em “Others”. Critério default: Top 5 por média do indicador da respectiva série no período (ex.: média da participação em `share_of_rank` ou média do `score` em `overall_sentiment`).
 
 #### 5) Não‑Objetivos (fora de escopo v1)
 - Export/compartilhamento do relatório.
@@ -57,6 +60,7 @@ Escopo v1: replicar as abas do `/demo` (Dashboard, AI Analysis/Prompts, Competit
   - Verificação de integridade/HMAC (recomendado): validar cabeçalho `x-signature` = HMAC-SHA256(body, `N8N_HMAC_SECRET`) para aceitar apenas chamadas do n8n. Em desenvolvimento, permitir bypass por flag de ambiente. Todas as chamadas devem usar HTTPS/TLS.
   - Persistência: manter `upsert` por domínio (UNIQUE(domain) já existente). Para v1, gravar `version/generated_at/request_id` dentro de `analysis_data`. Futuro (v1.2+): avaliar migração para colunas top‑level (`version`, `generated_at`, `request_id`) para facilitar indexação/consulta.
   - Observabilidade: manter resumo `data_summary` no response para troubleshooting.
+- Regras de ordenação/limite (front-first): ainda que o payload venha em ordem arbitrária, o front deve reordenar a série do domínio do cliente para o primeiro lugar e limitar competidores ao Top 5 (agregando demais em “Others”). Opcional (futuro): a Edge pode calcular e retornar um campo auxiliar `top_competitors` para padronizar a seleção.
 - `trigger-analysis` (chama n8n)
   - Enviar `domain` normalizado (já implementado) e incluir `request_id` (uuid) no payload para rastreio ponta-a-ponta.
   - Em produção, desabilitar simulação de sucesso. Tratar falhas do n8n com mensagens claras. Reforçar HTTPS/TLS.
@@ -136,6 +140,10 @@ Observações:
 - Cores: se não fornecidas, o front aplicará paleta padrão.
 - Versionamento: `version` começa em 1; mudanças futuras no schema incrementam este inteiro. Se ausente no payload, a Edge function preenche com `1`.
 - Rastreabilidade: `request_id` (uuid) e `generated_at` (ISO). Se ausentes, a Edge function preenche valores padrão.
+- Ordenação/Apresentação: o front deve:
+  - Renderizar o domínio do cliente primeiro e com destaque.
+  - Limitar competidores a Top 5 por gráfico/lista, agregando demais em “Others”.
+  - Exibir “Last updated” usando `analysis_data.generated_at` (preferência) ou `analysis_results.updated_at` (fallback do DB).
 
 Exemplo resumido do `analysis_data` (omitidos arrays longos):
 ```
@@ -194,6 +202,9 @@ Observação: enviar apenas metadados não sensíveis; usar HTTPS/TLS.
 - i18n: EN padrão, PT‑BR disponível via toggle.
 - Responsividade/A11y: landmarks, aria‑labels, navegação por teclado.
 - Testes unitários para mapeamento dos campos principais e renderização por aba.
+- Domínio do cliente aparece primeiro e destacado em todas as legendas/listas/gráficos.
+- Competidores limitados a Top 5 com “Others” quando houver excedente.
+- Cabeçalho exibe “Last updated” conforme regras definidas.
 
 #### 13) Plano de Marcos (fatiamento)
 - v1 (MVP):
