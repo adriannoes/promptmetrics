@@ -191,6 +191,10 @@ Compatibilidade com payload atual (n8n):
 
 Observação: enviar apenas metadados não sensíveis; usar HTTPS/TLS.
 
+Fases:
+- v1 (mínima): emissão client-side (ex.: console/event-emitter) para validação de eventos e nomes.
+- v1.1 (persistente): envio para destino durável (ex.: Supabase Edge logs/Analytics ou tabela dedicada `analysis_events`).
+
 #### 11) Versionamento do Payload (proposta)
 - `version` (inteiro) em `analysis_data` (preferido) e `generated_at` ISO string.
 - `request_id` (string) para correlacionar DomainSetup → trigger → receive-analysis.
@@ -205,6 +209,7 @@ Observação: enviar apenas metadados não sensíveis; usar HTTPS/TLS.
 - Domínio do cliente aparece primeiro e destacado em todas as legendas/listas/gráficos.
 - Competidores limitados a Top 5 com “Others” quando houver excedente.
 - Cabeçalho exibe “Last updated” conforme regras definidas.
+- Telemetria mínima em produção: emitir ao menos `analysis.view` e `analysis.tab_change`.
 
 #### 13) Plano de Marcos (fatiamento)
 - v1 (MVP):
