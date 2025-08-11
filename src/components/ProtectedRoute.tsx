@@ -25,7 +25,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     loading
   });
 
-  // Show loading state
+  // Show loading state (impede redirect para login durante boot)
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

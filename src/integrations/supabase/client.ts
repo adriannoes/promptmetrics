@@ -22,9 +22,5 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
       eventsPerSecond: 10,
     },
   },
-  global: {
-    headers: {
-      'x-my-custom-header': 'rank-me-llm',
-    },
-  },
+  // Remove custom global headers to avoid CORS preflight failures in Edge Functions
 });

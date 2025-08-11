@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,29 +18,49 @@ import { extractDomain } from '@/utils/domain';
 const Home = () => {
   const { profile } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const { data: organization, isLoading, error } = useQuery({
     queryKey: ['organization-by-id', profile?.organization_id],
     queryFn: async () => {
-      if (!profile?.organization_id) {
+      // Usa organization_id do perfil ou fallback salvo no localStorage após DomainSetup
+      const organizationId = profile?.organization_id || (() => {
+        try { return localStorage.getItem('lastOrganizationId') || undefined; } catch { return undefined; }
+      })();
+
+      if (!organizationId) {
         throw new Error('Organization id is required');
       }
 
       const { data, error } = await supabase
         .from('organizations')
         .select('*')
-        .eq('id', profile.organization_id)
+        .eq('id', organizationId)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!profile?.organization_id,
+    // Habilita também quando houver fallback
+    enabled: Boolean(profile?.organization_id || (() => { try { return !!localStorage.getItem('lastOrganizationId'); } catch { return false; } })()),
   });
 
-  // Realtime analysis results
-  const normalizedDomain = organization?.website_url ? extractDomain(organization.website_url) : undefined;
+  // Realtime analysis results (com fallback localStorage se website_url ainda não reidratou)
+  const lastSavedDomain = (() => {
+    try { return localStorage.getItem('lastSavedDomain') || undefined; } catch { return undefined; }
+  })();
+  const lastSavedWebsiteUrl = (() => {
+    try { return localStorage.getItem('lastSavedWebsiteUrl') || undefined; } catch { return undefined; }
+  })();
+  const effectiveWebsiteUrl = organization?.website_url || lastSavedWebsiteUrl;
+  const normalizedDomain = effectiveWebsiteUrl ? extractDomain(effectiveWebsiteUrl) : (lastSavedDomain ? extractDomain(lastSavedDomain) : undefined);
   const { data: analysisData } = useRealTimeAnalysis(normalizedDomain);
+  const isReady = Boolean(analysisData);
+
+  // Ao montar a Home, limpar a flag de setup em progresso
+  React.useEffect(() => {
+    try { localStorage.removeItem('domainSetupInProgress'); } catch {}
+  }, []);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -50,16 +71,52 @@ const Home = () => {
   }
 
   // Check if user belongs to this organization
-  if (profile?.organization_id !== organization.id) {
+  // Evita bloquear acesso enquanto o perfil reidrata. Se houver mismatch, confia no fallback carregado
+  if (profile?.organization_id && profile.organization_id !== organization.id) {
     return <UnauthorizedAccess message="You don't have access to this organization" />;
   }
 
-  // Show analysis in progress if no data available
-  const showAnalysisProgress = Boolean(organization?.website_url) && !analysisData;
+  // Show analysis in progress if temos algum domínio conhecido (org ou fallback) e ainda sem dados
+  const showAnalysisProgress = Boolean(effectiveWebsiteUrl || lastSavedDomain) && !analysisData;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <OrganizationHeader organization={organization} />
+
+      {/* CTA de status sempre visível */}
+      <div className="container mx-auto px-4 mt-4 mb-0">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            data-testid="analysis-cta"
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium ${isReady ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-200 text-slate-600 cursor-not-allowed'}`}
+            disabled={!isReady || !normalizedDomain}
+            aria-disabled={!isReady}
+            aria-busy={!isReady}
+            onClick={() => {
+              if (normalizedDomain) {
+                navigate(`/analysis?domain=${normalizedDomain}`);
+              }
+            }}
+          >
+            {!isReady ? (
+              <>
+                <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Preparing analysis…</span>
+              </>
+            ) : (
+              <>
+                <span>View my analysis</span>
+              </>
+            )}
+          </button>
+          {!isReady && (
+            <span role="status" aria-live="polite" className="text-sm text-slate-600">
+              Your first analysis will be ready in a few minutes
+            </span>
+          )}
+        </div>
+      </div>
 
       {showAnalysisProgress ? (
         <div

@@ -26,6 +26,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { toast } from 'sonner';
 import { extractDomain } from '@/utils/domain';
+import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
+import type { CompleteAnalysisResult } from '@/types/analysis';
 
 const AnalysisContent = () => {
   const { t } = useLanguage();
@@ -33,6 +35,8 @@ const AnalysisContent = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<CompleteAnalysisResult | null>(null);
+  const [resultLoading, setResultLoading] = useState(false);
   const location = useLocation();
   const mainRef = useRef<HTMLElement | null>(null);
 
@@ -60,12 +64,27 @@ const AnalysisContent = () => {
     const domainParam = params.get('domain');
     if (domainParam) {
       setCurrentDomain(extractDomain(domainParam));
-    } else {
-      // 5.1.2: Fallback para localStorage
-      const stored = localStorage.getItem('lastAnalyzedDomain');
-      if (stored) {
-        setCurrentDomain(extractDomain(stored));
-      }
+      try { localStorage.setItem('lastAnalyzedDomain', extractDomain(domainParam)); } catch {}
+      return;
+    }
+
+    // Fallbacks em cascata
+    const stored = localStorage.getItem('lastAnalyzedDomain');
+    if (stored) {
+      setCurrentDomain(extractDomain(stored));
+      return;
+    }
+
+    const lastSavedWebsiteUrl = localStorage.getItem('lastSavedWebsiteUrl');
+    const lastSavedDomain = localStorage.getItem('lastSavedDomain');
+    if (lastSavedWebsiteUrl) {
+      setCurrentDomain(extractDomain(lastSavedWebsiteUrl));
+      try { localStorage.setItem('lastAnalyzedDomain', extractDomain(lastSavedWebsiteUrl)); } catch {}
+      return;
+    }
+    if (lastSavedDomain) {
+      setCurrentDomain(extractDomain(lastSavedDomain));
+      try { localStorage.setItem('lastAnalyzedDomain', extractDomain(lastSavedDomain)); } catch {}
     }
   }, [location.search]);
 
@@ -74,12 +93,89 @@ const AnalysisContent = () => {
     mainRef.current?.focus();
   }, []);
 
+  // Buscar último resultado para o domínio atual quando disponível
+  useEffect(() => {
+    const loadLatestForDomain = async (domain: string) => {
+      try {
+        setResultLoading(true);
+        const normalized = extractDomain(domain);
+        const { data, error } = await supabase
+          .from('analysis_results')
+          .select('*')
+          .eq('domain', normalized)
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Analysis: erro ao buscar resultado', error);
+          setAnalysisResult(null);
+          return;
+        }
+        setAnalysisResult((data as any) || null);
+      } catch (err) {
+        console.error('Analysis: exceção ao buscar resultado', err);
+        setAnalysisResult(null);
+      } finally {
+        setResultLoading(false);
+      }
+    };
+
+    if (currentDomain) {
+      loadLatestForDomain(currentDomain);
+    } else {
+      setAnalysisResult(null);
+    }
+  }, [currentDomain]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SkipNav />
       <Header />
       <main ref={mainRef} id="main-content" tabIndex={-1} role="main" className="pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-testid="analysis-container">
+          {/* Header Summary (sempre que existir analysisResult) */}
+          {analysisResult && (
+            <div className="mb-8" data-testid="analysis-header-summary">
+              <Card>
+                <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <CardTitle className="text-2xl">
+                      <strong>{analysisResult.domain}</strong>
+                    </CardTitle>
+                    <CardDescription>
+                      {analysisResult.analysis_data?.summary || ''}
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge className={analysisResult.status === 'completed' ? 'bg-green-100 text-green-700' : analysisResult.status === 'processing' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}>
+                      {analysisResult.status}
+                    </Badge>
+                    <div className="text-sm text-muted-foreground" data-testid="analysis-last-updated">
+                      Last updated:{' '}
+                      {(() => {
+                        const iso = (analysisResult as any)?.analysis_data?.generated_at || analysisResult.updated_at;
+                        try { return new Date(iso).toLocaleString(); } catch { return String(iso); }
+                      })()}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {typeof (analysisResult as any)?.analysis_data?.score === 'number' && (
+                    <div className="flex items-center gap-4">
+                      <div className="text-3xl font-bold">{(analysisResult as any).analysis_data.score}<span className="text-lg text-muted-foreground">/100</span></div>
+                      <div className="w-full max-w-md bg-muted rounded-full h-2">
+                        <div
+                          className="bg-primary h-2 rounded-full"
+                          style={{ width: `${Math.min((analysisResult as any).analysis_data.score, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
           {/* Header Section */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
@@ -174,85 +270,91 @@ const AnalysisContent = () => {
             </Card>
           </div>
 
-          {/* Analysis Section */}
-          <div className="grid lg:grid-cols-2 gap-8" data-testid="analysis-grid">
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Search className="w-5 h-5" />
-                    {t('analysis.newAnalysis.title')}
-                  </CardTitle>
-                  <CardDescription>
-                    {t('analysis.newAnalysis.desc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <DomainAnalysisInput 
-                    onAnalyze={handleAnalyze}
-                    loading={loading}
-                    onError={handleAnalysisError}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Instructions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">{t('analysis.howItWorks.title')}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">1</Badge>
-                    <div>
-                      <p className="font-medium">{t('analysis.step1.title')}</p>
-                      <p className="text-sm text-muted-foreground">{t('analysis.step1.desc')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">2</Badge>
-                    <div>
-                      <p className="font-medium">{t('analysis.step2.title')}</p>
-                      <p className="text-sm text-muted-foreground">{t('analysis.step2.desc')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">3</Badge>
-                    <div>
-                      <p className="font-medium">{t('analysis.step3.title')}</p>
-                      <p className="text-sm text-muted-foreground">{t('analysis.step3.desc')}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Quando existir análise completa, mostrar o dashboard. Caso contrário, manter o layout com histórico/preview. */}
+          {analysisResult && analysisResult.status === 'completed' && analysisResult.analysis_data ? (
+            <div data-testid="analysis-dashboard">
+              <AnalysisDashboard result={analysisResult as any} />
             </div>
+          ) : (
+            <div className="grid lg:grid-cols-2 gap-8" data-testid="analysis-grid">
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Search className="w-5 h-5" />
+                      {t('analysis.newAnalysis.title')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('analysis.newAnalysis.desc')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <DomainAnalysisInput 
+                      onAnalyze={handleAnalyze}
+                      loading={loading}
+                      onError={handleAnalysisError}
+                    />
+                  </CardContent>
+                </Card>
 
-            <div>
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    {t('analysis.analysisHistory.title')}
-                  </CardTitle>
-                  <CardDescription>
-                    {t('analysis.analysisHistory.desc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="max-h-[600px] overflow-y-auto">
-                    {currentDomain ? (
-                      <AnalysisResults 
-                        domain={currentDomain}
-                        refreshTrigger={refreshTrigger}
-                      />
-                    ) : (
-                      <AnalysisHistory />
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                {/* Instructions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{t('analysis.howItWorks.title')}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">1</Badge>
+                      <div>
+                        <p className="font-medium">{t('analysis.step1.title')}</p>
+                        <p className="text-sm text-muted-foreground">{t('analysis.step1.desc')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">2</Badge>
+                      <div>
+                        <p className="font-medium">{t('analysis.step2.title')}</p>
+                        <p className="text-sm text-muted-foreground">{t('analysis.step2.desc')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">3</Badge>
+                      <div>
+                        <p className="font-medium">{t('analysis.step3.title')}</p>
+                        <p className="text-sm text-muted-foreground">{t('analysis.step3.desc')}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div>
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5" />
+                      {t('analysis.analysisHistory.title')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('analysis.analysisHistory.desc')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="max-h-[600px] overflow-y-auto">
+                      {currentDomain ? (
+                        <AnalysisResults 
+                          domain={currentDomain}
+                          refreshTrigger={refreshTrigger}
+                        />
+                      ) : (
+                        <AnalysisHistory />
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>

@@ -12,9 +12,5 @@ export const anonymousSupabase = createClient<Database>(SUPABASE_URL, SUPABASE_P
     autoRefreshToken: false,
     detectSessionInUrl: false,
   },
-  global: {
-    headers: {
-      'x-my-custom-header': 'rank-me-llm-anonymous',
-    },
-  },
+  // Remove custom global headers to avoid CORS issues
 });

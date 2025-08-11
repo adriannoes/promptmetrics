@@ -31,8 +31,8 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
     if (!profile.organization_id) {
       console.warn('Client user has no organization_id');
       return {
-        path: '/domain-setup',
-        reason: 'Client user without organization redirected to domain setup'
+        path: '/organization-setup',
+        reason: 'Client user without organization redirected to organization setup'
       };
     }
 

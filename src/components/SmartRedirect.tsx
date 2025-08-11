@@ -30,20 +30,42 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
 
     // For non-admin users, check if they have a domain set up
     const hasDomain = profile.organization_id && profile.organizations?.website_url;
+    const hasOrganization = !!profile.organization_id;
     const setupInProgress = (() => {
       try { return localStorage.getItem('domainSetupInProgress') === 'true'; } catch { return false; }
+    })();
+    const lastSavedDomain = (() => {
+      try { return localStorage.getItem('lastSavedDomain'); } catch { return null; }
+    })();
+    const lastSavedWebsiteUrl = (() => {
+      try { return localStorage.getItem('lastSavedWebsiteUrl'); } catch { return null; }
     })();
     const currentPath = location.pathname;
 
     // Allow access to certain pages regardless of domain status
-    const allowedPaths = ['/domain-setup', '/login', '/signup', '/', '/demo'];
-    if (allowedPaths.includes(currentPath)) {
-      // Always allow staying on domain-setup to avoid interrupting setup flows
+    const allowedPaths = ['/organization-setup', '/domain-setup', '/login', '/signup', '/', '/demo', '/analysis'];
+    const isAllowed = allowedPaths.some((p) => currentPath === p || currentPath.startsWith(p + '/'));
+    if (isAllowed) {
+      // Se estamos na domain-setup e há setup em progresso, force ir para /home
+      if (currentPath === '/domain-setup' && setupInProgress) {
+        console.log('SmartRedirect: Forcing redirect to /home during domain setup');
+        navigate('/home', { replace: true });
+        return;
+      }
+      // Sempre permitir permanência nas rotas permitidas
       return;
     }
 
     // For protected pages, check domain status
-    if (!hasDomain) {
+    if (!hasOrganization) {
+      console.log('SmartRedirect: User has no organization, redirecting to organization-setup');
+      navigate('/organization-setup', { replace: true });
+    } else if (!hasDomain) {
+      // Allow staying on /home if a domain setup is in progress to avoid ping-pong
+      if (currentPath === '/home' && (setupInProgress || lastSavedDomain || lastSavedWebsiteUrl)) {
+        console.log('SmartRedirect: Domain setup in progress, staying on /home');
+        return;
+      }
       console.log('SmartRedirect: User has no domain, redirecting to domain-setup');
       navigate('/domain-setup', { replace: true });
     } else {

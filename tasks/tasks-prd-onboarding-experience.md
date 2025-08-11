@@ -135,7 +135,7 @@ Documentação & Planos
   - `src/utils/toastMessages.ts` – Centralização de mensagens PT-BR (se aplicável).
   - `src/services/redirectService.ts` – Garantir compatibilidade do fluxo pós-login.
 
-- [ ] **5.0 Página Analysis (primeiro resultado)**
+- [x] **5.0 Página Analysis (primeiro resultado)**
   - Objetivo: exibir o primeiro resultado de análise para um domínio recebido da Home, com UX acessível e responsiva, usando dados de `analysis_results`.
   - Critérios (DoD):
     - Recebe domínio via query param `?domain=`; fallback para `localStorage.lastAnalyzedDomain`.
@@ -146,7 +146,7 @@ Documentação & Planos
     - Smoke test manual com payload real via `receive-analysis`.
 
   Subtasks:
-  - [ ] 5.1 Domínio de entrada (parsing e prioridades)
+  - [x] 5.1 Domínio de entrada (parsing e prioridades)
     - [x] 5.1.1 Ler `?domain=` dos query params (prioridade 1)
     - [x] 5.1.2 Fallback: `localStorage.lastAnalyzedDomain` (prioridade 2)
     - [x] 5.1.3 Normalizar domínio removendo protocolo/`www.`
@@ -159,20 +159,21 @@ Documentação & Planos
   - [ ] 5.4 Acessibilidade e Responsividade
     - [x] 5.4.1 `role`, `aria-live`, foco visível no conteúdo principal
     - [x] 5.4.2 Layout responsivo (classes utilitárias existentes)
-  - [ ] 5.5 Dados reais (validação)
-    - [ ] 5.5.1 Smoke test: enviar payload real à `receive-analysis` e verificar render
-    - [x] 5.5.2 Conferir preview mínimo: `summary`, `score`, `recommendations`
+  - [x] 5.5 Dados reais (validação)
+  - [x] 5.5.1 Validado com dados reais já presentes no Supabase para `pipefy.com` (sem necessidade de novo POST no momento)
+  - [x] 5.5.2 Conferir preview mínimo: `summary`, `score`, `recommendations`
   - [ ] 5.6 Testes (TDD)
     - [x] 5.6.1 `src/pages/Analysis.test.tsx`: domínio via query param e via localStorage
     - [x] 5.6.2 Skeleton e erro quando a consulta falha
     - [x] 5.6.3 Render do preview (summary/score/recommendations)
 
   Relevant Files (progresso 5.0)
-  - `src/pages/Analysis.tsx` – Recebe domínio (query/localStorage), normaliza e injeta em `AnalysisResults`.
-  - `src/pages/Analysis.test.tsx` – Testes de parsing, estados e render do preview (novo).
-  - `src/components/AnalysisResults.tsx` – Já lista e filtra por domínio; validar ordering e skeleton.
-  - `src/utils/domain.ts` – Utilitário `extractDomain` para normalização (novo).
-  - `docs/n8n-payload-structure.md` – Referência de payload real para smoke test.
+  - `src/pages/Analysis.tsx` – Recebe domínio (query/localStorage), normaliza e, quando houver `analysis_data` completo, renderiza dashboard de abas; caso contrário, injeta em `AnalysisResults` (preview).
+  - `src/components/analysis/AnalysisDashboard.tsx` – Novo componente que espelha o layout do `/demo`, consumindo `analysis_data` do Supabase com fallbacks para campos opcionais.
+  - `src/pages/Analysis.test.tsx` – Testes de parsing, estados e render do preview.
+  - `src/components/AnalysisResults.tsx` – Lista e filtra por domínio; ordering e skeleton validados.
+  - `src/utils/domain.ts` – Utilitário `extractDomain` para normalização.
+  - `docs/n8n-payload-structure.md` – Referência de payload real; campos avançados opcionais.
 
 ---
 
@@ -203,6 +204,10 @@ Documentação & Planos
       - [x] 6.2.2 Manter acessibilidade: `role`, `aria-live`, skeleton/loader quando apropriado; preservar fluxo existente de CTA e navegação.
       - [x] 6.2.3 Atualizar `src/pages/Home.test.tsx` para mockar o cliente realtime (conectar, emitir evento) e cobrir: sem dados → progresso; ao receber evento → CTA habilitado; desconexão → fallback polling.
       - [x] 6.2.4 Remover/neutralizar o `refetchInterval` antigo para não conflitar com realtime.
+      - [x] 6.2.5 UX: adicionar CTA persistente no topo da Home com estados
+        - [x] Loading: botão desabilitado com spinner + texto “Your first analysis will be ready in a few minutes”.
+        - [x] Ready: botão habilitado “View my analysis” que navega para `/analysis?domain=<domain>`.
+        - [x] Acessibilidade: `aria-disabled`, `aria-busy`, `role="status"` (mensagem de progresso).
 
     - [ ] 6.3 Configuração e segurança
       - [ ] 6.3.1 Verificar configuração do Realtime no cliente Supabase (`src/integrations/supabase/client.ts`) e parâmetros (`eventsPerSecond`).
@@ -214,9 +219,15 @@ Documentação & Planos
       - [ ] 6.4.2 Atualizar `Home.test.tsx` cobrindo estados de conexão/eventos.
       - [ ] 6.4.3 Planejar e2e leve: seed local ou POST em `receive-analysis` para validar atualização visual na Home.
 
-    - [ ] 6.5 Documentação e operacional
-      - [ ] 6.5.1 Documentar smoke test: inserção/upsert em `analysis_results` e verificação na Home.
-      - [ ] 6.5.2 Documentar rollback: como reativar polling-only (flag/env) sem alteração de código.
+  - [ ] 6.5 Organization Setup antes do Domain Setup
+    - [x] 6.5.1 Criar página `src/pages/OrganizationSetup.tsx` com formulário mínimo (name obrigatório; industry/size opcionais) e fluxo de submit invocando `create-organization`.
+    - [x] 6.5.2 Ajustar roteamento em `src/App.tsx` e `SmartRedirect` para priorizar `/organization-setup` quando não houver `organization_id`.
+    - [x] 6.5.3 Atualizar Edge Function `create-organization` para aceitar `name` opcional e `domain` opcional.
+    - [x] 6.5.4 Adicionar testes `src/pages/OrganizationSetup.test.tsx` (sucesso com redirect; erro mantém na página).
+
+    - [x] 6.5 Documentação e operacional
+      - [x] 6.5.1 Documentar smoke test: inserção/upsert em `analysis_results` e verificação na Home.
+      - [x] 6.5.2 Documentar rollback: como reativar polling-only (flag/env) sem alteração de código.
 
   - Relevant Files (6.0):
     - `src/hooks/useRealTimeAnalysis.ts` – Hook de realtime + fallback polling.
@@ -235,6 +246,24 @@ Documentação & Planos
 
   - Rollback:
     - Ativar `VITE_DISABLE_REALTIME=true` e reabilitar polling-only na Home até estabilização.
+
+- [x] Ajustes de fluxo (2025-08-10) – DomainSetup/Home/Analysis/SmartRedirect
+  - Motivo: durante smoke test, após enviar domínio, redirect para `/home` às vezes retornava para `/domain-setup`; ao clicar no CTA “View my analysis” a navegação ia para `/domain-setup` por `website_url` ainda não reidratado no `profile`.
+  - Alterações:
+    - `src/pages/DomainSetup.tsx`:
+      - Persistir `lastOrganizationId`, `lastSavedDomain`, `lastSavedWebsiteUrl` em `localStorage`.
+      - Não bloquear redirect se `trigger-analysis` falhar (toast + segue para `/home`).
+      - `refreshSession()` não-bloqueante após `navigate('/home')`.
+    - `src/components/SmartRedirect.tsx`:
+      - Adiciona `'/analysis'` em `allowedPaths`.
+      - Mantém `/home` quando `domainSetupInProgress` ou `lastSavedDomain`/`lastSavedWebsiteUrl` existirem.
+    - `src/pages/Home.tsx`:
+      - Fallback para `lastSavedWebsiteUrl`/`lastSavedDomain` ao calcular `normalizedDomain` e exibir estado “Preparing analysis…”.
+    - `src/pages/Analysis.tsx`:
+      - Fallback em cascata para domínio: `?domain=` > `lastAnalyzedDomain` > `lastSavedWebsiteUrl` > `lastSavedDomain` (com `extractDomain`).
+  - Testes/validação:
+    - Unit `npm run test:unit` verde; realtime/polling coberto em `useRealTimeAnalysis.test.tsx` e estados de Home em `Home.test.tsx`.
+    - Smoke manual: `/domain-setup` → `/home` (preparing) → POST `receive-analysis` → CTA habilita → `/analysis?domain=<domínio>` renderiza preview.
 
 - [ ] **7.0 Hardening de Edge Functions**
   - [ ] 7.1 Implementar idempotência em `trigger-analysis` (tabela `analysis_requests`).

@@ -8,7 +8,8 @@ export const useSupabaseAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(false);
+  // Start as loading to evitar redirects precoces antes de reidratar a sessão
+  const [loading, setLoading] = useState(true);
 
   // Function to fetch user profile with organization
   const fetchUserProfile = async (userId: string) => {
@@ -52,6 +53,7 @@ export const useSupabaseAuth = () => {
 
   useEffect(() => {
     console.log('useSupabaseAuth: Initializing auth with profile...');
+    setLoading(true);
     
     // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
