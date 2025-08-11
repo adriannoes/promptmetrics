@@ -29,7 +29,7 @@ const fallbackRanking = [
   { month: 'Jun', You: 2.1, Competitor1: 1.8, Competitor2: 3.0 },
 ];
 
-const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string }> = ({ domain, score, summary }) => {
+const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string; lastUpdated?: string }> = ({ domain, score, summary, lastUpdated }) => {
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -37,13 +37,18 @@ const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string 
           <div>
             <CardTitle className="text-2xl flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-blue-600" />
-              {domain}
+              <strong>{domain}</strong>
             </CardTitle>
             <CardDescription className="mt-2 max-w-3xl">{summary}</CardDescription>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold text-blue-700 mb-1">{score}<span className="text-lg text-blue-600">/100</span></div>
             <Badge className="bg-blue-100 text-blue-700">Overall Score</Badge>
+            {lastUpdated && (
+              <div className="text-xs text-muted-foreground mt-1" data-testid="dashboard-last-updated">
+                Last updated: {(() => { try { return new Date(lastUpdated).toLocaleString(); } catch { return lastUpdated; } })()}
+              </div>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -53,9 +58,67 @@ const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string 
 
 export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) => {
   const { domain, analysis_data } = result;
+  const [activeTab, setActiveTab] = React.useState('dashboard');
 
-  const sentimentTrends = analysis_data?.sentiment_trends?.length ? analysis_data.sentiment_trends : fallbackTrends;
-  const rankingData = analysis_data?.ranking_data?.length ? analysis_data.ranking_data : fallbackRanking;
+  // Telemetria mínima
+  React.useEffect(() => {
+    // page_view
+    console.log('telemetry.analysis.view', {
+      domain,
+      has_data: !!analysis_data,
+      status: (result as any).status,
+      version: (analysis_data as any)?.version,
+    });
+  }, [domain]);
+
+  const handleTabChange = (val: string) => {
+    setActiveTab(val);
+    console.log('telemetry.analysis.tab_change', { tab: val, domain });
+  };
+
+  // Utilidades de série: ordenar colocando o domínio do cliente primeiro
+  const orderSeriesKeys = (keys: string[]) => {
+    const lower = domain.toLowerCase();
+    const findExact = keys.find(k => k.toLowerCase() === lower);
+    const findIncludes = keys.find(k => k.toLowerCase().includes(lower));
+    const mainKey = findExact || findIncludes || keys[0];
+    const others = keys.filter(k => k !== mainKey);
+    return [mainKey, ...others];
+  };
+
+  // Calcular Top 5 competidores (excluindo a série do cliente) e agregar em Others
+  const trimToTop5WithOthers = (rows: Array<any>) => {
+    if (!rows?.length) return rows;
+    const keys = Object.keys(rows[0]).filter(k => k !== 'month');
+    if (!keys.length) return rows;
+    const orderedKeys = orderSeriesKeys(keys);
+    const mainKey = orderedKeys[0];
+    const competitorKeys = orderedKeys.slice(1);
+    // média por série
+    const averages = competitorKeys.map(k => {
+      const avg = rows.reduce((acc, r) => acc + (Number(r[k]) || 0), 0) / rows.length;
+      return { key: k, avg };
+    });
+    averages.sort((a, b) => b.avg - a.avg);
+    const topKeys = averages.slice(0, 5).map(a => a.key);
+    const dropKeys = averages.slice(5).map(a => a.key);
+    if (dropKeys.length === 0) return rows; // nada a agregar
+    // construir nova matriz com Others
+    const resultRows = rows.map(r => {
+      const othersSum = dropKeys.reduce((acc, k) => acc + (Number(r[k]) || 0), 0);
+      const base: any = { month: r.month };
+      base[mainKey] = r[mainKey];
+      topKeys.forEach(k => { base[k] = r[k]; });
+      base['Others'] = othersSum;
+      return base;
+    });
+    return resultRows;
+  };
+
+  const rawSentiment = analysis_data?.sentiment_trends?.length ? analysis_data.sentiment_trends : fallbackTrends;
+  const rawRanking = analysis_data?.ranking_data?.length ? analysis_data.ranking_data : fallbackRanking;
+  const sentimentTrends = trimToTop5WithOthers(rawSentiment);
+  const rankingData = trimToTop5WithOthers(rawRanking);
   const overallSentiment = analysis_data?.overall_sentiment?.length
     ? analysis_data.overall_sentiment
     : [
@@ -64,13 +127,35 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
         { name: 'Competitor2', score: 64, color: '#8B5CF6' },
       ];
 
+  // Reordenar overall_sentiment para colocar domínio primeiro e limitar Top 5 + Others (média)
+  const orderedOverall = React.useMemo(() => {
+    const items = [...overallSentiment];
+    // separar domínio
+    const domainIndex = items.findIndex(i => i.name.toLowerCase().includes(domain.toLowerCase()));
+    const domainItem = domainIndex >= 0 ? items.splice(domainIndex, 1)[0] : { name: domain, score: analysis_data?.score ?? 75, color: '#3B82F6' };
+    // ordenar competidores por score desc
+    items.sort((a: any, b: any) => (Number(b.score) || 0) - (Number(a.score) || 0));
+    const top = items.slice(0, 5);
+    const rest = items.slice(5);
+    if (rest.length) {
+      const avg = Math.round(rest.reduce((acc: number, it: any) => acc + (Number(it.score) || 0), 0) / rest.length);
+      top.push({ name: 'Others', score: avg, color: '#6B7280' });
+    }
+    return [domainItem, ...top];
+  }, [overallSentiment, domain, analysis_data?.score]);
+
   const recommendations = analysis_data?.recommendations ?? [];
 
   return (
     <div>
-      <AnalysisHeader domain={domain} score={analysis_data?.score ?? 0} summary={analysis_data?.summary ?? ''} />
+      <AnalysisHeader 
+        domain={domain} 
+        score={analysis_data?.score ?? 0} 
+        summary={analysis_data?.summary ?? ''}
+        lastUpdated={(analysis_data as any)?.generated_at || (result as any)?.updated_at}
+      />
 
-      <Tabs defaultValue="dashboard" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-6">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="prompts">AI Analysis</TabsTrigger>
@@ -97,11 +182,13 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                     <Tooltip />
                     <Legend />
                     {/* Desenha uma linha para cada chave além de month dinamicamente */}
-                    {Object.keys(sentimentTrends[0] || {})
-                      .filter((k) => k !== 'month')
-                      .map((seriesKey, idx) => (
+                    {(() => {
+                      const keys = Object.keys(sentimentTrends[0] || {}).filter(k => k !== 'month');
+                      const ordered = orderSeriesKeys(keys);
+                      return ordered.map((seriesKey, idx) => (
                         <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
-                      ))}
+                      ));
+                    })()}
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -124,11 +211,13 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                     <YAxis domain={[0, 6]} />
                     <Tooltip />
                     <Legend />
-                    {Object.keys(rankingData[0] || {})
-                      .filter((k) => k !== 'month')
-                      .map((seriesKey, idx) => (
+                    {(() => {
+                      const keys = Object.keys(rankingData[0] || {}).filter(k => k !== 'month');
+                      const ordered = orderSeriesKeys(keys);
+                      return ordered.map((seriesKey, idx) => (
                         <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
-                      ))}
+                      ));
+                    })()}
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -144,7 +233,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={320}>
-                  <BarChart data={overallSentiment as any}>
+                  <BarChart data={orderedOverall as any}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis domain={[0, 100]} />
