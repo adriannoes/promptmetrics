@@ -162,10 +162,11 @@ Documentação & Planos
   - [x] 5.5 Dados reais (validação)
   - [x] 5.5.1 Validado com dados reais já presentes no Supabase para `pipefy.com` (sem necessidade de novo POST no momento)
   - [x] 5.5.2 Conferir preview mínimo: `summary`, `score`, `recommendations`
-  - [ ] 5.6 Testes (TDD)
+    - [ ] 5.6 Testes (TDD)
     - [x] 5.6.1 `src/pages/Analysis.test.tsx`: domínio via query param e via localStorage
     - [x] 5.6.2 Skeleton e erro quando a consulta falha
     - [x] 5.6.3 Render do preview (summary/score/recommendations)
+    - [x] 5.6.4 `src/components/analysis/AnalysisDashboard.test.tsx`: header com domínio em destaque e "Last updated"
 
   Relevant Files (progresso 5.0)
   - `src/pages/Analysis.tsx` – Recebe domínio (query/localStorage), normaliza e, quando houver `analysis_data` completo, renderiza dashboard de abas; caso contrário, injeta em `AnalysisResults` (preview).
