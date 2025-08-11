@@ -134,6 +134,48 @@ const AnalysisContent = () => {
       <Header />
       <main ref={mainRef} id="main-content" tabIndex={-1} role="main" className="pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-testid="analysis-container">
+          {/* Header Summary (sempre que existir analysisResult) */}
+          {analysisResult && (
+            <div className="mb-8" data-testid="analysis-header-summary">
+              <Card>
+                <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <CardTitle className="text-2xl">
+                      <strong>{analysisResult.domain}</strong>
+                    </CardTitle>
+                    <CardDescription>
+                      {analysisResult.analysis_data?.summary || ''}
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge className={analysisResult.status === 'completed' ? 'bg-green-100 text-green-700' : analysisResult.status === 'processing' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}>
+                      {analysisResult.status}
+                    </Badge>
+                    <div className="text-sm text-muted-foreground" data-testid="analysis-last-updated">
+                      Last updated:{' '}
+                      {(() => {
+                        const iso = (analysisResult as any)?.analysis_data?.generated_at || analysisResult.updated_at;
+                        try { return new Date(iso).toLocaleString(); } catch { return String(iso); }
+                      })()}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {typeof (analysisResult as any)?.analysis_data?.score === 'number' && (
+                    <div className="flex items-center gap-4">
+                      <div className="text-3xl font-bold">{(analysisResult as any).analysis_data.score}<span className="text-lg text-muted-foreground">/100</span></div>
+                      <div className="w-full max-w-md bg-muted rounded-full h-2">
+                        <div
+                          className="bg-primary h-2 rounded-full"
+                          style={{ width: `${Math.min((analysisResult as any).analysis_data.score, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
           {/* Header Section */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
