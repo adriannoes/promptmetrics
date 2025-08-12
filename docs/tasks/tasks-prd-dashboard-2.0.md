@@ -17,10 +17,48 @@
 ## Tasks
 
 - [ ] 1.0 Roteamento e Carregamento de Dados da página `/analysis` (auth guard, `?domain=` com fallbacks, snapshot inicial)
+  - [ ] 1.1 Fazer parse de `?domain=` e normalizar com `extractDomain` (remover protocolo/`www.`/trailing `/`).
+  - [ ] 1.2 Fallback em cascata quando `?domain=` ausente: `localStorage.lastAnalyzedDomain` → `lastSavedWebsiteUrl` → `lastSavedDomain`.
+  - [ ] 1.3 Proteger rota com `ProtectedRoute` (permitir demo quando aplicável) e exibir skeleton inicial.
+  - [ ] 1.4 Buscar o último registro em `analysis_results` por domínio (order `updated_at desc`, fallback `created_at`).
+  - [ ] 1.5 Persistir `lastAnalyzedDomain` no `localStorage` ao carregar dados válidos.
+  - [ ] 1.6 Estados: skeleton, erro (`role="alert"`), vazio (mensagem amigável e instrução para iniciar análise).
+  - [ ] 1.7 Testes em `src/pages/Analysis.test.tsx`: parsing, normalização, cascata de fallbacks, ordering e estados (skeleton/erro/vazio).
+
 - [ ] 2.0 UI e Componentização do Dashboard 2.0 replicando `/demo` (abas: Dashboard, AI Analysis, Competitors, Strategic Insights)
+  - [ ] 2.1 Criar/ajustar `src/components/analysis/AnalysisDashboard.tsx` com tabs e layout responsivo.
+  - [ ] 2.2 Mapear `analysis_data` real para cada aba, reusando o que for possível dos componentes de `src/components/demo/*` como referência.
+  - [ ] 2.3 Implementar componentes de apresentação pequenos (cards/tabelas/gráficos com Recharts) com fallbacks quando campos estiverem ausentes.
+  - [ ] 2.4 Exibir cabeçalho com domínio e "Last updated" (formatação relativa e absoluta; timezone seguro).
+  - [ ] 2.5 Empty states por aba com mensagens claras e acessíveis.
+  - [ ] 2.6 Testes em `src/components/analysis/AnalysisDashboard.test.tsx` cobrindo render mínimo por aba e mapeamentos essenciais.
+
 - [ ] 3.0 Realtime Supabase para `analysis_results` (assinatura por domínio, atualização reativa com fallback para snapshot)
+  - [ ] 3.1 Integrar `useRealTimeAnalysis(domain)` na página `/analysis` para refetch quando houver INSERT/UPDATE do domínio.
+  - [ ] 3.2 Debounce (≥300ms) e throttling de fetch (≥2s) para evitar flood de re-render.
+  - [ ] 3.3 Fallback automático para snapshot quando `isConnected === false`; retomar realtime ao reconectar.
+  - [ ] 3.4 Flag `VITE_DISABLE_REALTIME` para forçar polling-only em diagnóstico (documentar no `.env.example`).
+  - [ ] 3.5 Testes: ampliar `useRealTimeAnalysis.test.tsx` e criar integração leve na `/analysis` simulando evento.
+
 - [ ] 4.0 UX: regras de apresentação (cliente primeiro, Top 5 + “Others”, “Last updated”), i18n (EN/PT‑BR) e A11y (skeleton/erros)
+  - [ ] 4.1 Aplicar regra "cliente primeiro" nas listas e gráficos (quando houver cliente-alvo).
+  - [ ] 4.2 Consolidar Top 5 e agrupar restantes em "Others" com contagem/soma adequada.
+  - [ ] 4.3 I18n: adicionar chaves no `LanguageContext` para rótulos, abas, empty states e mensagens de erro (EN/PT‑BR).
+  - [ ] 4.4 Acessibilidade: foco visível nos tabs; `aria-selected`, `role=tablist/tab/panel`; mensagens com `aria-live` quando apropriado.
+  - [ ] 4.5 Documentar padrões de formatação de datas e números; garantir consistência cross-locale.
+  - [ ] 4.6 Testes de acessibilidade e i18n básicos (chaves presentes e renderizadas corretamente).
+
 - [ ] 5.0 Testes (TDD) cobrindo mapeamentos por aba e integração da `/analysis`; Telemetria mínima (events `analysis.*`)
+  - [ ] 5.1 Escrever testes antes/ao lado dos componentes (unit e integração leve) e manter snapshots controlados.
+  - [ ] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros.
+  - [ ] 5.3 Teste de integração: navegar para `/analysis?domain=...` e validar render do header + "Last updated".
+  - [ ] 5.4 Telemetria: instrumentar eventos `analysis.view_opened`, `analysis.tab_changed`, `analysis.data_loaded` (no-op seguro se não houver backend de analytics).
+  - [ ] 5.5 Atualizar `README.md`/`docs/DOCS.md` com como rodar os testes: `npm test` e filtros por arquivo.
+
 - [ ] 6.0 Ajustes mínimos nas Edge Functions para metadados/versionamento de payload e orientação de segurança (HTTPS/TLS)
+  - [ ] 6.1 `receive-analysis`: garantir `updated_at` coerente, `payload_version`, e normalização de campos opcionais.
+  - [ ] 6.2 Documentar versão do payload em `docs/payload/n8n-payload-structure.md` e exemplo atualizado em `docs/payload/n8n-payload-example`.
+  - [ ] 6.3 Recomendar HTTPS/TLS nas integrações e uso de segredos via variáveis de ambiente; atualizar `.env.example` se necessário.
+  - [ ] 6.4 Smoke test com `curl` autenticado (Bearer `$SUPABASE_ANON_KEY`) validando upsert por domínio e refresh em tempo real.
 
 
