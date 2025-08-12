@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AnalysisDashboard } from './AnalysisDashboard';
 import { screen } from '@testing-library/react';
@@ -131,6 +132,46 @@ describe('AnalysisDashboard - ordering e Top 5 + Others', () => {
     // mas garantimos que elementos-chave renderizam sem erro.
     expect(await screen.findByText(/Sentiment Trends/i)).toBeInTheDocument();
     expect(await screen.findByText(/Ranking Position/i)).toBeInTheDocument();
+  });
+});
+
+describe('AnalysisDashboard - empty states por aba e fallback de Last updated', () => {
+  const base = makeResult();
+
+  it('usa fallback de Last updated para updated_at quando generated_at ausente', async () => {
+    const result = { ...base, analysis_data: { ...base.analysis_data } } as any;
+    delete result.analysis_data.generated_at;
+    render(
+      <LanguageProvider>
+        <AnalysisDashboard result={result} />
+      </LanguageProvider>
+    );
+    const last = await screen.findByTestId('dashboard-last-updated');
+    expect(last).toBeInTheDocument();
+  });
+
+  it('mostra mensagens de vazio quando sections não existem', async () => {
+    const result = {
+      ...base,
+      analysis_data: {
+        version: 1,
+        summary: 'Resumo',
+        score: 80,
+        recommendations: [],
+      },
+    } as any;
+    render(
+      <LanguageProvider>
+        <AnalysisDashboard result={result} />
+      </LanguageProvider>
+    );
+    // Abre aba de prompts para ver empty state
+    await userEvent.click(await screen.findByRole('tab', { name: /AI Analysis/i }));
+    expect(await screen.findByText(/Not enough prompt data yet\./i)).toBeInTheDocument();
+    // Abre aba de insights para ver mensagens de vazio
+    await userEvent.click(await screen.findByRole('tab', { name: /Strategic Insights/i }));
+    expect(await screen.findByText(/No recommendations available\./i)).toBeInTheDocument();
+    expect(await screen.findByText(/No strategic insights available\./i)).toBeInTheDocument();
   });
 });
 

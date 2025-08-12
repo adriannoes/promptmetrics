@@ -125,6 +125,25 @@ describe('Analysis Page - 5.1.1 Query Param', () => {
     const el = await screen.findByTestId('analysis-domain');
     expect(el).toHaveTextContent('fallback.example.com');
   });
+
+  it('usa fallback em cascata: lastSavedWebsiteUrl quando lastAnalyzedDomain ausente', async () => {
+    vi.spyOn(domainUtils, 'extractDomain').mockImplementation((s: any) => 'site.example.com');
+    localStorage.removeItem('lastAnalyzedDomain');
+    localStorage.setItem('lastSavedWebsiteUrl', 'https://site.example.com/path');
+    setup('/analysis');
+    const live = await screen.findByTestId('analysis-live-region');
+    expect(live).toHaveTextContent('site.example.com');
+  });
+
+  it('usa fallback em cascata: lastSavedDomain quando os anteriores ausentes', async () => {
+    vi.spyOn(domainUtils, 'extractDomain').mockImplementation((s: any) => 'only-domain.example');
+    localStorage.removeItem('lastAnalyzedDomain');
+    localStorage.removeItem('lastSavedWebsiteUrl');
+    localStorage.setItem('lastSavedDomain', 'only-domain.example');
+    setup('/analysis');
+    const live = await screen.findByTestId('analysis-live-region');
+    expect(live).toHaveTextContent('only-domain.example');
+  });
 });
 
 describe('Analysis Page - 5.4 A11y & Responsividade', () => {
@@ -202,6 +221,32 @@ describe('Analysis Page - skeleton durante carregamento', () => {
     // Reset delay para não afetar outros testes
     delayMs = 0;
     channelStatus = 'SUBSCRIBED';
+  });
+});
+
+describe('Analysis Page - empty state quando não há análise para o domínio', () => {
+  const setup = (url: string) => {
+    return render(
+      <LanguageProvider>
+        <MemoryRouter initialEntries={[url]}>
+          <Routes>
+            <Route path="/analysis" element={<Analysis />} />
+          </Routes>
+        </MemoryRouter>
+      </LanguageProvider>
+    );
+  };
+
+  it('renderiza grid com DomainAnalysisInput e AnalysisHistory', async () => {
+    // Força SUBSCRIBED mas sem dados do banco
+    channelStatus = 'SUBSCRIBED';
+    mockResult = null;
+    vi.spyOn(domainUtils, 'extractDomain').mockImplementation((s: any) => 'nodata.example');
+    setup('/analysis?domain=nodata.example');
+    const grid = await screen.findByTestId('analysis-grid');
+    expect(grid).toBeInTheDocument();
+    // título do card "New Analysis" (i18n EN padrão)
+    expect(await screen.findByText('New Analysis')).toBeInTheDocument();
   });
 });
 

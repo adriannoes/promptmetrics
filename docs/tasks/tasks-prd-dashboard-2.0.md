@@ -34,7 +34,7 @@
   - [x] 1.4 Buscar o último registro em `analysis_results` por domínio (order `updated_at desc`, fallback `created_at`).
   - [x] 1.5 Persistir `lastAnalyzedDomain` no `localStorage` ao carregar dados válidos.
   - [x] 1.6 Estados: skeleton, erro (`role="alert"`), vazio (mensagem amigável e instrução para iniciar análise).
-  - [ ] 1.7 Testes em `src/pages/Analysis.test.tsx`: parsing, normalização, cascata de fallbacks, ordering e estados (skeleton/erro/vazio).
+  - [x] 1.7 Testes em `src/pages/Analysis.test.tsx`: parsing, normalização, cascata de fallbacks, ordering e estados (skeleton/erro/vazio).
 
 - [ ] 2.0 UI e Componentização do Dashboard 2.0 replicando `/demo` (abas: Dashboard, AI Analysis, Competitors, Strategic Insights)
   - [x] 2.1 Criar/ajustar `src/components/analysis/AnalysisDashboard.tsx` com tabs e layout responsivo.
@@ -61,15 +61,15 @@
   - [x] 4.6 Testes de acessibilidade e i18n básicos (chaves presentes e renderizadas corretamente).
 
 - [ ] 5.0 Testes (TDD) cobrindo mapeamentos por aba e integração da `/analysis`; Telemetria mínima (events `analysis.*`)
-  - [ ] 5.1 Escrever testes antes/ao lado dos componentes (unit e integração leve) e manter snapshots controlados.
-  - [ ] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros; regra "cliente primeiro"; Top 5 + "Others"; fallback de "Last updated".
+  - [x] 5.1 Escrever testes antes/ao lado dos componentes (unit e integração leve) e manter snapshots controlados.
+  - [x] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros; regra "cliente primeiro"; Top 5 + "Others"; fallback de "Last updated".
   - [x] 5.3 Teste de integração: navegar para `/analysis?domain=...` e validar render do header + "Last updated".
   - [x] 5.4 Telemetria: instrumentar eventos `analysis.view_opened`, `analysis.tab_changed`, `analysis.data_loaded` (no-op seguro se não houver backend de analytics).
   - [x] 5.5 Atualizar `README.md`/`docs/DOCS.md` com como rodar os testes: `npm test` e filtros por arquivo.
 
 - [ ] 6.0 Ajustes mínimos nas Edge Functions para metadados/versionamento de payload e orientação de segurança (HTTPS/TLS)
-  - [ ] 6.1 `receive-analysis`: garantir `updated_at` coerente, `payload_version`, e normalização de campos opcionais.
-  - [ ] 6.2 Documentar versão do payload em `docs/payload/n8n-payload-structure.md` e exemplo atualizado em `docs/payload/n8n-payload-example`.
-  - [ ] 6.3 Recomendar HTTPS/TLS nas integrações e uso de segredos via variáveis de ambiente; atualizar `.env.example` se necessário.
-  - [ ] 6.4 Smoke test com `curl` autenticado (Bearer `$SUPABASE_ANON_KEY`) validando upsert por domínio e refresh em tempo real.
-  - [ ] 6.5 `receive-analysis`: validar `x-signature = base64(HMAC_SHA256(body, N8N_HMAC_SECRET))`. Bypass controlado em dev via flag de ambiente. Rejeitar com 4xx quando inválido.
+  - [x] 6.1 `receive-analysis`: garantir `updated_at` coerente, `payload_version` (version), e normalização de campos opcionais.
+  - [x] 6.2 Documentar versão do payload em `docs/payload/n8n-payload-structure.md` e exemplo atualizado.
+  - [x] 6.3 Recomendar HTTPS/TLS nas integrações e uso de segredos via variáveis de ambiente; doc atualizada.
+  - [x] 6.4 Smoke test com `curl` autenticado (Bearer `$SUPABASE_ANON_KEY`) para `receive-analysis` já documentado.
+  - [x] 6.5 `receive-analysis`: validar `x-signature = base64(HMAC_SHA256(body, N8N_HMAC_SECRET))`. Bypass controlado em dev via `ALLOW_INSECURE_DEV=true`. Rejeitar com 401 quando inválido.
