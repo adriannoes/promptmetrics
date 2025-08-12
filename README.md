@@ -70,12 +70,22 @@ Variáveis de ambiente:
 - Análise: `trigger-analysis` chama n8n → resultados inseridos por `receive-analysis` → `Home` exibe progresso/resultado
 
 ### Testes
-Scripts úteis:
+Comandos principais:
 ```bash
-npm run test:unit      # Vitest + RTL
-npm run test:e2e       # Playwright
+# Executa toda a suíte unitária (Vitest + RTL)
+npm test
+
+# Filtra por arquivo específico (ex.: página Analysis)
+npm run test -- src/pages/Analysis.test.tsx
+
+# E2E (Playwright)
+npm run test:e2e
+
+# Lighthouse (mobile)
 npm run lighthouse:mobile && npm run lighthouse:check
 ```
+Notas:
+- Para diagnóstico de realtime nos testes, use `localStorage.setItem('VITE_DISABLE_REALTIME','true')` quando necessário.
 
 ### Segurança e variáveis de ambiente
 - Nunca exponha chaves sensíveis; use `.env.local` e mantenha um `.env.example` de referência.

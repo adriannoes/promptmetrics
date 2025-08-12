@@ -65,7 +65,7 @@
   - [ ] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros; regra "cliente primeiro"; Top 5 + "Others"; fallback de "Last updated".
   - [x] 5.3 Teste de integração: navegar para `/analysis?domain=...` e validar render do header + "Last updated".
   - [x] 5.4 Telemetria: instrumentar eventos `analysis.view_opened`, `analysis.tab_changed`, `analysis.data_loaded` (no-op seguro se não houver backend de analytics).
-  - [ ] 5.5 Atualizar `README.md`/`docs/DOCS.md` com como rodar os testes: `npm test` e filtros por arquivo.
+  - [x] 5.5 Atualizar `README.md`/`docs/DOCS.md` com como rodar os testes: `npm test` e filtros por arquivo.
 
 - [ ] 6.0 Ajustes mínimos nas Edge Functions para metadados/versionamento de payload e orientação de segurança (HTTPS/TLS)
   - [ ] 6.1 `receive-analysis`: garantir `updated_at` coerente, `payload_version`, e normalização de campos opcionais.

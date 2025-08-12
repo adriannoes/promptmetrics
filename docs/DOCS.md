@@ -409,13 +409,21 @@ Deployed via Lovable platform:
 
 ### Testing
 
-Scripts úteis (package.json):
+Comandos principais:
 ```bash
-npm run test:unit           # Vitest + React Testing Library
-npm run test:e2e            # Playwright (sobe dev server em 8080)
+# Unit (Vitest + RTL)
+npm test
+
+# Filtrar por arquivo (ex.: Analysis Dashboard)
+npm run test -- src/components/analysis/AnalysisDashboard.test.tsx
+
+# E2E (Playwright – dev server em 8080)
+npm run test:e2e
 npm run test:e2e:update     # Atualiza snapshots visuais
-npm run lighthouse:mobile   # Gera relatório Lighthouse (mobile)
-npm run lighthouse:check    # Valida Performance ≥ 90, LCP ≤ 2.5s, CLS ≤ 0.1
+
+# Lighthouse (Mobile)
+npm run lighthouse:mobile
+npm run lighthouse:check    # Performance ≥ 90, LCP ≤ 2.5s, CLS ≤ 0.1
 ```
 
 Playwright está configurado com:
@@ -451,7 +459,7 @@ Objetivo: validar fluxo do onboarding sem dependência de UI extensa.
    - Opção A (seed local): executar `supabase/seed/analysis_results_sample.sql` no banco local.
    - Opção B (Edge Function): enviar POST para `receive-analysis` com HTTPS/TLS.
 
-Exemplo de POST seguro (use variáveis e HTTPS):
+Exemplo de POST seguro (use variáveis e HTTPS/TLS; nunca exponha segredos em cliente):
 
 ```bash
 curl -i -X POST \
