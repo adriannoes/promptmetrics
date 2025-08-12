@@ -442,7 +442,7 @@ Visit `/changelog` for detailed release history and feature updates.
 ### Integração Completa com N8N
 - O fluxo de análise de domínio agora dispara um workflow no N8N via edge function (`trigger-analysis`).
 - O N8N processa e retorna o resultado para o Supabase via webhook (`receive-analysis`).
-- Estrutura detalhada do payload documentada em `docs/n8n-payload-structure.md`.
+- Estrutura detalhada do payload documentada em `docs/payload/n8n-payload-structure.md`.
 
 ### Real-time Updates
 - Resultados de análise são atualizados em tempo real no dashboard e na página `/my-rank` usando canais do Supabase (`postgres_changes`).
@@ -455,8 +455,8 @@ Visit `/changelog` for detailed release history and feature updates.
 - Componentes de exibição de resultados e histórico de análises atualizados para refletir o novo fluxo.
 
 ### Documentação Técnica
-- Adicionado `docs/n8n-payload-structure.md` com exemplos de payloads e explicação do fluxo.
-- Adicionado `docs/plan.md` detalhando a arquitetura ultra-simples e decisões recentes.
+- Adicionado `docs/payload/n8n-payload-structure.md` com exemplos de payloads e explicação do fluxo.
+- Adicionado `docs/prd-and-plans/plan.md` detalhando a arquitetura ultra-simples e decisões recentes.
 
 ---
 

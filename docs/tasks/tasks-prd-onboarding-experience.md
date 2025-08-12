@@ -13,7 +13,7 @@ Edge Functions
 - `supabase/functions/receive-analysis/index.ts` – Recebe resultados e grava no DB.
 
 Documentação & Planos
-- `product-mgmt/tasks/cleanup-plan.md` – Plano de remoção/refatoração.
+- `docs/prd-and-plans/cleanup-plan.md` – Plano de remoção/refatoração.
 - `docs/DOCS.md` – Contexto geral do projeto.
 - `.env.example` – Variáveis de ambiente (adicionar `N8N_WEBHOOK_URL`).
 - `supabase/config.toml` – Configuração local do Supabase.
@@ -91,7 +91,7 @@ Documentação & Planos
   - `supabase/migrations/<timestamp>-add-unique-constraint-analysis-results-domain.sql` – adiciona UNIQUE(domain) em `analysis_results`.
   - `supabase/migrations/20250809194000-add-unique-constraint-analysis-results-domain.sql` – adiciona UNIQUE(domain) com limpeza de duplicados.
   - `supabase/seed/analysis_results_sample.sql` – seed de exemplo para testes locais.
-  - `docs/n8n-payload-structure.md` – adicionada nota sobre fallback de simulação quando `N8N_WEBHOOK_URL` não está configurada.
+  - `docs/payload/n8n-payload-structure.md` – adicionada nota sobre fallback de simulação quando `N8N_WEBHOOK_URL` não está configurada.
 
 - [x] **4.0 Home Personalizado**
   - Objetivo: entregar uma Home dinâmica, que reflete o status da análise do domínio do usuário e oferece um CTA acessível para visualizar a análise quando disponível.
@@ -174,7 +174,7 @@ Documentação & Planos
   - `src/pages/Analysis.test.tsx` – Testes de parsing, estados e render do preview.
   - `src/components/AnalysisResults.tsx` – Lista e filtra por domínio; ordering e skeleton validados.
   - `src/utils/domain.ts` – Utilitário `extractDomain` para normalização.
-  - `docs/n8n-payload-structure.md` – Referência de payload real; campos avançados opcionais.
+  - `docs/payload/n8n-payload-structure.md` – Referência de payload real; campos avançados opcionais.
 
 ---
 
