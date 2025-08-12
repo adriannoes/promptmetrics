@@ -27,7 +27,7 @@
         - Todas as integrações devem usar HTTPS/TLS
   - [x] 0.2 Garantir scripts rápidos (≤60s): `npm run lint`, `npm run typecheck`, `npm test`.
 
-- [ ] 1.0 Roteamento e Carregamento de Dados da página `/analysis` (auth guard, `?domain=` com fallbacks, snapshot inicial)
+- [x] 1.0 Roteamento e Carregamento de Dados da página `/analysis` (auth guard, `?domain=` com fallbacks, snapshot inicial)
   - [x] 1.1 Fazer parse de `?domain=` e normalizar com `extractDomain` (remover protocolo/`www.`/trailing `/`).
   - [x] 1.2 Fallback em cascata quando `?domain=` ausente: `localStorage.lastAnalyzedDomain` → `lastSavedWebsiteUrl` → `lastSavedDomain`.
   - [x] 1.3 Proteger rota com `ProtectedRoute` (permitir demo quando aplicável) e exibir skeleton inicial.
@@ -36,7 +36,7 @@
   - [x] 1.6 Estados: skeleton, erro (`role="alert"`), vazio (mensagem amigável e instrução para iniciar análise).
   - [x] 1.7 Testes em `src/pages/Analysis.test.tsx`: parsing, normalização, cascata de fallbacks, ordering e estados (skeleton/erro/vazio).
 
-- [ ] 2.0 UI e Componentização do Dashboard 2.0 replicando `/demo` (abas: Dashboard, AI Analysis, Competitors, Strategic Insights)
+- [x] 2.0 UI e Componentização do Dashboard 2.0 replicando `/demo` (abas: Dashboard, AI Analysis, Competitors, Strategic Insights)
   - [x] 2.1 Criar/ajustar `src/components/analysis/AnalysisDashboard.tsx` com tabs e layout responsivo.
   - [x] 2.2 Mapear `analysis_data` real para cada aba, reusando o que for possível dos componentes de `src/components/demo/*` como referência.
   - [x] 2.3 Implementar componentes de apresentação pequenos (cards/tabelas/gráficos com Recharts) com fallbacks quando campos estiverem ausentes.
@@ -45,14 +45,14 @@
   - [x] 2.6 Testes em `src/components/analysis/AnalysisDashboard.test.tsx` cobrindo render mínimo por aba e mapeamentos essenciais.
   - [x] 2.7 Testes (complemento): validar "cliente primeiro" em todas as abas aplicáveis e Top 5 + "Others" com soma/contagem corretas.
 
-- [ ] 3.0 Realtime Supabase para `analysis_results` (assinatura por domínio, atualização reativa com fallback para snapshot)
+- [x] 3.0 Realtime Supabase para `analysis_results` (assinatura por domínio, atualização reativa com fallback para snapshot)
   - [x] 3.1 Integrar `useRealTimeAnalysis(domain)` na página `/analysis` para refetch quando houver INSERT/UPDATE do domínio.
   - [x] 3.2 Debounce (≥300ms) e throttling de fetch (≥2s) para evitar flood de re-render.
   - [x] 3.3 Fallback automático para snapshot quando `isConnected === false`; retomar realtime ao reconectar.
   - [x] 3.4 Flag `VITE_DISABLE_REALTIME` para forçar polling-only em diagnóstico (documentar no `.env.example`).
   - [x] 3.5 Testes: ampliar `useRealTimeAnalysis.test.tsx` e criar integração leve na `/analysis` simulando evento.
 
-- [ ] 4.0 UX: regras de apresentação (cliente primeiro, Top 5 + “Others”, “Last updated”), i18n (EN/PT‑BR) e A11y (skeleton/erros)
+- [x] 4.0 UX: regras de apresentação (cliente primeiro, Top 5 + “Others”, “Last updated”), i18n (EN/PT‑BR) e A11y (skeleton/erros)
   - [x] 4.1 Aplicar regra "cliente primeiro" nas listas e gráficos (quando houver cliente-alvo).
   - [x] 4.2 Consolidar Top 5 e agrupar restantes em "Others" com contagem/soma adequada.
   - [x] 4.3 I18n: adicionar chaves no `LanguageContext` para rótulos, abas, empty states e mensagens de erro (EN/PT‑BR).
@@ -60,14 +60,14 @@
   - [x] 4.5 Documentar padrões de formatação de datas e números; garantir consistência cross-locale.
   - [x] 4.6 Testes de acessibilidade e i18n básicos (chaves presentes e renderizadas corretamente).
 
-- [ ] 5.0 Testes (TDD) cobrindo mapeamentos por aba e integração da `/analysis`; Telemetria mínima (events `analysis.*`)
+- [x] 5.0 Testes (TDD) cobrindo mapeamentos por aba e integração da `/analysis`; Telemetria mínima (events `analysis.*`)
   - [x] 5.1 Escrever testes antes/ao lado dos componentes (unit e integração leve) e manter snapshots controlados.
   - [x] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros; regra "cliente primeiro"; Top 5 + "Others"; fallback de "Last updated".
   - [x] 5.3 Teste de integração: navegar para `/analysis?domain=...` e validar render do header + "Last updated".
   - [x] 5.4 Telemetria: instrumentar eventos `analysis.view_opened`, `analysis.tab_changed`, `analysis.data_loaded` (no-op seguro se não houver backend de analytics).
   - [x] 5.5 Atualizar `README.md`/`docs/DOCS.md` com como rodar os testes: `npm test` e filtros por arquivo.
 
-- [ ] 6.0 Ajustes mínimos nas Edge Functions para metadados/versionamento de payload e orientação de segurança (HTTPS/TLS)
+- [x] 6.0 Ajustes mínimos nas Edge Functions para metadados/versionamento de payload e orientação de segurança (HTTPS/TLS)
   - [x] 6.1 `receive-analysis`: garantir `updated_at` coerente, `payload_version` (version), e normalização de campos opcionais.
   - [x] 6.2 Documentar versão do payload em `docs/payload/n8n-payload-structure.md` e exemplo atualizado.
   - [x] 6.3 Recomendar HTTPS/TLS nas integrações e uso de segredos via variáveis de ambiente; doc atualizada.
