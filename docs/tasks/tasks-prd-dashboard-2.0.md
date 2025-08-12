@@ -33,7 +33,7 @@
   - [x] 1.3 Proteger rota com `ProtectedRoute` (permitir demo quando aplicável) e exibir skeleton inicial.
   - [x] 1.4 Buscar o último registro em `analysis_results` por domínio (order `updated_at desc`, fallback `created_at`).
   - [x] 1.5 Persistir `lastAnalyzedDomain` no `localStorage` ao carregar dados válidos.
-  - [ ] 1.6 Estados: skeleton, erro (`role="alert"`), vazio (mensagem amigável e instrução para iniciar análise).
+  - [x] 1.6 Estados: skeleton, erro (`role="alert"`), vazio (mensagem amigável e instrução para iniciar análise).
   - [ ] 1.7 Testes em `src/pages/Analysis.test.tsx`: parsing, normalização, cascata de fallbacks, ordering e estados (skeleton/erro/vazio).
 
 - [ ] 2.0 UI e Componentização do Dashboard 2.0 replicando `/demo` (abas: Dashboard, AI Analysis, Competitors, Strategic Insights)

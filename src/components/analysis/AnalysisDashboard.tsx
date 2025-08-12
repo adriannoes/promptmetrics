@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import { BarChart3, Target, Heart, TrendingUp, Sparkles } from 'lucide-react';
-import { CompleteAnalysisResult } from '@/types/analysis';
+import type { CompleteAnalysisResult, AnalysisDataStructure, ChartDataPoint, OverallSentimentItem, RankingData, SentimentTrendData } from '@/types/analysis';
 
 interface AnalysisDashboardProps {
   result: CompleteAnalysisResult;
@@ -57,7 +57,7 @@ const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string;
 };
 
 export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) => {
-  const { domain, analysis_data } = result;
+  const { domain, analysis_data } = result as { domain: string; analysis_data: AnalysisDataStructure };
   const [activeTab, setActiveTab] = React.useState('dashboard');
 
   // Telemetria mínima
@@ -87,7 +87,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
   };
 
   // Calcular Top 5 competidores (excluindo a série do cliente) e agregar em Others
-  const trimToTop5WithOthers = (rows: Array<any>) => {
+  const trimToTop5WithOthers = (rows: Array<Record<string, number | string>>) => {
     if (!rows?.length) return rows;
     const keys = Object.keys(rows[0]).filter(k => k !== 'month');
     if (!keys.length) return rows;
@@ -95,7 +95,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
     const mainKey = orderedKeys[0];
     const competitorKeys = orderedKeys.slice(1);
     // média por série
-    const averages = competitorKeys.map(k => {
+    const averages = competitorKeys.map((k) => {
       const avg = rows.reduce((acc, r) => acc + (Number(r[k]) || 0), 0) / rows.length;
       return { key: k, avg };
     });
@@ -104,22 +104,22 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
     const dropKeys = averages.slice(5).map(a => a.key);
     if (dropKeys.length === 0) return rows; // nada a agregar
     // construir nova matriz com Others
-    const resultRows = rows.map(r => {
+    const resultRows = rows.map((r) => {
       const othersSum = dropKeys.reduce((acc, k) => acc + (Number(r[k]) || 0), 0);
-      const base: any = { month: r.month };
+      const base: Record<string, number | string> = { month: r.month };
       base[mainKey] = r[mainKey];
-      topKeys.forEach(k => { base[k] = r[k]; });
+      topKeys.forEach((k) => { base[k] = r[k]; });
       base['Others'] = othersSum;
       return base;
     });
     return resultRows;
   };
 
-  const rawSentiment = analysis_data?.sentiment_trends?.length ? analysis_data.sentiment_trends : fallbackTrends;
-  const rawRanking = analysis_data?.ranking_data?.length ? analysis_data.ranking_data : fallbackRanking;
-  const sentimentTrends = trimToTop5WithOthers(rawSentiment);
-  const rankingData = trimToTop5WithOthers(rawRanking);
-  const overallSentiment = analysis_data?.overall_sentiment?.length
+  const rawSentiment: SentimentTrendData[] = analysis_data?.sentiment_trends?.length ? analysis_data.sentiment_trends : (fallbackTrends as SentimentTrendData[]);
+  const rawRanking: RankingData[] = analysis_data?.ranking_data?.length ? analysis_data.ranking_data : (fallbackRanking as RankingData[]);
+  const sentimentTrends = trimToTop5WithOthers(rawSentiment as unknown as Array<Record<string, number | string>>);
+  const rankingDataProcessed = trimToTop5WithOthers(rawRanking as unknown as Array<Record<string, number | string>>);
+  const overallSentiment: OverallSentimentItem[] = analysis_data?.overall_sentiment?.length
     ? analysis_data.overall_sentiment
     : [
         { name: domain, score: analysis_data?.score ?? 75, color: '#3B82F6' },
@@ -129,16 +129,16 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
 
   // Reordenar overall_sentiment para colocar domínio primeiro e limitar Top 5 + Others (média)
   const orderedOverall = React.useMemo(() => {
-    const items = [...overallSentiment];
+    const items: OverallSentimentItem[] = [...overallSentiment];
     // separar domínio
     const domainIndex = items.findIndex(i => i.name.toLowerCase().includes(domain.toLowerCase()));
-    const domainItem = domainIndex >= 0 ? items.splice(domainIndex, 1)[0] : { name: domain, score: analysis_data?.score ?? 75, color: '#3B82F6' };
+    const domainItem: OverallSentimentItem = domainIndex >= 0 ? items.splice(domainIndex, 1)[0] : { name: domain, score: analysis_data?.score ?? 75, color: '#3B82F6' };
     // ordenar competidores por score desc
-    items.sort((a: any, b: any) => (Number(b.score) || 0) - (Number(a.score) || 0));
+    items.sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0));
     const top = items.slice(0, 5);
     const rest = items.slice(5);
     if (rest.length) {
-      const avg = Math.round(rest.reduce((acc: number, it: any) => acc + (Number(it.score) || 0), 0) / rest.length);
+      const avg = Math.round(rest.reduce((acc: number, it) => acc + (Number(it.score) || 0), 0) / rest.length);
       top.push({ name: 'Others', score: avg, color: '#6B7280' });
     }
     return [domainItem, ...top];
@@ -152,7 +152,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
         domain={domain} 
         score={analysis_data?.score ?? 0} 
         summary={analysis_data?.summary ?? ''}
-        lastUpdated={(analysis_data as any)?.generated_at || (result as any)?.updated_at}
+        lastUpdated={(analysis_data as unknown as { generated_at?: string })?.generated_at || result.updated_at}
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
@@ -175,7 +175,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={sentimentTrends as any}>
+                  <LineChart data={sentimentTrends as ChartDataPoint[]}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis domain={[0, 100]} />
@@ -183,7 +183,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                     <Legend />
                     {/* Desenha uma linha para cada chave além de month dinamicamente */}
                     {(() => {
-                      const keys = Object.keys(sentimentTrends[0] || {}).filter(k => k !== 'month');
+                       const keys = Object.keys((sentimentTrends[0] || {}) as Record<string, unknown>).filter(k => k !== 'month');
                       const ordered = orderSeriesKeys(keys);
                       return ordered.map((seriesKey, idx) => (
                         <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
@@ -205,14 +205,14 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={rankingData as any}>
+                  <LineChart data={rankingDataProcessed as ChartDataPoint[]}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis domain={[0, 6]} />
                     <Tooltip />
                     <Legend />
                     {(() => {
-                      const keys = Object.keys(rankingData[0] || {}).filter(k => k !== 'month');
+                       const keys = Object.keys((rankingDataProcessed[0] || {}) as Record<string, unknown>).filter(k => k !== 'month');
                       const ordered = orderSeriesKeys(keys);
                       return ordered.map((seriesKey, idx) => (
                         <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
@@ -233,7 +233,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={320}>
-                  <BarChart data={orderedOverall as any}>
+                   <BarChart data={orderedOverall as OverallSentimentItem[]}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis domain={[0, 100]} />

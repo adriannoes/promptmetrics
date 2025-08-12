@@ -271,7 +271,15 @@ const AnalysisContent = () => {
           </div>
 
           {/* Quando existir análise completa, mostrar o dashboard. Caso contrário, manter o layout com histórico/preview. */}
-          {analysisResult && analysisResult.status === 'completed' && analysisResult.analysis_data ? (
+          {resultLoading ? (
+            <div data-testid="analysis-skeleton" className="grid lg:grid-cols-2 gap-8 animate-pulse">
+              <div className="space-y-6">
+                <div className="h-40 bg-muted rounded" />
+                <div className="h-64 bg-muted rounded" />
+              </div>
+              <div className="h-96 bg-muted rounded" />
+            </div>
+          ) : analysisResult && analysisResult.status === 'completed' && analysisResult.analysis_data ? (
             <div data-testid="analysis-dashboard">
               <AnalysisDashboard result={analysisResult as any} />
             </div>

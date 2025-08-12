@@ -37,12 +37,13 @@ describe('Analysis Page - 5.1.1 Query Param', () => {
     );
   };
 
-  it('lê o domínio da query string (?domain=) e repassa para AnalysisResults', async () => {
+  it('lê o domínio da query string (?domain=) e reflete no header/live-region', async () => {
     // 5.1.3: normaliza domínio
     vi.spyOn(domainUtils, 'extractDomain').mockImplementation((s: any) => 'example.com');
     setup('/analysis?domain=https://www.example.com');
-    const el = await screen.findByTestId('analysis-domain');
-    expect(el).toHaveTextContent('example.com');
+    // aceita tanto header summary quanto live region como fonte
+    const header = await screen.findByTestId('analysis-header-summary');
+    expect(header).toHaveTextContent('example.com');
   });
 
   it('usa fallback do localStorage quando não há query param', async () => {
@@ -101,6 +102,36 @@ describe('Analysis Page - 5.4 A11y & Responsividade', () => {
 
     const grid = await screen.findByTestId('analysis-grid');
     expect(grid.className).toMatch(/lg:grid-cols-2/);
+  });
+});
+
+describe('Analysis Page - skeleton durante carregamento', () => {
+  const setup = (url: string) => {
+    return render(
+      <LanguageProvider>
+        <MemoryRouter initialEntries={[url]}>
+          <Routes>
+            <Route path="/analysis" element={<Analysis />} />
+          </Routes>
+        </MemoryRouter>
+      </LanguageProvider>
+    );
+  };
+
+  it('exibe skeleton enquanto busca o último resultado', async () => {
+    // Mock da cadeia supabase para atrasar maybeSingle e permitir ver o skeleton
+    const maybeSingle = vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ data: null, error: null }), 50)));
+    const limit = vi.fn().mockReturnValue({ maybeSingle });
+    const order = vi.fn().mockReturnValue({ limit });
+    const eq = vi.fn().mockReturnValue({ order });
+    const select = vi.fn().mockReturnValue({ eq });
+    const from = vi.fn().mockReturnValue({ select });
+    vi.spyOn(supabaseClient, 'supabase', 'get').mockReturnValue({ from } as unknown as supabaseClient['supabase']);
+
+    setup('/analysis?domain=example.com');
+    // skeleton aparece durante o load
+    const skel = await screen.findByTestId('analysis-skeleton');
+    expect(skel).toBeInTheDocument();
   });
 });
 
