@@ -29,9 +29,10 @@ import { extractDomain } from '@/utils/domain';
 import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
 import type { CompleteAnalysisResult } from '@/types/analysis';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
+import { formatDateTime } from '@/lib/format';
 
 const AnalysisContent = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentDomain, setCurrentDomain] = useState<string>('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -127,10 +128,7 @@ const AnalysisContent = () => {
                     </Badge>
                     <div className="text-sm text-muted-foreground" data-testid="analysis-last-updated">
                       Last updated:{' '}
-                      {(() => {
-                        const iso = (analysisResult as any)?.analysis_data?.generated_at || analysisResult.updated_at;
-                        try { return new Date(iso).toLocaleString(); } catch { return String(iso); }
-                      })()}
+                      {formatDateTime((analysisResult as any)?.analysis_data?.generated_at || analysisResult.updated_at, language)}
                     </div>
                   </div>
                 </CardHeader>

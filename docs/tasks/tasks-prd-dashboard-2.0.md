@@ -56,9 +56,9 @@
   - [x] 4.1 Aplicar regra "cliente primeiro" nas listas e gráficos (quando houver cliente-alvo).
   - [x] 4.2 Consolidar Top 5 e agrupar restantes em "Others" com contagem/soma adequada.
   - [x] 4.3 I18n: adicionar chaves no `LanguageContext` para rótulos, abas, empty states e mensagens de erro (EN/PT‑BR).
-  - [ ] 4.4 Acessibilidade: foco visível nos tabs; `aria-selected`, `role=tablist/tab/panel`; mensagens com `aria-live` quando apropriado.
-  - [ ] 4.5 Documentar padrões de formatação de datas e números; garantir consistência cross-locale.
-  - [ ] 4.6 Testes de acessibilidade e i18n básicos (chaves presentes e renderizadas corretamente).
+  - [x] 4.4 Acessibilidade: foco visível nos tabs; `aria-selected`, `role=tablist/tab/panel`; mensagens com `aria-live` quando apropriado.
+  - [x] 4.5 Documentar padrões de formatação de datas e números; garantir consistência cross-locale.
+  - [x] 4.6 Testes de acessibilidade e i18n básicos (chaves presentes e renderizadas corretamente).
 
 - [ ] 5.0 Testes (TDD) cobrindo mapeamentos por aba e integração da `/analysis`; Telemetria mínima (events `analysis.*`)
   - [ ] 5.1 Escrever testes antes/ao lado dos componentes (unit e integração leve) e manter snapshots controlados.

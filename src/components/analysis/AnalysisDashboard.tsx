@@ -6,6 +6,7 @@ import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tool
 import { BarChart3, Target, Heart, TrendingUp, Sparkles } from 'lucide-react';
 import type { CompleteAnalysisResult, AnalysisDataStructure, ChartDataPoint, OverallSentimentItem, RankingData, SentimentTrendData } from '@/types/analysis';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatDateTime, formatNumber } from '@/lib/format';
 import { orderSeriesKeys, trimToTop5WithOthers } from './dataTransforms';
 
 interface AnalysisDashboardProps {
@@ -32,6 +33,7 @@ const fallbackRanking = [
 ];
 
 const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string; lastUpdated?: string }> = ({ domain, score, summary, lastUpdated }) => {
+  const { language } = useLanguage();
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -44,11 +46,11 @@ const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string;
             <CardDescription className="mt-2 max-w-3xl">{summary}</CardDescription>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold text-blue-700 mb-1">{score}<span className="text-lg text-blue-600">/100</span></div>
+            <div className="text-3xl font-bold text-blue-700 mb-1">{formatNumber(score, language)}<span className="text-lg text-blue-600">/100</span></div>
             <Badge className="bg-blue-100 text-blue-700">Overall Score</Badge>
             {lastUpdated && (
               <div className="text-xs text-muted-foreground mt-1" data-testid="dashboard-last-updated">
-                Last updated: {(() => { try { return new Date(lastUpdated).toLocaleString(); } catch { return lastUpdated; } })()}
+                Last updated: {formatDateTime(lastUpdated, language)}
               </div>
             )}
           </div>

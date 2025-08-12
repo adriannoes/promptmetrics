@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AnalysisDashboard } from './AnalysisDashboard';
+import { screen } from '@testing-library/react';
 
 const makeResult = () => ({
   id: 'ar-1',
@@ -86,6 +87,22 @@ describe('AnalysisDashboard - header summary', () => {
     // last updated usa analysis_data.generated_at
     const last = await screen.findByTestId('dashboard-last-updated');
     expect(last.textContent).toMatch(/Last updated:/);
+  });
+});
+
+describe('AnalysisDashboard - A11y tabs (roles básicos)', () => {
+  it('usa role=tablist e role=tab/tabpanel nos elementos de abas', async () => {
+    const result = makeResult();
+    render(
+      <LanguageProvider>
+        <AnalysisDashboard result={result as any} />
+      </LanguageProvider>
+    );
+    // TabsList é um wrapper Radix com role=tablist
+    const tablist = await screen.findByRole('tablist');
+    expect(tablist).toBeInTheDocument();
+    const tabs = await screen.findAllByRole('tab');
+    expect(tabs.length).toBeGreaterThanOrEqual(3);
   });
 });
 
