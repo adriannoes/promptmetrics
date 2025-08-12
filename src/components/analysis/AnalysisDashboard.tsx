@@ -6,6 +6,7 @@ import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tool
 import { BarChart3, Target, Heart, TrendingUp, Sparkles } from 'lucide-react';
 import type { CompleteAnalysisResult, AnalysisDataStructure, ChartDataPoint, OverallSentimentItem, RankingData, SentimentTrendData } from '@/types/analysis';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { orderSeriesKeys, trimToTop5WithOthers } from './dataTransforms';
 
 interface AnalysisDashboardProps {
   result: CompleteAnalysisResult;
@@ -78,49 +79,12 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
     console.log('telemetry.analysis.tab_change', { tab: val, domain });
   };
 
-  // Utilidades de série: ordenar colocando o domínio do cliente primeiro
-  const orderSeriesKeys = (keys: string[]) => {
-    const lower = domain.toLowerCase();
-    const findExact = keys.find(k => k.toLowerCase() === lower);
-    const findIncludes = keys.find(k => k.toLowerCase().includes(lower));
-    const mainKey = findExact || findIncludes || keys[0];
-    const others = keys.filter(k => k !== mainKey);
-    return [mainKey, ...others];
-  };
-
-  // Calcular Top 5 competidores (excluindo a série do cliente) e agregar em Others
-  const trimToTop5WithOthers = (rows: Array<Record<string, number | string>>) => {
-    if (!rows?.length) return rows;
-    const keys = Object.keys(rows[0]).filter(k => k !== 'month');
-    if (!keys.length) return rows;
-    const orderedKeys = orderSeriesKeys(keys);
-    const mainKey = orderedKeys[0];
-    const competitorKeys = orderedKeys.slice(1);
-    // média por série
-    const averages = competitorKeys.map((k) => {
-      const avg = rows.reduce((acc, r) => acc + (Number(r[k]) || 0), 0) / rows.length;
-      return { key: k, avg };
-    });
-    averages.sort((a, b) => b.avg - a.avg);
-    const topKeys = averages.slice(0, 5).map(a => a.key);
-    const dropKeys = averages.slice(5).map(a => a.key);
-    if (dropKeys.length === 0) return rows; // nada a agregar
-    // construir nova matriz com Others
-    const resultRows = rows.map((r) => {
-      const othersSum = dropKeys.reduce((acc, k) => acc + (Number(r[k]) || 0), 0);
-      const base: Record<string, number | string> = { month: r.month };
-      base[mainKey] = r[mainKey];
-      topKeys.forEach((k) => { base[k] = r[k]; });
-      base['Others'] = othersSum;
-      return base;
-    });
-    return resultRows;
-  };
+  // Utilidades importadas de dataTransforms
 
   const rawSentiment: SentimentTrendData[] = analysis_data?.sentiment_trends?.length ? analysis_data.sentiment_trends : (fallbackTrends as SentimentTrendData[]);
   const rawRanking: RankingData[] = analysis_data?.ranking_data?.length ? analysis_data.ranking_data : (fallbackRanking as RankingData[]);
-  const sentimentTrends = trimToTop5WithOthers(rawSentiment as unknown as Array<Record<string, number | string>>);
-  const rankingDataProcessed = trimToTop5WithOthers(rawRanking as unknown as Array<Record<string, number | string>>);
+  const sentimentTrends = trimToTop5WithOthers(domain, rawSentiment as unknown as Array<Record<string, number | string>>);
+  const rankingDataProcessed = trimToTop5WithOthers(domain, rawRanking as unknown as Array<Record<string, number | string>>);
   const overallSentiment: OverallSentimentItem[] = analysis_data?.overall_sentiment?.length
     ? analysis_data.overall_sentiment
     : [
@@ -186,7 +150,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                     {/* Desenha uma linha para cada chave além de month dinamicamente */}
                     {(() => {
                        const keys = Object.keys((sentimentTrends[0] || {}) as Record<string, unknown>).filter(k => k !== 'month');
-                      const ordered = orderSeriesKeys(keys);
+                       const ordered = orderSeriesKeys(domain, keys);
                       return ordered.map((seriesKey, idx) => (
                         <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
                       ));
@@ -215,7 +179,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                     <Legend />
                     {(() => {
                        const keys = Object.keys((rankingDataProcessed[0] || {}) as Record<string, unknown>).filter(k => k !== 'month');
-                      const ordered = orderSeriesKeys(keys);
+                       const ordered = orderSeriesKeys(domain, keys);
                       return ordered.map((seriesKey, idx) => (
                         <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
                       ));

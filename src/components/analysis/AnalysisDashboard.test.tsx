@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AnalysisDashboard } from './AnalysisDashboard';
 
 const makeResult = () => ({
@@ -73,7 +74,11 @@ const makeResult = () => ({
 describe('AnalysisDashboard - header summary', () => {
   it('exibe domínio em destaque e Last updated do generated_at', async () => {
     const result = makeResult();
-    render(<AnalysisDashboard result={result as any} />);
+    render(
+      <LanguageProvider>
+        <AnalysisDashboard result={result as any} />
+      </LanguageProvider>
+    );
 
     // domínio destacado (texto presente)
     expect(await screen.findByText('pipefy.com')).toBeInTheDocument();
@@ -87,20 +92,28 @@ describe('AnalysisDashboard - header summary', () => {
 describe('AnalysisDashboard - ordering e Top 5 + Others', () => {
   it('renderiza gráficos principais sem erro após processamento de Top 5 + Others', async () => {
     const result = makeResult();
-    render(<AnalysisDashboard result={result as any} />);
+    render(
+      <LanguageProvider>
+        <AnalysisDashboard result={result as any} />
+      </LanguageProvider>
+    );
     // Não confiamos em labels SVG do Recharts no JSDOM; apenas garantimos que as seções existem.
-    expect(await screen.findByText('Overall Sentiment')).toBeInTheDocument();
-    expect(await screen.findByText('Sentiment Trends')).toBeInTheDocument();
-    expect(await screen.findByText('Ranking Position')).toBeInTheDocument();
+    expect(await screen.findByText(/Overall Sentiment Score/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Sentiment Trends/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Ranking Position/i)).toBeInTheDocument();
   });
 
   it('reordena séries das linhas para deixar o domínio primeiro', async () => {
     const result = makeResult();
-    render(<AnalysisDashboard result={result as any} />);
+    render(
+      <LanguageProvider>
+        <AnalysisDashboard result={result as any} />
+      </LanguageProvider>
+    );
     // Não validamos a ordem exata das linhas no DOM do Recharts (complexo),
     // mas garantimos que elementos-chave renderizam sem erro.
-    expect(await screen.findByText('Sentiment Trends')).toBeInTheDocument();
-    expect(await screen.findByText('Ranking Position')).toBeInTheDocument();
+    expect(await screen.findByText(/Sentiment Trends/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Ranking Position/i)).toBeInTheDocument();
   });
 });
 
