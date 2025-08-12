@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import { BarChart3, Target, Heart, TrendingUp, Sparkles } from 'lucide-react';
 import type { CompleteAnalysisResult, AnalysisDataStructure, ChartDataPoint, OverallSentimentItem, RankingData, SentimentTrendData } from '@/types/analysis';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AnalysisDashboardProps {
   result: CompleteAnalysisResult;
@@ -59,6 +60,7 @@ const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string;
 export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) => {
   const { domain, analysis_data } = result as { domain: string; analysis_data: AnalysisDataStructure };
   const [activeTab, setActiveTab] = React.useState('dashboard');
+  const { t } = useLanguage();
 
   // Telemetria mínima
   React.useEffect(() => {
@@ -157,9 +159,9 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="prompts">AI Analysis</TabsTrigger>
-          <TabsTrigger value="insights">Strategic Insights</TabsTrigger>
+          <TabsTrigger value="dashboard">{t('analysis.tabs.dashboard')}</TabsTrigger>
+          <TabsTrigger value="prompts">{t('analysis.tabs.promptAnalysis')}</TabsTrigger>
+          <TabsTrigger value="insights">{t('analysis.tabs.strategicInsights')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard">
@@ -169,9 +171,9 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="w-5 h-5 text-blue-600" />
-                  Sentiment Trends
+                  {t('dashboard.sentimentTrends')}
                 </CardTitle>
-                <CardDescription>Últimos meses por competidor</CardDescription>
+                <CardDescription>{t('analysis.lastMonthsPerCompetitor')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -199,9 +201,9 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="w-5 h-5 text-blue-600" />
-                  Ranking Position
+                  {t('dashboard.rankingPosition')}
                 </CardTitle>
-                <CardDescription>Menor é melhor</CardDescription>
+                <CardDescription>{t('analysis.lowerIsBetter')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -228,7 +230,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-blue-600" />
-                  Overall Sentiment
+                  {t('dashboard.overallSentimentScore')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -251,10 +253,10 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-blue-600" />
-                AI Prompt Analysis
+                {t('analysis.aiPromptAnalysis')}
               </CardTitle>
               <CardDescription>
-                Métricas agregadas por LLM e ranking por prompt
+                {t('analysis.promptMetricsSubtitle')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -269,7 +271,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                   ))}
                 </div>
               ) : (
-                <p className="text-slate-600 text-sm">Sem dados suficientes para prompts.</p>
+                <p className="text-slate-600 text-sm">{t('analysis.empty.prompts')}</p>
               )}
             </CardContent>
           </Card>
@@ -279,8 +281,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Recomendações</CardTitle>
-                <CardDescription>Top sugestões para o domínio</CardDescription>
+                <CardTitle>{t('dashboard.recommendations')}</CardTitle>
+                <CardDescription>{t('analysis.recommendations.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {recommendations.length ? (
@@ -290,15 +292,15 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-slate-600 text-sm">Sem recomendações disponíveis.</p>
+                  <p className="text-slate-600 text-sm">{t('analysis.empty.recommendations')}</p>
                 )}
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Insights Estratégicos</CardTitle>
-                <CardDescription>Pontos de destaque</CardDescription>
+                <CardTitle>{t('strategicInsights.title')}</CardTitle>
+                <CardDescription>{t('analysis.highlights')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {analysis_data?.strategic_insights?.key_insights?.length ? (
@@ -308,7 +310,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-slate-600 text-sm">Sem insights estratégicos disponíveis.</p>
+                  <p className="text-slate-600 text-sm">{t('analysis.empty.insights')}</p>
                 )}
               </CardContent>
             </Card>
