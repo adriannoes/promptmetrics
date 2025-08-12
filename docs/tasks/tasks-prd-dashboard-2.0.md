@@ -46,15 +46,15 @@
   - [x] 2.7 Testes (complemento): validar "cliente primeiro" em todas as abas aplicáveis e Top 5 + "Others" com soma/contagem corretas.
 
 - [ ] 3.0 Realtime Supabase para `analysis_results` (assinatura por domínio, atualização reativa com fallback para snapshot)
-  - [ ] 3.1 Integrar `useRealTimeAnalysis(domain)` na página `/analysis` para refetch quando houver INSERT/UPDATE do domínio.
-  - [ ] 3.2 Debounce (≥300ms) e throttling de fetch (≥2s) para evitar flood de re-render.
-  - [ ] 3.3 Fallback automático para snapshot quando `isConnected === false`; retomar realtime ao reconectar.
+  - [x] 3.1 Integrar `useRealTimeAnalysis(domain)` na página `/analysis` para refetch quando houver INSERT/UPDATE do domínio.
+  - [x] 3.2 Debounce (≥300ms) e throttling de fetch (≥2s) para evitar flood de re-render.
+  - [x] 3.3 Fallback automático para snapshot quando `isConnected === false`; retomar realtime ao reconectar.
   - [x] 3.4 Flag `VITE_DISABLE_REALTIME` para forçar polling-only em diagnóstico (documentar no `.env.example`).
-  - [ ] 3.5 Testes: ampliar `useRealTimeAnalysis.test.tsx` e criar integração leve na `/analysis` simulando evento.
+  - [x] 3.5 Testes: ampliar `useRealTimeAnalysis.test.tsx` e criar integração leve na `/analysis` simulando evento.
 
 - [ ] 4.0 UX: regras de apresentação (cliente primeiro, Top 5 + “Others”, “Last updated”), i18n (EN/PT‑BR) e A11y (skeleton/erros)
-  - [ ] 4.1 Aplicar regra "cliente primeiro" nas listas e gráficos (quando houver cliente-alvo).
-  - [ ] 4.2 Consolidar Top 5 e agrupar restantes em "Others" com contagem/soma adequada.
+  - [x] 4.1 Aplicar regra "cliente primeiro" nas listas e gráficos (quando houver cliente-alvo).
+  - [x] 4.2 Consolidar Top 5 e agrupar restantes em "Others" com contagem/soma adequada.
   - [x] 4.3 I18n: adicionar chaves no `LanguageContext` para rótulos, abas, empty states e mensagens de erro (EN/PT‑BR).
   - [ ] 4.4 Acessibilidade: foco visível nos tabs; `aria-selected`, `role=tablist/tab/panel`; mensagens com `aria-live` quando apropriado.
   - [ ] 4.5 Documentar padrões de formatação de datas e números; garantir consistência cross-locale.

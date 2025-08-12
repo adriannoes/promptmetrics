@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 import { extractDomain } from '@/utils/domain';
 import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
 import type { CompleteAnalysisResult } from '@/types/analysis';
+import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 
 const AnalysisContent = () => {
   const { t } = useLanguage();
@@ -36,7 +37,7 @@ const AnalysisContent = () => {
   const [loading, setLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<CompleteAnalysisResult | null>(null);
-  const [resultLoading, setResultLoading] = useState(false);
+  const { data: rtData, loading: rtLoading } = useRealTimeAnalysis(currentDomain);
   const location = useLocation();
   const mainRef = useRef<HTMLElement | null>(null);
 
@@ -93,40 +94,13 @@ const AnalysisContent = () => {
     mainRef.current?.focus();
   }, []);
 
-  // Buscar último resultado para o domínio atual quando disponível
+  // Sincronizar resultado com o hook de Realtime
   useEffect(() => {
-    const loadLatestForDomain = async (domain: string) => {
-      try {
-        setResultLoading(true);
-        const normalized = extractDomain(domain);
-        const { data, error } = await supabase
-          .from('analysis_results')
-          .select('*')
-          .eq('domain', normalized)
-          .order('updated_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (error) {
-          console.error('Analysis: erro ao buscar resultado', error);
-          setAnalysisResult(null);
-          return;
-        }
-        setAnalysisResult((data as any) || null);
-      } catch (err) {
-        console.error('Analysis: exceção ao buscar resultado', err);
-        setAnalysisResult(null);
-      } finally {
-        setResultLoading(false);
-      }
-    };
-
-    if (currentDomain) {
-      loadLatestForDomain(currentDomain);
-    } else {
-      setAnalysisResult(null);
+    if (rtData) {
+      setAnalysisResult(rtData as unknown as CompleteAnalysisResult);
+      try { localStorage.setItem('lastAnalyzedDomain', rtData.domain); } catch {}
     }
-  }, [currentDomain]);
+  }, [rtData]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -271,7 +245,7 @@ const AnalysisContent = () => {
           </div>
 
           {/* Quando existir análise completa, mostrar o dashboard. Caso contrário, manter o layout com histórico/preview. */}
-          {resultLoading ? (
+          {rtLoading ? (
             <div data-testid="analysis-skeleton" className="grid lg:grid-cols-2 gap-8 animate-pulse">
               <div className="space-y-6">
                 <div className="h-40 bg-muted rounded" />
