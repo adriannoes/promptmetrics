@@ -12,44 +12,44 @@
 ### Notes
 
 - Crie/atualize testes ao lado dos arquivos (por exemplo: `MyComponent.tsx` e `MyComponent.test.tsx`).
-- Use `npx jest [opcional/caminho/do/arquivo]` para executar testes; sem caminho roda toda a suíte.
+- Use `npm test` (Vitest) ou filtre por arquivo com `npm run test -- src/caminho/arquivo.test.tsx`.
 - Chamadas externas (Edge Functions, n8n) devem usar HTTPS/TLS; nunca exponha segredos no front. Utilize variáveis via `.env.example`.
 - Siga `docs/instructions/process-task-list.mdc`: ao concluir uma sub‑tarefa, marque `[x]`, e pause para aprovação antes de iniciar a próxima.
 - Mantenha a seção “Relevant Files” atualizada conforme arquivos forem criados/alterados.
 
 ## Tasks
 
-- [ ] 0.0 Preparação e Configuração
-  - [ ] 0.1 Criar/atualizar `.env.example` com chaves/flags de diagnóstico (sem segredos reais):
+- [x] 0.0 Preparação e Configuração
+  - [x] 0.1 Criar/atualizar `.env.example` com chaves/flags de diagnóstico (sem segredos reais):
         - `VITE_DISABLE_REALTIME=` (vazio → Realtime habilitado)
         - `VITE_SUPABASE_URL=` e `VITE_SUPABASE_ANON_KEY=` (placeholders para front)
         - Para Edge Functions: `N8N_HMAC_SECRET=` (apenas ambiente do servidor; não expor no front)
         - Todas as integrações devem usar HTTPS/TLS
-  - [ ] 0.2 Garantir scripts rápidos (≤60s): `npm run lint`, `npm run typecheck`, `npm test`.
+  - [x] 0.2 Garantir scripts rápidos (≤60s): `npm run lint`, `npm run typecheck`, `npm test`.
 
 - [ ] 1.0 Roteamento e Carregamento de Dados da página `/analysis` (auth guard, `?domain=` com fallbacks, snapshot inicial)
-  - [ ] 1.1 Fazer parse de `?domain=` e normalizar com `extractDomain` (remover protocolo/`www.`/trailing `/`).
-  - [ ] 1.2 Fallback em cascata quando `?domain=` ausente: `localStorage.lastAnalyzedDomain` → `lastSavedWebsiteUrl` → `lastSavedDomain`.
-  - [ ] 1.3 Proteger rota com `ProtectedRoute` (permitir demo quando aplicável) e exibir skeleton inicial.
-  - [ ] 1.4 Buscar o último registro em `analysis_results` por domínio (order `updated_at desc`, fallback `created_at`).
-  - [ ] 1.5 Persistir `lastAnalyzedDomain` no `localStorage` ao carregar dados válidos.
+  - [x] 1.1 Fazer parse de `?domain=` e normalizar com `extractDomain` (remover protocolo/`www.`/trailing `/`).
+  - [x] 1.2 Fallback em cascata quando `?domain=` ausente: `localStorage.lastAnalyzedDomain` → `lastSavedWebsiteUrl` → `lastSavedDomain`.
+  - [x] 1.3 Proteger rota com `ProtectedRoute` (permitir demo quando aplicável) e exibir skeleton inicial.
+  - [x] 1.4 Buscar o último registro em `analysis_results` por domínio (order `updated_at desc`, fallback `created_at`).
+  - [x] 1.5 Persistir `lastAnalyzedDomain` no `localStorage` ao carregar dados válidos.
   - [ ] 1.6 Estados: skeleton, erro (`role="alert"`), vazio (mensagem amigável e instrução para iniciar análise).
   - [ ] 1.7 Testes em `src/pages/Analysis.test.tsx`: parsing, normalização, cascata de fallbacks, ordering e estados (skeleton/erro/vazio).
 
 - [ ] 2.0 UI e Componentização do Dashboard 2.0 replicando `/demo` (abas: Dashboard, AI Analysis, Competitors, Strategic Insights)
-  - [ ] 2.1 Criar/ajustar `src/components/analysis/AnalysisDashboard.tsx` com tabs e layout responsivo.
-  - [ ] 2.2 Mapear `analysis_data` real para cada aba, reusando o que for possível dos componentes de `src/components/demo/*` como referência.
-  - [ ] 2.3 Implementar componentes de apresentação pequenos (cards/tabelas/gráficos com Recharts) com fallbacks quando campos estiverem ausentes.
-  - [ ] 2.4 Exibir cabeçalho com domínio e "Last updated" (formatação relativa e absoluta; timezone seguro).
-  - [ ] 2.5 Empty states por aba com mensagens claras e acessíveis.
-  - [ ] 2.6 Testes em `src/components/analysis/AnalysisDashboard.test.tsx` cobrindo render mínimo por aba e mapeamentos essenciais.
+  - [x] 2.1 Criar/ajustar `src/components/analysis/AnalysisDashboard.tsx` com tabs e layout responsivo.
+  - [x] 2.2 Mapear `analysis_data` real para cada aba, reusando o que for possível dos componentes de `src/components/demo/*` como referência.
+  - [x] 2.3 Implementar componentes de apresentação pequenos (cards/tabelas/gráficos com Recharts) com fallbacks quando campos estiverem ausentes.
+  - [x] 2.4 Exibir cabeçalho com domínio e "Last updated" (formatação relativa e absoluta; timezone seguro).
+  - [x] 2.5 Empty states por aba com mensagens claras e acessíveis.
+  - [x] 2.6 Testes em `src/components/analysis/AnalysisDashboard.test.tsx` cobrindo render mínimo por aba e mapeamentos essenciais.
   - [ ] 2.7 Testes (complemento): validar "cliente primeiro" em todas as abas aplicáveis e Top 5 + "Others" com soma/contagem corretas.
 
 - [ ] 3.0 Realtime Supabase para `analysis_results` (assinatura por domínio, atualização reativa com fallback para snapshot)
   - [ ] 3.1 Integrar `useRealTimeAnalysis(domain)` na página `/analysis` para refetch quando houver INSERT/UPDATE do domínio.
   - [ ] 3.2 Debounce (≥300ms) e throttling de fetch (≥2s) para evitar flood de re-render.
   - [ ] 3.3 Fallback automático para snapshot quando `isConnected === false`; retomar realtime ao reconectar.
-  - [ ] 3.4 Flag `VITE_DISABLE_REALTIME` para forçar polling-only em diagnóstico (documentar no `.env.example`).
+  - [x] 3.4 Flag `VITE_DISABLE_REALTIME` para forçar polling-only em diagnóstico (documentar no `.env.example`).
   - [ ] 3.5 Testes: ampliar `useRealTimeAnalysis.test.tsx` e criar integração leve na `/analysis` simulando evento.
 
 - [ ] 4.0 UX: regras de apresentação (cliente primeiro, Top 5 + “Others”, “Last updated”), i18n (EN/PT‑BR) e A11y (skeleton/erros)
@@ -63,8 +63,8 @@
 - [ ] 5.0 Testes (TDD) cobrindo mapeamentos por aba e integração da `/analysis`; Telemetria mínima (events `analysis.*`)
   - [ ] 5.1 Escrever testes antes/ao lado dos componentes (unit e integração leve) e manter snapshots controlados.
   - [ ] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros; regra "cliente primeiro"; Top 5 + "Others"; fallback de "Last updated".
-  - [ ] 5.3 Teste de integração: navegar para `/analysis?domain=...` e validar render do header + "Last updated".
-  - [ ] 5.4 Telemetria: instrumentar eventos `analysis.view_opened`, `analysis.tab_changed`, `analysis.data_loaded` (no-op seguro se não houver backend de analytics).
+  - [x] 5.3 Teste de integração: navegar para `/analysis?domain=...` e validar render do header + "Last updated".
+  - [x] 5.4 Telemetria: instrumentar eventos `analysis.view_opened`, `analysis.tab_changed`, `analysis.data_loaded` (no-op seguro se não houver backend de analytics).
   - [ ] 5.5 Atualizar `README.md`/`docs/DOCS.md` com como rodar os testes: `npm test` e filtros por arquivo.
 
 - [ ] 6.0 Ajustes mínimos nas Edge Functions para metadados/versionamento de payload e orientação de segurança (HTTPS/TLS)

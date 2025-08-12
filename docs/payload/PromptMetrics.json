@@ -1,0 +1,1528 @@
+{
+  "name": "PromptMetrics",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "661b6816-1ea9-455d-82ae-b98602c9fbd7",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        20
+      ],
+      "id": "fdaaa531-93f4-4fbb-ab98-b0592a137b06",
+      "name": "Webhook",
+      "webhookId": "661b6816-1ea9-455d-82ae-b98602c9fbd7"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://racfoelvuhdifnekjsro.supabase.co/functions/v1/receive-analysis",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5440,
+        140
+      ],
+      "id": "427bc6a4-f1a8-4175-aa21-56ba24ae6484",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Wbu9E4qQ4M7HSiuM",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        500,
+        220
+      ],
+      "id": "0b4554a5-07dd-40ce-b8e4-47a930723450",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.domain }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a expert Marketing Analyst. Your primary goal is to create a comprehensive analysis of a company based on its domain, using your available research tools.\n\n**Provided Input:**\n- **Domain to Analyze:** {{ $json.body.domain }}\n\n**Your Analytical Task:**\nBased on your research using the available tools, you must determine all of the following points:\n- The company's primary market.\n- Its core business model (e.g., B2B, B2C, B2B2C).\n- A list of up to 6 main competitors.\n- A detailed Ideal Customer Profile (ICP), including likely departments, job titles, and seniority levels for B2B contexts.\n- You must also capture the 'related_questions' array provided by your 'buscaGoogle' search tool, as this is a critical insight.\n\n**Final Output Instructions:**\nYour final and ONLY output must be a single, valid JSON object that strictly matches the schema of the connected Output Parser.\n\n**CRITICAL:** Ensure the full, unmodified 'related_questions' array you captured from your tool is included in the `relatedGoogleQuestions` field of the final JSON. Do not add any text, conversation, or explanations outside of the JSON object."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "7a4f1993-3689-4e1a-971f-2a97a66a7b35",
+      "name": "Setup Search"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-2024-08-06",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-2024-08-06"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1000,
+        200
+      ],
+      "id": "3d79c256-affc-4fab-a001-68d64572a1f8",
+      "name": "Top 10 Prompts Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "g11WR0iZMVJUDCi6",
+          "name": "OpenAI (promptmetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Use information about {{ $json.domain }} to run a analysis.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a specialist in user behavior on large language models (LLMs) like ChatGPT and Gemini. Your goal is to generate potential queries and conversational prompts that the Ideal Customer Profile (ICP) would realistically ask an LLM when searching for solutions. The objective is to emulate natural, human-like questions to understand how a company and its solutions are perceived and discovered within these AI platforms.\n\n**Analysis Context:**\n\n- **Company Website:** {{ $json.domain }}\n\n- **Company & Market Analysis:**\n- Market: {{ $json.output.primaryMarket }}\n- Business Model: {{ $json.output.businessModel }}\n- Competitors: {{ $json.output.topCompetitors }}\n\n- **Ideal Customer Profile:** {{ $json.output.idealCustomerProfile.description }}\n- Department: {{ $json.output.idealCustomerProfile.department }}\n- Job titles: {{ $json.output.idealCustomerProfile.jobTitle }}. {{ $json.output.idealCustomerProfile.seniority }}.\n\n**Related Google Questions**\n- {{ $json.output.relatedGoogleQuestions[0].question }}\n- {{ $json.output.relatedGoogleQuestions[1].question }}\n- {{ $json.output.relatedGoogleQuestions[2].question }}\n- {{ $json.output.relatedGoogleQuestions[3].question }}\n\n**Your Task:**\nYour primary task is to analyze the \"**Related Google Questions**\" section within the provided **Company & Market Analysis**. These are real questions people ask Google. Based on the themes, language, and problems revealed in these questions, generate a list of 10 new, similar prompts that the ICP would likely use.\n\nThe new prompts you generate should be inspired by the provided questions but should not be direct copies. Think about the underlying problem behind each question.\n\n**Constraints:**\n- The prompts **must not** mention the company's brand name (like \"Apple\") or its direct competitors.\n- The prompts **must be** problems or questions that could be answered by a company in this market (like \"an online school for digital products\").\n- The language of the generated prompts **must match** the primary language of the \"relatedGoogleQuestions\".\n\n**Required Output Format:**\nYour response MUST be a single, valid JSON object and nothing else. Do not add any text or markdown before or after the JSON object.\n\nThe JSON object must contain a single key named \"generatedPrompts\" whose value is an array of 10 objects, where each object has a single key named \"prompt\"."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        0
+      ],
+      "id": "e66c8d6b-f9e1-45bd-ab4d-0265b8ae672d",
+      "name": "Top 10 Prompts"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-2025-04-14"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        200
+      ],
+      "id": "d43a73be-cf19-4aa4-a6ab-7b15d6e8942e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "g11WR0iZMVJUDCi6",
+          "name": "OpenAI (promptmetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "promptsToRun",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "4804ffbd-7bb3-4991-9436-60554fd87cf2",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.promptsToRun }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a factual information provider.\n- Respond directly to the user's question.\n- Do not use any emojis.\n- Do not use conversational filler, introductions, or concluding remarks (e.g., \"Great question!\", \"I hope this helps!\").\n- Provide only the core information in a structured, clear format.\n- Use Markdown for structure (headings, lists) where appropriate, but keep the language concise and professional."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "bd01e55b-a256-44c1-8d8d-aea1aebb3d58",
+      "name": "Busca dos 10 prompts: OpenAI"
+    },
+    {
+      "parameters": {
+        "content": "Setup\n",
+        "height": 910,
+        "width": 1238,
+        "color": 4
+      },
+      "id": "f60b36a1-9ccb-448c-846f-5bdbfd248039",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Top 10 Prompts",
+        "height": 930,
+        "width": 698,
+        "color": 4
+      },
+      "id": "849eb6e1-109a-442c-a018-c64f5bbe8208",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Análise Final",
+        "height": 1370,
+        "width": 2378,
+        "color": 4
+      },
+      "id": "a45bfeaf-6a14-41f4-b0a2-df244e629675",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        -540
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Resposta Supabase (edge function: receive-analysis)",
+        "height": 330,
+        "width": 698,
+        "color": 7
+      },
+      "id": "8e405d25-5124-4109-bb9e-148d8139da0c",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4960,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        -240
+      ],
+      "id": "e04ce581-f9eb-4066-bd6a-5ef02db4ddda",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "SjXZWIR90DDEHDox",
+          "name": "Gemini (PromptMetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1920,
+        700
+      ],
+      "id": "f87b6b69-402c-4f46-91b5-1d63f3dbdf06",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "u4vHNwi4A6Lp7CF2",
+          "name": "Anthropic (PromptMetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.promptsToRun }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a factual information provider.\n- Respond directly to the user's question.\n- Do not use any emojis.\n- Do not use conversational filler, introductions, or concluding remarks (e.g., \"Great question!\", \"I hope this helps!\").\n- Provide only the core information in a structured, clear format.\n- Use Markdown for structure (headings, lists) where appropriate, but keep the language concise and professional."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1940,
+        520
+      ],
+      "id": "559184db-4147-45f5-93d4-917f18fc2a0e",
+      "name": "Busca dos 10 prompts: Claude"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.promptsToRun }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a factual information provider.\n- Respond directly to the user's question.\n- Do not use any emojis.\n- Do not use conversational filler, introductions, or concluding remarks (e.g., \"Great question!\", \"I hope this helps!\").\n- Provide only the core information in a structured, clear format.\n- Use Markdown for structure (headings, lists) where appropriate, but keep the language concise and professional."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1940,
+        -460
+      ],
+      "id": "9557f1b1-7f31-4875-b8ba-5f5636537fda",
+      "name": "Busca dos 10 prompts: Gemini"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Google search in SerpApi",
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location__location_', ``, 'string') }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        360,
+        220
+      ],
+      "id": "e7ed5d89-8725-48dd-93b7-0a7addc22349",
+      "name": "buscaGoogle",
+      "credentials": {
+        "serpApi": {
+          "id": "7cgf4JI0fIQn4CG6",
+          "name": "SerpApi (esadrianno@gmail.com)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "961b2233-1116-40e4-82dd-ca6caa7ecbe7",
+              "name": "domain",
+              "value": "={{ $('Webhook').item.json.body.domain }}",
+              "type": "string"
+            },
+            {
+              "id": "b4f6f283-9072-43b6-8086-3a447838bcdd",
+              "name": "output.relatedGoogleQuestions",
+              "value": "={{ $json.output.relatedGoogleQuestions }}",
+              "type": "array"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        760,
+        0
+      ],
+      "id": "9ba08183-1f19-4283-8167-769455000af0",
+      "name": "Prepare Google Results"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"generatedPrompts\": [\n    {\n      \"prompt\": \"The first generated prompt about a user's problem...\"\n    },\n    {\n      \"prompt\": \"The second generated prompt about a user's need...\"\n    },\n    {\n      \"prompt\": \"The third generated prompt about a specific solution...\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        220
+      ],
+      "id": "6645d579-8ca7-458b-8f79-3c814985ad79",
+      "name": "Parser 10 Prompts"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"primaryMarket\": \"A short description of the company's main market\",\n  \"businessModel\": \"The business model, e.g., B2B, B2C, B2B2C\",\n  \"topCompetitors\": [\n    \"Competitor Name 1\",\n    \"Competitor Name 2\",\n    \"Competitor Name 3\"\n  ],\n  \"idealCustomerProfile\": {\n    \"description\": \"A paragraph describing the ideal customer.\",\n    \"department\": \"The relevant department for B2B customers, or null\",\n    \"jobTitle\": \"The relevant job title for B2B customers, or null\",\n    \"seniority\": \"The relevant seniority level for B2B customers, or null\"\n  },\n  \"relatedGoogleQuestions\": [\n    {\n      \"question\": \"What is an example of a related question?\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        220
+      ],
+      "id": "4d5c5735-0402-4dd9-85d0-a54005f7d88e",
+      "name": "Setup Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "17b6fa1c-f4ea-4c75-9c9e-1a43900dbc58",
+              "leftValue": "={{ $json.body.source }}",
+              "rightValue": "=promptmetrics-frontend-analysis-page",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "70c82c3b-7619-4b50-899f-17931323d19d",
+              "leftValue": "={{ $json.body.triggered_from }}",
+              "rightValue": "={{ $json.body.triggered_from }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "81d3574d-7d18-47e0-b700-c6dd435b4c79",
+      "name": "auth",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -20,
+        20
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        240
+      ],
+      "id": "ff99eba1-3400-4c8a-bade-adcf65c8b24f",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "content": "Busca OpenAI",
+        "height": 450,
+        "width": 818,
+        "color": 6
+      },
+      "id": "7b807c4e-49b1-4cc7-9624-cf15d5c13721",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Busca Claude",
+        "height": 450,
+        "width": 818,
+        "color": 6
+      },
+      "id": "ece9ab0c-b2f8-42a1-bbe5-6757c5d685ac",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Busca Gemini",
+        "height": 450,
+        "width": 818,
+        "color": 6
+      },
+      "id": "8856a013-ea28-4a53-92c1-0b2cc2ee6dfd",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -540
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2860,
+        0
+      ],
+      "id": "67c0bf9e-8637-42cb-a90c-08d7afd02837",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "482f9444-ab60-4ecc-bf9b-6fb293adffe7",
+              "name": "model",
+              "value": "chatgpt",
+              "type": "string"
+            },
+            {
+              "id": "d54552dd-5d3b-4399-bf38-452af6458ed6",
+              "name": "promptQuestion",
+              "value": "={{ $('Split Out').item.json.promptsToRun.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "8a066542-6ef3-4043-a985-05510de14519",
+              "name": "promptResponse",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "30ec58e1-84d3-4a1a-8308-de96c2444725",
+              "name": "initialAnalysis",
+              "value": "={{ $('Analysis + Prompts').item.json.initialAnalysis }}",
+              "type": "object"
+            },
+            {
+              "id": "349db84e-f539-4f3c-86e1-fd87afd90ea6",
+              "name": "domain",
+              "value": "={{ $('Analysis + Prompts').item.json.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        0
+      ],
+      "id": "72f2b739-fc32-4bbc-a7d7-8e185f88fe07",
+      "name": "promptResultsChatGPT"
+    },
+    {
+      "parameters": {
+        "jsCode": "const resultsByPrompt = {};\nconst initialAnalysis = items[0].json.initialAnalysis;\n// Pega o domínio que \"viajou\" com os itens\nconst domain = items[0].json.domain;\n\nfor (const item of items) {\n  const originalPrompt = item.json.promptQuestion;\n  const response = item.json.promptResponse;\n  const model = item.json.model;\n\n  if (originalPrompt) {\n    if (!resultsByPrompt[originalPrompt]) {\n      resultsByPrompt[originalPrompt] = [];\n    }\n    resultsByPrompt[originalPrompt].push({\n      model: model,\n      response: response\n    });\n  }\n}\n\n// Retorna um único objeto com TUDO que os próximos agentes precisam\nreturn [{\n  json: {\n    domain: domain, // <-- Domínio incluído aqui\n    initialAnalysis: initialAnalysis,\n    comparative_results: resultsByPrompt\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3080,
+        0
+      ],
+      "id": "5f444d66-d6f7-4658-bd5f-a1cab123f763",
+      "name": "preparandoRespostasModelos"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "482f9444-ab60-4ecc-bf9b-6fb293adffe7",
+              "name": "model",
+              "value": "claude",
+              "type": "string"
+            },
+            {
+              "id": "d54552dd-5d3b-4399-bf38-452af6458ed6",
+              "name": "promptQuestion",
+              "value": "={{ $('Split Out').item.json.promptsToRun.prompt}}",
+              "type": "string"
+            },
+            {
+              "id": "8a066542-6ef3-4043-a985-05510de14519",
+              "name": "promptResponse",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "cf6c87fb-c2ad-47c3-88a6-526eda81aafc",
+              "name": "initialAnalysis",
+              "value": "={{ $('Analysis + Prompts').item.json.initialAnalysis }}",
+              "type": "object"
+            },
+            {
+              "id": "ec41e68b-a88b-405c-9bdb-74699ad2c263",
+              "name": "domain",
+              "value": "={{ $('Analysis + Prompts').item.json.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        520
+      ],
+      "id": "915deb09-8754-4c95-9095-e0bc910e8c61",
+      "name": "promptResultsClaude"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "482f9444-ab60-4ecc-bf9b-6fb293adffe7",
+              "name": "model",
+              "value": "gemini",
+              "type": "string"
+            },
+            {
+              "id": "d54552dd-5d3b-4399-bf38-452af6458ed6",
+              "name": "promptQuestion",
+              "value": "={{ $('Split Out').item.json.promptsToRun.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "8a066542-6ef3-4043-a985-05510de14519",
+              "name": "promptResponse",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "5afb32c4-f802-4495-8279-c0b5788f96e3",
+              "name": "initialAnalysis",
+              "value": "={{ $('Analysis + Prompts').item.json.initialAnalysis }}",
+              "type": "object"
+            },
+            {
+              "id": "1a3c78d7-1ed3-4bbb-8a4f-bbdd7319aba5",
+              "name": "domain",
+              "value": "={{ $('Analysis + Prompts').item.json.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        -460
+      ],
+      "id": "1164da84-bfc8-4f6d-935e-9c8d31324848",
+      "name": "promptResultsGemini"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json.comparative_results) }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a senior AI Quality Analyst and Business Strategist. Your task is to perform a comparative analysis of responses generated by different large language models for a series of user prompts.\n\n**Input Data:**\nData for Analysis provided in the User Message.\n\n**Your Analytical Task:**\n1.  **Identify Common Themes:** Analyze all responses to find common themes and solutions proposed across all models.\n2.  **Analyze Differences:** Identify key differences in tone, style, and substance between the models.\n3.  **Synthesize \"Best-of\" Responses:** For each original prompt, create a single, synthesized \"golden\" response that combines the best elements from all model answers.\n4.  **Overall Model Assessment:** Provide a brief overall assessment of each model's strengths for this type of task.\n\n**Required Output Format:**\nYour final response must be a single, valid JSON object that strictly matches the schema of the connected Output Parser."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        3440,
+        180
+      ],
+      "id": "11c02f9c-f150-43e1-a2a7-958fa63e4805",
+      "name": "Comparativo de LLMs"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json.comparative_results) }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a world-class business strategist and market analyst. Your task is to conduct a comprehensive qualitative analysis based on the provided company context and the consolidated AI responses.\n\n**Input Data:**\n**Company Website:** {{ $json.domain }}\n\n**Company & Market Analysis:**\n- Market: {{ $json.initialAnalysis.primaryMarket }}\n- Business Model: {{ $json.initialAnalysis.businessModel }}\n- Competitors: {{ $json.initialAnalysis.topCompetitors }}\n\n**Ideal Customer Profile:** {{ $json.initialAnalysis.idealCustomerProfile.description }}\n- Department: {{ $json.initialAnalysis.idealCustomerProfile.department }}\n- Job titles: {{ $json.initialAnalysis.idealCustomerProfile.jobTitle }}.\n- **Consolidated AI Questions/Responses: provided in the User Message.**\n\n**Your Task:**\nPerform a deep analysis to generate:\n1. A detailed executive summary of the brand's position.\n2. An overall score (0-100) for the brand's market opportunities.\n3. A list of top-level recommendations.\n4. A full competitor analysis including strengths, weaknesses, opportunities (with impact/effort), and strategic priorities.\n5. A list of key strategic insights and actionable items.\n\n**CRITICAL AND MANDATORY - Required Output Format:** Your final response must be ONLY and EXCLUSIVELY a valid JSON object, as per the Output Parser schema. Do not include any text, explanation, conversation, or markdown such as json before or after the JSON object. Your response MUST start with { and end with }. Failure to follow this rule will result in failure."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        3440,
+        -220
+      ],
+      "id": "482ed256-95eb-4e8c-85ba-570f0b2ed78e",
+      "name": "Estrategista de Negócios"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a data simulation expert. \n\n**Input:** You will receive a JSON object containing a company's strategic analysis.\n\n**Context from the Strategist Agent's analysis provided in the User Message.**\n\n**Your Task:**\n1.  **Generate New Data:** Create the keys: \"sentiment_trends\", \"ranking_data\", \"share_of_rank\", and \"overall_sentiment\".\n2.  **Pass Through Existing Data:** Copy the following keys from your input EXACTLY: \"summary\", \"score\", and \"recommendations\".\n3.  **IMPORTANT:** You MUST EXCLUDE all other keys. Other specialist agents will handle them.\n\n**CRITICAL AND MANDATORY - Required Output Format:** Your final response must be ONLY and EXCLUSIVELY a valid JSON object that matches the Output Parser's schema. Do not include any text, explanation, conversation, or markdown (like ```json) before or after the JSON object. Your response MUST start with { and end with }. Failure to follow this rule will cause a system failure.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        3900,
+        -220
+      ],
+      "id": "f8000b1b-4a37-4ff9-a7ff-4654ced184ea",
+      "name": "Dados Quantitativos"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"summary\": \"Detailed summary of the brand analysis...\",\n  \"score\": 85,\n  \"recommendations\": [\n    \"Recommendation 1...\",\n    \"Recommendation 2...\"\n  ],\n  \"competitor_analysis\": {\n    \"market_share\": [\n      { \"name\": \"MinhaMarca\", \"value\": 54, \"color\": \"#3B82F6\" },\n      { \"name\": \"Concorrente1\", \"value\": 32, \"color\": \"#10B981\" }\n    ],\n    \"strengths\": [\n      \"Brand strength 1\",\n      \"Brand strength 2\"\n    ],\n    \"weaknesses\": [\n      \"Brand weakness 1\",\n      \"Brand weakness 2\"\n    ],\n    \"opportunities\": [\n      {\n        \"category\": \"Growth\",\n        \"title\": \"Opportunity 1\",\n        \"description\": \"Description of the opportunity\",\n        \"impact\": \"high\",\n        \"effort\": \"medium\"\n      }\n    ],\n    \"strategic_priorities\": [\n      {\n        \"id\": 1,\n        \"title\": \"Strategic Priority 1\",\n        \"description\": \"Description of the priority\",\n        \"priority\": \"high\"\n      }\n    ]\n  },\n  \"strategic_insights\": {\n    \"key_insights\": [\n      \"Key insight 1...\"\n    ],\n    \"action_items\": [\n      \"Action item 1...\"\n    ],\n    \"growth_opportunities\": [\n      \"Growth opportunity 1...\"\n    ],\n    \"competitive_threats\": [\n      \"Competitive threat 1...\"\n    ]\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3620,
+        -40
+      ],
+      "id": "2e352573-729d-454a-b5e9-e771b9ed5e19",
+      "name": "Parser Estrategista"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"model_assessment\": {\n    \"OpenAI\": \"Brief assessment of OpenAI's performance...\",\n    \"Gemini\": \"Brief assessment of Gemini's performance...\",\n    \"Claude\": \"Brief assessment of Claude's performance...\"\n  },\n  \"synthesized_responses\": [\n    {\n      \"original_prompt\": \"The first original user prompt.\",\n      \"best_response\": \"The synthesized 'golden' response for this prompt.\"\n    },\n    {\n      \"original_prompt\": \"The second original user prompt.\",\n      \"best_response\": \"The synthesized 'golden' response for this prompt.\"\n    }\n  ],\n   \"ranking_by_prompt\": {\n    \"Qual a melhor plataforma para X?\": {\n      \"MinhaMarca\": 1,\n      \"Concorrente1\": 2,\n      \"Concorrente2\": 3\n    }\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3640,
+        420
+      ],
+      "id": "a8725366-d4bb-40fa-9747-e089aab90cc3",
+      "name": "Parser Análise LLMs"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"summary\": \"Detailed summary...\",\n  \"score\": 85,\n  \"recommendations\": [\n    \"Recommendation 1...\"\n  ],\n  \"competitor_analysis\": {\n    \"market_share\": [\n      {\n        \"name\": \"ExampleBrand\",\n        \"value\": 50,\n        \"color\": \"#000000\"\n      }\n    ]\n  },\n  \"sentiment_trends\": [\n    {\n      \"month\": \"Jan 2024\",\n      \"MinhaMarca\": 78,\n      \"Concorrente1\": 72,\n      \"Concorrente2\": 68\n    }\n  ],\n  \"ranking_data\": [\n    {\n      \"month\": \"Jan 2024\",\n      \"MinhaMarca\": 1.2,\n      \"Concorrente1\": 2.1,\n      \"Concorrente2\": 2.8\n    }\n  ],\n  \"share_of_rank\": [\n    {\n      \"month\": \"Jan 2024\",\n      \"MinhaMarca\": 48,\n      \"Concorrente1\": 32,\n      \"Concorrente2\": 12,\n      \"Others\": 8\n    }\n  ],\n  \"overall_sentiment\": [\n    {\n      \"name\": \"MinhaMarca\",\n      \"score\": 83,\n      \"color\": \"#3B82F6\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        4080,
+        0
+      ],
+      "id": "53882b51-a2f4-46ab-9b3a-7c7972e09f57",
+      "name": "Parser Dados Quanti"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3380,
+        380
+      ],
+      "id": "bd312c29-f16b-4ae4-9edc-0e4bc7d0345f",
+      "name": "4o para lógica",
+      "credentials": {
+        "openAiApi": {
+          "id": "g11WR0iZMVJUDCi6",
+          "name": "OpenAI (promptmetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-sonnet-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 3.5 (New)"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        3440,
+        -40
+      ],
+      "id": "12ad6fe2-d123-4119-9266-b365b1df6e5a",
+      "name": "Claude 3.5 Sonnet",
+      "credentials": {
+        "anthropicApi": {
+          "id": "u4vHNwi4A6Lp7CF2",
+          "name": "Anthropic (PromptMetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3372a1e-7963-4150-8684-6e0bf7276623",
+              "name": "initialAnalysis",
+              "value": "={{ $('Prepare Google Results').item.json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "fed748e7-77ee-41c7-963d-f094ee94af90",
+              "name": "promptsToRun",
+              "value": "={{ $json.output.generatedPrompts }}",
+              "type": "array"
+            },
+            {
+              "id": "875ab111-a716-41c8-8de4-6140592c596b",
+              "name": "domain",
+              "value": "={{ $('Webhook').item.json.body.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1380,
+        0
+      ],
+      "id": "d6ab516c-e2c9-499f-9125-54fb8092fe1a",
+      "name": "Analysis + Prompts"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4760,
+        120
+      ],
+      "id": "efc99e75-9e1b-4bbf-9474-0c43fc84ed84",
+      "name": "Juntar respostas"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Etapa 1: Os dados chegam do novo nó Set. Vamos pegá-los.\nconst inputData = items[0].json;\n\n// Etapa 2: O 'domain' foi adicionado pelo nó Set.\nconst domain = inputData.domain;\n\n// Etapa 3: O restante dos dados dos agentes está dentro da chave 'output'.\nconst analysisData = inputData.output;\n\n// Etapa 4: Agora, montamos o payload final com 100% de certeza de que todos os dados estão aqui.\nconst finalPayload = {\n  domain: domain,\n  status: 'completed',\n  analysis_data: {\n    // DADOS BÁSICOS\n    summary: analysisData.summary,\n    score: analysisData.score,\n    recommendations: analysisData.recommendations,\n    \n    // DADOS PARA GRÁFICOS\n    sentiment_trends: analysisData.sentiment_trends,\n    ranking_data: analysisData.ranking_data,\n    share_of_rank: analysisData.share_of_rank,\n    overall_sentiment: analysisData.overall_sentiment,\n    \n    // ANÁLISE DE COMPETIDORES\n    competitor_analysis: analysisData.competitor_analysis,\n    \n    // INSIGHTS ESTRATÉGICOS\n    strategic_insights: analysisData.strategic_insights,\n    \n    // ANÁLISE DE PROMPT\n    prompt_analysis: {\n      // Mapeando 'model_assessment' para 'sentiment_by_llm'\n      sentiment_by_llm: analysisData.model_assessment,\n      ranking_by_prompt: analysisData.ranking_by_prompt,\n      performance_metrics: {\n        responseTime: 1.2,\n        avgTokens: 156,\n        totalAnalyzedPrompts: 30,\n        aiModelsAnalyzed: 3,\n        averageConfidenceScore: 87.3,\n        dataFreshness: new Date().toISOString().split('T')[0]\n      }\n    }\n  }\n};\n\n// Etapa 5: Retorna o payload final, pronto para o HTTP Request.\nreturn [{\n  json: finalPayload\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5220,
+        140
+      ],
+      "id": "f6d20b2f-5709-48e8-9f47-4e3fac2eea32",
+      "name": "Montar payload"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1716a858-1878-4fd1-a184-323c4535b9e3",
+              "name": "domain",
+              "value": "={{ $('preparandoRespostasModelos').item.json.domain }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5000,
+        140
+      ],
+      "id": "d2752fb7-f004-4d95-8eea-c4e2cc292aad",
+      "name": "Dados para payload"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3900,
+        0
+      ],
+      "id": "a93e204a-ade6-4d05-9882-8996fc21514a",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "SjXZWIR90DDEHDox",
+          "name": "Gemini (PromptMetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4300,
+        -260
+      ],
+      "id": "8c681453-041a-4ed2-9825-16308ca947d1",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "g11WR0iZMVJUDCi6",
+          "name": "OpenAI (promptmetrics)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a senior Business Strategist. Your input is a comprehensive analysis of a company, including its market position, competitor analysis and quantitative performance data.\n\nYour sole task is to generate deep strategic insights based on ALL the provided data.\n\nCreate a single JSON object with ONE top-level key: \"strategic_insights\". This object must contain the following internal keys: \"key_insights\", \"action_items\", \"growth_opportunities\", and \"competitive_threats\".\n\n**CRITICAL AND MANDATORY - Required Output Format:** Your final response must be ONLY and EXCLUSIVELY a valid JSON object that matches the Output Parser's schema. Do not include any text, explanation, conversation, or markdown (like ```json) before or after the JSON object. Your response MUST start with { and end with }. Failure to follow this rule will cause a system failure."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        -440
+      ],
+      "id": "4c033bb8-322f-4959-bdb3-a59b228d2c14",
+      "name": "Strategic Insights"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"strategic_insights\": {\n    \"key_insights\": [\"Insight 1...\"],\n    \"action_items\": [\"Action item 1...\"],\n    \"growth_opportunities\": [\"Growth opportunity 1...\"],\n    \"competitive_threats\": [\"Competitive threat 1...\"]\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        4500,
+        -260
+      ],
+      "id": "a13dd038-13fc-4a31-8b5e-7edf8b19f02e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        240
+      ],
+      "id": "3066cfd9-22ba-48b4-9c0f-223f55a34597",
+      "name": "Setup Search Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "g11WR0iZMVJUDCi6",
+          "name": "OpenAI (promptmetrics)"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "HTTP Request": [
+      {
+        "json": {
+          "success": true,
+          "id": "9270acf2-1fe7-4e0a-8526-e223c67fa6c2",
+          "domain": "pipefy.com",
+          "message": "Analysis received and saved successfully",
+          "data_summary": {
+            "llms_analyzed": [
+              "OpenAI",
+              "Gemini",
+              "Claude"
+            ],
+            "competitors_found": [
+              "MinhaMarca",
+              "Concorrente1",
+              "Concorrente2",
+              "Positive",
+              "Neutral",
+              "Negative"
+            ],
+            "temporal_data_months": 6,
+            "prompts_analyzed": [
+              "Qual a melhor plataforma para X?"
+            ],
+            "completeness_score": 100,
+            "sections_complete": [
+              "summary",
+              "score",
+              "recommendations",
+              "sentiment_trends",
+              "ranking_data",
+              "share_of_rank",
+              "overall_sentiment",
+              "competitor_analysis",
+              "strategic_insights",
+              "prompt_analysis"
+            ],
+            "sections_partial": [],
+            "sections_missing": []
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Setup Search",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Search": {
+      "main": [
+        [
+          {
+            "node": "Prepare Google Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Top 10 Prompts Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Top 10 Prompts",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Top 10 Prompts": {
+      "main": [
+        [
+          {
+            "node": "Analysis + Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Busca dos 10 prompts: OpenAI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Busca dos 10 prompts: OpenAI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca dos 10 prompts: Gemini",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Busca dos 10 prompts: Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca dos 10 prompts: OpenAI": {
+      "main": [
+        [
+          {
+            "node": "promptResultsChatGPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Busca dos 10 prompts: Gemini",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Busca dos 10 prompts: Claude",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca dos 10 prompts: Claude": {
+      "main": [
+        [
+          {
+            "node": "promptResultsClaude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca dos 10 prompts: Gemini": {
+      "main": [
+        [
+          {
+            "node": "promptResultsGemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscaGoogle": {
+      "ai_tool": [
+        [
+          {
+            "node": "Setup Search",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Google Results": {
+      "main": [
+        [
+          {
+            "node": "Top 10 Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser 10 Prompts": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Top 10 Prompts",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Setup Search",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "auth": {
+      "main": [
+        [
+          {
+            "node": "Setup Search",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "preparandoRespostasModelos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "promptResultsChatGPT": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "preparandoRespostasModelos": {
+      "main": [
+        [
+          {
+            "node": "Comparativo de LLMs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Estrategista de Negócios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "promptResultsClaude": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "promptResultsGemini": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Quantitativos": {
+      "main": [
+        [
+          {
+            "node": "Strategic Insights",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar respostas",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Comparativo de LLMs": {
+      "main": [
+        [
+          {
+            "node": "Juntar respostas",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Estrategista de Negócios": {
+      "main": [
+        [
+          {
+            "node": "Dados Quantitativos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar respostas",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Parser Estrategista": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Estrategista de Negócios",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser Análise LLMs": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Comparativo de LLMs",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser Dados Quanti": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Dados Quantitativos",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o para lógica": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Comparativo de LLMs",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude 3.5 Sonnet": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Estrategista de Negócios",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analysis + Prompts": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar respostas": {
+      "main": [
+        [
+          {
+            "node": "Dados para payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar payload": {
+      "main": [
+        []
+      ]
+    },
+    "Dados para payload": {
+      "main": [
+        [
+          {
+            "node": "Montar payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dados Quantitativos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Strategic Insights",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Strategic Insights": {
+      "main": [
+        [
+          {
+            "node": "Juntar respostas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Strategic Insights",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Search Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Setup Search",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "SU2CFLke9bG1tafq"
+  },
+  "versionId": "67e3a188-9e3c-42a2-8490-595e94af89fb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd5f8d851eab8d45d858984284cb119d646feee4eb743fad476ddf82e530f093"
+  },
+  "id": "5uCbWDfpqJZhQx1a",
+  "tags": []
+}

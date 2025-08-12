@@ -5,6 +5,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Analysis from './Analysis';
 import * as domainUtils from '@/utils/domain';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import * as supabaseClient from '@/integrations/supabase/client';
 
 vi.mock('@/components/Header', () => ({
   __esModule: true,
@@ -100,6 +101,60 @@ describe('Analysis Page - 5.4 A11y & Responsividade', () => {
 
     const grid = await screen.findByTestId('analysis-grid');
     expect(grid.className).toMatch(/lg:grid-cols-2/);
+  });
+});
+
+describe('Analysis Page - header summary e Last updated', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  const setup = (url: string) => {
+    return render(
+      <LanguageProvider>
+        <MemoryRouter initialEntries={[url]}>
+          <Routes>
+            <Route path="/analysis" element={<Analysis />} />
+          </Routes>
+        </MemoryRouter>
+      </LanguageProvider>
+    );
+  };
+
+  it('mostra domain + Last updated do registro mais recente (updated_at desc)', async () => {
+    // Mock do supabase.from(...).select(...).eq(...).order(...).limit(1).maybeSingle()
+    const maybeSingle = vi.fn().mockResolvedValue({
+      data: {
+        id: 'ar-2',
+        domain: 'example.com',
+        status: 'completed',
+        updated_at: '2025-08-10T23:05:00.000Z',
+        analysis_data: {
+          summary: 'Resumo',
+          score: 80,
+          generated_at: '2025-08-10T23:04:00.000Z'
+        }
+      },
+      error: null
+    });
+    const order = vi.fn().mockReturnValue({ limit: () => ({ maybeSingle }) });
+    const eq = vi.fn().mockReturnValue({ order });
+    const select = vi.fn().mockReturnValue({ eq });
+    const from = vi.fn().mockReturnValue({ select });
+    vi.spyOn(supabaseClient, 'supabase', 'get').mockReturnValue({
+      from,
+    } as unknown as supabaseClient['supabase']);
+
+    setup('/analysis?domain=https://www.example.com');
+
+    // Header summary renderiza
+    const header = await screen.findByTestId('analysis-header-summary');
+    expect(header).toBeInTheDocument();
+    expect(header).toHaveTextContent('example.com');
+
+    const last = await screen.findByTestId('analysis-last-updated');
+    expect(last.textContent).toMatch(/Last updated:/);
   });
 });
 

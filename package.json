@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "test": "vitest run --reporter=verbose",
     "lint": "eslint .",
     "preview": "vite preview --port 8080 --strictPort",
     "test:e2e": "playwright test",
