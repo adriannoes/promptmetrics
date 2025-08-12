@@ -3,7 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, BarChart, Bar } from 'recharts';
-import { BarChart3, Target, Heart, TrendingUp, Sparkles } from 'lucide-react';
+import { BarChart3, Target, Heart, TrendingUp, Sparkles, ArrowLeft } from 'lucide-react';
+import { NavBar } from '@/components/ui/tubelight-navbar';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { CompleteAnalysisResult, AnalysisDataStructure, ChartDataPoint, OverallSentimentItem, RankingData, SentimentTrendData } from '@/types/analysis';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { formatDateTime, formatNumber } from '@/lib/format';
@@ -32,37 +34,14 @@ const fallbackRanking = [
   { month: 'Jun', You: 2.1, Competitor1: 1.8, Competitor2: 3.0 },
 ];
 
-const AnalysisHeader: React.FC<{ domain: string; score: number; summary: string; lastUpdated?: string }> = ({ domain, score, summary, lastUpdated }) => {
-  const { language } = useLanguage();
-  return (
-    <Card className="mb-6">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
-              <strong>{domain}</strong>
-            </CardTitle>
-            <CardDescription className="mt-2 max-w-3xl">{summary}</CardDescription>
-          </div>
-          <div className="text-right">
-            <div className="text-3xl font-bold text-blue-700 mb-1">{formatNumber(score, language)}<span className="text-lg text-blue-600">/100</span></div>
-            <Badge className="bg-blue-100 text-blue-700">Overall Score</Badge>
-            {lastUpdated && (
-              <div className="text-xs text-muted-foreground mt-1" data-testid="dashboard-last-updated">
-                Last updated: {formatDateTime(lastUpdated, language)}
-              </div>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
-  );
-};
+// Header removido para simplificar a página conforme a nova diretriz
 
 export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) => {
   const { domain, analysis_data } = result as { domain: string; analysis_data: AnalysisDataStructure };
-  const [activeTab, setActiveTab] = React.useState('dashboard');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const initialTab = (location.hash?.replace('#', '') || 'dashboard');
+  const [activeTab, setActiveTab] = React.useState(initialTab);
   const { t } = useLanguage();
 
   // Telemetria mínima
@@ -79,7 +58,19 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
   const handleTabChange = (val: string) => {
     setActiveTab(val);
     console.log('telemetry.analysis.tab_change', { tab: val, domain });
+    // Sincroniza com hash para permitir navegação direta e funcionamento do NavBar
+    navigate(`#${val}`, { replace: true });
   };
+
+  // Reage a mudanças no hash da URL (ex: navegação externa, testes)
+  React.useEffect(() => {
+    const syncFromHash = () => {
+      const next = (window.location.hash || '').replace('#', '') || 'dashboard';
+      setActiveTab(next);
+    };
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, []);
 
   // Utilidades importadas de dataTransforms
 
@@ -116,17 +107,43 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
 
   return (
     <div>
-      <AnalysisHeader 
-        domain={domain} 
-        score={analysis_data?.score ?? 0} 
-        summary={analysis_data?.summary ?? ''}
-        lastUpdated={(analysis_data as unknown as { generated_at?: string })?.generated_at || result.updated_at}
+      {/* Barra superior: botão Voltar + NavBar posicionada logo abaixo do título na página */}
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={() => navigate('/home')}
+          className="inline-flex items-center gap-2 text-sm font-medium text-foreground/80 hover:text-primary"
+          aria-label="Back to Home"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
+      </div>
+      <NavBar
+        position="static"
+        items={[
+          { name: t('analysis.tabs.dashboard'), url: '/analysis#dashboard', icon: BarChart3 },
+          { name: t('analysis.tabs.promptAnalysis'), url: '/analysis#prompts', icon: Sparkles },
+          { name: t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis', url: '/analysis#competitors', icon: Target },
+          { name: t('analysis.tabs.strategicInsights'), url: '/analysis#insights', icon: TrendingUp },
+        ]}
+        onItemClick={(item) => {
+          const map: Record<string, string> = {
+            [t('analysis.tabs.dashboard')]: 'dashboard',
+            [t('analysis.tabs.promptAnalysis')]: 'prompts',
+            [t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis']: 'competitors',
+            [t('analysis.tabs.strategicInsights')]: 'insights',
+          };
+          const val = map[item.name] ?? 'dashboard';
+          handleTabChange(val);
+        }}
       />
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full pt-16">
+        {/* Mantemos a estrutura de TabsList para acessibilidade e testes, porém oculta visualmente */}
+        <TabsList className="sr-only">
           <TabsTrigger value="dashboard">{t('analysis.tabs.dashboard')}</TabsTrigger>
           <TabsTrigger value="prompts">{t('analysis.tabs.promptAnalysis')}</TabsTrigger>
+          <TabsTrigger value="competitors">{t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis'}</TabsTrigger>
           <TabsTrigger value="insights">{t('analysis.tabs.strategicInsights')}</TabsTrigger>
         </TabsList>
 
@@ -239,6 +256,21 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               ) : (
                 <p className="text-slate-600 text-sm">{t('analysis.empty.prompts')}</p>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="competitors">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-600" />
+                {t('competitorAnalysis.title')}
+              </CardTitle>
+              <CardDescription>{t('competitorAnalysis.basedOnCurrentAnalysis')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-600 text-sm">{t('analysis.empty.insights')}</p>
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AnalysisDashboard } from './AnalysisDashboard';
@@ -73,21 +74,22 @@ const makeResult = () => ({
   }
 });
 
-describe('AnalysisDashboard - header summary', () => {
-  it('exibe domínio em destaque e Last updated do generated_at', async () => {
+describe('AnalysisDashboard - header/nav e estrutura principal', () => {
+  it('renderiza NavBar e conteúdo do dashboard', async () => {
     const result = makeResult();
     render(
       <LanguageProvider>
-        <AnalysisDashboard result={result as any} />
+        <MemoryRouter initialEntries={["/analysis"]}>
+          <AnalysisDashboard result={result as any} />
+        </MemoryRouter>
       </LanguageProvider>
     );
 
-    // domínio destacado (texto presente)
-    expect(await screen.findByText('pipefy.com')).toBeInTheDocument();
-
-    // last updated usa analysis_data.generated_at
-    const last = await screen.findByTestId('dashboard-last-updated');
-    expect(last.textContent).toMatch(/Last updated:/);
+    // NavBar presente (usa link para /analysis#dashboard)
+    const links = await screen.findAllByRole('link', { name: 'Dashboard' });
+    expect(links.length).toBeGreaterThan(0);
+    // Conteúdo principal do dashboard visível
+    expect(await screen.findByText(/Overall Sentiment Score/i)).toBeInTheDocument();
   });
 });
 
@@ -96,7 +98,9 @@ describe('AnalysisDashboard - A11y tabs (roles básicos)', () => {
     const result = makeResult();
     render(
       <LanguageProvider>
-        <AnalysisDashboard result={result as any} />
+        <MemoryRouter initialEntries={["/analysis"]}>
+          <AnalysisDashboard result={result as any} />
+        </MemoryRouter>
       </LanguageProvider>
     );
     // TabsList é um wrapper Radix com role=tablist
@@ -112,7 +116,9 @@ describe('AnalysisDashboard - ordering e Top 5 + Others', () => {
     const result = makeResult();
     render(
       <LanguageProvider>
-        <AnalysisDashboard result={result as any} />
+        <MemoryRouter initialEntries={["/analysis"]}>
+          <AnalysisDashboard result={result as any} />
+        </MemoryRouter>
       </LanguageProvider>
     );
     // Não confiamos em labels SVG do Recharts no JSDOM; apenas garantimos que as seções existem.
@@ -125,7 +131,9 @@ describe('AnalysisDashboard - ordering e Top 5 + Others', () => {
     const result = makeResult();
     render(
       <LanguageProvider>
-        <AnalysisDashboard result={result as any} />
+        <MemoryRouter initialEntries={["/analysis"]}>
+          <AnalysisDashboard result={result as any} />
+        </MemoryRouter>
       </LanguageProvider>
     );
     // Não validamos a ordem exata das linhas no DOM do Recharts (complexo),
@@ -138,16 +146,18 @@ describe('AnalysisDashboard - ordering e Top 5 + Others', () => {
 describe('AnalysisDashboard - empty states por aba e fallback de Last updated', () => {
   const base = makeResult();
 
-  it('usa fallback de Last updated para updated_at quando generated_at ausente', async () => {
+  it('renderiza dashboard mesmo sem generated_at (sem exigir last updated no header)', async () => {
     const result = { ...base, analysis_data: { ...base.analysis_data } } as any;
     delete result.analysis_data.generated_at;
     render(
       <LanguageProvider>
-        <AnalysisDashboard result={result} />
+        <MemoryRouter initialEntries={["/analysis"]}>
+          <AnalysisDashboard result={result} />
+        </MemoryRouter>
       </LanguageProvider>
     );
-    const last = await screen.findByTestId('dashboard-last-updated');
-    expect(last).toBeInTheDocument();
+    // O header foi simplificado; validamos que o dashboard apareceu normalmente
+    expect(await screen.findByText(/Overall Sentiment Score/i)).toBeInTheDocument();
   });
 
   it('mostra mensagens de vazio quando sections não existem', async () => {
@@ -162,14 +172,19 @@ describe('AnalysisDashboard - empty states por aba e fallback de Last updated', 
     } as any;
     render(
       <LanguageProvider>
-        <AnalysisDashboard result={result} />
+        <MemoryRouter initialEntries={["/analysis"]}>
+          <AnalysisDashboard result={result} />
+        </MemoryRouter>
       </LanguageProvider>
     );
-    // Abre aba de prompts para ver empty state
-    await userEvent.click(await screen.findByRole('tab', { name: /AI Analysis/i }));
+    // Abre aba de prompts via hash/nav bar
+    window.location.hash = '#prompts';
+    // Dispara um evento de hashchange (simulado)
+    await userEvent.click(document.body);
     expect(await screen.findByText(/Not enough prompt data yet\./i)).toBeInTheDocument();
-    // Abre aba de insights para ver mensagens de vazio
-    await userEvent.click(await screen.findByRole('tab', { name: /Strategic Insights/i }));
+    // Abre aba de insights
+    window.location.hash = '#insights';
+    await userEvent.click(document.body);
     expect(await screen.findByText(/No recommendations available\./i)).toBeInTheDocument();
     expect(await screen.findByText(/No strategic insights available\./i)).toBeInTheDocument();
   });

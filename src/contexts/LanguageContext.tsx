@@ -268,7 +268,8 @@ const translations = {
     'analysis.title': 'Domain Analysis',
     // Analysis tabs (for dashboard)
     'analysis.tabs.dashboard': 'Dashboard',
-    'analysis.tabs.promptAnalysis': 'AI Analysis',
+    'analysis.tabs.promptAnalysis': 'Prompt Analysis',
+    'analysis.tabs.competitorAnalysis': 'Competitor Analysis',
     'analysis.tabs.strategicInsights': 'Strategic Insights',
     'analysis.lastMonthsPerCompetitor': 'Last months by competitor',
     'analysis.lowerIsBetter': 'Lower is better',
@@ -584,7 +585,8 @@ const translations = {
     'analysis.title': 'Análise de Domínio',
     // Analysis tabs (for dashboard)
     'analysis.tabs.dashboard': 'Dashboard',
-    'analysis.tabs.promptAnalysis': 'Análise de IA',
+    'analysis.tabs.promptAnalysis': 'Análise de Prompts',
+    'analysis.tabs.competitorAnalysis': 'Análise Competitiva',
     'analysis.tabs.strategicInsights': 'Insights Estratégicos',
     'analysis.lastMonthsPerCompetitor': 'Últimos meses por concorrente',
     'analysis.lowerIsBetter': 'Menor é melhor',

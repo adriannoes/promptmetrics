@@ -101,7 +101,7 @@ describe('Analysis Page - 5.1.1 Query Param', () => {
     );
   };
 
-  it('lê o domínio da query string (?domain=) e reflete no header/live-region', async () => {
+  it('lê o domínio da query string (?domain=) e reflete na live-region', async () => {
     // 5.1.3: normaliza domínio
     vi.spyOn(domainUtils, 'extractDomain').mockImplementation((s: any) => 'example.com');
     mockResult = {
@@ -112,9 +112,8 @@ describe('Analysis Page - 5.1.1 Query Param', () => {
       analysis_data: { summary: 'Resumo', score: 80, generated_at: '2025-08-10T23:04:00.000Z' },
     };
     setup('/analysis?domain=https://www.example.com');
-    // aceita tanto header summary quanto live region como fonte
-    const header = await screen.findByTestId('analysis-header-summary');
-    expect(header).toHaveTextContent('example.com');
+    const live = await screen.findByTestId('analysis-live-region');
+    expect(live).toHaveTextContent('example.com');
   });
 
   it('usa fallback do localStorage quando não há query param', async () => {
@@ -268,7 +267,7 @@ describe('Analysis Page - header summary e Last updated', () => {
     );
   };
 
-  it('mostra domain + Last updated do registro mais recente (updated_at desc)', async () => {
+  it('mantém container sem header summary e segue funcional', async () => {
     try { localStorage.setItem('VITE_DISABLE_REALTIME', 'true'); } catch {}
     // Mock do supabase.from(...).select(...).eq(...).order(...).limit(1).maybeSingle()
     const maybeSingle = vi.fn().mockResolvedValue({
@@ -295,13 +294,9 @@ describe('Analysis Page - header summary e Last updated', () => {
 
     setup('/analysis?domain=https://www.example.com');
 
-    // Header summary renderiza
-    const header = await screen.findByTestId('analysis-header-summary');
-    expect(header).toBeInTheDocument();
-    expect(header).toHaveTextContent('example.com');
-
-    const last = await screen.findByTestId('analysis-last-updated');
-    expect(last.textContent).toMatch(/Last updated:/);
+    // Agora não há mais header summary; apenas valida o container principal
+    const container = await screen.findByTestId('analysis-container');
+    expect(container).toBeInTheDocument();
     try { localStorage.removeItem('VITE_DISABLE_REALTIME'); } catch {}
   });
 });
