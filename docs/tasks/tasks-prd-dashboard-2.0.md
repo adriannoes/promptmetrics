@@ -43,7 +43,7 @@
   - [x] 2.4 Exibir cabeçalho com domínio e "Last updated" (formatação relativa e absoluta; timezone seguro).
   - [x] 2.5 Empty states por aba com mensagens claras e acessíveis.
   - [x] 2.6 Testes em `src/components/analysis/AnalysisDashboard.test.tsx` cobrindo render mínimo por aba e mapeamentos essenciais.
-  - [ ] 2.7 Testes (complemento): validar "cliente primeiro" em todas as abas aplicáveis e Top 5 + "Others" com soma/contagem corretas.
+  - [x] 2.7 Testes (complemento): validar "cliente primeiro" em todas as abas aplicáveis e Top 5 + "Others" com soma/contagem corretas.
 
 - [ ] 3.0 Realtime Supabase para `analysis_results` (assinatura por domínio, atualização reativa com fallback para snapshot)
   - [ ] 3.1 Integrar `useRealTimeAnalysis(domain)` na página `/analysis` para refetch quando houver INSERT/UPDATE do domínio.
@@ -55,7 +55,7 @@
 - [ ] 4.0 UX: regras de apresentação (cliente primeiro, Top 5 + “Others”, “Last updated”), i18n (EN/PT‑BR) e A11y (skeleton/erros)
   - [ ] 4.1 Aplicar regra "cliente primeiro" nas listas e gráficos (quando houver cliente-alvo).
   - [ ] 4.2 Consolidar Top 5 e agrupar restantes em "Others" com contagem/soma adequada.
-  - [ ] 4.3 I18n: adicionar chaves no `LanguageContext` para rótulos, abas, empty states e mensagens de erro (EN/PT‑BR).
+  - [x] 4.3 I18n: adicionar chaves no `LanguageContext` para rótulos, abas, empty states e mensagens de erro (EN/PT‑BR).
   - [ ] 4.4 Acessibilidade: foco visível nos tabs; `aria-selected`, `role=tablist/tab/panel`; mensagens com `aria-live` quando apropriado.
   - [ ] 4.5 Documentar padrões de formatação de datas e números; garantir consistência cross-locale.
   - [ ] 4.6 Testes de acessibilidade e i18n básicos (chaves presentes e renderizadas corretamente).

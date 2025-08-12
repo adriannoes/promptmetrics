@@ -30,6 +30,24 @@ describe('dataTransforms - Top 5 + Others', () => {
     const janOthers = Number(result[0]['Others']);
     expect(janOthers).toBeGreaterThan(0);
   });
+
+  it('calcula "Others" como soma exata das séries descartadas em cada linha', () => {
+    const result = trimToTop5WithOthers('you', rows);
+    // Recalcula manualmente: identificar quais chaves foram mantidas além de month
+    const keysJan = Object.keys(result[0]).filter((k) => k !== 'month');
+    // Others está presente e é número
+    const othersJan = Number(result[0]['Others']);
+    expect(Number.isFinite(othersJan)).toBe(true);
+    // As chaves descartadas são as que não estão em keysJan e não são 'month'
+    const originalKeys = Object.keys(rows[0]).filter((k) => k !== 'month');
+    const dropped = originalKeys.filter((k) => !keysJan.includes(k));
+    const manualJanSum = dropped.reduce((acc, k) => acc + (Number((rows[0] as any)[k]) || 0), 0);
+    expect(othersJan).toBe(manualJanSum);
+
+    const othersFeb = Number(result[1]['Others']);
+    const manualFebSum = dropped.reduce((acc, k) => acc + (Number((rows[1] as any)[k]) || 0), 0);
+    expect(othersFeb).toBe(manualFebSum);
+  });
 });
 
 
