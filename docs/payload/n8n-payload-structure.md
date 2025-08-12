@@ -8,7 +8,7 @@ Envio recomendado: um único objeto JSON (não array), com os campos abaixo. Os 
 
 Cabeçalhos obrigatórios (segurança):
 - `Content-Type: application/json`
-- `x-signature: <assinatura-base64>` — HMAC-SHA256 do corpo bruto (string JSON), usando a chave `N8N_HMAC_SECRET`. Exigido em produção; pode ser bypass em dev.
+ - `x-signature: <assinatura-base64>` — HMAC-SHA256 do corpo bruto (string JSON), usando a chave `N8N_HMAC_SECRET`. Exigido em produção; bypass controlado em dev via `ALLOW_INSECURE_DEV=true`.
 - Recomendado: `User-Agent: n8n-workflow/<versao>`
 
 Top-level (recomendado):

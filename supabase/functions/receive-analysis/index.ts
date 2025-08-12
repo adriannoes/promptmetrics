@@ -3,8 +3,11 @@
 
 // @ts-ignore - Deno runtime imports
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-// @ts-ignore - Deno runtime imports  
+// @ts-ignore - Deno runtime imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+// Local HMAC utilities (cross-runtime)
+// @ts-ignore - Deno runtime local import
+import { verifyHmacSha256Base64 } from './hmac.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -206,9 +209,11 @@ serve(async (req) => {
       });
     }
 
+    // Read raw body first (for HMAC)
+    const rawBody = await req.text();
     let payload;
     try {
-      payload = await req.json();
+      payload = JSON.parse(rawBody);
       console.log('📥 Received raw payload:', JSON.stringify(payload, null, 2));
     } catch (parseError) {
       console.error('❌ Failed to parse JSON payload:', parseError);
@@ -221,6 +226,26 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       );
+    }
+
+    // Optional HMAC verification (required in prod when N8N_HMAC_SECRET is set)
+    try {
+      // @ts-ignore - Deno global
+      const secret = Deno.env.get('N8N_HMAC_SECRET');
+      const bypass = (Deno.env.get('ALLOW_INSECURE_DEV') || '').toLowerCase() === 'true';
+      const provided = req.headers.get('x-signature');
+      if (secret && !bypass) {
+        if (!provided) {
+          return new Response(JSON.stringify({ error: 'Missing x-signature' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const ok = await verifyHmacSha256Base64(rawBody, provided, secret);
+        if (!ok) {
+          return new Response(JSON.stringify({ error: 'Invalid signature' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+      }
+    } catch (sigErr) {
+      console.error('❌ Signature verification error:', sigErr);
+      return new Response(JSON.stringify({ error: 'Signature verification failed' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     // n8n sends data as array, extract first item
@@ -309,8 +334,16 @@ serve(async (req) => {
       });
     }
 
+    // Enrich analysis_data with defaults for version/generation metadata
+    const baseAnalysisData = {
+      version: analysisPayload.analysis_data?.version ?? 1,
+      generated_at: analysisPayload.analysis_data?.generated_at ?? new Date().toISOString(),
+      request_id: analysisPayload.analysis_data?.request_id ?? crypto.randomUUID?.() ?? `${Date.now()}`,
+      ...analysisPayload.analysis_data,
+    };
+
     // Process and enhance analysis data
-    const { processed: enhancedAnalysisData, competitors } = processAnalysisData(analysisPayload.analysis_data);
+    const { processed: enhancedAnalysisData, competitors } = processAnalysisData(baseAnalysisData);
     const dataMetrics = calculateDataMetrics(enhancedAnalysisData, competitors);
 
     // Initialize Supabase client
