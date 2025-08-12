@@ -7,14 +7,25 @@
 - `src/pages/Analysis.test.tsx` – Testes de integração de rota, parsing de domínio e estados (skeleton/erro).
 - `supabase/functions/receive-analysis/index.ts` – Ingestão (n8n → Supabase), normalização de metadados e upsert por domínio.
 - `supabase/migrations/*.sql` – Migrações relacionadas a `analysis_results` (UNIQUE(domain), eventuais colunas futuras).
+- `.env.example` – Exemplos de variáveis (diagnóstico Realtime e chaves públicas). Nunca commitar segredos reais.
 
 ### Notes
 
 - Crie/atualize testes ao lado dos arquivos (por exemplo: `MyComponent.tsx` e `MyComponent.test.tsx`).
 - Use `npx jest [opcional/caminho/do/arquivo]` para executar testes; sem caminho roda toda a suíte.
 - Chamadas externas (Edge Functions, n8n) devem usar HTTPS/TLS; nunca exponha segredos no front. Utilize variáveis via `.env.example`.
+- Siga `docs/instructions/process-task-list.mdc`: ao concluir uma sub‑tarefa, marque `[x]`, e pause para aprovação antes de iniciar a próxima.
+- Mantenha a seção “Relevant Files” atualizada conforme arquivos forem criados/alterados.
 
 ## Tasks
+
+- [ ] 0.0 Preparação e Configuração
+  - [ ] 0.1 Criar/atualizar `.env.example` com chaves/flags de diagnóstico (sem segredos reais):
+        - `VITE_DISABLE_REALTIME=` (vazio → Realtime habilitado)
+        - `VITE_SUPABASE_URL=` e `VITE_SUPABASE_ANON_KEY=` (placeholders para front)
+        - Para Edge Functions: `N8N_HMAC_SECRET=` (apenas ambiente do servidor; não expor no front)
+        - Todas as integrações devem usar HTTPS/TLS
+  - [ ] 0.2 Garantir scripts rápidos (≤60s): `npm run lint`, `npm run typecheck`, `npm test`.
 
 - [ ] 1.0 Roteamento e Carregamento de Dados da página `/analysis` (auth guard, `?domain=` com fallbacks, snapshot inicial)
   - [ ] 1.1 Fazer parse de `?domain=` e normalizar com `extractDomain` (remover protocolo/`www.`/trailing `/`).
@@ -32,6 +43,7 @@
   - [ ] 2.4 Exibir cabeçalho com domínio e "Last updated" (formatação relativa e absoluta; timezone seguro).
   - [ ] 2.5 Empty states por aba com mensagens claras e acessíveis.
   - [ ] 2.6 Testes em `src/components/analysis/AnalysisDashboard.test.tsx` cobrindo render mínimo por aba e mapeamentos essenciais.
+  - [ ] 2.7 Testes (complemento): validar "cliente primeiro" em todas as abas aplicáveis e Top 5 + "Others" com soma/contagem corretas.
 
 - [ ] 3.0 Realtime Supabase para `analysis_results` (assinatura por domínio, atualização reativa com fallback para snapshot)
   - [ ] 3.1 Integrar `useRealTimeAnalysis(domain)` na página `/analysis` para refetch quando houver INSERT/UPDATE do domínio.
@@ -50,7 +62,7 @@
 
 - [ ] 5.0 Testes (TDD) cobrindo mapeamentos por aba e integração da `/analysis`; Telemetria mínima (events `analysis.*`)
   - [ ] 5.1 Escrever testes antes/ao lado dos componentes (unit e integração leve) e manter snapshots controlados.
-  - [ ] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros.
+  - [ ] 5.2 Cobrir: parsing/fallback do domínio, ordering por `updated_at`, render mínimo por aba, empty states e erros; regra "cliente primeiro"; Top 5 + "Others"; fallback de "Last updated".
   - [ ] 5.3 Teste de integração: navegar para `/analysis?domain=...` e validar render do header + "Last updated".
   - [ ] 5.4 Telemetria: instrumentar eventos `analysis.view_opened`, `analysis.tab_changed`, `analysis.data_loaded` (no-op seguro se não houver backend de analytics).
   - [ ] 5.5 Atualizar `README.md`/`docs/DOCS.md` com como rodar os testes: `npm test` e filtros por arquivo.
@@ -60,5 +72,4 @@
   - [ ] 6.2 Documentar versão do payload em `docs/payload/n8n-payload-structure.md` e exemplo atualizado em `docs/payload/n8n-payload-example`.
   - [ ] 6.3 Recomendar HTTPS/TLS nas integrações e uso de segredos via variáveis de ambiente; atualizar `.env.example` se necessário.
   - [ ] 6.4 Smoke test com `curl` autenticado (Bearer `$SUPABASE_ANON_KEY`) validando upsert por domínio e refresh em tempo real.
-
-
+  - [ ] 6.5 `receive-analysis`: validar `x-signature = base64(HMAC_SHA256(body, N8N_HMAC_SECRET))`. Bypass controlado em dev via flag de ambiente. Rejeitar com 4xx quando inválido.
