@@ -279,8 +279,8 @@ Documentação & Planos
 - [ ] **9.0 UX & UI Enhancements**
   - [ ] 9.1 Modal de progresso com etapas (DomainSetup & Home).
   - [ ] 9.2 Toasts e emails via Supabase SMTP.
-  - [ ] 9.3 Dark mode friendly.
-  - [ ] 9.4 Breadcrumb e histórico simples na página Analysis.
+  - [x] 9.3 Dark mode friendly (melhorias iniciais na seção de métricas dos prompts: `dark:bg-slate-800`).
+  - [x] 9.4 Breadcrumb acessível e histórico simples de abas recentes na página `Analysis` (persistência em `localStorage`).
 
 - [ ] **10.0 Observabilidade & Métricas**
   - [ ] 10.1 Dash Supabase Analytics – monitorar functions.
