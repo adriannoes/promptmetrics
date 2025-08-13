@@ -182,6 +182,14 @@ describe('Analysis Page - 5.4 A11y & Responsividade', () => {
     expect(live).toHaveTextContent('example.com');
   });
 
+  it('exibe breadcrumb acessível com Home / Analysis', async () => {
+    setup('/analysis?domain=example.com');
+    const nav = await screen.findByRole('navigation', { name: /breadcrumb/i });
+    expect(nav).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'Home' })).toHaveAttribute('href', '/home');
+    expect(await screen.findByText('Analysis')).toBeInTheDocument();
+  });
+
   it('usa classes responsivas no layout principal', async () => {
     setup('/analysis');
     const container = await screen.findByTestId('analysis-container');

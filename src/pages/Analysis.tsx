@@ -13,12 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Search, 
   BarChart3, 
-  TrendingUp, 
-  Globe, 
-  AlertCircle, 
-  Clock,
-  CheckCircle,
-  Loader2
+  AlertCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
@@ -28,6 +23,14 @@ import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
 import type { CompleteAnalysisResult } from '@/types/analysis';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 import { formatDateTime } from '@/lib/format';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 import { signOut } from '@/services/authService';
 
 const AnalysisContent = () => {
@@ -108,23 +111,19 @@ const AnalysisContent = () => {
       <SkipNav />
       <main ref={mainRef} id="main-content" tabIndex={-1} role="main" className="pt-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6" data-testid="analysis-container">
-          {/* Header como na /demo, com nossas cores (compactado) */}
+          {/* Breadcrumb acessível */}
           <div className="mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-primary-foreground font-bold">P</div>
-                <h1 className="text-2xl font-bold">PromptMetrics</h1>
-              </div>
-              <div className="flex items-center gap-3">
-                <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-colors">Export Report</button>
-                <button
-                  onClick={async () => { await signOut(); navigate('/'); }}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-foreground/80 hover:text-primary"
-                >
-                  {language === 'pt-BR' ? 'Sair' : 'Sign out'}
-                </button>
-              </div>
-            </div>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/home">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Analysis</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </div>
 
           {/* Error Alert */}
