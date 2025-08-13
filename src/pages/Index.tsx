@@ -25,8 +25,8 @@ const Index = () => {
         <React.Suspense fallback={<div className="px-4 py-8 text-slate-600">Carregando…</div>}>
           <section id="features"><Problem /></section>
           <section id="integration"><Transformation /></section>
-          <section id="pricing"><Pricing /></section>
-          <section id="testimonials"><FAQ /></section>
+          <Pricing />
+          <FAQ />
           <ContactForm />
         </React.Suspense>
       </main>

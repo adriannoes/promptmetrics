@@ -21,14 +21,13 @@ const footerLinks: FooterSection[] = [
     links: [
       { title: 'Features', href: '/#features' },
       { title: 'Pricing', href: '/#pricing' },
-      { title: 'Testimonials', href: '/#testimonials' },
-      { title: 'Integration', href: '/#integration' },
+      { title: 'FAQs', href: '/faqs' },
+      { title: 'Changelog', href: '/changelog' },
     ],
   },
   {
     label: 'Company',
     links: [
-      { title: 'FAQs', href: '/faqs' },
       { title: 'About Us', href: '/about' },
       { title: 'Privacy Policy', href: '/privacy' },
       { title: 'Terms of Services', href: '/terms' },
@@ -38,7 +37,6 @@ const footerLinks: FooterSection[] = [
     label: 'Resources',
     links: [
       { title: 'Blog', href: '/blog' },
-      { title: 'Changelog', href: '/changelog' },
       { title: 'Brand', href: '/brand' },
       { title: 'Help', href: '/help' },
     ],
@@ -82,7 +80,7 @@ export function Footer() {
         <AnimatedContainer className="space-y-4">
           <FrameIcon className="w-8 h-8 text-slate-800" />
           <p className="text-slate-500 mt-8 text-sm md:mt-0">
-            © {new Date().getFullYear()} Asme. All rights reserved.
+            © {new Date().getFullYear()} PromptMetrics. All rights reserved.
           </p>
         </AnimatedContainer>
 
