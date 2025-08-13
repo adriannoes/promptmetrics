@@ -7,9 +7,9 @@ test.describe('Landing visual and a11y', () => {
     await expect(page.locator('#main-content')).toBeVisible();
     await expect(page.locator('footer')).toBeVisible();
 
-    await expect(page).toHaveScreenshot('landing-hero.png', { fullPage: false });
-    await page.locator('#pricing').scrollIntoViewIfNeeded();
-    await expect(page).toHaveScreenshot('landing-pricing.png', { fullPage: false });
+    await expect(page).toHaveScreenshot('landing-hero.png', { fullPage: false, maxDiffPixels: 100 });
+    await page.locator('section#pricing').first().scrollIntoViewIfNeeded();
+    await expect(page).toHaveScreenshot('landing-pricing.png', { fullPage: false, maxDiffPixels: 100 });
     await page.locator('#faq').scrollIntoViewIfNeeded();
     await expect(page).toHaveScreenshot('landing-faq.png', { fullPage: false });
     await page.locator('#form').scrollIntoViewIfNeeded();

@@ -14,7 +14,7 @@ test.describe('Landing navigation', () => {
     await page.locator('#mobile-navigation').getByRole('button', { name: /pricing/i }).click({ force: true });
 
     // pricing should be in viewport
-    const pricing = page.locator('#pricing');
+    const pricing = page.locator('section#pricing').first();
     await expect(pricing).toBeVisible();
 
     // open menu again and go to faq

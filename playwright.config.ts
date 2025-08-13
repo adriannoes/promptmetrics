@@ -28,6 +28,9 @@ export default defineConfig({
       port: 8080,
       reuseExistingServer: true,
       timeout: 60_000,
+      env: {
+        VITE_E2E_AUTH_BYPASS: 'true',
+      },
     },
   ],
 });

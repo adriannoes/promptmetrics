@@ -25,6 +25,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     loading
   });
 
+  // E2E bypass: permite acesso às rotas protegidas durante testes visuais
+  if (import.meta.env.VITE_E2E_AUTH_BYPASS === 'true') {
+    return <>{children}</>;
+  }
+
   // Show loading state (impede redirect para login durante boot)
   if (loading) {
     return (

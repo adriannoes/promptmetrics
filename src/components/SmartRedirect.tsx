@@ -12,6 +12,10 @@ export const SmartRedirect: React.FC<SmartRedirectProps> = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // E2E bypass: não fazer redirects automáticos
+    if (import.meta.env.VITE_E2E_AUTH_BYPASS === 'true') {
+      return;
+    }
     // Don't redirect while loading
     if (loading || !profile) return;
 

@@ -15,7 +15,8 @@ const Admin = React.lazy(() => import('./pages/Admin'));
 const Analysis = React.lazy(() => import('./pages/Analysis'));
 const Demo = React.lazy(() => import('./pages/Demo'));
 const DemoPM3 = React.lazy(() => import('./pages/DemoPM3'));
-const Home = React.lazy(() => import('./pages/Home'));
+  const Home = React.lazy(() => import('./pages/Home'));
+  const AnalysisE2E = React.lazy(() => import('./pages/AnalysisE2E'));
 const DomainSetup = React.lazy(() => import('./pages/DomainSetup'));
   const OrganizationSetup = React.lazy(() => import('./pages/OrganizationSetup'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
@@ -95,6 +96,10 @@ function App() {
                       <Analysis />
                     </ProtectedRoute>
                   } />
+                  {/* E2E-only route (dev/test) */}
+                  {(import.meta.env.DEV || import.meta.env.VITE_E2E_AUTH_BYPASS === 'true') && (
+                    <Route path="/analysis-e2e" element={<AnalysisE2E />} />
+                  )}
                   
                   
                   <Route path="/home" element={
