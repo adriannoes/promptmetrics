@@ -42,7 +42,6 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
   const navigate = useNavigate();
   const initialTab = (location.hash?.replace('#', '') || 'dashboard');
   const [activeTab, setActiveTab] = React.useState(initialTab);
-  const [recentTabs, setRecentTabs] = React.useState<string[]>([]);
   const { t } = useLanguage();
 
   // Telemetria mínima
@@ -56,19 +55,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
     });
   }, [domain]);
 
-  const persistRecentTabs = React.useCallback((val: string) => {
-    try {
-      const key = `analysisTabHistory:${domain}`;
-      const existing = JSON.parse(localStorage.getItem(key) || '[]') as string[];
-      const next = [val, ...existing.filter((v) => v !== val)].slice(0, 3);
-      localStorage.setItem(key, JSON.stringify(next));
-      setRecentTabs(next);
-    } catch {}
-  }, [domain]);
-
   const handleTabChange = (val: string) => {
     setActiveTab(val);
-    persistRecentTabs(val);
     console.log('telemetry.analysis.tab_change', { tab: val, domain });
     // Sincroniza com hash para permitir navegação direta e funcionamento do NavBar
     navigate(`#${val}`, { replace: true });
@@ -79,24 +67,10 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
     const syncFromHash = () => {
       const next = (window.location.hash || '').replace('#', '') || 'dashboard';
       setActiveTab(next);
-      persistRecentTabs(next);
     };
     window.addEventListener('hashchange', syncFromHash);
     return () => window.removeEventListener('hashchange', syncFromHash);
   }, []);
-
-  // Carrega histórico ao montar
-  React.useEffect(() => {
-    try {
-      const key = `analysisTabHistory:${domain}`;
-      const existing = JSON.parse(localStorage.getItem(key) || '[]') as string[];
-      if (existing.length) setRecentTabs(existing);
-      else persistRecentTabs(initialTab);
-    } catch {
-      // ignora
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [domain]);
 
   // Utilidades importadas de dataTransforms
 
@@ -163,31 +137,6 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
           handleTabChange(val);
         }}
       />
-
-      {/* Histórico rápido de abas recentes */}
-      {recentTabs.length > 0 && (
-        <nav aria-label="recent-tabs" className="mt-3 text-sm text-muted-foreground">
-          <span className="mr-2">Recent:</span>
-          {recentTabs.map((tab, idx) => {
-            const nameMap: Record<string, string> = {
-              dashboard: t('analysis.tabs.dashboard'),
-              prompts: t('analysis.tabs.promptAnalysis'),
-              competitors: t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis',
-              insights: t('analysis.tabs.strategicInsights'),
-            };
-            const label = nameMap[tab] || tab;
-            return (
-              <button
-                key={`${tab}-${idx}`}
-                onClick={() => handleTabChange(tab)}
-                className="underline hover:text-foreground mr-3"
-              >
-                {label}
-              </button>
-            );
-          })}
-        </nav>
-      )}
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full pt-16">
         {/* Mantemos a estrutura de TabsList para acessibilidade e testes, porém oculta visualmente */}
@@ -298,7 +247,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               {analysis_data?.prompt_analysis?.performance_metrics ? (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {Object.entries(analysis_data.prompt_analysis.performance_metrics).map(([k, v]) => (
-                    <div key={k} className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-center">
+                    <div key={k} className="p-3 rounded-lg bg-slate-50 text-center">
                       <div className="text-sm text-slate-600">{k}</div>
                       <div className="text-xl font-semibold">{String(v)}</div>
                     </div>
