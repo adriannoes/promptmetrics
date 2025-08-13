@@ -53,8 +53,8 @@ Testes existentes a revisar após migração:
 - [ ] 1.0 Definir a nova estrutura por domínio/feature e mapeamento de arquivos
   - [x] 1.1 Criar diretórios: `src/features/{analysis,admin,onboarding,demo}/{components,hooks,services,types,lib}` e `src/shared/{components,hooks,services,types,lib,utils,contexts}`
   - [ ] 1.2 Definir convenções de nomes (componentes PascalCase, hooks `useX`, serviços `*Service`, tipos `XProps/DTO`) e locais por domínio vs compartilhado
-  - [ ] 1.3 Propor aliases: manter `@/*` e adicionar `@shared/*` e `@features/*` no `tsconfig.app.json` (paths)
-  - [ ] 1.4 Elaborar mapeamento fonte→destino para pastas/arquivos atuais (incluindo `constants/PromptAnalysisData.ts` → `features/analysis/lib/`)
+  - [x] 1.3 Propor aliases: manter `@/*` e adicionar `@shared/*` e `@features/*` no `tsconfig.app.json` (paths)
+  - [x] 1.4 Elaborar mapeamento fonte→destino para pastas/arquivos atuais (incluindo `constants/PromptAnalysisData.ts` → `features/analysis/lib/`)
   - [ ] 1.5 Planejar commits atômicos e PRs pequenos (≤10 arquivos ou ≤300 linhas), com descrição clara (Conventional Commits)
 
 - [ ] 2.0 Migrar código para `src/features/*` e `src/shared/*`, ajustando imports/aliases
@@ -99,4 +99,53 @@ Testes existentes a revisar após migração:
         - `npm run lighthouse:check` — Verifica se as metas configuradas foram atingidas.
   - [ ] 5.6 Atualizar documentação (`README.md`, `docs/DOCS.md`) com novas rotas/estrutura e notas de segurança (HTTPS/TLS, `.env.example`).
 
+
+### 1.4 Mapping fonte→destino (planejado)
+
+- Análise
+  - `src/components/analysis/AnalysisDashboard.tsx` → `src/features/analysis/components/AnalysisDashboard.tsx`
+  - `src/components/analysis/dataTransforms.ts` → `src/features/analysis/lib/dataTransforms.ts`
+  - `src/components/analysis/AnalysisDashboard.test.tsx` → `src/features/analysis/components/AnalysisDashboard.test.tsx`
+  - `src/components/analysis/dataTransforms.test.ts` → `src/features/analysis/lib/dataTransforms.test.ts`
+  - `src/hooks/useRealTimeAnalysis.ts` → `src/features/analysis/hooks/useRealTimeAnalysis.ts`
+  - `src/hooks/useUserAnalysis.ts` → `src/features/analysis/hooks/useUserAnalysis.ts`
+  - `src/constants/PromptAnalysisData.ts` → `src/features/analysis/lib/PromptAnalysisData.ts`
+  - `src/components/AnalysisResults.tsx` → `src/features/analysis/components/AnalysisResults.tsx`
+  - `src/components/AnalysisResults.test.tsx` → `src/features/analysis/components/AnalysisResults.test.tsx`
+  - `src/components/AnalysisHistory.tsx` → `src/features/analysis/components/AnalysisHistory.tsx`
+  - `src/components/AnalysisProgressModal.tsx` → `src/features/analysis/components/AnalysisProgressModal.tsx`
+
+- Admin
+  - `src/components/admin/AdminPromoteUser.tsx` → `src/features/admin/components/AdminPromoteUser.tsx`
+  - `src/components/admin/AdminRoleFilter.tsx` → `src/features/admin/components/AdminRoleFilter.tsx`
+  - `src/components/admin/AdminUserStats.tsx` → `src/features/admin/components/AdminUserStats.tsx`
+  - `src/components/admin/AdminUserTable.tsx` → `src/features/admin/components/AdminUserTable.tsx`
+  - `src/components/AdminUserManagement.tsx` → `src/features/admin/components/AdminUserManagement.tsx`
+  - `src/hooks/useAdminUsers.ts` → `src/features/admin/hooks/useAdminUsers.ts`
+
+- Onboarding
+  - `src/pages/OrganizationSetup.tsx` → wrapper em `src/routes/OrganizationSetupRoute.tsx` + lógicas em `src/features/onboarding/*`
+  - `src/pages/DomainSetup.tsx` → wrapper em `src/routes/DomainSetupRoute.tsx` + lógicas em `src/features/onboarding/*`
+  - `src/components/OrganizationDashboard.tsx` → `src/features/onboarding/components/OrganizationDashboard.tsx`
+  - `src/components/OrganizationHeader.tsx` → `src/features/onboarding/components/OrganizationHeader.tsx`
+
+- Demo/Marketing
+  - `src/components/demo/*` → `src/features/demo/components/*`
+  - `src/pages/BrandingDemo.tsx` → `src/features/demo/components/BrandingDemo.tsx`
+  - `src/pages/SocialPlaceholders.tsx` → `src/features/demo/components/SocialPlaceholders.tsx`
+  - `src/pages/Demo.tsx` → `src/features/demo/components/DemoPage.tsx` (se for manter como página direta, fica em `routes/`)
+
+- Compartilhados (shared)
+  - `src/lib/*` → `src/shared/lib/*`
+  - `src/utils/*` → `src/shared/utils/*`
+  - `src/services/authService.ts` → `src/shared/services/authService.ts`
+  - `src/services/redirectService.ts` → `src/shared/services/redirectService.ts`
+  - `src/services/errorReporting.ts` → `src/shared/services/errorReporting.ts`
+  - `src/contexts/*` → `src/shared/contexts/*`
+  - `src/types/auth.ts` → `src/shared/types/auth.ts`
+  - `src/types/analysis.ts` → `src/features/analysis/types/analysis.ts` (tipos de domínio)
+  - `src/components/*` genéricos reutilizáveis (ex.: `FormField`, `PhoneInput`, `LoadingSpinner`, etc.) → `src/shared/components/*`
+
+- Rotas
+  - `src/pages/*` → `src/routes/*Route.tsx` wrappers finos e reexport dos componentes de `features/*`
 
