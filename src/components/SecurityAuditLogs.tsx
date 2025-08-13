@@ -32,10 +32,7 @@ const SecurityAuditLogs = () => {
   const [loading, setLoading] = useState(true);
   const { profile } = useAuth();
 
-  // Only render if current user is admin
-  if (profile?.role !== 'admin') {
-    return null;
-  }
+  // Garante ordem estável de hooks
 
   useEffect(() => {
     fetchSecurityData();
@@ -94,6 +91,9 @@ const SecurityAuditLogs = () => {
   const failedLoginAttempts = loginAttempts.filter(attempt => !attempt.success);
   const successfulLogins = loginAttempts.filter(attempt => attempt.success);
 
+  if (profile?.role !== 'admin') {
+    return null;
+  }
   if (loading) {
     return <div className="p-4">Loading security audit data...</div>;
   }

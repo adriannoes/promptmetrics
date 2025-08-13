@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import SkipNav from '../components/SkipNav';
 import { SectionHeader } from '../components/SectionHeader';
 import Footer from '../components/ui/footer-section';
-// @ts-expect-error - Vite raw import para renderizar markdown como texto
+// Vite raw import para renderizar markdown como texto
 import changelogRaw from '../../docs/CHANGELOG.md?raw';
 import { useLanguage } from '../contexts/LanguageContext';
 

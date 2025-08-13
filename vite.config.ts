@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => ({
     include: ['react', 'react-dom'],
   },
   build: {
-    sourcemap: true,
+    sourcemap: mode === 'development',
     rollupOptions: {
       output: {
         manualChunks: {

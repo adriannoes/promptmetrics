@@ -23,10 +23,7 @@ const AdminInvitationCodes = () => {
   const [creating, setCreating] = useState(false);
   const { profile } = useAuth();
 
-  // Only render if current user is admin
-  if (profile?.role !== 'admin') {
-    return null;
-  }
+  // Render gating via early return after effects are defined para evitar hooks condicionais
 
   useEffect(() => {
     fetchCodes();
@@ -119,6 +116,9 @@ const AdminInvitationCodes = () => {
   const usedCodes = codes.filter(code => code.used).length;
   const availableCodes = codes.filter(code => !code.used).length;
 
+  if (profile?.role !== 'admin') {
+    return null;
+  }
   if (loading) {
     return <div className="p-4">Loading invitation codes...</div>;
   }

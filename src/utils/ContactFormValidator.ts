@@ -20,7 +20,7 @@ export const validatePhoneNumber = (phoneValue: string): boolean => {
   if (!phoneValue.trim()) return false;
   
   // Much more relaxed validation - just check for basic phone format
-  const cleanPhone = phoneValue.replace(/[^\d+\-\s\(\)]/g, '');
+  const cleanPhone = phoneValue.replace(/[^\d+\-\s()]/g, '');
   
   // Must have at least 8 digits and no more than 20 characters total
   const digitCount = cleanPhone.replace(/\D/g, '').length;
@@ -31,7 +31,7 @@ export const validateField = (name: string, value: string, errors: ValidationErr
   const newErrors = { ...errors };
   
   switch (name) {
-    case 'name':
+    case 'name': {
       const sanitizedName = sanitizeInput(value);
       if (!sanitizedName) {
         newErrors.name = t('form.error.name.required');
@@ -43,7 +43,8 @@ export const validateField = (name: string, value: string, errors: ValidationErr
         delete newErrors.name;
       }
       break;
-    case 'email':
+    }
+    case 'email': {
       const sanitizedEmail = sanitizeInput(value);
       if (!sanitizedEmail) {
         newErrors.email = t('form.error.email.required');
@@ -53,7 +54,8 @@ export const validateField = (name: string, value: string, errors: ValidationErr
         delete newErrors.email;
       }
       break;
-    case 'phone':
+    }
+    case 'phone': {
       if (!value.trim()) {
         newErrors.phone = t('form.error.phone.required');
       } else if (!validatePhoneNumber(value)) {
@@ -62,6 +64,7 @@ export const validateField = (name: string, value: string, errors: ValidationErr
         delete newErrors.phone;
       }
       break;
+    }
   }
   
   return newErrors;
