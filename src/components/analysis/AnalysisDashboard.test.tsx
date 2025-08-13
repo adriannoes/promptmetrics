@@ -191,3 +191,28 @@ describe('AnalysisDashboard - empty states por aba e fallback de Last updated', 
 });
 
 
+describe('AnalysisDashboard - histórico de abas recentes', () => {
+  it('persiste e exibe abas recentes no topo', async () => {
+    const result = makeResult();
+    render(
+      <LanguageProvider>
+        <MemoryRouter initialEntries={["/analysis"]}>
+          <AnalysisDashboard result={result as any} />
+        </MemoryRouter>
+      </LanguageProvider>
+    );
+    // clica em Competitors e depois em Insights
+    const competitorsLink = await screen.findByRole('link', { name: 'Competitor Analysis' });
+    await userEvent.click(competitorsLink);
+    const insightsLink = await screen.findByRole('link', { name: 'Strategic Insights' });
+    await userEvent.click(insightsLink);
+    // Deve existir nav de abas recentes
+    const recent = await screen.findByRole('navigation', { name: /recent-tabs/i });
+    expect(recent).toBeInTheDocument();
+    // Deve listar pelo menos um botão recente
+    const recentButtons = await screen.findAllByRole('button', { name: /Strategic Insights|Competitor Analysis|Dashboard|Prompt Analysis/ });
+    expect(recentButtons.length).toBeGreaterThan(0);
+  });
+});
+
+
