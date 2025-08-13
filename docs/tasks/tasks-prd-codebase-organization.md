@@ -51,7 +51,7 @@ Testes existentes a revisar após migração:
 ## Tasks
 
 - [ ] 1.0 Definir a nova estrutura por domínio/feature e mapeamento de arquivos
-  - [ ] 1.1 Criar diretórios: `src/features/{analysis,admin,onboarding,demo}/{components,hooks,services,types,lib}` e `src/shared/{components,hooks,services,types,lib,utils,contexts}`
+  - [x] 1.1 Criar diretórios: `src/features/{analysis,admin,onboarding,demo}/{components,hooks,services,types,lib}` e `src/shared/{components,hooks,services,types,lib,utils,contexts}`
   - [ ] 1.2 Definir convenções de nomes (componentes PascalCase, hooks `useX`, serviços `*Service`, tipos `XProps/DTO`) e locais por domínio vs compartilhado
   - [ ] 1.3 Propor aliases: manter `@/*` e adicionar `@shared/*` e `@features/*` no `tsconfig.app.json` (paths)
   - [ ] 1.4 Elaborar mapeamento fonte→destino para pastas/arquivos atuais (incluindo `constants/PromptAnalysisData.ts` → `features/analysis/lib/`)
