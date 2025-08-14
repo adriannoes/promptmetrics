@@ -502,6 +502,16 @@ npm run lighthouse:mobile && npm run lighthouse:check
 - Admin Panel: gerenciamento de usuários e convites
 - Security Enhancements: audit logging e rate limiting
 
+### Housekeeping pós-migração de branches
+
+- Branches removidas deste repositório após migração para outros repositórios:
+  - `dev`, `mvp`, `main-backup`, `feat/analysis-recent-tabs-darkmode`
+- Arquivos/estruturas atualizados:
+  - `.env.example` agora fica na raiz do projeto (antes em `docs/env.example`).
+  - Removidos hardcodes de Supabase URL/Anon Key no frontend; utilizar `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` via variáveis de ambiente.
+  - `.gitignore` atualizado para incluir `reports/`, artefatos do Playwright e resultados de testes.
+  - Criada pasta `reports/` para consolidar relatórios (Lighthouse, etc.).
+
 ---
 
 ## Quick Reference
