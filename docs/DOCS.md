@@ -372,7 +372,7 @@ SUPABASE_DB_URL=postgresql://...
 1. **Clone Repository**
 ```bash
 git clone <repository-url>
-cd promptmetrics
+cd rank-me-llm
 ```
 
 2. **Install Dependencies (reprodutível)**

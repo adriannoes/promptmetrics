@@ -2,9 +2,9 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Preferir variáveis de ambiente (Vite) com fallback quando estiverem ausentes ou vazias
-const DEFAULT_SUPABASE_URL = "https://racfoelvuhdifnekjsro.supabase.co";
-const DEFAULT_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhY2ZvZWx2dWhkaWZuZWtqc3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTk3NTksImV4cCI6MjA2NjA5NTc1OX0.m1NKUgLKup4mwc7ma5DPX2Rxemskt2_7iXAI1wcwv_0";
+// Preferir variáveis de ambiente (Vite). Fallbacks são placeholders seguros para desenvolvimento local
+const DEFAULT_SUPABASE_URL = "https://<project-ref>.supabase.co";
+const DEFAULT_SUPABASE_ANON_KEY = "anon-key-placeholder";
 
 export function selectNonEmptyEnv(value: unknown, fallback: string): string {
   if (typeof value === 'string') {

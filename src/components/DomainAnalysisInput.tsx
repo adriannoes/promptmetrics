@@ -175,7 +175,8 @@ export const DomainAnalysisInput: React.FC<DomainAnalysisInputProps> = ({
       // Tentar chamada direta com fetch como alternativa
       console.log('🔄 DomainAnalysisInput: Trying direct fetch as alternative...');
       
-      const functionUrl = `https://racfoelvuhdifnekjsro.supabase.co/functions/v1/trigger-analysis`;
+      const baseUrl = (import.meta as any)?.env?.VITE_SUPABASE_URL || 'https://<project-ref>.supabase.co';
+      const functionUrl = `${baseUrl}/functions/v1/trigger-analysis`;
       console.log('📍 DomainAnalysisInput: Function URL:', functionUrl);
       
       try {

@@ -53,7 +53,7 @@ npm run dev
 Acesse `http://localhost:8080`.
 
 Variáveis de ambiente:
-- Crie `.env.local` com base em `.env.example` (nunca comite segredos).
+- Crie `.env.local` com base em `.env.example` na raiz (nunca comite segredos).
 - Necessárias: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `N8N_WEBHOOK_URL`.
 
 ### Estrutura de pastas (resumo)
