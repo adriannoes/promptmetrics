@@ -6,6 +6,7 @@ import { AccessibilityProvider } from './contexts/AccessibilityContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Toaster } from './components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Pages
 const Index = React.lazy(() => import('./pages/Index'));
@@ -44,18 +45,24 @@ function App() {
       queries: {
         retry: 1,
         refetchOnWindowFocus: false,
+        staleTime: 5 * 60 * 1000, // 5 minutes
       },
     },
   }), []);
 
   return (
-    <Router>
-      <AuthProvider>
-        <LanguageProvider>
-          <AccessibilityProvider>
-            <QueryClientProvider client={queryClient}>
-              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-                <React.Suspense fallback={<div className="p-6 text-slate-600">Carregando…</div>}>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <LanguageProvider>
+            <AccessibilityProvider>
+              <QueryClientProvider client={queryClient}>
+                <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+                  <React.Suspense fallback={
+                    <div className="min-h-screen flex items-center justify-center">
+                      <div className="p-6 text-slate-600">Carregando…</div>
+                    </div>
+                  }>
                 <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<Index />} />
@@ -128,14 +135,15 @@ function App() {
                   {/* 404 page */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-                </React.Suspense>
-              </div>
-            </QueryClientProvider>
-            <Toaster />
-          </AccessibilityProvider>
-        </LanguageProvider>
-      </AuthProvider>
-    </Router>
+                  </React.Suspense>
+                </div>
+              </QueryClientProvider>
+              <Toaster />
+            </AccessibilityProvider>
+          </LanguageProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
