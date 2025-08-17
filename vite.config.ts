@@ -9,18 +9,11 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    // Relaxed headers for development to prevent connection issues
-    ...(mode === 'development' && {
-      headers: {
-        'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; style-src 'self' 'unsafe-inline' https:; connect-src 'self' https: wss: ws:; img-src 'self' data: https: blob:; media-src 'self' https: data:; font-src 'self' data: https:;",
-      }
-    })
   },
   preview: {
     host: "::",
     port: 8080,
-    strictPort: true,
-    // No CSP for preview mode to ensure compatibility with Lovable
+    strictPort: false,
     headers: {},
   },
   test: {
@@ -41,8 +34,12 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', '@supabase/supabase-js'],
-    exclude: ['@react-three/fiber', 'three'],
+    include: ['react', 'react-dom'],
+    force: true,
+    exclude: ['**/*.test.*', '**/*.spec.*']
+  },
+  esbuild: {
+    exclude: ['**/*.test.*', '**/*.spec.*']
   },
   build: {
     sourcemap: false,
@@ -52,6 +49,10 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
+          // Skip test files
+          if (id.includes('.test.') || id.includes('.spec.')) {
+            return undefined;
+          }
           // Core React libraries
           if (id.includes('react') || id.includes('react-dom')) {
             return 'react-vendor';
@@ -60,25 +61,12 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('@radix-ui') || id.includes('lucide-react')) {
             return 'ui-vendor';
           }
-          // Supabase and auth
-          if (id.includes('@supabase') || id.includes('@tanstack/react-query')) {
-            return 'data-vendor';
-          }
-          // Large libraries
-          if (id.includes('framer-motion') || id.includes('@react-three')) {
-            return 'animation-vendor';
-          }
           // Everything else in node_modules
           if (id.includes('node_modules')) {
             return 'vendor';
           }
         },
-        chunkFileNames: (chunkInfo) => {
-          return chunkInfo.name === 'index' ? '[name]-[hash].js' : '[name]-[hash].js';
-        },
-        assetFileNames: '[name]-[hash][extname]',
       },
     },
-    assetsInlineLimit: 4096,
   },
 }));

@@ -15,25 +15,6 @@ export const useAuthState = () => {
   // If demo user is active, use demo loading state, otherwise use Supabase loading
   const loading = demoUser ? demoLoading : supabaseLoading;
 
-  console.log('useAuthState:', { 
-    demoUser: !!demoUser, 
-    supabaseUser: !!supabaseUser, 
-    user: !!user, 
-    profile: !!profile, 
-    loading 
-  });
-
-  // Monitor state changes for debugging
-  React.useEffect(() => {
-    console.log('useAuthState state changed:', { 
-      demoUser: !!demoUser, 
-      supabaseUser: !!supabaseUser, 
-      user: !!user, 
-      profile: !!profile, 
-      loading 
-    });
-  }, [demoUser, supabaseUser, user, profile, loading]);
-
   return {
     user,
     session,

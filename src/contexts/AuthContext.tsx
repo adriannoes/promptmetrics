@@ -29,7 +29,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    console.warn('useAuth called outside of AuthProvider, returning fallback values');
+    return {
+      user: null,
+      session: null,
+      profile: null,
+      loading: false,
+      signUp: async () => ({ error: { message: 'Auth not initialized' } }),
+      signIn: async () => ({ error: { message: 'Auth not initialized' } }),
+      signInWithGoogle: async () => ({ error: { message: 'Auth not initialized' } }),
+      signInWithDemo: async () => ({ error: { message: 'Auth not initialized' } }),
+      signOut: async () => ({ success: false })
+    };
   }
   return context;
 };

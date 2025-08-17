@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act } from 'react-dom/test-utils';

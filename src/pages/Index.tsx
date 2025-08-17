@@ -1,15 +1,13 @@
 
 import React from 'react';
-import { LanguageProvider } from '../contexts/LanguageContext';
-import { AccessibilityProvider } from '../contexts/AccessibilityContext';
 import SkipNav from '../components/SkipNav';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
-const Problem = React.lazy(() => import('../components/Problem'));
-const Transformation = React.lazy(() => import('../components/Transformation'));
-const Pricing = React.lazy(() => import('../components/Pricing'));
-const FAQ = React.lazy(() => import('../components/FAQ'));
-const ContactForm = React.lazy(() => import('../components/ContactForm'));
+import Problem from '../components/Problem';
+import Transformation from '../components/Transformation';
+import Pricing from '../components/Pricing';
+import FAQ from '../components/FAQ';
+import ContactForm from '../components/ContactForm';
 import Footer from '../components/ui/footer-section';
 import AccessibilityPanel from '../components/AccessibilityPanel';
 
@@ -22,13 +20,11 @@ const Index = () => {
       <Header />
       <main id="main-content" tabIndex={-1} role="main">
         <Hero />
-        <React.Suspense fallback={<div className="px-4 py-8 text-slate-600">Carregando…</div>}>
-          <section id="features"><Problem /></section>
-          <section id="integration"><Transformation /></section>
-          <Pricing />
-          <FAQ />
-          <ContactForm />
-        </React.Suspense>
+        <section id="features"><Problem /></section>
+        <section id="integration"><Transformation /></section>
+        <Pricing />
+        <FAQ />
+        <ContactForm />
       </main>
       <Footer />
       <AccessibilityPanel />
