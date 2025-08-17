@@ -16,14 +16,6 @@ export default defineConfig(({ mode }) => ({
     strictPort: false,
     headers: {},
   },
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['src/tests/setup.ts'],
-    css: true,
-    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
-    exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
-  },
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
@@ -39,7 +31,8 @@ export default defineConfig(({ mode }) => ({
     exclude: ['**/*.test.*', '**/*.spec.*']
   },
   esbuild: {
-    exclude: ['**/*.test.*', '**/*.spec.*']
+    exclude: ['**/*.test.*', '**/*.spec.*'],
+    target: 'es2020'
   },
   build: {
     sourcemap: false,
@@ -47,6 +40,12 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      external: (id) => {
+        if (id.includes('.test.') || id.includes('.spec.')) {
+          return true;
+        }
+        return false;
+      },
       output: {
         manualChunks: (id) => {
           // Skip test files

@@ -40,7 +40,8 @@ const NotFound = React.lazy(() => import('./pages/NotFound'));
   const LinkedIn = React.lazy(() => import('./pages/SocialPlaceholders').then(m => ({default: m.LinkedIn})));
 
 function App() {
-  const queryClient = React.useMemo(() => new QueryClient({
+  // Use a safer approach to create QueryClient to avoid React null issues
+  const [queryClient] = React.useState(() => new QueryClient({
     defaultOptions: {
       queries: {
         retry: 1,
@@ -48,7 +49,7 @@ function App() {
         staleTime: 5 * 60 * 1000, // 5 minutes
       },
     },
-  }), []);
+  }));
 
   return (
     <ErrorBoundary>
