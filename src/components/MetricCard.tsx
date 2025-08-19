@@ -69,34 +69,41 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   const classes = getVariantClasses();
 
   return (
-    <Card className={`backdrop-blur-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 pm-reduce-motion ${classes.card} ${className}`}>
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
+    <Card className={`group backdrop-blur-lg shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:rotate-1 ${classes.card} ${className}`}>
+      <CardContent className="p-6 relative overflow-hidden">
+        {/* Subtle animated background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="relative flex items-start justify-between">
           <div className="flex-1">
-            <p className={`text-sm font-medium mb-2 ${classes.title}`}>
+            <p className={`text-sm font-medium mb-3 ${classes.title} group-hover:scale-105 transition-transform duration-300`}>
               {title}
             </p>
             
-            <div className="flex items-end gap-2">
-              <span className={`text-2xl sm:text-3xl font-bold leading-none ${classes.value}`}>
+            <div className="flex items-end gap-3">
+              <span className={`text-3xl sm:text-4xl font-bold leading-none ${classes.value} group-hover:scale-110 transition-transform duration-300`}>
                 {displayValue || value}
               </span>
               
               {typeof trend === 'number' && (
-                <div className={`flex items-center gap-1 text-sm font-medium ${classes.trend}`}>
+                <div className={`flex items-center gap-1 text-sm font-semibold ${classes.trend} group-hover:scale-110 transition-transform duration-300`}>
                   {trend > 0 ? (
-                    <TrendingUp className="w-3 h-3" />
+                    <TrendingUp className="w-4 h-4 animate-bounce" />
                   ) : (
-                    <TrendingDown className="w-3 h-3" />
+                    <TrendingDown className="w-4 h-4" />
                   )}
-                  <span>{Math.abs(trend)}%</span>
+                  <span>
+                    {trend > 0 ? '+' : ''}{Math.abs(trend)}%
+                  </span>
                 </div>
               )}
             </div>
           </div>
           
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${classes.icon}`}>
-            <Icon className="w-6 h-6" />
+          <div className={`relative w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300 ${classes.icon}`}>
+            {/* Glow effect on hover */}
+            <div className="absolute inset-0 bg-white/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Icon className="relative w-7 h-7 group-hover:rotate-12 transition-transform duration-300" />
           </div>
         </div>
       </CardContent>

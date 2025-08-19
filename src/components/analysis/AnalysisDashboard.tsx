@@ -130,58 +130,95 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
 
   return (
     <div>
-      {/* Barra superior: botão Voltar + NavBar posicionada logo abaixo do título na página */}
-      <div className="flex items-center justify-between mb-4">
-        <button
-          onClick={() => navigate('/home')}
-          className="inline-flex items-center gap-2 text-sm font-medium text-foreground/80 hover:text-primary"
-          aria-label="Back to Home"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </button>
-      </div>
-      <NavBar
-        position="static"
-        items={[
-          { name: t('analysis.tabs.dashboard'), url: '/analysis#dashboard', icon: BarChart3 },
-          { name: t('analysis.tabs.promptAnalysis'), url: '/analysis#prompts', icon: Sparkles },
-          { name: t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis', url: '/analysis#competitors', icon: Target },
-          { name: t('analysis.tabs.strategicInsights'), url: '/analysis#insights', icon: TrendingUp },
-        ]}
-        onItemClick={(item) => {
-          const map: Record<string, string> = {
-            [t('analysis.tabs.dashboard')]: 'dashboard',
-            [t('analysis.tabs.promptAnalysis')]: 'prompts',
-            [t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis']: 'competitors',
-            [t('analysis.tabs.strategicInsights')]: 'insights',
-          };
-          const val = map[item.name] ?? 'dashboard';
-          handleTabChange(val);
-        }}
-      />
+      {/* Enhanced Header Section with Status and Navigation */}
+      <div className="relative mb-8">
+        {/* Decorative Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl" />
+        
+        <div className="relative p-6 sm:p-8">
+          {/* Top Navigation */}
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => navigate('/home')}
+              className="group inline-flex items-center gap-2 text-sm font-medium text-foreground/80 hover:text-primary transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white/60 backdrop-blur-sm"
+              aria-label="Back to Home"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+              Back to Dashboard
+            </button>
+            
+            {/* Analysis Status Badge */}
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-green-700">Analysis Complete</span>
+            </div>
+          </div>
 
+          {/* Domain Hero */}
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/60 rounded-full backdrop-blur-sm border border-white/40">
+              <div className="w-3 h-3 bg-blue-500 rounded-full" />
+              <span className="text-sm font-medium text-slate-700">Domain Analysis</span>
+            </div>
+            
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              {domain}
+            </h1>
+            
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Comprehensive AI analysis revealing insights, trends, and competitive positioning
+            </p>
+          </div>
+
+          {/* Enhanced Navigation */}
+          <div className="mt-8">
+            <NavBar
+              position="static"
+              items={[
+                { name: t('analysis.tabs.dashboard'), url: '/analysis#dashboard', icon: BarChart3 },
+                { name: t('analysis.tabs.promptAnalysis'), url: '/analysis#prompts', icon: Sparkles },
+                { name: t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis', url: '/analysis#competitors', icon: Target },
+                { name: t('analysis.tabs.strategicInsights'), url: '/analysis#insights', icon: TrendingUp },
+              ]}
+              onItemClick={(item) => {
+                const map: Record<string, string> = {
+                  [t('analysis.tabs.dashboard')]: 'dashboard',
+                  [t('analysis.tabs.promptAnalysis')]: 'prompts',
+                  [t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis']: 'competitors',
+                  [t('analysis.tabs.strategicInsights')]: 'insights',
+                };
+                const val = map[item.name] ?? 'dashboard';
+                handleTabChange(val);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Tabs Quick Access */}
       {recentTabs.length > 0 && (
-        <nav aria-label="recent-tabs" className="mt-3 text-sm text-muted-foreground">
-          <span className="mr-2">Recent:</span>
-          {recentTabs.map((tab, idx) => {
-            const nameMap: Record<string, string> = {
-              dashboard: t('analysis.tabs.dashboard'),
-              prompts: t('analysis.tabs.promptAnalysis'),
-              competitors: t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis',
-              insights: t('analysis.tabs.strategicInsights'),
-            };
-            const label = nameMap[tab] || tab;
-            return (
-              <button
-                key={`${tab}-${idx}`}
-                onClick={() => handleTabChange(tab)}
-                className="underline hover:text-foreground mr-3"
-              >
-                {label}
-              </button>
-            );
-          })}
+        <nav aria-label="recent-tabs" className="mb-6 flex items-center gap-2 text-sm">
+          <span className="text-slate-500 font-medium">Recent:</span>
+          <div className="flex gap-2">
+            {recentTabs.slice(0, 3).map((tab, idx) => {
+              const nameMap: Record<string, string> = {
+                dashboard: t('analysis.tabs.dashboard'),
+                prompts: t('analysis.tabs.promptAnalysis'),
+                competitors: t('analysis.tabs.competitorAnalysis') || 'Competitor Analysis',
+                insights: t('analysis.tabs.strategicInsights'),
+              };
+              const label = nameMap[tab] || tab;
+              return (
+                <button
+                  key={`${tab}-${idx}`}
+                  onClick={() => handleTabChange(tab)}
+                  className="px-3 py-1 bg-white/60 hover:bg-white/80 rounded-full backdrop-blur-sm border border-white/40 hover:border-blue-200/60 text-slate-600 hover:text-blue-700 transition-all duration-300 hover:shadow-md"
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </nav>
       )}
 
@@ -195,30 +232,55 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
         </TabsList>
 
         <TabsContent value="dashboard">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Sentiment Trends */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Enhanced Sentiment Trends */}
+            <Card className="backdrop-blur-xl bg-white/60 border-white/60 shadow-xl hover:shadow-2xl transition-all duration-500 group">
+              <CardHeader className="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-sm">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Heart className="w-4 h-4 text-white" />
+                  </div>
                   {t('dashboard.sentimentTrends')}
                 </CardTitle>
                 <CardDescription>{t('analysis.lastMonthsPerCompetitor')}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+              <CardContent className="p-6">
+                <ResponsiveContainer width="100%" height={320}>
                   <LineChart data={sentimentTrends as ChartDataPoint[]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.6} />
+                    <XAxis 
+                      dataKey="month" 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                      tickLine={{ stroke: '#cbd5e1' }}
+                    />
+                    <YAxis 
+                      domain={[0, 100]} 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                      tickLine={{ stroke: '#cbd5e1' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(12px)',
+                        border: '1px solid rgba(255, 255, 255, 0.6)',
+                        borderRadius: '12px',
+                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+                      }}
+                    />
                     <Legend />
-                    {/* Desenha uma linha para cada chave além de month dinamicamente */}
                     {(() => {
                        const keys = Object.keys((sentimentTrends[0] || {}) as Record<string, unknown>).filter(k => k !== 'month');
                        const ordered = orderSeriesKeys(domain, keys);
                       return ordered.map((seriesKey, idx) => (
-                        <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
+                        <Line 
+                          key={seriesKey} 
+                          type="monotone" 
+                          dataKey={seriesKey} 
+                          stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} 
+                          strokeWidth={3}
+                          dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+                          activeDot={{ r: 6, strokeWidth: 2, fill: ["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4] }}
+                        />
                       ));
                     })()}
                   </LineChart>
@@ -226,28 +288,54 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               </CardContent>
             </Card>
 
-            {/* Ranking */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="w-5 h-5 text-blue-600" />
+            {/* Enhanced Ranking */}
+            <Card className="backdrop-blur-xl bg-white/60 border-white/60 shadow-xl hover:shadow-2xl transition-all duration-500 group">
+              <CardHeader className="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-sm">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Target className="w-4 h-4 text-white" />
+                  </div>
                   {t('dashboard.rankingPosition')}
                 </CardTitle>
                 <CardDescription>{t('analysis.lowerIsBetter')}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+              <CardContent className="p-6">
+                <ResponsiveContainer width="100%" height={320}>
                   <LineChart data={rankingDataProcessed as ChartDataPoint[]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis domain={[0, 6]} />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.6} />
+                    <XAxis 
+                      dataKey="month" 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                      tickLine={{ stroke: '#cbd5e1' }}
+                    />
+                    <YAxis 
+                      domain={[0, 6]} 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                      tickLine={{ stroke: '#cbd5e1' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(12px)',
+                        border: '1px solid rgba(255, 255, 255, 0.6)',
+                        borderRadius: '12px',
+                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+                      }}
+                    />
                     <Legend />
                     {(() => {
                        const keys = Object.keys((rankingDataProcessed[0] || {}) as Record<string, unknown>).filter(k => k !== 'month');
                        const ordered = orderSeriesKeys(domain, keys);
                       return ordered.map((seriesKey, idx) => (
-                        <Line key={seriesKey} type="monotone" dataKey={seriesKey} stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} strokeWidth={2} />
+                        <Line 
+                          key={seriesKey} 
+                          type="monotone" 
+                          dataKey={seriesKey} 
+                          stroke={["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4]} 
+                          strokeWidth={3}
+                          dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+                          activeDot={{ r: 6, strokeWidth: 2, fill: ["#3B82F6","#10B981","#8B5CF6","#F59E0B"][idx % 4] }}
+                        />
                       ));
                     })()}
                   </LineChart>
@@ -255,22 +343,51 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
               </CardContent>
             </Card>
 
-            {/* Overall Sentiment */}
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-blue-600" />
+            {/* Enhanced Overall Sentiment */}
+            <Card className="md:col-span-2 backdrop-blur-xl bg-white/60 border-white/60 shadow-xl hover:shadow-2xl transition-all duration-500 group">
+              <CardHeader className="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-sm">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <TrendingUp className="w-4 h-4 text-white" />
+                  </div>
                   {t('dashboard.overallSentimentScore')}
                 </CardTitle>
+                <CardDescription>Competitive landscape overview</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={320}>
-                   <BarChart data={orderedOverall as OverallSentimentItem[]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Bar dataKey="score" fill="#3B82F6" />
+              <CardContent className="p-6">
+                <ResponsiveContainer width="100%" height={350}>
+                   <BarChart data={orderedOverall as OverallSentimentItem[]} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.6} />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                      tickLine={{ stroke: '#cbd5e1' }}
+                    />
+                    <YAxis 
+                      domain={[0, 100]} 
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                      tickLine={{ stroke: '#cbd5e1' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(12px)',
+                        border: '1px solid rgba(255, 255, 255, 0.6)',
+                        borderRadius: '12px',
+                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+                      }}
+                    />
+                    <Bar 
+                      dataKey="score" 
+                      fill="url(#colorGradient)" 
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <defs>
+                      <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.9}/>
+                        <stop offset="95%" stopColor="#1E40AF" stopOpacity={0.7}/>
+                      </linearGradient>
+                    </defs>
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -279,83 +396,133 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result }) 
         </TabsContent>
 
         <TabsContent value="prompts">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-blue-600" />
+          <Card className="backdrop-blur-xl bg-white/60 border-white/60 shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-purple-50/60 to-pink-50/60 backdrop-blur-sm">
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
                 {t('analysis.aiPromptAnalysis')}
               </CardTitle>
               <CardDescription>
                 {t('analysis.promptMetricsSubtitle')}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8">
               {/* Resumo simples das métricas se existirem */}
               {analysis_data?.prompt_analysis?.performance_metrics ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {Object.entries(analysis_data.prompt_analysis.performance_metrics).map(([k, v]) => (
-                    <div key={k} className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-center">
-                      <div className="text-sm text-slate-600">{k}</div>
-                      <div className="text-xl font-semibold">{String(v)}</div>
+                    <div key={k} className="p-4 rounded-xl bg-gradient-to-br from-purple-50/80 to-pink-50/80 border border-purple-200/40 text-center backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+                      <div className="text-sm font-medium text-purple-700 mb-2">{k}</div>
+                      <div className="text-2xl font-bold text-purple-900">{String(v)}</div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-slate-600 text-sm">{t('analysis.empty.prompts')}</p>
+                <div className="text-center py-16">
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-600/20 rounded-full blur-xl animate-pulse" />
+                    <Sparkles className="relative w-20 h-20 text-purple-500 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-700 mb-3">Prompt Analysis Coming Soon</h3>
+                  <p className="text-slate-600">{t('analysis.empty.prompts')}</p>
+                </div>
               )}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="competitors">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-blue-600" />
+          <Card className="backdrop-blur-xl bg-white/60 border-white/60 shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-orange-50/60 to-red-50/60 backdrop-blur-sm">
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                  <Target className="w-4 h-4 text-white" />
+                </div>
                 {t('competitorAnalysis.title')}
               </CardTitle>
               <CardDescription>{t('competitorAnalysis.basedOnCurrentAnalysis')}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-slate-600 text-sm">{t('analysis.empty.insights')}</p>
+            <CardContent className="p-8">
+              <div className="text-center py-16">
+                <div className="relative mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-red-600/20 rounded-full blur-xl animate-pulse" />
+                  <Target className="relative w-20 h-20 text-orange-500 mx-auto" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-700 mb-3">Competitor Analysis Coming Soon</h3>
+                <p className="text-slate-600">{t('analysis.empty.insights')}</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="insights">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('dashboard.recommendations')}</CardTitle>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card className="backdrop-blur-xl bg-white/60 border-white/60 shadow-xl hover:shadow-2xl transition-all duration-500">
+              <CardHeader className="bg-gradient-to-r from-green-50/60 to-emerald-50/60 backdrop-blur-sm">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-white" />
+                  </div>
+                  {t('dashboard.recommendations')}
+                </CardTitle>
                 <CardDescription>{t('analysis.recommendations.subtitle')}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {recommendations.length ? (
-                  <ul className="list-disc ml-5 space-y-1">
+                  <div className="space-y-3">
                     {recommendations.slice(0, 8).map((r, i) => (
-                      <li key={i} className="text-sm text-slate-700">{r}</li>
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50/60 border border-green-200/40 backdrop-blur-sm hover:bg-green-100/60 transition-colors duration-300">
+                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-xs font-bold text-white">{i + 1}</span>
+                        </div>
+                        <p className="text-sm text-slate-700 leading-relaxed">{r}</p>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 ) : (
-                  <p className="text-slate-600 text-sm">{t('analysis.empty.recommendations')}</p>
+                  <div className="text-center py-12">
+                    <div className="relative mb-4">
+                      <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-xl animate-pulse" />
+                      <TrendingUp className="relative w-16 h-16 text-green-500 mx-auto" />
+                    </div>
+                    <p className="text-slate-600">{t('analysis.empty.recommendations')}</p>
+                  </div>
                 )}
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('strategicInsights.title')}</CardTitle>
+            <Card className="backdrop-blur-xl bg-white/60 border-white/60 shadow-xl hover:shadow-2xl transition-all duration-500">
+              <CardHeader className="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-sm">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                  {t('strategicInsights.title')}
+                </CardTitle>
                 <CardDescription>{t('analysis.highlights')}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {analysis_data?.strategic_insights?.key_insights?.length ? (
-                  <ul className="list-disc ml-5 space-y-1">
+                  <div className="space-y-3">
                     {analysis_data.strategic_insights.key_insights.slice(0, 8).map((r, i) => (
-                      <li key={i} className="text-sm text-slate-700">{r}</li>
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-blue-50/60 border border-blue-200/40 backdrop-blur-sm hover:bg-blue-100/60 transition-colors duration-300">
+                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Sparkles className="w-3 h-3 text-white" />
+                        </div>
+                        <p className="text-sm text-slate-700 leading-relaxed">{r}</p>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 ) : (
-                  <p className="text-slate-600 text-sm">{t('analysis.empty.insights')}</p>
+                  <div className="text-center py-12">
+                    <div className="relative mb-4">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 rounded-full blur-xl animate-pulse" />
+                      <Sparkles className="relative w-16 h-16 text-blue-500 mx-auto" />
+                    </div>
+                    <p className="text-slate-600">{t('analysis.empty.insights')}</p>
+                  </div>
                 )}
               </CardContent>
             </Card>

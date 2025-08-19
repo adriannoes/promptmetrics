@@ -40,24 +40,33 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={open ? onClose : undefined}>
-      <DialogContent className="max-w-md w-full">
+      <DialogContent className="max-w-md w-full backdrop-blur-xl bg-white/90 border-white/60 shadow-2xl">
         <DialogHeader>
           <DialogTitle>
             {status === 'processing' && (
               <span className="flex items-center gap-2">
-                <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-md animate-pulse" />
+                  <Loader2 className="relative w-5 h-5 text-blue-600 animate-spin" />
+                </div>
                 Análise em andamento...
               </span>
             )}
             {status === 'completed' && (
               <span className="flex items-center gap-2 text-green-700">
-                <CheckCircle className="w-5 h-5" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-green-500/20 rounded-full blur-md" />
+                  <CheckCircle className="relative w-5 h-5" />
+                </div>
                 Análise concluída!
               </span>
             )}
             {status === 'failed' && (
               <span className="flex items-center gap-2 text-red-700">
-                <Clock className="w-5 h-5" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-500/20 rounded-full blur-md" />
+                  <Clock className="relative w-5 h-5" />
+                </div>
                 Tempo esgotado
               </span>
             )}
@@ -80,30 +89,39 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
               </>
             )}
             {error && (
-              <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded">
+              <div className="mt-4 p-3 bg-red-100/80 border border-red-300/60 text-red-800 rounded-lg backdrop-blur-sm">
                 <strong>Erro:</strong> {error}
               </div>
             )}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center gap-4 mt-2">
-          <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-300">
+        
+        <div className="flex flex-wrap gap-2 mt-4">
+          <Badge variant="outline" className="bg-blue-100/80 text-blue-700 border-blue-300/60 backdrop-blur-sm">
             ⏱️ {formatTime(elapsedTime)}
           </Badge>
-          <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300">
+          <Badge variant="outline" className="bg-green-100/80 text-green-700 border-green-300/60 backdrop-blur-sm">
             🔍 Verificando dados periodicamente
           </Badge>
         </div>
-        <DialogFooter className="mt-4 flex flex-row gap-2 justify-end">
+        
+        <DialogFooter className="mt-6 flex flex-row gap-3 justify-end">
           {status === 'processing' && (
-            <Button onClick={onCancel} variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+            <Button 
+              onClick={onCancel} 
+              variant="outline" 
+              className="border-blue-300/60 text-blue-700 hover:bg-blue-100/60 backdrop-blur-sm transition-all duration-300 hover:shadow-lg"
+            >
               Cancelar
             </Button>
           )}
           {(status === 'completed' || status === 'failed') && onViewRanking && (
-            <Button onClick={onViewRanking} className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1">
+            <Button 
+              onClick={onViewRanking} 
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+            >
               Ver sua análise
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <ArrowRight className="w-4 h-4" />
             </Button>
           )}
         </DialogFooter>
