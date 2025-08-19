@@ -6,23 +6,23 @@ import SkipNav from '@/components/SkipNav';
 import { DomainAnalysisInput } from '@/components/DomainAnalysisInput';
 import { AnalysisResults } from '@/components/AnalysisResults';
 import { AnalysisHistory } from '@/components/AnalysisHistory';
+import { SectionHeader } from '@/components/SectionHeader';
+import { DecorativeBlobs } from '@/components/DecorativeBlobs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Search, 
   BarChart3, 
-  AlertCircle
+  AlertCircle,
+  Brain
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
-import { toast } from 'sonner';
 import { extractDomain } from '@/utils/domain';
 import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
 import type { CompleteAnalysisResult } from '@/types/analysis';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
-import { formatDateTime } from '@/lib/format';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -31,7 +31,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { signOut } from '@/services/authService';
 
 const AnalysisContent = () => {
   const { t, language } = useLanguage();
@@ -107,12 +106,24 @@ const AnalysisContent = () => {
   }, [rtData]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 text-foreground relative">
+      {/* Decorative Background */}
+      <DecorativeBlobs blobs={[
+        {
+          className: 'fixed -top-24 -left-24 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-indigo-600/10 rounded-full blur-3xl',
+          ariaHidden: true
+        },
+        {
+          className: 'fixed -bottom-24 -right-24 w-80 h-80 bg-gradient-to-br from-purple-400/10 to-pink-600/10 rounded-full blur-3xl',
+          ariaHidden: true
+        }
+      ]} />
+
       <SkipNav />
-      <main ref={mainRef} id="main-content" tabIndex={-1} role="main" className="pt-4">
+      <main ref={mainRef} id="main-content" tabIndex={-1} role="main" className="relative pt-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6" data-testid="analysis-container">
           {/* Breadcrumb acessível */}
-          <div className="mb-4">
+          <div className="mb-8">
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -125,6 +136,20 @@ const AnalysisContent = () => {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+
+          {/* Hero Section */}
+          {!analysisResult?.analysis_data && (
+            <div className="mb-12">
+              <SectionHeader
+                icon={Brain}
+                tag="AI Analysis"
+                title="Discover How AI Perceives Your Domain"
+                subtitle="Get comprehensive insights about your website's AI visibility, sentiment analysis, and competitive positioning in the digital landscape."
+                align="center"
+                tagClasses="bg-blue-100/80 backdrop-blur-lg border-blue-200/50 text-blue-800"
+              />
+            </div>
+          )}
 
           {/* Error Alert */}
           {analysisError && (
@@ -166,10 +191,10 @@ const AnalysisContent = () => {
           {rtLoading ? (
             <div data-testid="analysis-skeleton" className="grid lg:grid-cols-2 gap-6 animate-pulse">
               <div className="space-y-6">
-                <div className="h-40 bg-muted rounded" />
-                <div className="h-64 bg-muted rounded" />
+                <div className="h-40 bg-white/60 backdrop-blur-lg border border-white/60 rounded-xl shadow-lg" />
+                <div className="h-64 bg-white/60 backdrop-blur-lg border border-white/60 rounded-xl shadow-lg" />
               </div>
-              <div className="h-96 bg-muted rounded" />
+              <div className="h-96 bg-white/60 backdrop-blur-lg border border-white/60 rounded-xl shadow-lg" />
             </div>
           ) : analysisResult && analysisResult.status === 'completed' && analysisResult.analysis_data ? (
             <div data-testid="analysis-dashboard">
@@ -178,10 +203,10 @@ const AnalysisContent = () => {
           ) : (
             <div className="grid lg:grid-cols-2 gap-6" data-testid="analysis-grid">
               <div className="space-y-6">
-                <Card>
+                <Card className="backdrop-blur-lg bg-white/60 border-white/60 shadow-xl">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Search className="w-5 h-5" />
+                      <Search className="w-5 h-5 text-blue-600" />
                       {t('analysis.newAnalysis.title')}
                     </CardTitle>
                     <CardDescription>
@@ -198,30 +223,30 @@ const AnalysisContent = () => {
                 </Card>
 
                 {/* Instructions */}
-                <Card>
+                <Card className="backdrop-blur-lg bg-white/60 border-white/60 shadow-xl">
                   <CardHeader>
                     <CardTitle className="text-lg">{t('analysis.howItWorks.title')}</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">1</Badge>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-r from-blue-50/80 to-indigo-50/80">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white flex items-center justify-center text-sm font-semibold shadow-lg">1</div>
                       <div>
-                        <p className="font-medium">{t('analysis.step1.title')}</p>
-                        <p className="text-sm text-muted-foreground">{t('analysis.step1.desc')}</p>
+                        <p className="font-semibold text-blue-900">{t('analysis.step1.title')}</p>
+                        <p className="text-sm text-blue-700 mt-1">{t('analysis.step1.desc')}</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">2</Badge>
+                    <div className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-r from-indigo-50/80 to-purple-50/80">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex items-center justify-center text-sm font-semibold shadow-lg">2</div>
                       <div>
-                        <p className="font-medium">{t('analysis.step2.title')}</p>
-                        <p className="text-sm text-muted-foreground">{t('analysis.step2.desc')}</p>
+                        <p className="font-semibold text-indigo-900">{t('analysis.step2.title')}</p>
+                        <p className="text-sm text-indigo-700 mt-1">{t('analysis.step2.desc')}</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <Badge className="w-6 h-6 rounded-full flex items-center justify-center text-xs">3</Badge>
+                    <div className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-r from-purple-50/80 to-pink-50/80">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 text-white flex items-center justify-center text-sm font-semibold shadow-lg">3</div>
                       <div>
-                        <p className="font-medium">{t('analysis.step3.title')}</p>
-                        <p className="text-sm text-muted-foreground">{t('analysis.step3.desc')}</p>
+                        <p className="font-semibold text-purple-900">{t('analysis.step3.title')}</p>
+                        <p className="text-sm text-purple-700 mt-1">{t('analysis.step3.desc')}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -229,10 +254,10 @@ const AnalysisContent = () => {
               </div>
 
               <div>
-                <Card className="h-full">
+                <Card className="h-full backdrop-blur-lg bg-white/60 border-white/60 shadow-xl">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5" />
+                      <BarChart3 className="w-5 h-5 text-blue-600" />
                       {t('analysis.analysisHistory.title')}
                     </CardTitle>
                     <CardDescription>
