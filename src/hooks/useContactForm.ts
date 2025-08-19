@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useAccessibility } from '../contexts/AccessibilityContext';
+import { useScreenReaderAnnouncer } from '../contexts/AccessibilityContext';
 import { validateField, sanitizeInput, ValidationError } from '../utils/ContactFormValidator';
 
 interface FormData {
@@ -11,7 +11,7 @@ interface FormData {
 
 export const useContactForm = () => {
   const { t } = useLanguage();
-  const { announceToScreenReader } = useAccessibility();
+  const { announce } = useScreenReaderAnnouncer();
   
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -93,13 +93,13 @@ export const useContactForm = () => {
     
     // Check if there are any validation errors
     if (Object.keys(newErrors).length > 0) {
-      announceToScreenReader('Please fix the form errors before submitting');
+      announce('Please fix the form errors before submitting');
       return;
     }
     
     setIsSubmitting(true);
     setLastSubmitTime(now);
-    announceToScreenReader('Submitting form...');
+    announce('Submitting form...');
 
     try {
       // Sanitize all form data before submission
@@ -150,7 +150,7 @@ export const useContactForm = () => {
       console.log('=== FORM SUBMITTED SUCCESSFULLY TO PIPEFY ===');
       setSubmitted(true);
       setFormData({ name: '', email: '', phone: '' });
-      announceToScreenReader('Form submitted successfully! Welcome to the waitlist.');
+      announce('Form submitted successfully! Welcome to the waitlist.');
     } catch (error: any) {
       console.error('Error submitting form:', error);
       
@@ -166,7 +166,7 @@ export const useContactForm = () => {
       }
       
       setSubmitError(errorMessage);
-      announceToScreenReader('Form submission failed. Please try again.');
+      announce('Form submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

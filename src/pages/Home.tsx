@@ -6,13 +6,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import OrganizationHeader from '@/components/OrganizationHeader';
-import OrganizationDashboard from '@/components/OrganizationDashboard';
 import UnauthorizedAccess from '@/components/UnauthorizedAccess';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { StatusHero } from '@/components/StatusHero';
 import { DecorativeBlobs } from '@/components/DecorativeBlobs';
-import { FloatingActionBar } from '@/components/FloatingActionBar';
 import { QuickInsights } from '@/components/QuickInsights';
+import { AccessibilityPanel } from '@/components/AccessibilityPanel';
+import { 
+  LazyOrganizationDashboard, 
+  LazyFloatingActionBar 
+} from '@/components/LazyComponents';
+import { usePerformanceMonitor, useAsyncPerformance } from '@/hooks/usePerformanceMonitor';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 import { extractDomain } from '@/utils/domain';
 
@@ -20,6 +24,8 @@ const Home = () => {
   const { profile } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { measureAsync } = useAsyncPerformance();
+  usePerformanceMonitor('HomePage');
 
   const { data: organization, isLoading, error } = useQuery({
     queryKey: ['organization-by-id', profile?.organization_id],
@@ -129,7 +135,7 @@ const Home = () => {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <OrganizationDashboard organization={organization} />
+                <LazyOrganizationDashboard organization={organization} />
               </div>
               <div>
                 <QuickInsights domain={normalizedDomain} compact={true} />
@@ -141,12 +147,15 @@ const Home = () => {
         {/* Organization Dashboard - only show when not in progress and not ready */}
         {!showAnalysisProgress && !isReady && (
           <div className="pb-20">
-            <OrganizationDashboard organization={organization} />
+            <LazyOrganizationDashboard organization={organization} />
           </div>
         )}
 
         {/* Floating Action Bar */}
-        <FloatingActionBar />
+        <LazyFloatingActionBar />
+
+        {/* Accessibility Panel */}
+        <AccessibilityPanel />
       </div>
     </div>
   );

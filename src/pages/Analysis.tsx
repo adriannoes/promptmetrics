@@ -20,9 +20,14 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { extractDomain } from '@/utils/domain';
-import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
-import { FloatingActionBar } from '@/components/FloatingActionBar';
-import { InteractiveDashboard } from '@/components/InteractiveDashboard';
+import { AccessibilityPanel } from '@/components/AccessibilityPanel';
+import { 
+  LazyAnalysisDashboard, 
+  LazyInteractiveDashboard, 
+  LazyFloatingActionBar 
+} from '@/components/LazyComponents';
+import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
+import { QuickInsights } from '@/components/QuickInsights';
 import type { CompleteAnalysisResult } from '@/types/analysis';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 import {
@@ -36,6 +41,7 @@ import {
 
 const AnalysisContent = () => {
   const { t, language } = useLanguage();
+  usePerformanceMonitor('AnalysisPage');
   const [currentDomain, setCurrentDomain] = useState<string>('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -199,15 +205,16 @@ const AnalysisContent = () => {
               <div className="h-96 bg-white/60 backdrop-blur-lg border border-white/60 rounded-xl shadow-lg" />
             </div>
           ) : analysisResult && analysisResult.status === 'completed' && analysisResult.analysis_data ? (
-            <div data-testid="analysis-dashboard" className="space-y-8">
-              <AnalysisDashboard result={analysisResult as any} />
-              
-              {/* Enhanced Interactive Dashboard */}
-              <div className="mt-12">
-                <InteractiveDashboard 
+            <div data-testid="analysis-dashboard" className="grid lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                <LazyAnalysisDashboard result={analysisResult as any} />
+                <LazyInteractiveDashboard 
                   domain={currentDomain} 
                   data={analysisResult.analysis_data}
                 />
+              </div>
+              <div>
+                <QuickInsights domain={currentDomain} />
               </div>
             </div>
           ) : (
@@ -292,7 +299,7 @@ const AnalysisContent = () => {
           )}
 
           {/* Floating Action Bar */}
-          <FloatingActionBar 
+          <LazyFloatingActionBar 
             actions={[
               {
                 id: 'home',
@@ -312,6 +319,9 @@ const AnalysisContent = () => {
               }
             ]}
           />
+
+          {/* Accessibility Panel */}
+          <AccessibilityPanel />
         </div>
       </main>
     </div>

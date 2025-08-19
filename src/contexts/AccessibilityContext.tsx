@@ -1,17 +1,115 @@
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
-interface AccessibilityContextType {
+interface AccessibilityState {
   highContrast: boolean;
+  largeText: boolean;
   reducedMotion: boolean;
-  fontSize: 'normal' | 'large' | 'extra-large';
+  screenReaderMode: boolean;
+  keyboardNavigation: boolean;
+  focusVisible: boolean;
+}
+
+interface AccessibilityContextType extends AccessibilityState {
   toggleHighContrast: () => void;
+  toggleLargeText: () => void;
   toggleReducedMotion: () => void;
-  setFontSize: (size: 'normal' | 'large' | 'extra-large') => void;
-  announceToScreenReader: (message: string) => void;
+  toggleScreenReaderMode: () => void;
+  toggleKeyboardNavigation: () => void;
+  toggleFocusVisible: () => void;
 }
 
 const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
+
+const STORAGE_KEY = 'accessibility-settings';
+
+const defaultState: AccessibilityState = {
+  highContrast: false,
+  largeText: false,
+  reducedMotion: false,
+  screenReaderMode: false,
+  keyboardNavigation: true,
+  focusVisible: true,
+};
+
+export const AccessibilityProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [state, setState] = useState<AccessibilityState>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? { ...defaultState, ...JSON.parse(saved) } : defaultState;
+    } catch {
+      return defaultState;
+    }
+  });
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // Handle localStorage errors silently
+    }
+  }, [state]);
+
+  // Apply accessibility settings to document
+  useEffect(() => {
+    const root = document.documentElement;
+
+    // High contrast
+    root.classList.toggle('high-contrast', state.highContrast);
+    
+    // Large text
+    root.classList.toggle('large-text', state.largeText);
+    
+    // Reduced motion
+    root.classList.toggle('reduced-motion', state.reducedMotion);
+    
+    // Screen reader mode
+    root.classList.toggle('screen-reader', state.screenReaderMode);
+    
+    // Keyboard navigation
+    root.classList.toggle('keyboard-nav', state.keyboardNavigation);
+    
+    // Focus visible
+    root.classList.toggle('focus-visible', state.focusVisible);
+
+    // Update CSS custom properties
+    root.style.setProperty('--motion-scale', state.reducedMotion ? '0' : '1');
+    root.style.setProperty('--text-scale', state.largeText ? '1.25' : '1');
+
+    // Add ARIA live region for announcements
+    if (state.screenReaderMode) {
+      let liveRegion = document.getElementById('aria-live-region');
+      if (!liveRegion) {
+        liveRegion = document.createElement('div');
+        liveRegion.id = 'aria-live-region';
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.className = 'sr-only';
+        document.body.appendChild(liveRegion);
+      }
+    }
+  }, [state]);
+
+  const toggleSetting = (key: keyof AccessibilityState) => {
+    setState(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const value: AccessibilityContextType = {
+    ...state,
+    toggleHighContrast: () => toggleSetting('highContrast'),
+    toggleLargeText: () => toggleSetting('largeText'),
+    toggleReducedMotion: () => toggleSetting('reducedMotion'),
+    toggleScreenReaderMode: () => toggleSetting('screenReaderMode'),
+    toggleKeyboardNavigation: () => toggleSetting('keyboardNavigation'),
+    toggleFocusVisible: () => toggleSetting('focusVisible'),
+  };
+
+  return (
+    <AccessibilityContext.Provider value={value}>
+      {children}
+    </AccessibilityContext.Provider>
+  );
+};
 
 export const useAccessibility = () => {
   const context = useContext(AccessibilityContext);
@@ -21,83 +119,22 @@ export const useAccessibility = () => {
   return context;
 };
 
-export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [highContrast, setHighContrast] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [fontSize, setFontSizeState] = useState<'normal' | 'large' | 'extra-large'>('normal');
+// Utility hook for announcing content to screen readers
+export const useScreenReaderAnnouncer = () => {
+  const { screenReaderMode } = useAccessibility();
 
-  useEffect(() => {
-    // Check for user's motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setReducedMotion(prefersReducedMotion);
+  const announce = (message: string) => {
+    if (!screenReaderMode) return;
 
-    // Load saved preferences
-    const savedHighContrast = localStorage.getItem('accessibility-high-contrast') === 'true';
-    const savedFontSize = localStorage.getItem('accessibility-font-size') as 'normal' | 'large' | 'extra-large' || 'normal';
-    
-    setHighContrast(savedHighContrast);
-    setFontSizeState(savedFontSize);
-
-    // Apply initial settings
-    document.documentElement.classList.toggle('high-contrast', savedHighContrast);
-    document.documentElement.classList.toggle('font-large', savedFontSize === 'large');
-    document.documentElement.classList.toggle('font-extra-large', savedFontSize === 'extra-large');
-  }, []);
-
-  const toggleHighContrast = () => {
-    const newValue = !highContrast;
-    setHighContrast(newValue);
-    localStorage.setItem('accessibility-high-contrast', newValue.toString());
-    document.documentElement.classList.toggle('high-contrast', newValue);
-  };
-
-  const toggleReducedMotion = () => {
-    const newValue = !reducedMotion;
-    setReducedMotion(newValue);
-    localStorage.setItem('accessibility-reduced-motion', newValue.toString());
-    document.documentElement.classList.toggle('reduced-motion', newValue);
-  };
-
-  const setFontSize = (size: 'normal' | 'large' | 'extra-large') => {
-    setFontSizeState(size);
-    localStorage.setItem('accessibility-font-size', size);
-    
-    // Remove existing font size classes
-    document.documentElement.classList.remove('font-large', 'font-extra-large');
-    
-    // Add new font size class
-    if (size === 'large') {
-      document.documentElement.classList.add('font-large');
-    } else if (size === 'extra-large') {
-      document.documentElement.classList.add('font-extra-large');
+    const liveRegion = document.getElementById('aria-live-region');
+    if (liveRegion) {
+      liveRegion.textContent = message;
+      // Clear after announcement
+      setTimeout(() => {
+        liveRegion.textContent = '';
+      }, 1000);
     }
   };
 
-  const announceToScreenReader = (message: string) => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.className = 'sr-only';
-    announcement.textContent = message;
-    
-    document.body.appendChild(announcement);
-    
-    setTimeout(() => {
-      document.body.removeChild(announcement);
-    }, 1000);
-  };
-
-  return (
-    <AccessibilityContext.Provider value={{
-      highContrast,
-      reducedMotion,
-      fontSize,
-      toggleHighContrast,
-      toggleReducedMotion,
-      setFontSize,
-      announceToScreenReader
-    }}>
-      {children}
-    </AccessibilityContext.Provider>
-  );
+  return { announce };
 };
