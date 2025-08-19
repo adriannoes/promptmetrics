@@ -10,6 +10,7 @@ export interface MetricCardProps {
   icon: LucideIcon;
   variant?: 'success' | 'warning' | 'error' | 'primary' | 'neutral';
   className?: string;
+  onClick?: () => void;
 }
 
 export const MetricCard: React.FC<MetricCardProps> = ({
@@ -19,7 +20,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   trend,
   icon: Icon,
   variant = 'primary',
-  className = ''
+  className = '',
+  onClick
 }) => {
   const getVariantClasses = () => {
     switch (variant) {
@@ -69,7 +71,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   const classes = getVariantClasses();
 
   return (
-    <Card className={`group backdrop-blur-lg shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:rotate-1 ${classes.card} ${className}`}>
+    <Card 
+      className={`group backdrop-blur-lg shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:rotate-1 ${classes.card} ${className} ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <CardContent className="p-6 relative overflow-hidden">
         {/* Subtle animated background */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

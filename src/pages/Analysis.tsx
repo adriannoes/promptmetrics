@@ -21,6 +21,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ErrorReportButton } from '@/components/ErrorReportButton';
 import { extractDomain } from '@/utils/domain';
 import { AnalysisDashboard } from '@/components/analysis/AnalysisDashboard';
+import { FloatingActionBar } from '@/components/FloatingActionBar';
+import { InteractiveDashboard } from '@/components/InteractiveDashboard';
 import type { CompleteAnalysisResult } from '@/types/analysis';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 import {
@@ -197,8 +199,16 @@ const AnalysisContent = () => {
               <div className="h-96 bg-white/60 backdrop-blur-lg border border-white/60 rounded-xl shadow-lg" />
             </div>
           ) : analysisResult && analysisResult.status === 'completed' && analysisResult.analysis_data ? (
-            <div data-testid="analysis-dashboard">
+            <div data-testid="analysis-dashboard" className="space-y-8">
               <AnalysisDashboard result={analysisResult as any} />
+              
+              {/* Enhanced Interactive Dashboard */}
+              <div className="mt-12">
+                <InteractiveDashboard 
+                  domain={currentDomain} 
+                  data={analysisResult.analysis_data}
+                />
+              </div>
             </div>
           ) : (
             <div className="grid lg:grid-cols-2 gap-6" data-testid="analysis-grid">
@@ -280,6 +290,28 @@ const AnalysisContent = () => {
               </div>
             </div>
           )}
+
+          {/* Floating Action Bar */}
+          <FloatingActionBar 
+            actions={[
+              {
+                id: 'home',
+                label: 'Dashboard',
+                icon: require('lucide-react').Home,
+                onClick: () => navigate('/home')
+              },
+              {
+                id: 'new-analysis',
+                label: 'New Analysis',
+                icon: require('lucide-react').Search,
+                onClick: () => {
+                  setCurrentDomain('');
+                  setAnalysisResult(null);
+                },
+                variant: 'primary'
+              }
+            ]}
+          />
         </div>
       </main>
     </div>

@@ -11,6 +11,8 @@ import UnauthorizedAccess from '@/components/UnauthorizedAccess';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { StatusHero } from '@/components/StatusHero';
 import { DecorativeBlobs } from '@/components/DecorativeBlobs';
+import { FloatingActionBar } from '@/components/FloatingActionBar';
+import { QuickInsights } from '@/components/QuickInsights';
 import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
 import { extractDomain } from '@/utils/domain';
 
@@ -122,12 +124,29 @@ const Home = () => {
           }}
         />
 
-        {/* Organization Dashboard - only show when not in progress */}
-        {!showAnalysisProgress && (
+        {/* Quick Insights - show when analysis is ready */}
+        {isReady && normalizedDomain && (
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div className="grid lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <OrganizationDashboard organization={organization} />
+              </div>
+              <div>
+                <QuickInsights domain={normalizedDomain} compact={true} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Organization Dashboard - only show when not in progress and not ready */}
+        {!showAnalysisProgress && !isReady && (
           <div className="pb-20">
             <OrganizationDashboard organization={organization} />
           </div>
         )}
+
+        {/* Floating Action Bar */}
+        <FloatingActionBar />
       </div>
     </div>
   );
