@@ -1,0 +1,221 @@
+{
+  "name": "Brand Analysis Complete Payload Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "domain",
+              "value": "={{ $json.domain || 'pipefy.com' }}"
+            },
+            {
+              "name": "status",
+              "value": "completed"
+            }
+          ],
+          "number": [
+            {
+              "name": "score",
+              "value": 85
+            }
+          ],
+          "object": [
+            {
+              "name": "analysis_data",
+              "value": {
+                "summary": "Análise detalhada da marca Pipefy baseada em dados de mercado e percepções dos usuários. A marca apresenta forte presença no segmento de automação de processos, com foco em soluções no-code/low-code.",
+                "score": 85,
+                "recommendations": [
+                  "Melhorar presença em documentações técnicas",
+                  "Expandir casos de uso em tutoriais",
+                  "Fortalecer parcerias estratégicas"
+                ],
+                "sentiment_trends": [
+                  { "month": "Jan", "Pipefy": 75, "Competitor1": 68, "Competitor2": 65 },
+                  { "month": "Feb", "Pipefy": 76, "Competitor1": 69, "Competitor2": 66 },
+                  { "month": "Mar", "Pipefy": 78, "Competitor1": 70, "Competitor2": 68 },
+                  { "month": "Apr", "Pipefy": 77, "Competitor1": 71, "Competitor2": 68 },
+                  { "month": "May", "Pipefy": 79, "Competitor1": 70, "Competitor2": 68 },
+                  { "month": "Jun", "Pipefy": 78, "Competitor1": 71, "Competitor2": 68 }
+                ],
+                "ranking_data": [
+                  { "month": "Jan", "Pipefy": 2.1, "Competitor1": 2.8, "Competitor2": 3.2 },
+                  { "month": "Feb", "Pipefy": 2.0, "Competitor1": 2.7, "Competitor2": 3.1 },
+                  { "month": "Mar", "Pipefy": 1.9, "Competitor1": 2.6, "Competitor2": 3.0 },
+                  { "month": "Apr", "Pipefy": 2.0, "Competitor1": 2.5, "Competitor2": 2.9 },
+                  { "month": "May", "Pipefy": 1.8, "Competitor1": 2.4, "Competitor2": 2.8 },
+                  { "month": "Jun", "Pipefy": 1.7, "Competitor1": 2.3, "Competitor2": 2.7 }
+                ],
+                "overall_sentiment": [
+                  { "name": "Pipefy", "score": 77.6, "color": "#3B82F6" },
+                  { "name": "Competitor1", "score": 73.4, "color": "#10B981" },
+                  { "name": "Competitor2", "score": 68.8, "color": "#8B5CF6" }
+                ],
+                "share_of_rank": [
+                  { "month": "Jan", "Pipefy": 35, "Competitor1": 28, "Competitor2": 22, "Others": 15 },
+                  { "month": "Feb", "Pipefy": 38, "Competitor1": 26, "Competitor2": 21, "Others": 15 },
+                  { "month": "Mar", "Pipefy": 42, "Competitor1": 25, "Competitor2": 20, "Others": 13 },
+                  { "month": "Apr", "Pipefy": 45, "Competitor1": 24, "Competitor2": 19, "Others": 12 },
+                  { "month": "May", "Pipefy": 48, "Competitor1": 23, "Competitor2": 18, "Others": 11 },
+                  { "month": "Jun", "Pipefy": 52, "Competitor1": 22, "Competitor2": 17, "Others": 9 }
+                ],
+                "competitor_analysis": {
+                  "market_share": [
+                    { "name": "Pipefy", "value": 35, "color": "#3B82F6" },
+                    { "name": "Competitor1", "value": 25, "color": "#10B981" },
+                    { "name": "Competitor2", "value": 20, "color": "#8B5CF6" },
+                    { "name": "Others", "value": 20, "color": "#6B7280" }
+                  ],
+                  "market_trends": [
+                    { "month": "Jan", "Pipefy": 32, "Competitor1": 28, "Competitor2": 22, "Others": 18 },
+                    { "month": "Feb", "Pipefy": 33, "Competitor1": 27, "Competitor2": 21, "Others": 19 },
+                    { "month": "Mar", "Pipefy": 34, "Competitor1": 26, "Competitor2": 21, "Others": 19 },
+                    { "month": "Apr", "Pipefy": 35, "Competitor1": 25, "Competitor2": 20, "Others": 20 },
+                    { "month": "May", "Pipefy": 35, "Competitor1": 25, "Competitor2": 20, "Others": 20 },
+                    { "month": "Jun", "Pipefy": 35, "Competitor1": 25, "Competitor2": 20, "Others": 20 }
+                  ],
+                  "strategic_priorities": [
+                    {
+                      "id": 1,
+                      "title": "Expandir recursos de automação de processos",
+                      "description": "35% market share—aprimorar capacidades de automação do Pipefy para superar competidores.",
+                      "priority": "high",
+                      "marketShare": 35.0
+                    },
+                    {
+                      "id": 2,
+                      "title": "Focar em pequenas e médias empresas",
+                      "description": "Competir com soluções enterprise via onboarding simplificado e recursos para PMEs.",
+                      "priority": "medium",
+                      "marketShare": 25.0
+                    }
+                  ],
+                  "opportunities": [
+                    {
+                      "category": "Product Development",
+                      "title": "Aproveitar interface no-code do Pipefy para diferenciação competitiva.",
+                      "description": "A abordagem visual de construção de processos continua sendo única, com competidores focando mais em templates...",
+                      "impact": "high",
+                      "effort": "medium"
+                    },
+                    {
+                      "category": "Market Expansion",
+                      "title": "Capitalizar nas integrações nativas para atrair equipes buscando soluções completas.",
+                      "description": "Integrações com ferramentas populares diferencia o Pipefy de muitos competidores...",
+                      "impact": "medium",
+                      "effort": "low"
+                    }
+                  ]
+                },
+                "prompt_analysis": {
+                  "sentiment_by_llm": {
+                    "ChatGPT": 82,
+                    "Gemini": 78,
+                    "Claude": 85,
+                    "Perplexity": 80
+                  },
+                  "ranking_by_prompt": {
+                    "workflow_automation": { "Pipefy": 1, "Competitor1": 2, "Competitor2": 3 },
+                    "process_management": { "Pipefy": 2, "Competitor1": 1, "Competitor2": 3 },
+                    "team_collaboration": { "Pipefy": 1, "Competitor1": 3, "Competitor2": 2 }
+                  },
+                  "performance_metrics": {
+                    "total_mentions": 247,
+                    "positive_mentions": 198,
+                    "neutral_mentions": 35,
+                    "negative_mentions": 14,
+                    "sentiment_score": 80.2
+                  }
+                },
+                "strategic_insights": {
+                  "key_insights": [
+                    "Pipefy é consistentemente mencionado como líder em automação visual de processos",
+                    "Forte presença em discussões sobre transformação digital em PMEs",
+                    "Oportunidade de expansão no mercado enterprise com recursos avançados"
+                  ],
+                  "recommendations": [
+                    "Investir em recursos de IA para automação inteligente de processos",
+                    "Expandir biblioteca de templates para diferentes indústrias",
+                    "Fortalecer parcerias com consultores de transformação digital"
+                  ],
+                  "action_items": [
+                    "Criar campanha de marketing focada em casos de sucesso de PMEs",
+                    "Desenvolver certificações para parceiros e consultores",
+                    "Implementar recursos de analytics avançados nos dashboards"
+                  ],
+                  "growth_opportunities": [
+                    "Mercado de automação de processos em crescimento de 23% ao ano",
+                    "Demanda crescente por soluções no-code/low-code",
+                    "Oportunidade de expansão internacional"
+                  ],
+                  "competitive_threats": [
+                    "Grandes players investindo pesado em automação",
+                    "Startups especializadas ganhando tração em nichos específicos",
+                    "Mudanças regulatórias podem impactar alguns segmentos"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-payload-node",
+      "name": "Generate Complete Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "receive-analysis",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [60, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "respond-node",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [420, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Generate Complete Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Complete Payload": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null
+}
