@@ -32,14 +32,16 @@ const SecurityAuditLogs = () => {
   const [loading, setLoading] = useState(true);
   const { profile } = useAuth();
 
+  useEffect(() => {
+    if (profile?.role === 'admin') {
+      fetchSecurityData();
+    }
+  }, [profile?.role]);
+
   // Only render if current user is admin
   if (profile?.role !== 'admin') {
     return null;
   }
-
-  useEffect(() => {
-    fetchSecurityData();
-  }, []);
 
   const fetchSecurityData = async () => {
     setLoading(true);
