@@ -28,16 +28,68 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
+    exclude: ['@vite/client', '@vite/env'],
   },
   build: {
-    sourcemap: true,
+    sourcemap: mode === 'development', // Only generate sourcemaps in development
+    minify: 'esbuild', // Use esbuild for faster builds
+    target: 'esnext', // Use modern JS features
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['lucide-react', '@radix-ui/react-slot', '@radix-ui/react-toast'],
+        manualChunks: (id) => {
+          // Vendor libraries
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@radix-ui') || id.includes('lucide-react') || id.includes('class-variance-authority')) {
+              return 'ui-vendor';
+            }
+            if (id.includes('@tanstack/react-query') || id.includes('@supabase')) {
+              return 'data-vendor';
+            }
+            if (id.includes('three') || id.includes('@react-three')) {
+              return '3d-vendor';
+            }
+            if (id.includes('recharts') || id.includes('date-fns')) {
+              return 'charts-vendor';
+            }
+            return 'vendor';
+          }
+          // Application chunks
+          if (id.includes('/src/pages/')) {
+            return 'pages';
+          }
+          if (id.includes('/src/components/admin/')) {
+            return 'admin-components';
+          }
+          if (id.includes('/src/components/demo/') || id.includes('/src/components/live/')) {
+            return 'analysis-components';
+          }
         },
+        // Optimize chunk file names
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+      // Aggressive tree shaking
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
+        tryCatchDeoptimization: false,
       },
     },
+    // Performance optimizations
+    chunkSizeWarningLimit: 600, // Increase limit for better chunking
+    cssCodeSplit: true, // Split CSS into separate chunks
+    assetsInlineLimit: 4096, // Inline small assets
+    reportCompressedSize: false, // Speed up builds
+  },
+  // ESBuild optimizations
+  esbuild: {
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
+    minifyIdentifiers: mode === 'production',
+    minifySyntax: mode === 'production',
+    minifyWhitespace: mode === 'production',
   },
 }));
