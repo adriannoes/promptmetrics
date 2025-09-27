@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MyRankDashboardTab } from '@/components/myrank/MyRankDashboardTab';
-import { MyRankPromptAnalysisTab } from '@/components/myrank/MyRankPromptAnalysisTab';
-import { MyRankCompetitorAnalysisTab } from '@/components/myrank/MyRankCompetitorAnalysisTab';
-import { MyRankStrategicInsightsTab } from '@/components/myrank/MyRankStrategicInsightsTab';
+import {
+  LazyMyRankDashboardTab,
+  LazyMyRankPromptAnalysisTab,
+  LazyMyRankCompetitorAnalysisTab,
+  LazyMyRankStrategicInsightsTab
+} from '@/components/lazy-components';
 import { useAnalysisData } from '@/hooks/useAnalysisData';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -190,19 +192,19 @@ const MyRank = () => {
             </TabsList>
 
             <TabsContent value="dashboard">
-              <MyRankDashboardTab analysisData={analysisData as any} />
+              <LazyMyRankDashboardTab analysisData={analysisData as any} />
             </TabsContent>
 
             <TabsContent value="prompt-analysis">
-              <MyRankPromptAnalysisTab analysisData={analysisData as any} />
+              <LazyMyRankPromptAnalysisTab analysisData={analysisData as any} />
             </TabsContent>
 
             <TabsContent value="competitor-analysis">
-              <MyRankCompetitorAnalysisTab analysisData={analysisData as any} />
+              <LazyMyRankCompetitorAnalysisTab analysisData={analysisData as any} />
             </TabsContent>
 
             <TabsContent value="strategic-insights">
-              <MyRankStrategicInsightsTab analysisData={analysisData as any} />
+              <LazyMyRankStrategicInsightsTab analysisData={analysisData as any} />
             </TabsContent>
           </Tabs>
         )}
