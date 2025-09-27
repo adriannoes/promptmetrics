@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://rankme-landing-launchpad.lovable.app/sitemap.xml
+Sitemap: https://promptmetrics-landing-launchpad.lovable.app/sitemap.xml
 
 # Crawl-delay for politeness
 Crawl-delay: 1
