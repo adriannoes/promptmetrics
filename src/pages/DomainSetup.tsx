@@ -4,10 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { auditService } from '@/services/auditService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
+// Import only what's needed from Three.js to reduce bundle size
+import {
+  Vector3,
+  Vector2,
+  ShaderMaterial,
+  GLSL3,
+  CustomBlending,
+  SrcAlphaFactor,
+  OneFactor,
+  Mesh
+} from 'three';
 import { cn } from '@/lib/utils';
 
 type Uniforms = {
@@ -232,7 +243,7 @@ const ShaderMaterial = ({
   uniforms: Uniforms;
 }) => {
   const { size } = useThree();
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = useRef<Mesh>(null);
   let lastFrameTime = 0;
 
   useFrame(({ clock }) => {
@@ -261,7 +272,7 @@ const ShaderMaterial = ({
           break;
         case "uniform3f":
           preparedUniforms[uniformName] = {
-            value: new THREE.Vector3().fromArray(uniform.value),
+            value: new Vector3().fromArray(uniform.value),
             type: "3f",
           };
           break;
@@ -271,14 +282,14 @@ const ShaderMaterial = ({
         case "uniform3fv":
           preparedUniforms[uniformName] = {
             value: uniform.value.map((v: number[]) =>
-              new THREE.Vector3().fromArray(v)
+              new Vector3().fromArray(v)
             ),
             type: "3fv",
           };
           break;
         case "uniform2f":
           preparedUniforms[uniformName] = {
-            value: new THREE.Vector2().fromArray(uniform.value),
+            value: new Vector2().fromArray(uniform.value),
             type: "2f",
           };
           break;
@@ -290,13 +301,13 @@ const ShaderMaterial = ({
 
     preparedUniforms["u_time"] = { value: 0, type: "1f" };
     preparedUniforms["u_resolution"] = {
-      value: new THREE.Vector2(size.width * 2, size.height * 2),
+      value: new Vector2(size.width * 2, size.height * 2),
     };
     return preparedUniforms;
   };
 
   const material = React.useMemo(() => {
-    const materialObject = new THREE.ShaderMaterial({
+    const materialObject = new ShaderMaterial({
       vertexShader: `
       precision mediump float;
       in vec2 coordinates;
@@ -312,10 +323,10 @@ const ShaderMaterial = ({
       `,
       fragmentShader: source,
       uniforms: getUniforms(),
-      glslVersion: THREE.GLSL3,
-      blending: THREE.CustomBlending,
-      blendSrc: THREE.SrcAlphaFactor,
-      blendDst: THREE.OneFactor,
+      glslVersion: GLSL3,
+      blending: CustomBlending,
+      blendSrc: SrcAlphaFactor,
+      blendDst: OneFactor,
     });
 
     return materialObject;
@@ -389,9 +400,17 @@ const DomainSetup = () => {
         
         if (analysisError) {
           console.error('Failed to trigger analysis:', analysisError);
+          // Log failed analysis attempt
+          if (profile?.email) {
+            await auditService.logDomainAnalysis(cleanDomain, profile.email, false);
+          }
           toast.error('Domain saved but analysis failed to start. You can trigger it manually later.');
         } else {
           console.log('🎯 Analysis triggered successfully!');
+          // Log successful analysis trigger
+          if (profile?.email) {
+            await auditService.logDomainAnalysis(cleanDomain, profile.email, true);
+          }
         }
       } catch (analysisErr) {
         console.error('🎯 Error triggering analysis:', analysisErr);

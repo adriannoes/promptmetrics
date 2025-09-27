@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
 
 interface AnalysisResult {
   id: string;
@@ -22,13 +23,13 @@ export const useAnalysisData = (domain?: string) => {
 
   const fetchAnalysis = useCallback(async (targetDomain: string) => {
     if (!targetDomain.trim()) {
-      console.log('🚫 useAnalysisData: Skipping fetch - empty domain');
+      logger.debug('Skipping fetch - empty domain');
       setError('Domínio não fornecido');
       setLoading(false);
       return;
     }
 
-    console.log('🔍 useAnalysisData: Fetching analysis for domain via edge function:', targetDomain);
+    logger.api(`Fetching analysis for domain via edge function: ${targetDomain}`);
     setLoading(true);
     setError(null);
 
@@ -45,7 +46,7 @@ export const useAnalysisData = (domain?: string) => {
 
       const { data: result, error: fetchError } = await Promise.race([fetchPromise, timeoutPromise]) as any;
 
-      console.log('📊 useAnalysisData: Edge function result:', { result, fetchError });
+      logger.debug('Edge function result received', { result: !!result, hasError: !!fetchError });
 
       if (fetchError) {
         if (fetchError.message?.includes('Timeout')) {
@@ -56,13 +57,13 @@ export const useAnalysisData = (domain?: string) => {
 
       if (result?.success) {
         setData(result.data);
-        console.log('✅ useAnalysisData: Data set successfully from edge function:', result.data?.id || 'no-data');
+        logger.debug('Data set successfully from edge function', { dataId: result.data?.id || 'no-data' });
       } else {
         const errorMessage = result?.error || 'Erro desconhecido na busca de dados';
         throw new Error(errorMessage);
       }
     } catch (err) {
-      console.error('❌ useAnalysisData: Error fetching analysis via edge function:', err);
+      logger.error('Error fetching analysis via edge function', err);
 
       let errorMessage = 'Falha ao buscar dados de análise';
 
@@ -88,7 +89,7 @@ export const useAnalysisData = (domain?: string) => {
   // Debounced fetch when domain changes
   useEffect(() => {
     if (domain && domain.trim()) {
-      console.log('🚀 useAnalysisData: useEffect triggered for domain:', domain);
+      logger.debug('useEffect triggered for domain', { domain });
       
       // Clear any existing timeout
       if (timeoutRef.current) {
@@ -116,18 +117,18 @@ export const useAnalysisData = (domain?: string) => {
   // Controlled auto-refresh only when no data exists and not currently loading
   useEffect(() => {
     if (domain && !data && !loading) {
-      console.log('🔄 useAnalysisData: Setting up controlled auto-refresh for domain:', domain);
+      logger.debug('Setting up controlled auto-refresh for domain', { domain });
       
       const interval = setInterval(() => {
         // Only fetch if still no data and not loading
         if (!data && !loading) {
-          console.log('🔄 useAnalysisData: Auto-refresh tick for domain:', domain);
+          logger.debug('Auto-refresh tick for domain', { domain });
           fetchAnalysis(domain);
         }
       }, 15000); // Increased to 15 seconds to be less aggressive
 
       return () => {
-        console.log('🛑 useAnalysisData: Clearing auto-refresh interval');
+        logger.debug('Clearing auto-refresh interval');
         clearInterval(interval);
       };
     }

@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
+import { auditService } from '@/services/auditService';
 
 export const signUp = async (email: string, password: string, fullName: string, inviteCode: string) => {
   // Input validation
@@ -39,7 +40,10 @@ export const signUp = async (email: string, password: string, fullName: string, 
         }
       }
     });
-    
+
+    // Log audit event
+    await auditService.logSignup(sanitizedEmail, !error);
+
     return { error };
   } catch (error) {
     console.error('Signup error:', error);
@@ -94,6 +98,9 @@ export const signIn = async (email: string, password: string) => {
 
     const success = !error;
     logger.auth('Login success', { success });
+
+    // Log audit event
+    await auditService.logLogin(sanitizedEmail, success);
     
     try {
       logger.auth('Logging login attempt...');

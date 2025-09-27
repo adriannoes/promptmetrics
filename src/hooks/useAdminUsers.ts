@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { auditService } from '@/services/auditService';
 
 interface Profile {
   id: string;
@@ -20,10 +21,12 @@ export const useAdminUsers = () => {
 
   const fetchProfiles = async () => {
     try {
+      // Optimize query to select only needed fields and limit results
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('id, full_name, email, role, created_at, invite_code')
+        .order('created_at', { ascending: false })
+        .limit(100); // Limit to prevent loading too many users at once
 
       if (error) throw error;
       
@@ -65,6 +68,13 @@ export const useAdminUsers = () => {
 
       const action = newRole === 'admin' ? 'promoted' : 'demoted';
       toast.success(`Successfully ${action} ${email} to ${newRole}`);
+
+      // Log audit event
+      if (profile?.email) {
+        const oldRole = profiles.find(p => p.id === userId)?.role || 'unknown';
+        await auditService.logUserPromotion(profile.email, email, newRole, oldRole);
+      }
+
       fetchProfiles();
     } catch (error) {
       console.error('Error changing user role:', error);
@@ -128,6 +138,12 @@ export const useAdminUsers = () => {
       }
 
       toast.success(`Successfully promoted ${sanitizedEmail} to admin`);
+
+      // Log audit event
+      if (profile?.email) {
+        await auditService.logUserPromotion(profile.email, sanitizedEmail, 'admin', userProfile.role);
+      }
+
       fetchProfiles();
       return true;
     } catch (error) {
