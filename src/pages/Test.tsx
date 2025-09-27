@@ -21,7 +21,7 @@ const Test = () => {
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Settings className="w-8 h-8 text-blue-600" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome to RankMeLLM</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome to PromptMetrics</h1>
           <p className="text-slate-600">Your organization page is being set up</p>
         </div>
 

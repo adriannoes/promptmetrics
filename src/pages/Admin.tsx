@@ -1,17 +1,28 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Zap, LogOut, Users, Settings, BarChart3, Shield } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AdminUserManagement from '@/components/AdminUserManagement';
-import AdminInvitationCodes from '@/components/AdminInvitationCodes';
-import SecurityAuditLogs from '@/components/SecurityAuditLogs';
+import AuditLogsDashboard from '@/components/admin/AuditLogsDashboard';
+import {
+  LazyAdminUserManagement,
+  LazyAdminInvitationCodes,
+  LazySecurityAuditLogs
+} from '@/components/lazy-components';
+import { auditService } from '@/services/auditService';
 
 const Admin = () => {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Log admin panel access
+  useEffect(() => {
+    if (profile?.email) {
+      auditService.logAdminAccess(profile.email);
+    }
+  }, [profile?.email]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -27,7 +38,7 @@ const Admin = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Zap className="w-4 h-4 text-white" />
               </div>
-              <span className="text-lg font-bold text-slate-900 tracking-tight">RankMeLLM Admin</span>
+              <span className="text-lg font-bold text-slate-900 tracking-tight">PromptMetrics Admin</span>
             </div>
             
             <div className="flex items-center gap-4">
@@ -96,31 +107,39 @@ const Admin = () => {
 
         <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8">
           <Tabs defaultValue="users" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="users" className="flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                User Management
+                Users
               </TabsTrigger>
               <TabsTrigger value="invites" className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
-                Invitation Codes
+                Invites
+              </TabsTrigger>
+              <TabsTrigger value="audit" className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                Audit Logs
               </TabsTrigger>
               <TabsTrigger value="security" className="flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                Security Audit
+                <BarChart3 className="w-4 h-4" />
+                Security
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="users" className="mt-6">
-              <AdminUserManagement />
+              <LazyAdminUserManagement />
             </TabsContent>
-            
+
             <TabsContent value="invites" className="mt-6">
-              <AdminInvitationCodes />
+              <LazyAdminInvitationCodes />
             </TabsContent>
-            
+
+            <TabsContent value="audit" className="mt-6">
+              <AuditLogsDashboard />
+            </TabsContent>
+
             <TabsContent value="security" className="mt-6">
-              <SecurityAuditLogs />
+              <LazySecurityAuditLogs />
             </TabsContent>
           </Tabs>
         </div>

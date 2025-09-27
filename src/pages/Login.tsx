@@ -20,24 +20,17 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🌐 Login.handleSubmit: Starting login for email:', email);
     setLoading(true);
 
-    console.log('🌐 Login.handleSubmit: Calling signIn...');
     const { error } = await signIn(email, password);
 
-    console.log('🌐 Login.handleSubmit: signIn response:', { hasError: !!error, errorMessage: error?.message });
-
     if (error) {
-      console.error('🌐 Login.handleSubmit: Login failed, showing error toast');
       toast.error(error.message);
     } else {
-      console.log('🌐 Login.handleSubmit: Login successful, showing success toast');
       toast.success('Signed in successfully!');
     }
 
     setLoading(false);
-    console.log('🌐 Login.handleSubmit: Login process completed');
   };
 
   const handleGoogleSignIn = async () => {

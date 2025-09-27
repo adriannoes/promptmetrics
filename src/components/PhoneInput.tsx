@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Phone, ChevronDown } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import {
   Select,
   SelectContent,

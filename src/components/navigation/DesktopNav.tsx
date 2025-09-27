@@ -16,21 +16,14 @@ export function DesktopNav({ onSectionScroll }: DesktopNavProps) {
   const { user, profile, signOut } = useAuth();
 
   const handleSignOut = async () => {
-    console.log('🖱️ DesktopNav: Sign out button clicked');
-    console.log('🖱️ DesktopNav: Current user:', user?.email || 'null');
-    console.log('🖱️ DesktopNav: Current profile:', profile?.email || 'null');
-    console.log('🖱️ DesktopNav: Initiating signOut');
     try {
       await signOut();
-      console.log('🖱️ DesktopNav: SignOut completed successfully');
     } catch (error) {
-      console.error('🖱️ DesktopNav: SignOut error:', error);
+      console.error('SignOut error:', error);
     }
   };
 
   const isLoggedIn = user || (profile && profile.email === 'demo@example.com');
-  
-  console.log('🔍 DesktopNav render - isLoggedIn:', isLoggedIn, 'user:', user?.email, 'profile:', profile?.email);
 
   return (
     <nav className="hidden md:flex items-center gap-8" role="navigation" aria-label={t('nav.main')}>
