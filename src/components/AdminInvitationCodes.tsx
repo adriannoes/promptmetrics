@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { auditService } from '@/services/auditService';
 import { Ticket, Plus, Trash2, Key } from 'lucide-react';
 
 interface InvitationCode {
@@ -23,14 +24,16 @@ const AdminInvitationCodes = () => {
   const [creating, setCreating] = useState(false);
   const { profile } = useAuth();
 
+  useEffect(() => {
+    if (profile?.role === 'admin') {
+      fetchCodes();
+    }
+  }, [profile?.role]);
+
   // Only render if current user is admin
   if (profile?.role !== 'admin') {
     return null;
   }
-
-  useEffect(() => {
-    fetchCodes();
-  }, []);
 
   const fetchCodes = async () => {
     try {
@@ -88,6 +91,11 @@ const AdminInvitationCodes = () => {
         .insert([{ code: newCode }]);
 
       if (error) throw error;
+
+      // Log audit event
+      if (profile?.email) {
+        await auditService.logInviteCreated(profile.email, newCode);
+      }
 
       toast.success(`New invitation code "${newCode}" created successfully!`);
       fetchCodes();
