@@ -9,17 +9,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { user, session, profile, loading } = useAuthState();
 
-  console.log('🔐 AuthProvider - Estado atual:', {
-    hasUser: !!user,
-    hasSession: !!session,
-    hasProfile: !!profile,
-    loading,
-    userEmail: user?.email,
-    profileEmail: profile?.email,
-    profileRole: profile?.role,
-    timestamp: new Date().toISOString()
-  });
-
   return (
     <AuthContext.Provider value={{
       user,

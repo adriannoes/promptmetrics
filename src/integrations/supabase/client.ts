@@ -12,7 +12,6 @@ const cleanOldSessions = () => {
     }
   }
   keysToRemove.forEach(key => localStorage.removeItem(key));
-  console.log('🧹 Limpeza de sessões antigas concluída');
 };
 
 // Executar limpeza na inicialização
@@ -28,8 +27,6 @@ const testConnectivity = async () => {
   if (supabaseConfig.isProduction) return; // Não executar em produção
   
   try {
-    console.log('🔍 Testando conectividade com Supabase...');
-
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
@@ -43,22 +40,8 @@ const testConnectivity = async () => {
 
     clearTimeout(timeoutId);
 
-    if (response.ok) {
-      console.log('✅ Conectividade Supabase OK - Projeto ativo');
-      return true;
-    } else {
-      console.warn('⚠️ Resposta Supabase inesperada:', response.status);
-      return false;
-    }
+    return response.ok;
   } catch (error) {
-    if (error.name === 'AbortError') {
-      console.error('⏱️ Timeout na conexão Supabase - Projeto pode estar sendo restaurado');
-    } else if (error.message.includes('ERR_NAME_NOT_RESOLVED')) {
-      console.error('🌐 DNS não resolve - Projeto pode estar pausado ou sendo restaurado');
-      console.log('💡 Aguarde alguns minutos e tente novamente');
-    } else {
-      console.error('❌ Erro de conectividade Supabase:', error.message);
-    }
     return false;
   }
 };
