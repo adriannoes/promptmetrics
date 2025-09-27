@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { DashboardTab } from '@/components/demo/DashboardTab';
-import { PromptAnalysisTab } from '@/components/demo/PromptAnalysisTab';
-import { CompetitorAnalysisTab } from '@/components/demo/CompetitorAnalysisTab';
-import { StrategicInsightsTab } from '@/components/demo/StrategicInsightsTab';
+import {
+  LazyDashboardTab,
+  LazyPromptAnalysisTab,
+  LazyCompetitorAnalysisTab,
+  LazyStrategicInsightsTab
+} from '@/components/lazy-components';
 
 const Demo = () => {
 
@@ -51,19 +53,19 @@ const Demo = () => {
           </TabsList>
 
           <TabsContent value="dashboard">
-            <DashboardTab />
+            <LazyDashboardTab />
           </TabsContent>
 
           <TabsContent value="prompt-analysis">
-            <PromptAnalysisTab />
+            <LazyPromptAnalysisTab />
           </TabsContent>
 
           <TabsContent value="competitor-analysis">
-            <CompetitorAnalysisTab />
+            <LazyCompetitorAnalysisTab />
           </TabsContent>
 
           <TabsContent value="strategic-insights">
-            <StrategicInsightsTab />
+            <LazyStrategicInsightsTab />
           </TabsContent>
         </Tabs>
       </div>

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,19 +9,29 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Home from "./pages/Home";
-import OrganizationHome from "./pages/OrganizationHome";
-import Admin from "./pages/Admin";
-import Test from "./pages/Test";
-import Demo from "./pages/Demo";
-import DomainSetup from "./pages/DomainSetup";
-import Changelog from "./pages/Changelog";
-import Analysis from "./pages/Analysis";
-import MyRank from "./pages/MyRank";
-import NotFound from "./pages/NotFound";
+import LoadingSpinner from "./components/LoadingSpinner";
+
+// Lazy load pages for better performance
+const Index = React.lazy(() => import("./pages/Index"));
+const Login = React.lazy(() => import("./pages/Login"));
+const Signup = React.lazy(() => import("./pages/Signup"));
+const Home = React.lazy(() => import("./pages/Home"));
+const OrganizationHome = React.lazy(() => import("./pages/OrganizationHome"));
+const Admin = React.lazy(() => import("./pages/Admin"));
+const Test = React.lazy(() => import("./pages/Test"));
+const Demo = React.lazy(() => import("./pages/Demo"));
+const DomainSetup = React.lazy(() => import("./pages/DomainSetup"));
+const Changelog = React.lazy(() => import("./pages/Changelog"));
+const Analysis = React.lazy(() => import("./pages/Analysis"));
+const MyRank = React.lazy(() => import("./pages/MyRank"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+
+// Loading component for Suspense
+const PageLoadingFallback = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <LoadingSpinner />
+  </div>
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,7 +58,8 @@ const App = () => (
                   v7_relativeSplatPath: true
                 }}
               >
-                <Routes>
+                <Suspense fallback={<PageLoadingFallback />}>
+                  <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -56,49 +67,50 @@ const App = () => (
             <Route path="/analysis" element={<Analysis />} />
             <Route path="/my-rank" element={<MyRank />} />
             <Route path="/changelog" element={<Changelog />} />
-            <Route 
-              path="/domain-setup" 
+            <Route
+              path="/domain-setup"
               element={
                 <ProtectedRoute requiredRole="client">
                   <DomainSetup />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/test" 
+            <Route
+              path="/test"
               element={
                 <ProtectedRoute>
                   <Test />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/home" 
+            <Route
+              path="/home"
               element={
                 <ProtectedRoute requiredRole="client">
                   <Home />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/home/:slug" 
+            <Route
+              path="/home/:slug"
               element={
                 <ProtectedRoute requiredRole="client">
                   <OrganizationHome />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/admin" 
+            <Route
+              path="/admin"
               element={
                 <ProtectedRoute requiredRole="admin">
                   <Admin />
                 </ProtectedRoute>
-              } 
+              }
             />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-                </Routes>
+                  </Routes>
+                </Suspense>
               </BrowserRouter>
             </LanguageProvider>
           </AuthProvider>
