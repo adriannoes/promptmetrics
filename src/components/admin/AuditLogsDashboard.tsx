@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -55,6 +55,10 @@ const AuditLogsDashboard = () => {
           action,
           table_name,
           record_id,
+          old_values,
+          new_values,
+          ip_address,
+          user_agent,
           created_at,
           profiles:user_id (
             email,
@@ -76,7 +80,7 @@ const AuditLogsDashboard = () => {
 
       if (error) throw error;
 
-      setLogs(data || []);
+      setLogs((data || []) as any);
     } catch (error) {
       console.error('Error fetching audit logs:', error);
       toast.error('Failed to load audit logs');

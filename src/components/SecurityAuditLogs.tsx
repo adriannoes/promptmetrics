@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -10,12 +10,14 @@ import { Shield, AlertTriangle, User, Key, RefreshCw } from 'lucide-react';
 
 interface AuditLog {
   id: string;
-  user_id: string;
+  user_id: string | null;
   action: string;
-  table_name: string;
-  record_id: string;
+  table_name: string | null;
+  record_id: string | null;
   old_values: any;
   new_values: any;
+  ip_address: any;
+  user_agent: string | null;
   created_at: string;
 }
 

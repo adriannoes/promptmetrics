@@ -1,5 +1,5 @@
 
-import React from 'react';
+
 import { useLanguage } from '../contexts/LanguageContext';
 import { Target, Calculator, BarChart3, ArrowRight } from 'lucide-react';
 
