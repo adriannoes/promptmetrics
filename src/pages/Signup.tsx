@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Zap } from 'lucide-react';
 import { toast } from 'sonner';
+import { PasswordStrengthIndicator } from '@/components/PasswordStrengthIndicator';
+import { validatePasswordStrength } from '@/utils/passwordStrength';
 
 const Signup = () => {
   const [fullName, setFullName] = useState('');
@@ -33,6 +35,13 @@ const Signup = () => {
     
     if (!inviteCode.trim()) {
       toast.error('Invite code is required');
+      return;
+    }
+
+    // Validate password strength before submitting
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
+      toast.error(passwordValidation.feedback);
       return;
     }
 
@@ -113,6 +122,7 @@ const Signup = () => {
                 required
                 className="h-12"
               />
+              <PasswordStrengthIndicator password={password} />
             </div>
 
             <div className="space-y-2">

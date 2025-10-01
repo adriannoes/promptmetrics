@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
 import { auditService } from '@/services/auditService';
+import { validatePasswordStrength } from '@/utils/passwordStrength';
 
 export const signUp = async (email: string, password: string, fullName: string, inviteCode: string) => {
   // Input validation
@@ -9,8 +10,10 @@ export const signUp = async (email: string, password: string, fullName: string, 
     return { error: { message: 'Please enter a valid email address' } };
   }
   
-  if (!password || password.length < 6) {
-    return { error: { message: 'Password must be at least 6 characters long' } };
+  // Validate password strength
+  const passwordValidation = validatePasswordStrength(password);
+  if (!passwordValidation.isValid) {
+    return { error: { message: passwordValidation.feedback } };
   }
   
   if (!fullName || fullName.trim().length < 2) {
