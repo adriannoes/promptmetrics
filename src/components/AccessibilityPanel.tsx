@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAccessibility } from '../contexts/AccessibilityContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Settings, X, Eye, Zap, Type } from 'lucide-react';

@@ -1,5 +1,5 @@
 
-import React from 'react';
+
 import { HeaderBrand } from './navigation/HeaderBrand';
 import { DesktopNav } from './navigation/DesktopNav';
 import MobileNav from './MobileNav';
