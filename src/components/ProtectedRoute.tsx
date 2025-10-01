@@ -29,20 +29,7 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     timestamp: new Date().toISOString()
   });
 
-  // Debug component - remove after fixing the issue
-  const DebugInfo = () => (
-    <div className="fixed top-4 right-4 bg-black/80 text-white p-4 rounded-lg text-xs z-50 max-w-xs">
-      <div><strong>Debug Info:</strong></div>
-      <div>User: {user ? '✅' : '❌'}</div>
-      <div>Profile: {profile ? '✅' : '❌'}</div>
-      <div>Loading: {loading ? '✅' : '❌'}</div>
-      <div>Required Role: {requiredRole || 'none'}</div>
-      <div>User Email: {user?.email || 'none'}</div>
-      <div>Profile Email: {profile?.email || 'none'}</div>
-      <div>Profile Role: {profile?.role || 'none'}</div>
-      <div>Time: {new Date().toLocaleTimeString()}</div>
-    </div>
-  );
+  // Debug component removed - state is properly logged to console
 
   if (loading) {
     return (
