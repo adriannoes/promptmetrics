@@ -1,23 +1,8 @@
 
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Target, Heart, Trophy, Database } from 'lucide-react';
-import { useRealTimeAnalysis } from '@/hooks/useRealTimeAnalysis';
-import { Badge } from '@/components/ui/badge';
-
-interface AnalysisResult {
-  id: string;
-  domain: string;
-  status: string;
-  analysis_data: any;
-  created_at: string;
-  updated_at: string;
-}
-
-interface DashboardTabProps {
-  analysisData: AnalysisResult;
-}
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { TrendingUp, Target, Heart, Trophy } from 'lucide-react';
 
 // Default mock data for fallback
 const defaultSentimentTrendData = [

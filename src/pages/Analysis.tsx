@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
-import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
+import { LanguageProvider } from '../contexts/LanguageContext';
 import { AccessibilityProvider } from '../contexts/AccessibilityContext';
-import { useAuth } from '../contexts/AuthContext';
 import SkipNav from '../components/SkipNav';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -15,12 +13,10 @@ import { LiveStrategicInsightsTab } from '../components/live/LiveStrategicInsigh
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3, RefreshCw, AlertCircle, CheckCircle, Clock, Download, Share2, Settings } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { BarChart3, RefreshCw, AlertCircle, CheckCircle, Clock, Download, Settings } from 'lucide-react';
 
 const AnalysisContent = () => {
-  const { t } = useLanguage();
-  const { profile } = useAuth();
 
   // Use custom hooks for better separation of concerns
   const { organization, currentDomain, loading: orgLoading, error: orgError, hasDomain } = useOrganizationData();

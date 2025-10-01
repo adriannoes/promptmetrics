@@ -30,7 +30,7 @@ const Index = () => {
         // User is logged in, redirecting...
 
         try {
-          const { path, reason } = await getPostLoginRedirect(profile);
+          const { path } = await getPostLoginRedirect(profile);
           // Redirecting to appropriate dashboard
           navigate(path, { replace: true });
         } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   Vector3,
   Vector2,
-  ShaderMaterial,
+  ShaderMaterial as ThreeShaderMaterial,
   GLSL3,
   CustomBlending,
   SrcAlphaFactor,
@@ -235,7 +235,6 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
 const ShaderMaterial = ({
   source,
   uniforms,
-  maxFps = 60,
 }: {
   source: string;
   hovered?: boolean;
@@ -244,13 +243,10 @@ const ShaderMaterial = ({
 }) => {
   const { size } = useThree();
   const ref = useRef<Mesh>(null);
-  let lastFrameTime = 0;
 
   useFrame(({ clock }) => {
     if (!ref.current) return;
     const timestamp = clock.getElapsedTime();
-
-    lastFrameTime = timestamp;
 
     const material: any = ref.current.material;
     const timeLocation = material.uniforms.u_time;
@@ -307,7 +303,7 @@ const ShaderMaterial = ({
   };
 
   const material = React.useMemo(() => {
-    const materialObject = new ShaderMaterial({
+    const materialObject = new ThreeShaderMaterial({
       vertexShader: `
       precision mediump float;
       in vec2 coordinates;

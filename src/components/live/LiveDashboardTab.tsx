@@ -4,6 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { TrendingUp, Target, Heart, Trophy, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 
 interface AnalysisResult {
   id: string;
@@ -271,14 +272,14 @@ export const LiveDashboardTab: React.FC<LiveDashboardTabProps> = ({ analysisData
                     <XAxis dataKey="name" />
                     <YAxis domain={[0, 100]} unit="%" />
                     <Tooltip
-                      formatter={(value, name) => [`${value}%`, 'Pontuação']}
+                      formatter={(value) => [`${value}%`, 'Pontuação']}
                       labelFormatter={(label) => label}
                     />
                     <Bar dataKey="score" fill="#3B82F6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
                 <div className="mt-4 space-y-2">
-                  {overallSentimentData.map((item, index) => (
+                  {overallSentimentData.map((item: any, index: number) => (
                     <div key={item.name} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div

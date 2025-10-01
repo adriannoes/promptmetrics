@@ -73,7 +73,7 @@ export const LiveStrategicInsightsTab: React.FC<LiveStrategicInsightsTabProps> =
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {keyFindings.map((finding, index) => (
+              {keyFindings.map((finding: any, index: number) => (
                 <div key={index} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
                   <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                   <div>
@@ -109,7 +109,7 @@ export const LiveStrategicInsightsTab: React.FC<LiveStrategicInsightsTabProps> =
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recommendations.map((recommendation, index) => (
+              {recommendations.map((recommendation: any, index: number) => (
                 <div key={index} className="border-l-4 border-blue-500 pl-4">
                   <h4 className="font-semibold mb-2">{recommendation.title || `Recommendation ${index + 1}`}</h4>
                   <p className="text-muted-foreground mb-3">{recommendation.description}</p>
@@ -137,7 +137,7 @@ export const LiveStrategicInsightsTab: React.FC<LiveStrategicInsightsTabProps> =
                     <div className="mt-3">
                       <h5 className="text-sm font-medium mb-2">Action Steps:</h5>
                       <ul className="space-y-1">
-                        {recommendation.steps.map((step, stepIndex) => (
+                        {recommendation.steps.map((step: string, stepIndex: number) => (
                           <li key={stepIndex} className="text-sm text-muted-foreground flex items-start gap-2">
                             <span className="text-blue-600 mt-0.5">{stepIndex + 1}.</span>
                             {step}
@@ -164,7 +164,7 @@ export const LiveStrategicInsightsTab: React.FC<LiveStrategicInsightsTabProps> =
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {opportunities.map((opportunity, index) => (
+              {opportunities.map((opportunity: any, index: number) => (
                 <div key={index} className="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <TrendingUp className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                   <div>
@@ -194,7 +194,7 @@ export const LiveStrategicInsightsTab: React.FC<LiveStrategicInsightsTabProps> =
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {threats.map((threat, index) => (
+              {threats.map((threat: any, index: number) => (
                 <div key={index} className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                   <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                   <div>

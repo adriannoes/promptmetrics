@@ -8,13 +8,6 @@ import { logMonitor } from '@/utils/monitoring';
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-interface LogOptions {
-  level: LogLevel;
-  message: string;
-  data?: any;
-  sensitive?: boolean; // Marca dados sensíveis que devem ser removidos em produção
-}
-
 class SecureLogger {
   private isProduction = import.meta.env.PROD;
   private isDevelopment = import.meta.env.DEV;
