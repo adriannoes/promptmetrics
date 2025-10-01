@@ -1,5 +1,5 @@
 
-import React from 'react';
+
 import { motion } from "framer-motion";
 import { Check, Star } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
 import { AccessibilityProvider } from '../contexts/AccessibilityContext';
 import SkipNav from '../components/SkipNav';

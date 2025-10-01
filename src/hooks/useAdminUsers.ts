@@ -54,8 +54,7 @@ export const useAdminUsers = () => {
     setProcessingRoleChange(userId);
     
     try {
-      // Use the secure admin function instead of direct database update
-      const { data, error } = await supabase.rpc('admin_change_user_role', {
+      const { error } = await supabase.rpc('admin_change_user_role', {
         target_user_id: userId,
         new_role: newRole
       });
@@ -126,7 +125,7 @@ export const useAdminUsers = () => {
       }
 
       // Use the secure admin function instead of direct database update
-      const { data, error } = await supabase.rpc('admin_change_user_role', {
+      const { error } = await supabase.rpc('admin_change_user_role', {
         target_user_id: userProfile.id,
         new_role: 'admin'
       });

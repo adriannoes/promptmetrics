@@ -80,13 +80,13 @@ export const useDemoAuth = () => {
     };
 
     // Add demo login/logout event listeners
-    window.addEventListener('demo-login', handleDemoLogin as EventListener);
-    window.addEventListener('demo-logout', handleDemoLogout as EventListener);
+    window.addEventListener('demo-login', handleDemoLogin as any);
+    window.addEventListener('demo-logout', handleDemoLogout as any);
 
     return () => {
       mounted = false;
-      window.removeEventListener('demo-login', handleDemoLogin as EventListener);
-      window.removeEventListener('demo-logout', handleDemoLogout as EventListener);
+      window.removeEventListener('demo-login', handleDemoLogin as any);
+      window.removeEventListener('demo-logout', handleDemoLogout as any);
     };
   }, []);
 

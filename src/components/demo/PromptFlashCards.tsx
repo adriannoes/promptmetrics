@@ -1,5 +1,5 @@
 
-import React from 'react';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { BarChart3, Target, TrendingUp, Heart } from 'lucide-react';
 import { flashCardData } from '@/constants/PromptAnalysisData';

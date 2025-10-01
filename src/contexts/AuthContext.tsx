@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { AuthContextType } from '@/types/auth';
 import { useAuthState } from '@/hooks/useAuthState';
 import * as authService from '@/services/authService';
