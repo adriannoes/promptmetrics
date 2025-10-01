@@ -70,7 +70,7 @@ export const LivePromptAnalysisTab: React.FC<LivePromptAnalysisTabProps> = ({ an
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {sentimentAnalysis.map((sentiment, index) => (
+              {sentimentAnalysis.map((sentiment: any, index: number) => (
                 <div key={index} className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold text-primary mb-1">
                     {sentiment.score || 'N/A'}
@@ -93,7 +93,7 @@ export const LivePromptAnalysisTab: React.FC<LivePromptAnalysisTabProps> = ({ an
 
       {/* Prompt Analysis Results */}
       {promptAnalysis.length > 0 ? (
-        promptAnalysis.map((prompt, index) => (
+        promptAnalysis.map((prompt: any, index: number) => (
           <Card key={index}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -154,7 +154,7 @@ export const LivePromptAnalysisTab: React.FC<LivePromptAnalysisTabProps> = ({ an
                 <div>
                   <h4 className="font-semibold mb-2">Key Topics Mentioned:</h4>
                   <div className="flex flex-wrap gap-2">
-                    {prompt.keywords.map((keyword, idx) => (
+                    {prompt.keywords.map((keyword: string, idx: number) => (
                       <Badge key={idx} variant="outline">
                         {keyword}
                       </Badge>

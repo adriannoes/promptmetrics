@@ -3,8 +3,6 @@
 
 import { logger } from '@/utils/logger';
 
-const PROJECT_ID = 'vtyrpodosmhnyendcrjf';
-
 export interface Profile {
   id: string;
   full_name: string;

@@ -117,7 +117,7 @@ export const LiveCompetitorAnalysisTab: React.FC<LiveCompetitorAnalysisTabProps>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {competitorRankings.map((competitor, index) => (
+                {competitorRankings.map((competitor: any, index: number) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
                       #{competitor.rank || index + 1}
@@ -163,7 +163,7 @@ export const LiveCompetitorAnalysisTab: React.FC<LiveCompetitorAnalysisTabProps>
 
       {/* Detailed Competitor Analysis */}
       {competitorData.length > 0 ? (
-        competitorData.map((competitor, index) => (
+        competitorData.map((competitor: any, index: number) => (
           <Card key={index}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -177,7 +177,7 @@ export const LiveCompetitorAnalysisTab: React.FC<LiveCompetitorAnalysisTabProps>
                   <h4 className="font-semibold mb-2">Strengths:</h4>
                   {competitor.strengths && competitor.strengths.length > 0 ? (
                     <ul className="space-y-1">
-                      {competitor.strengths.map((strength, idx) => (
+                      {competitor.strengths.map((strength: string, idx: number) => (
                         <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
                           <span className="text-green-600 mt-0.5">•</span>
                           {strength}
@@ -193,7 +193,7 @@ export const LiveCompetitorAnalysisTab: React.FC<LiveCompetitorAnalysisTabProps>
                   <h4 className="font-semibold mb-2">Weaknesses:</h4>
                   {competitor.weaknesses && competitor.weaknesses.length > 0 ? (
                     <ul className="space-y-1">
-                      {competitor.weaknesses.map((weakness, idx) => (
+                      {competitor.weaknesses.map((weakness: string, idx: number) => (
                         <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
                           <span className="text-red-600 mt-0.5">•</span>
                           {weakness}
@@ -210,7 +210,7 @@ export const LiveCompetitorAnalysisTab: React.FC<LiveCompetitorAnalysisTabProps>
                 <div>
                   <h4 className="font-semibold mb-2">AI Platform Responses:</h4>
                   <div className="space-y-3">
-                    {competitor.ai_responses.map((response, idx) => (
+                    {competitor.ai_responses.map((response: any, idx: number) => (
                       <div key={idx} className="bg-muted/50 p-3 rounded-md">
                         <div className="flex items-center gap-2 mb-2">
                           <Badge variant="outline">{response.platform}</Badge>

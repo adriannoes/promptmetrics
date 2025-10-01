@@ -112,18 +112,16 @@ class LogMonitor {
     try {
       // Em produção, enviar métricas para serviço de monitoramento
       if (import.meta.env.PROD) {
-        const payload = {
-          logs: this.metrics,
-          performance: this.performanceMetrics,
-          timestamp: Date.now(),
-          environment: 'production'
-        };
-
         // Aqui você pode enviar para seu serviço de monitoramento
         // await fetch('/api/metrics', {
         //   method: 'POST',
         //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(payload)
+        //   body: JSON.stringify({
+        //     logs: this.metrics,
+        //     performance: this.performanceMetrics,
+        //     timestamp: Date.now(),
+        //     environment: 'production'
+        //   })
         // });
 
         console.log('Metrics flushed:', {

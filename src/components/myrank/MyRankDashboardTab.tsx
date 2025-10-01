@@ -227,7 +227,7 @@ export const MyRankDashboardTab: React.FC<MyRankDashboardTabProps> = ({ analysis
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 space-y-2">
-              {overallSentimentData.map((item) => (
+              {overallSentimentData.map((item: any) => (
                 <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />

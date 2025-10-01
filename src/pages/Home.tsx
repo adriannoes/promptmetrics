@@ -56,7 +56,7 @@ const Home = () => {
   }, [profile?.organization_id]);
 
   // Get recent analysis data
-  const { data: analysisData, loading: analysisLoading } = useAnalysisData(currentDomain);
+  const { data: analysisData } = useAnalysisData(currentDomain);
 
   console.log('🏠 Home component:', {
     hasProfile: !!profile,

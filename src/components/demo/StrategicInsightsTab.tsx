@@ -3,21 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lightbulb } from 'lucide-react';
 
-interface AnalysisResult {
-  id: string;
-  domain: string;
-  status: string;
-  analysis_data: any;
-  created_at: string;
-  updated_at: string;
-}
-
-interface StrategicInsightsTabProps {
-  analysisData: AnalysisResult;
-}
-
 export const StrategicInsightsTab = () => {
-  const strategicInsights = null; // Static demo data
   return (
     <div className="space-y-8">
       <Card>
