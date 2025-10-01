@@ -4,8 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 interface Organization {
   id: string;
   name: string;
-  website_url?: string;
-  logo_url?: string;
+  website_url?: string | null;
+  logo_url?: string | null;
   created_at: string;
   updated_at: string;
 }

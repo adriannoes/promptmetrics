@@ -107,7 +107,7 @@ export const useContactForm = () => {
         phone: sanitizeInput(formData.phone)
       };
 
-      const { data, error } = await supabase.functions.invoke('submit-waitlist', {
+      const { error } = await supabase.functions.invoke('submit-waitlist', {
         body: sanitizedData
       });
 

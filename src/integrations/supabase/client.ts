@@ -17,14 +17,14 @@ const cleanOldSessions = () => {
 // Executar limpeza na inicialização
 cleanOldSessions();
 
-import { supabase as supabaseConfig } from '@/config/environment';
+import { supabase as supabaseConfig, isProduction, isDevelopment } from '@/config/environment';
 
 const SUPABASE_URL = supabaseConfig.url;
 const SUPABASE_PUBLISHABLE_KEY = supabaseConfig.anonKey;
 
 // Testar conectividade do projeto (apenas em desenvolvimento)
 const testConnectivity = async () => {
-  if (supabaseConfig.isProduction) return; // Não executar em produção
+  if (isProduction) return; // Não executar em produção
   
   try {
     const controller = new AbortController();
@@ -47,7 +47,7 @@ const testConnectivity = async () => {
 };
 
 // Executar teste de conectividade apenas em desenvolvimento
-if (supabaseConfig.isDevelopment) {
+if (isDevelopment) {
   testConnectivity();
 }
 

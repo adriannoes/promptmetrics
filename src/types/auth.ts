@@ -6,8 +6,8 @@ export interface Profile {
   full_name: string;
   email: string;
   role: 'client' | 'admin';
-  invite_code?: string;
-  organization_id?: string;
+  invite_code?: string | null;
+  organization_id?: string | null;
   created_at: string;
   updated_at: string;
 }

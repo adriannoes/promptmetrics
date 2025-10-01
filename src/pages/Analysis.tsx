@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
 import { AccessibilityProvider } from '../contexts/AccessibilityContext';
 import { useAuth } from '../contexts/AuthContext';
