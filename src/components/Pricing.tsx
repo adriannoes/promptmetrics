@@ -1,5 +1,5 @@
 
-import React from 'react';
+
 import { useLanguage } from '../contexts/LanguageContext';
 import { Star } from 'lucide-react';
 import { PricingAdvanced } from './ui/pricing-advanced';

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { AdminUserStats } from '@/components/admin/AdminUserStats';

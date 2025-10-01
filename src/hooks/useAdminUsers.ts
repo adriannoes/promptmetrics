@@ -84,17 +84,17 @@ export const useAdminUsers = () => {
     }
   };
 
-  const promoteByEmail = async (emailToPromote: string) => {
+  const promoteByEmail = async (emailToPromote: string): Promise<boolean> => {
     if (!emailToPromote.trim()) {
       toast.error('Please enter an email address');
-      return;
+      return false;
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailToPromote.trim())) {
       toast.error('Please enter a valid email address');
-      return;
+      return false;
     }
 
     const sanitizedEmail = emailToPromote.trim().toLowerCase();
