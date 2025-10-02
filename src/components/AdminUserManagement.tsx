@@ -11,7 +11,7 @@ type RoleFilter = 'all' | 'client' | 'admin';
 
 const AdminUserManagement = () => {
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
-  const { profile } = useAuth();
+  const { profile, userRole } = useAuth();
   const {
     profiles,
     loading,
@@ -23,7 +23,7 @@ const AdminUserManagement = () => {
   } = useAdminUsers();
 
   // Only render if current user is admin
-  if (profile?.role !== 'admin') {
+  if (userRole?.role !== 'admin') {
     return null;
   }
 

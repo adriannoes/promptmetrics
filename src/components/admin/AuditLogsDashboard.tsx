@@ -35,10 +35,10 @@ const AuditLogsDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('7'); // days
-  const { profile } = useAuth();
+  const { userRole } = useAuth();
 
   // Only render if current user is admin
-  if (profile?.role !== 'admin') {
+  if (userRole?.role !== 'admin') {
     return null;
   }
 

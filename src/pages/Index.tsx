@@ -19,7 +19,7 @@ const Index = () => {
   // Component rendering - no logging needed
 
   const navigate = useNavigate();
-  const { user, profile, loading } = useAuth();
+  const { user, profile, userRole, loading } = useAuth();
 
   // Redirect logged-in users to their appropriate dashboard
   useEffect(() => {
@@ -30,7 +30,7 @@ const Index = () => {
         // User is logged in, redirecting...
 
         try {
-          const { path } = await getPostLoginRedirect(profile);
+          const { path } = await getPostLoginRedirect(profile, userRole);
           // Redirecting to appropriate dashboard
           navigate(path, { replace: true });
         } catch (error) {
@@ -47,7 +47,7 @@ const Index = () => {
     };
 
     handleLoggedInUserRedirect();
-  }, [user, profile, loading, navigate]);
+  }, [user, profile, userRole, loading, navigate]);
 
 
 

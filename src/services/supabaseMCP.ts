@@ -103,7 +103,6 @@ export const getProfileByUserId = async (userId: string): Promise<{ data: Profil
       data: data ? {
         id: data.id,
         email: data.email,
-        role: data.role,
         full_name: data.full_name
       } : null,
       error: error ? {
@@ -125,7 +124,6 @@ export const getProfileByUserId = async (userId: string): Promise<{ data: Profil
     logger.db('Profile encontrado', {
       id: data.id,
       email: data.email,
-      role: data.role,
       full_name: data.full_name
     });
     return { data: data as Profile, error: null };

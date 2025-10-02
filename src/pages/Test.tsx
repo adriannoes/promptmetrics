@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Home, Settings, User } from 'lucide-react';
 
 const Test = () => {
-  const { profile, signOut } = useAuth();
+  const { profile, userRole, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -42,7 +42,7 @@ const Test = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-600">Role:</span>
-                <span className="font-medium capitalize">{profile.role}</span>
+                <span className="font-medium capitalize">{userRole?.role || 'loading...'}</span>
               </div>
               {profile.organization_id && (
                 <div className="flex justify-between">

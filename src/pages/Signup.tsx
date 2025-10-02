@@ -16,19 +16,19 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signUp, signInWithGoogle, user, profile } = useAuth();
+  const { signUp, signInWithGoogle, user, profile, userRole } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && profile) {
+    if (user && profile && userRole) {
       // Redirect based on role
-      if (profile.role === 'admin') {
+      if (userRole.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/home');
       }
     }
-  }, [user, profile, navigate]);
+  }, [user, profile, userRole, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

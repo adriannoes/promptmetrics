@@ -22,16 +22,16 @@ const AdminInvitationCodes = () => {
   const [codes, setCodes] = useState<InvitationCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
-  const { profile } = useAuth();
+  const { profile, userRole } = useAuth();
 
   useEffect(() => {
-    if (profile?.role === 'admin') {
+    if (userRole?.role === 'admin') {
       fetchCodes();
     }
-  }, [profile?.role]);
+  }, [userRole?.role]);
 
   // Only render if current user is admin
-  if (profile?.role !== 'admin') {
+  if (userRole?.role !== 'admin') {
     return null;
   }
 
