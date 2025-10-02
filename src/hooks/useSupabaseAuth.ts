@@ -2,14 +2,14 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { Profile } from '@/types/auth';
-// import { getProfileByUserId } from '@/services/supabaseMCP'; // Não usado mais
+import { Profile, UserRole } from '@/types/auth';
 import { logger } from '@/utils/logger';
 
 export const useSupabaseAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [loading, setLoading] = useState(true);
 
   logger.auth('Estado interno', {
@@ -68,7 +68,6 @@ export const useSupabaseAuth = () => {
               data: profileData ? {
                 id: profileData.id,
                 email: profileData.email,
-                role: profileData.role,
                 full_name: profileData.full_name
               } : null,
               error: error ? {
@@ -84,25 +83,45 @@ export const useSupabaseAuth = () => {
               if (error.code === 'PGRST116') {
                 logger.auth('Profile does not exist (PGRST116)');
                 setProfile(null);
+                setUserRole(null);
               } else {
                 logger.auth('Other error, setting profile to null');
                 setProfile(null);
+                setUserRole(null);
               }
             } else if (profileData) {
-              // Type assert the role to ensure it matches our Profile type
-              const typedProfile: Profile = {
-                ...profileData,
-                role: profileData.role as 'client' | 'admin'
-              };
+              const typedProfile: Profile = profileData;
               logger.auth('Profile set successfully from Supabase', {
                 profileId: typedProfile.id,
-                profileEmail: typedProfile.email,
-                profileRole: typedProfile.role
+                profileEmail: typedProfile.email
               });
               setProfile(typedProfile);
+              
+              // Fetch user role separately
+              setTimeout(async () => {
+                try {
+                  const { data: roleData, error: roleError } = await supabase
+                    .from('user_roles')
+                    .select('*')
+                    .eq('user_id', session.user.id)
+                    .single();
+                  
+                  if (roleError) {
+                    logger.error('Error fetching user role', roleError);
+                    setUserRole(null);
+                  } else if (roleData) {
+                    setUserRole(roleData);
+                    logger.auth('User role fetched', { role: roleData.role });
+                  }
+                } catch (error) {
+                  logger.error('Error in role fetch', error);
+                  setUserRole(null);
+                }
+              }, 0);
             } else {
               logger.auth('No profile data returned from Supabase');
               setProfile(null);
+              setUserRole(null);
             }
           } catch (error) {
             logger.error('Profile fetch exception from Supabase', error);
@@ -110,27 +129,26 @@ export const useSupabaseAuth = () => {
             // Fallback: criar perfil temporário baseado no usuário
             logger.auth('Criando perfil temporário como fallback');
             
-            // Usar dados conhecidos do banco como fallback
             const fallbackProfile: Profile = {
               id: session.user.id,
-              full_name: session.user.email === 'adrianno@promptmetrics.io' ? 'Adrianno PromptMetrics' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Usuário'),
+              full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Usuário',
               email: session.user.email || '',
-              role: session.user.email === 'adrianno@promptmetrics.io' ? 'admin' : 'client', // Baseado no email conhecido
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             };
             
             setProfile(fallbackProfile);
+            setUserRole(null);
             logger.auth('Perfil temporário criado', {
               id: fallbackProfile.id,
-              email: fallbackProfile.email,
-              role: fallbackProfile.role
+              email: fallbackProfile.email
             });
           }
         } else {
           // Clear profile immediately when user is null
           logger.auth('No user, clearing profile');
           setProfile(null);
+          setUserRole(null);
         }
         
         // Always set loading to false after processing auth change
@@ -177,6 +195,7 @@ export const useSupabaseAuth = () => {
     user,
     session,
     profile,
+    userRole,
     loading
   };
 };

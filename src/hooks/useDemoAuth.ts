@@ -2,12 +2,13 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { Profile } from '@/types/auth';
+import { Profile, UserRole } from '@/types/auth';
 
 export const useDemoAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -37,20 +38,45 @@ export const useDemoAuth = () => {
             id: '82a96621-2849-4dee-a70f-8da2616823be',
             full_name: 'Demo User',
             email: 'demo@example.com',
-            role: 'client',
             organization_id: null,
             invite_code: 'DEMO2024',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
           setProfile(demoProfile);
-        } else {
-          // Type assert the role to ensure it matches our Profile type
-          const typedProfile: Profile = {
-            ...profileData,
-            role: profileData.role as 'client' | 'admin'
+          
+          // Set mock userRole for demo
+          const demoRole: UserRole = {
+            id: 'demo-role-id',
+            user_id: '82a96621-2849-4dee-a70f-8da2616823be',
+            role: 'client',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           };
-          setProfile(typedProfile);
+          setUserRole(demoRole);
+        } else {
+          setProfile(profileData);
+          
+          // Fetch userRole for demo user
+          const { data: roleData } = await supabase
+            .from('user_roles')
+            .select('*')
+            .eq('user_id', profileData.id)
+            .single();
+          
+          if (roleData) {
+            setUserRole(roleData);
+          } else {
+            // Fallback demo role
+            const demoRole: UserRole = {
+              id: 'demo-role-id',
+              user_id: profileData.id,
+              role: 'client',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            };
+            setUserRole(demoRole);
+          }
         }
       } catch (error) {
         console.error('Demo profile fetch error:', error);
@@ -59,13 +85,21 @@ export const useDemoAuth = () => {
           id: '82a96621-2849-4dee-a70f-8da2616823be',
           full_name: 'Demo User',
           email: 'demo@example.com',
-          role: 'client',
           organization_id: null,
           invite_code: 'DEMO2024',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
         setProfile(demoProfile);
+        
+        const demoRole: UserRole = {
+          id: 'demo-role-id',
+          user_id: '82a96621-2849-4dee-a70f-8da2616823be',
+          role: 'client',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        setUserRole(demoRole);
       }
     };
 
@@ -77,6 +111,7 @@ export const useDemoAuth = () => {
       setUser(null);
       setSession(null);
       setProfile(null);
+      setUserRole(null);
     };
 
     // Add demo login/logout event listeners
@@ -93,6 +128,7 @@ export const useDemoAuth = () => {
   return {
     user,
     session,
-    profile
+    profile,
+    userRole
   };
 };

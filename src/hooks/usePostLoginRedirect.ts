@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getPostLoginRedirect } from '@/services/redirectService';
 
 export const usePostLoginRedirect = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, userRole, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,8 +16,10 @@ export const usePostLoginRedirect = () => {
         loading, 
         hasUser: !!user, 
         hasProfile: !!profile,
+        hasUserRole: !!userRole,
         userEmail: user?.email,
-        profileEmail: profile?.email 
+        profileEmail: profile?.email,
+        role: userRole?.role
       });
       
       // Only redirect on login page and when we have both user and profile
@@ -33,7 +35,7 @@ export const usePostLoginRedirect = () => {
       console.log('🚀 usePostLoginRedirect: Executing post-login redirect for user:', user.id);
 
       try {
-        const { path, reason } = await getPostLoginRedirect(profile);
+        const { path, reason } = await getPostLoginRedirect(profile, userRole);
         console.log('🚀 usePostLoginRedirect: Redirect decision:', { path, reason });
         navigate(path, { replace: true });
         console.log('🚀 usePostLoginRedirect: Navigation completed to:', path);
@@ -44,5 +46,5 @@ export const usePostLoginRedirect = () => {
     };
 
     handleRedirect();
-  }, [user, profile, loading, navigate, location.pathname]);
+  }, [user, profile, userRole, loading, navigate, location.pathname]);
 };

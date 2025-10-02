@@ -7,13 +7,14 @@ import * as authService from '@/services/authService';
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { user, session, profile, loading } = useAuthState();
+  const { user, session, profile, userRole, loading } = useAuthState();
 
   return (
     <AuthContext.Provider value={{
       user,
       session,
       profile,
+      userRole,
       loading,
       signUp: authService.signUp,
       signIn: authService.signIn,

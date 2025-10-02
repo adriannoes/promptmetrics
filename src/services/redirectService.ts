@@ -1,17 +1,17 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { Profile } from '@/types/auth';
+import { Profile, UserRole } from '@/types/auth';
 
 export interface RedirectResult {
   path: string;
   reason: string;
 }
 
-export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectResult> => {
-  console.log('Determining redirect for user:', profile);
+export const getPostLoginRedirect = async (profile: Profile, userRole: UserRole | null): Promise<RedirectResult> => {
+  console.log('Determining redirect for user:', profile, userRole);
 
   // Admin users go to admin dashboard
-  if (profile.role === 'admin') {
+  if (userRole?.role === 'admin') {
     return {
       path: '/admin',
       reason: 'Admin user redirected to admin dashboard'
@@ -19,7 +19,7 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
   }
 
   // Client users need organization lookup
-  if (profile.role === 'client') {
+  if (userRole?.role === 'client') {
     // Special handling for demo user - always redirect to demo page
     if (profile.email === 'demo@example.com') {
       return {
@@ -91,7 +91,7 @@ export const getPostLoginRedirect = async (profile: Profile): Promise<RedirectRe
   }
 
   // Unknown role fallback
-  console.warn('Unknown user role:', profile.role);
+  console.warn('Unknown user role:', userRole?.role);
   return {
     path: '/test',
     reason: 'Unknown role, redirected to fallback'

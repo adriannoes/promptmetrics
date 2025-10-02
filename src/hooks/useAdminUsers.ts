@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { auditService } from '@/services/auditService';
 
-interface Profile {
+interface ProfileWithRole {
   id: string;
   full_name: string;
   email: string;
@@ -14,29 +14,39 @@ interface Profile {
 }
 
 export const useAdminUsers = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [profiles, setProfiles] = useState<ProfileWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingRoleChange, setProcessingRoleChange] = useState<string | null>(null);
-  const { profile } = useAuth();
+  const { userRole } = useAuth();
 
   const fetchProfiles = async () => {
     try {
-      // Optimize query to select only needed fields and limit results
-      const { data, error } = await supabase
+      // Fetch profiles with their roles from user_roles table
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, full_name, email, role, created_at, invite_code')
+        .select('id, full_name, email, created_at')
         .order('created_at', { ascending: false })
-        .limit(100); // Limit to prevent loading too many users at once
+        .limit(100);
 
-      if (error) throw error;
+      if (profilesError) throw profilesError;
       
-      // Type assert the data to ensure role is properly typed
-      const typedProfiles = (data || []).map(profile => ({
+      // Fetch all user roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+
+      // Create a map of user_id to role
+      const rolesMap = new Map(rolesData?.map(r => [r.user_id, r.role]) || []);
+
+      // Combine profiles with their roles
+      const profilesWithRoles: ProfileWithRole[] = (profilesData || []).map(profile => ({
         ...profile,
-        role: profile.role as 'client' | 'admin'
+        role: (rolesMap.get(profile.id) || 'client') as 'client' | 'admin'
       }));
       
-      setProfiles(typedProfiles);
+      setProfiles(profilesWithRoles);
     } catch (error) {
       console.error('Error fetching profiles:', error);
       toast.error('Failed to load user profiles');
@@ -46,7 +56,7 @@ export const useAdminUsers = () => {
   };
 
   const handleRoleChange = async (userId: string, email: string, newRole: 'admin' | 'client') => {
-    if (userId === profile?.id) {
+    if (userId === userRole?.user_id) {
       toast.error('You cannot change your own role');
       return;
     }
@@ -69,10 +79,8 @@ export const useAdminUsers = () => {
       toast.success(`Successfully ${action} ${email} to ${newRole}`);
 
       // Log audit event
-      if (profile?.email) {
-        const oldRole = profiles.find(p => p.id === userId)?.role || 'unknown';
-        await auditService.logUserPromotion(profile.email, email, newRole, oldRole);
-      }
+      const oldRole = profiles.find(p => p.id === userId)?.role || 'unknown';
+      await auditService.logUserPromotion('admin', email, newRole, oldRole);
 
       fetchProfiles();
     } catch (error) {
@@ -89,7 +97,6 @@ export const useAdminUsers = () => {
       return false;
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailToPromote.trim())) {
       toast.error('Please enter a valid email address');
@@ -102,7 +109,7 @@ export const useAdminUsers = () => {
       // First find the user by email to get their ID
       const { data: userProfiles, error: fetchError } = await supabase
         .from('profiles')
-        .select('id, full_name, role')
+        .select('id, full_name')
         .eq('email', sanitizedEmail)
         .limit(1);
 
@@ -119,12 +126,19 @@ export const useAdminUsers = () => {
 
       const userProfile = userProfiles[0];
 
-      if (userProfile.role === 'admin') {
+      // Check if user is already admin
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userProfile.id)
+        .single();
+
+      if (roleData?.role === 'admin') {
         toast.error('User is already an admin');
         return false;
       }
 
-      // Use the secure admin function instead of direct database update
+      // Use the secure admin function to change role
       const { error } = await supabase.rpc('admin_change_user_role', {
         target_user_id: userProfile.id,
         new_role: 'admin'
@@ -139,9 +153,7 @@ export const useAdminUsers = () => {
       toast.success(`Successfully promoted ${sanitizedEmail} to admin`);
 
       // Log audit event
-      if (profile?.email) {
-        await auditService.logUserPromotion(profile.email, sanitizedEmail, 'admin', userProfile.role);
-      }
+      await auditService.logUserPromotion('admin', sanitizedEmail, 'admin', roleData?.role || 'client');
 
       fetchProfiles();
       return true;

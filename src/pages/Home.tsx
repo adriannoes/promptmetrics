@@ -62,7 +62,6 @@ const Home = () => {
     hasProfile: !!profile,
     profileEmail: profile?.email,
     profileName: profile?.full_name,
-    profileRole: profile?.role,
     organization: organization?.name,
     currentDomain
   });

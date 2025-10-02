@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, userRole, loading } = useAuth();
 
   // Log detalhado do estado
   console.log('🔒 ProtectedRoute - Estado completo:', { 
@@ -21,8 +21,11 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     profile: profile ? {
       id: profile.id,
       email: profile.email,
-      role: profile.role,
       full_name: profile.full_name
+    } : null,
+    userRole: userRole ? {
+      role: userRole.role,
+      user_id: userRole.user_id
     } : null,
     loading,
     requiredRole,
@@ -67,20 +70,20 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     );
   }
 
-  if (requiredRole && profile.role !== requiredRole) {
+  if (requiredRole && userRole?.role !== requiredRole) {
     console.log('Role mismatch, checking access permissions');
     
     // Admin can access client routes, but client cannot access admin routes
-    if (requiredRole === 'client' && profile.role === 'admin') {
+    if (requiredRole === 'client' && userRole?.role === 'admin') {
       console.log('Admin accessing client route - access granted');
       // Allow admin to access client routes
-    } else if (requiredRole === 'admin' && profile.role === 'client') {
+    } else if (requiredRole === 'admin' && userRole?.role === 'client') {
       console.log('Client trying to access admin route - redirecting to appropriate dashboard');
       return <Navigate to="/test" replace />;
     } else {
       console.log('Role mismatch, redirecting based on user role');
       // Redirect to appropriate dashboard based on user's role
-      if (profile.role === 'admin') {
+      if (userRole?.role === 'admin') {
         return <Navigate to="/admin" replace />;
       } else {
         return <Navigate to="/test" replace />;
