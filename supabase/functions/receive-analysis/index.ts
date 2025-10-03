@@ -24,6 +24,23 @@ serve(async (req) => {
       });
     }
 
+    // Webhook authentication - validate secret
+    const webhookSecret = Deno.env.get('N8N_WEBHOOK_SECRET');
+    const receivedSecret = req.headers.get('X-Webhook-Secret');
+
+    if (!webhookSecret || receivedSecret !== webhookSecret) {
+      console.log('❌ Unauthorized webhook call - invalid or missing secret');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized webhook call' }), 
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    console.log('✅ Webhook authenticated successfully');
+
     const payload = await req.json();
     console.log('📥 Received analysis payload:', JSON.stringify(payload, null, 2));
 
