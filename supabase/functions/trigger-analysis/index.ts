@@ -1,11 +1,35 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// Allowed origins for CORS
+const getAllowedOrigins = () => {
+  const origins = [
+    'https://f7f9381f-ef1d-491b-bfc3-dadb313a13c9.lovableproject.com',
+    // Add production domain when available
+  ];
+  
+  // Add localhost only in development
+  if (Deno.env.get('ENVIRONMENT') !== 'production') {
+    origins.push('http://localhost:5173');
+  }
+  
+  return origins;
+};
+
+const getCorsHeaders = (origin: string | null) => {
+  const allowedOrigins = getAllowedOrigins();
+  const isAllowed = origin && allowedOrigins.includes(origin);
+  
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : allowedOrigins[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  };
 };
 
 serve(async (req) => {
+  const origin = req.headers.get('Origin');
+  const corsHeaders = getCorsHeaders(origin);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
