@@ -64,8 +64,22 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/demo" element={<Demo />} />
-            <Route path="/analysis" element={<Analysis />} />
-            <Route path="/my-rank" element={<MyRank />} />
+            <Route
+              path="/analysis"
+              element={
+                <ProtectedRoute requiredRole="client">
+                  <Analysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-rank"
+              element={
+                <ProtectedRoute requiredRole="client">
+                  <MyRank />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/changelog" element={<Changelog />} />
             <Route
               path="/domain-setup"
