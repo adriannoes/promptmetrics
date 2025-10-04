@@ -60,10 +60,14 @@ const App = () => (
               >
                 <Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/demo" element={<Demo />} />
+                    {/* PUBLIC ROUTES - No authentication required */}
+                    <Route path="/" element={<Index />} /> {/* Landing page */}
+                    <Route path="/login" element={<Login />} /> {/* Login page with post-login redirect */}
+                    <Route path="/signup" element={<Signup />} /> {/* Registration page */}
+                    <Route path="/demo" element={<Demo />} /> {/* Public demo with sample data */}
+                    <Route path="/changelog" element={<Changelog />} /> {/* Public changelog */}
+                    
+                    {/* PROTECTED CLIENT ROUTES - Requires authentication + client role */}
             <Route
               path="/analysis"
               element={
@@ -71,7 +75,7 @@ const App = () => (
                   <Analysis />
                 </ProtectedRoute>
               }
-            />
+            /> {/* Main analysis dashboard with live data */}
             <Route
               path="/my-rank"
               element={
@@ -79,8 +83,7 @@ const App = () => (
                   <MyRank />
                 </ProtectedRoute>
               }
-            />
-            <Route path="/changelog" element={<Changelog />} />
+            /> {/* Domain ranking analysis */}
             <Route
               path="/domain-setup"
               element={
@@ -88,15 +91,7 @@ const App = () => (
                   <DomainSetup />
                 </ProtectedRoute>
               }
-            />
-            <Route
-              path="/test"
-              element={
-                <ProtectedRoute>
-                  <Test />
-                </ProtectedRoute>
-              }
-            />
+            /> {/* Domain configuration page */}
             <Route
               path="/home"
               element={
@@ -104,7 +99,7 @@ const App = () => (
                   <Home />
                 </ProtectedRoute>
               }
-            />
+            /> {/* Client home/dashboard */}
             <Route
               path="/home/:slug"
               element={
@@ -112,7 +107,9 @@ const App = () => (
                   <OrganizationHome />
                 </ProtectedRoute>
               }
-            />
+            /> {/* Organization-specific dashboard (multi-org support) */}
+            
+            {/* PROTECTED ADMIN ROUTES - Requires authentication + admin role */}
             <Route
               path="/admin"
               element={
@@ -120,9 +117,20 @@ const App = () => (
                   <Admin />
                 </ProtectedRoute>
               }
-            />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+            /> {/* Admin dashboard for user management */}
+            
+            {/* PROTECTED GENERIC ROUTES - Requires authentication (any role) */}
+            <Route
+              path="/test"
+              element={
+                <ProtectedRoute>
+                  <Test />
+                </ProtectedRoute>
+              }
+            /> {/* Temporary fallback page for authenticated users */}
+                    {/* CATCH-ALL ROUTE - Must be last */}
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} /> {/* 404 page for undefined routes */}
                   </Routes>
                 </Suspense>
               </BrowserRouter>
