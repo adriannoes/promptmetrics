@@ -7,7 +7,7 @@ const cleanOldSessions = () => {
   const keysToRemove = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && (key.includes('racfoelvuhdifnekjsro') || key.includes('supabase.auth.token'))) {
+    if (key && (key.includes('old-project-id') || key.includes('supabase.auth.token'))) {
       keysToRemove.push(key);
     }
   }
@@ -41,7 +41,7 @@ const testConnectivity = async () => {
     clearTimeout(timeoutId);
 
     return response.ok;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 };
@@ -59,6 +59,6 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-    storageKey: 'vtyrpodosmhnyendcrjf-auth-token', // Chave única para evitar conflitos
+    storageKey: 'promptmetrics-auth-token', // Chave única para evitar conflitos
   }
 });
