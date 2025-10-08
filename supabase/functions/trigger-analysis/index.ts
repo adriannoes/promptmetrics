@@ -109,7 +109,7 @@ serve(async (req) => {
       if (responseText) {
         try {
           n8nResult = JSON.parse(responseText);
-        } catch (parseError) {
+        } catch (_parseError) {
           console.log('N8N response is not JSON, treating as text:', responseText);
           n8nResult = { message: responseText };
         }
