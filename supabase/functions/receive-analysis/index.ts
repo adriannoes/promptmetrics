@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getAllowedOrigins, getCorsHeaders } from './cors-helpers.ts';
+import { timingSafeEqual } from './timing.ts';
 
 serve(async (req) => {
   console.log('🎯 Receive-analysis called:', req.method, req.url);
@@ -26,7 +27,7 @@ serve(async (req) => {
     const webhookSecret = Deno.env.get('N8N_WEBHOOK_SECRET');
     const receivedSecret = req.headers.get('X-Webhook-Secret');
 
-    if (!webhookSecret || receivedSecret !== webhookSecret) {
+    if (!webhookSecret || !receivedSecret || !timingSafeEqual(receivedSecret, webhookSecret)) {
       console.log('❌ Unauthorized webhook call - invalid or missing secret');
       return new Response(JSON.stringify({ error: 'Unauthorized webhook call' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
