@@ -17,7 +17,9 @@
     "test:watch": "vitest --watch",
     "security-check": "node scripts/security-check.js",
     "deploy:check": "npm run build:prod && npm run security-check",
-    "quality-check": "npm run lint && npm run test:run && npm run security-check"
+    "quality-check": "npm run lint && npm run test:run && npm run security-check",
+    "build:analyze": "npm run build:prod && echo '📊 Bundle analysis saved to dist/stats.html'",
+    "lighthouse": "lhci autorun"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -83,6 +85,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@lhci/cli": "^0.15.1",
     "@tailwindcss/typography": "^0.5.15",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -99,6 +102,8 @@
     "jsdom": "^27.0.0",
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
+    "puppeteer": "^24.23.0",
+    "rollup-plugin-visualizer": "^6.0.4",
     "tailwindcss": "^3.4.11",
     "terser": "^5.44.0",
     "typescript": "^5.9.2",
