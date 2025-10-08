@@ -8,8 +8,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import ErrorBoundary from "./components/ErrorBoundary";
-import LoadingSpinner from "./components/LoadingSpinner";
+import { ErrorBoundary } from "@/components";
+import { LoadingSpinner } from "@/components";
 
 // Lazy load pages for better performance
 const Index = React.lazy(() => import("./pages/Index"));
