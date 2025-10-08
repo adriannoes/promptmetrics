@@ -48,8 +48,7 @@ export const useRealTimeAnalysis = () => {
           schema: 'public',
           table: 'analysis_results'
         },
-        (payload) => {
-          console.log('Real-time analysis update:', payload);
+        (_payload) => {
           fetchRecentAnalyses();
         }
       )
