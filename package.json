@@ -18,7 +18,7 @@
     "security-check": "node scripts/security-check.js",
     "deploy:check": "npm run build:prod && npm run security-check",
     "quality-check": "npm run lint && npm run test:run && npm run security-check",
-    "build:analyze": "vite build --mode production && echo '📊 Bundle analysis saved to dist/stats.html'",
+    "build:analyze": "vite build --config build/vite.config.ts --mode production && echo '📊 Bundle analysis saved to dist/stats.html'",
     "lighthouse": "lhci autorun"
   },
   "dependencies": {
