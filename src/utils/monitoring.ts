@@ -123,11 +123,6 @@ class LogMonitor {
         //     environment: 'production'
         //   })
         // });
-
-        console.log('Metrics flushed:', {
-          logCount: this.metrics.length,
-          performanceCount: this.performanceMetrics.length
-        });
       }
 
       // Limpar métricas após flush
