@@ -4,10 +4,12 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import OrganizationHeader from '@/components/OrganizationHeader';
-import OrganizationDashboard from '@/components/OrganizationDashboard';
-import UnauthorizedAccess from '@/components/UnauthorizedAccess';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { 
+  OrganizationHeader, 
+  OrganizationDashboard, 
+  UnauthorizedAccess, 
+  LoadingSpinner 
+} from '@/components';
 
 const OrganizationHome = () => {
   const { slug } = useParams<{ slug: string }>();

@@ -1,15 +1,16 @@
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { AccessibilityProvider } from '../contexts/AccessibilityContext';
-import SkipNav from '../components/SkipNav';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import AccessibilityPanel from '../components/AccessibilityPanel';
+import { SkipNav } from '@/components';
+import { Header, Footer } from '@/components';
+import AccessibilityPanel from '@/components/AccessibilityPanel';
 import { useAnalysisData } from '../hooks/useAnalysisData';
 import { useOrganizationData } from '../hooks/useOrganizationData';
-import { LiveDashboardTab } from '../components/live/LiveDashboardTab';
-import { LivePromptAnalysisTab } from '../components/live/LivePromptAnalysisTab';
-import { LiveCompetitorAnalysisTab } from '../components/live/LiveCompetitorAnalysisTab';
-import { LiveStrategicInsightsTab } from '../components/live/LiveStrategicInsightsTab';
+import { 
+  LiveDashboardTab, 
+  LivePromptAnalysisTab, 
+  LiveCompetitorAnalysisTab, 
+  LiveStrategicInsightsTab 
+} from '@/components';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Zap } from 'lucide-react';
 import { toast } from 'sonner';
-import { PasswordStrengthIndicator } from '@/components/PasswordStrengthIndicator';
+import { PasswordStrengthIndicator } from '@/components';
 import { validatePasswordStrength } from '@/utils/passwordStrength';
 
 const Signup = () => {
