@@ -386,13 +386,10 @@ const DomainSetup = () => {
 
       // Trigger analysis after saving domain
       try {
-        console.log('🎯 Triggering analysis for domain:', cleanDomain);
-        const { data: result, error: analysisError } = await supabase.functions.invoke('trigger-analysis', {
+        const { error: analysisError } = await supabase.functions.invoke('trigger-analysis', {
           body: { domain: cleanDomain }
         });
 
-        console.log('🎯 Analysis trigger result:', result);
-        console.log('🎯 Analysis trigger error:', analysisError);
         
         if (analysisError) {
           console.error('Failed to trigger analysis:', analysisError);
@@ -402,7 +399,6 @@ const DomainSetup = () => {
           }
           toast.error('Domain saved but analysis failed to start. You can trigger it manually later.');
         } else {
-          console.log('🎯 Analysis triggered successfully!');
           // Log successful analysis trigger
           if (profile?.email) {
             await auditService.logDomainAnalysis(cleanDomain, profile.email, true);

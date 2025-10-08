@@ -58,13 +58,6 @@ const Home = () => {
   // Get recent analysis data
   const { data: analysisData } = useAnalysisData(currentDomain);
 
-  console.log('🏠 Home component:', {
-    hasProfile: !!profile,
-    profileEmail: profile?.email,
-    profileName: profile?.full_name,
-    organization: organization?.name,
-    currentDomain
-  });
 
   const handleSignOut = async () => {
     await signOut();
@@ -122,7 +115,6 @@ const Home = () => {
 
   // Fallback if profile is not available
   if (!profile) {
-    console.log('🏠 Home: No profile available, showing loading');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
