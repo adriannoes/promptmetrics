@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { BarChart3, RefreshCw, AlertCircle, CheckCircle, Clock, Download, Settings } from 'lucide-react';
+import { BarChart3, RefreshCw, AlertCircle, CheckCircle, Clock, Download, Settings, FileText } from 'lucide-react';
 
 const AnalysisContent = () => {
 
@@ -83,6 +83,16 @@ const AnalysisContent = () => {
 
                 {/* Action buttons */}
                 <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.location.href = '/document-ranking'}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Document Ranking
+                  </Button>
+
                   {analysisData && (
                     <Button
                       variant="outline"

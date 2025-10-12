@@ -48,10 +48,34 @@ export interface CompetitorAnalysisData {
   opportunities: CompetitorOpportunity[];
 }
 
+export interface LLMSentiment {
+  score: number;
+  confidence: number;
+  explanation: string;
+}
+
+export interface PromptRanking {
+  rank: number;
+  score: number;
+  prompt: string;
+  competitors: Array<{
+    name: string;
+    rank: number;
+    score: number;
+  }>;
+}
+
+export interface PerformanceMetrics {
+  responseTime: number;
+  accuracy: number;
+  consistency: number;
+  relevance: number;
+}
+
 export interface PromptAnalysisData {
-  sentiment_by_llm: Record<string, number>;
-  ranking_by_prompt: Record<string, any>;
-  performance_metrics: Record<string, any>;
+  sentiment_by_llm: Record<string, LLMSentiment>;
+  ranking_by_prompt: Record<string, PromptRanking>;
+  performance_metrics: Record<string, PerformanceMetrics>;
 }
 
 export interface StrategicInsightsData {
