@@ -21,7 +21,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://racfoelvuhdifnekjsro.supabase.co/functions/v1/receive-analysis",
+        "url": "https://your-project.supabase.co/functions/v1/receive-analysis",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,

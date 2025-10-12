@@ -7,13 +7,36 @@
 
 ## 🌟 Overview
 
-**PromptMetrics** analyzes how AI systems (ChatGPT, Gemini, Perplexity) perceive and describe brands across the web. Help companies understand and optimize their digital presence in AI responses.
+**PromptMetrics** analyzes how AI systems (ChatGPT, Gemini, Perplexity) perceive and describe brands across the web. Companies can understand and optimize their digital presence in AI-generated responses.
 
 ### 🎯 Key Features
 - **AI Brand Monitoring**: Track how AI systems describe your brand vs competitors
-- **Competitive Intelligence**: Understand your position in AI-generated recommendations
+- **Competitive Intelligence**: Understand positioning in AI-generated recommendations
 - **Real-time Analysis**: Live dashboard updates from automated AI analysis workflows
-- **Multi-LLM Comparison**: Comprehensive dashboards with multiple AI model analysis
+- **Multi-LLM Comparison**: Comprehensive dashboards comparing multiple AI models
+
+## 📁 Project Structure
+
+Well-organized structure for maintainability:
+
+```
+├── 📁 build/          # Build configs (Vite, Tailwind, PostCSS, Vitest)
+├── 📁 ci/             # CI/CD configs (.github, Lighthouse)
+├── 📁 config/         # App configs (ESLint, TypeScript, Components)
+├── 📁 docs/           # Documentation and guides
+├── 📁 env/            # Environment templates
+├── 📁 public/         # Static assets and PWA files
+├── 📁 scripts/        # Utility scripts (security checks)
+├── 📁 src/            # Application source code
+│   ├── components/    # React components
+│   ├── hooks/         # Custom React hooks
+│   ├── pages/         # Route components
+│   ├── services/      # API and external services
+│   ├── types/         # TypeScript definitions
+│   ├── utils/         # Utility functions
+│   └── test/          # Test files
+└── 📁 supabase/       # Supabase configs and migrations
+```
 
 ## 🚀 Quick Start
 
@@ -24,15 +47,15 @@
 ### Local Development
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone <repository-url>
-cd promptmetrics
+cd rank-me-llm
 
 # Install dependencies
 npm install
 
-# Configure environment variables
-cp env.example .env.local
+# Configure environment
+cp env/env.example .env.local
 # Edit .env.local with your Supabase credentials
 
 # Start development server
@@ -42,104 +65,86 @@ npm run dev
 ### Available Scripts
 
 ```bash
-npm run dev              # Start development server
-npm run build            # Build for production
+npm run dev              # Development server
+npm run build            # Production build
+npm run build:analyze    # Bundle analysis
 npm run preview          # Preview production build
 npm run lint             # Run ESLint
+npm run test:run         # Run tests
+npm run lighthouse       # Performance audit
+npm run quality-check    # Full quality check
 ```
 
-### Access the Application
+### Access Application
 - **Local**: `http://localhost:5173`
-- **Demo Mode**: Click "Try Demo" on landing page
+- **Demo**: Click "Try Demo" on landing page
 
 ## 🛡️ Security & Production Ready
 
 ### Security Features
 - ✅ **Secure Logging**: Automatic sanitization of sensitive data
 - ✅ **Rate Limiting**: Protection against spam and abuse
-- ✅ **Environment Validation**: Strict validation of required environment variables
-- ✅ **Audit Trail**: Complete user action monitoring system
+- ✅ **Environment Validation**: Strict validation of required variables
+- ✅ **Audit Trail**: Complete user action monitoring
 - ✅ **Access Control**: Role-based permissions with audit logging
 
 ## 🛠 Technology Stack
 
 ### Frontend
 - **Framework**: React 18.3.1 + TypeScript 5.6.3 + Vite 7.1.7
-- **UI Library**: Shadcn/ui + Radix UI components
-- **Styling**: Tailwind CSS
-- **State Management**: React Query + React Context
-- **Charts**: Recharts for data visualization
-- **Routing**: React Router DOM v6 with lazy loading
+- **UI**: Shadcn/ui + Radix UI + Tailwind CSS
+- **State**: React Query + Context API
+- **Charts**: Recharts
+- **Routing**: React Router v6 with lazy loading
 - **Forms**: React Hook Form + Zod validation
 
 ### Backend/Serverless
-- **Database**: Supabase PostgreSQL with Row Level Security (RLS)
-- **Authentication**: Supabase Auth with custom invite code system
-- **Edge Functions**: Supabase Edge Functions (Deno runtime)
+- **Database**: Supabase PostgreSQL with RLS
+- **Auth**: Supabase Auth + Google OAuth + invite codes
+- **Edge Functions**: Supabase (Deno runtime)
 
 ### Third-party Services
-- **Workflow Automation**: n8n for AI analysis pipeline
-- **Social Auth**: Google OAuth
-- **Email**: Supabase Auth emails
+- **Workflow Automation**: n8n for AI analysis
+- **Email**: Supabase Auth
+- **Monitoring**: Core Web Vitals + Lighthouse CI
 
 ## 📊 Key Features
 
-### 🔐 Authentication System
-- Supabase Auth with email/password + Google OAuth
-- Demo mode for instant access without registration
-- Invite code system for controlled access
-- Role-based access control (`client` and `admin` roles)
+### 🔐 Authentication
+- Supabase Auth + Google OAuth + invite codes
+- Demo mode for instant access
+- Role-based access (`client`/`admin`)
 
 ### 🤖 AI Analysis Pipeline
 - Real-time domain analysis via n8n workflows
 - Multi-LLM comparison (OpenAI, Gemini, Claude)
-- Comprehensive brand perception analysis
 - Live dashboard updates
 
 ### 🌐 Internationalization
-- English (default) and Portuguese (BR) support
-- Context-based translation system
+- English (default) + Portuguese (BR)
+- Context-based translations
 
 ## ⚡ Performance & Optimization
 
-### 🚀 Advanced Code Splitting
-- **40+ Lazy-loaded chunks** for optimal loading performance
-- **Bundle size reduced by ~80%** compared to monolithic builds
-- **Strategic chunking**: React vendor, UI vendor, charts vendor, pages, components
-- **Suspense boundaries** with elegant loading states
+### 🚀 Code Splitting
+- **40+ lazy-loaded chunks** for optimal performance
+- **Bundle size reduced by ~80%** vs monolithic builds
+- **Strategic chunking**: vendor libs, UI components, pages
+- **Suspense boundaries** with loading states
 
-### 🎯 Component Optimization
-- **React.memo, useMemo, useCallback** strategically applied
-- **Heavy component lazy loading** (charts, dashboards, etc.)
-- **Database query optimization** with field selection and limits
-
-## 🏗 Project Structure
-
-```
-src/
-├── components/                 # React components
-│   ├── common/               # Shared components
-│   ├── layout/               # Header, Footer, Navigation
-│   ├── marketing/            # Landing page components
-│   ├── forms/                # Form components
-│   ├── dashboard/            # Analytics components
-│   ├── admin/                # Admin components
-│   └── ui/                   # Shadcn/ui components
-├── contexts/                 # React contexts
-├── hooks/                    # Custom React hooks
-├── pages/                    # Route components
-├── services/                 # Business logic
-└── utils/                    # Utility functions
-```
+### 🎯 Optimizations
+- React.memo, useMemo, useCallback applied
+- Heavy components lazy loaded
+- Database queries optimized
 
 ## 📚 Documentation
 
-### 📖 Key Documentation
+### 📖 Key Docs
 - **[DOCS.md](docs/DOCS.md)** - Complete technical documentation
 - **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Production deployment guide
-- **[N8N Workflows Guide](docs/N8N-WORKFLOWS-README.md)** - Complete n8n migration guide
+- **[N8N Workflows](docs/N8N-WORKFLOWS-README.md)** - AI analysis pipeline guide
 
-### 🔗 Key URLs
+### 🔗 Key Routes
 - **Landing**: `/`
 - **Demo**: `/demo` (or click "Try Demo")
 - **Analysis**: `/analysis`
@@ -156,7 +161,3 @@ src/
 ## 📄 License
 
 This project is private and proprietary.
-
----
-
-**🌟 Built with ❤️ using modern web technologies**

@@ -24,6 +24,7 @@ const DomainSetup = React.lazy(() => import("./pages/DomainSetup"));
 const Changelog = React.lazy(() => import("./pages/Changelog"));
 const Analysis = React.lazy(() => import("./pages/Analysis"));
 const MyRank = React.lazy(() => import("./pages/MyRank"));
+const DocumentRanking = React.lazy(() => import("./pages/DocumentRanking"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Loading component for Suspense
@@ -92,6 +93,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             /> {/* Domain configuration page */}
+            <Route
+              path="/document-ranking"
+              element={
+                <ProtectedRoute requiredRole="client">
+                  <DocumentRanking />
+                </ProtectedRoute>
+              }
+            /> {/* Document ranking with RankLLM */}
             <Route
               path="/home"
               element={
