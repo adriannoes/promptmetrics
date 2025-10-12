@@ -12,21 +12,6 @@ export const useAuthState = () => {
   const profile = demoProfile || supabaseProfile;
   const userRole = demoUserRole || supabaseUserRole;
 
-  console.log('🔐 useAuthState:', {
-    demoUser: !!demoUser,
-    supabaseUser: !!supabaseUser,
-    demoProfile: !!demoProfile,
-    supabaseProfile: !!supabaseProfile,
-    demoUserRole: demoUserRole?.role,
-    supabaseUserRole: supabaseUserRole?.role,
-    loading,
-    finalUser: !!user,
-    finalProfile: !!profile,
-    finalUserRole: userRole?.role,
-    userEmail: user?.email,
-    profileEmail: profile?.email
-  });
-
   return {
     user,
     session,
