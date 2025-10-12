@@ -35,7 +35,7 @@ export const usePerformanceMonitoring = () => {
       try {
         // Send to analytics/monitoring service
         // This would be replaced with actual monitoring service
-        console.log('Performance Metric:', metric);
+        logger.info('Performance Metric sent', { metric: metric.name, value: metric.value });
       } catch (error) {
         logger.error('Failed to send performance metric', error);
       }

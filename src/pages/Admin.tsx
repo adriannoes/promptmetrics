@@ -3,9 +3,10 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Zap, LogOut, Users, Settings, BarChart3, Shield } from 'lucide-react';
+import { Zap, LogOut, Users, Settings, BarChart3, Shield, Brain } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AuditLogsDashboard from '@/components/admin/AuditLogsDashboard';
+import { AnalysisMethodSettings } from '@/components/admin/AnalysisMethodSettings';
 import {
   LazyAdminUserManagement,
   LazyAdminInvitationCodes,
@@ -107,7 +108,7 @@ const Admin = () => {
 
         <div className="bg-white rounded-2xl shadow-xl border border-white/60 p-8">
           <Tabs defaultValue="users" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="users" className="flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Users
@@ -115,6 +116,10 @@ const Admin = () => {
               <TabsTrigger value="invites" className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
                 Invites
+              </TabsTrigger>
+              <TabsTrigger value="analysis" className="flex items-center gap-2">
+                <Brain className="w-4 h-4" />
+                Analysis
               </TabsTrigger>
               <TabsTrigger value="audit" className="flex items-center gap-2">
                 <Shield className="w-4 h-4" />
@@ -132,6 +137,10 @@ const Admin = () => {
 
             <TabsContent value="invites" className="mt-6">
               <LazyAdminInvitationCodes />
+            </TabsContent>
+
+            <TabsContent value="analysis" className="mt-6">
+              <AnalysisMethodSettings />
             </TabsContent>
 
             <TabsContent value="audit" className="mt-6">
