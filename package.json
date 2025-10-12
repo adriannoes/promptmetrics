@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "build:prod": "vite build --config vite.config.prod.ts --mode production",
+    "build:prod": "vite build --config build/vite.config.prod.ts --mode production",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
@@ -18,7 +18,7 @@
     "security-check": "node scripts/security-check.js",
     "deploy:check": "npm run build:prod && npm run security-check",
     "quality-check": "npm run lint && npm run test:run && npm run security-check",
-    "build:analyze": "npm run build:prod && echo '📊 Bundle analysis saved to dist/stats.html'",
+    "build:analyze": "vite build --config build/vite.config.ts --mode production && echo '📊 Bundle analysis saved to dist/stats.html'",
     "lighthouse": "lhci autorun"
   },
   "dependencies": {
@@ -84,6 +84,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.10.2",
     "@eslint/js": "^9.9.0",
     "@lhci/cli": "^0.15.1",
     "@tailwindcss/typography": "^0.5.15",
@@ -91,12 +92,13 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.5.2",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "@vitejs/plugin-react-swc": "^4.1.0",
     "autoprefixer": "^10.4.20",
+    "axe-core": "^4.10.3",
     "eslint": "^9.36.0",
-    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-hooks": "^6.1.1",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "jsdom": "^27.0.0",

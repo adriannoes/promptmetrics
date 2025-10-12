@@ -26,6 +26,12 @@ dist-ssr
 # Documentation
 docs/
 
+# Project organization (see folder README files)
+# - config/ - Configuration files (eslint, tsconfig, etc.)
+# - build/ - Build configuration (vite, tailwind, etc.)
+# - ci/ - CI/CD configuration (.github, lighthouse, etc.)
+# - env/ - Environment templates
+
 # Environment files and secrets
 .env
 .env.local
