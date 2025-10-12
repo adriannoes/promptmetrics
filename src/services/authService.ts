@@ -72,20 +72,21 @@ export const signIn = async (email: string, password: string) => {
   logger.auth('Email sanitized successfully');
 
   try {
-    // Temporarily disable rate limiting check to debug login issue
-    logger.auth('Skipping rate limit check (temporarily disabled)');
-    /*
+    // Rate limiting check
     logger.auth('Checking rate limit...');
-    const { data: rateLimitData, error: rateLimitError } = await supabase
-      .rpc('is_rate_limited', { p_email: sanitizedEmail });
+    try {
+      const { data: rateLimitData, error: rateLimitError } = await supabase
+        .rpc('is_rate_limited', { p_email: sanitizedEmail });
 
-    if (rateLimitError) {
-      logger.error('Rate limit check error', rateLimitError);
-    } else if (rateLimitData) {
-      logger.auth('User is rate limited');
-      return { error: { message: 'Too many failed login attempts. Please try again in 15 minutes.' } };
+      if (rateLimitError) {
+        logger.error('Rate limit check error', rateLimitError);
+      } else if (rateLimitData) {
+        logger.auth('User is rate limited');
+        return { error: { message: 'Too many failed login attempts. Please try again in 15 minutes.' } };
+      }
+    } catch (e) {
+      logger.error('Rate limit RPC exception', e);
     }
-    */
 
     logger.auth('Attempting Supabase login...');
     const { data, error } = await supabase.auth.signInWithPassword({
