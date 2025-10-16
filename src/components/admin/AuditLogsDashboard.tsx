@@ -37,12 +37,12 @@ const AuditLogsDashboard = () => {
   const [dateFilter, setDateFilter] = useState('7'); // days
   const { userRole } = useAuth();
 
-  // Only render if current user is admin
-  if (userRole?.role !== 'admin') {
-    return null;
-  }
-
   const fetchAuditLogs = useCallback(async () => {
+    // Only fetch if user is admin
+    if (userRole?.role !== 'admin') {
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -87,7 +87,7 @@ const AuditLogsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [dateFilter]);
+  }, [dateFilter, userRole?.role]);
 
   useEffect(() => {
     fetchAuditLogs();
@@ -159,6 +159,11 @@ const AuditLogsDashboard = () => {
     failed: logs.filter(log => log.action.includes('failed')).length,
     security: logs.filter(log => log.action.includes('unauthorized')).length
   }), [logs]);
+
+  // Only render if current user is admin
+  if (userRole?.role !== 'admin') {
+    return null;
+  }
 
   return (
     <Card className="w-full">

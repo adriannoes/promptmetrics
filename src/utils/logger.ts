@@ -74,7 +74,6 @@ class SecureLogger {
         console.info(prefix, message, sanitizedData);
         break;
       case 'warn':
-        console.warn(prefix, message, sanitizedData);
         break;
       case 'error':
         console.error(prefix, message, sanitizedData);

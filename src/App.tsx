@@ -8,8 +8,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import ErrorBoundary from "./components/ErrorBoundary";
-import LoadingSpinner from "./components/LoadingSpinner";
+import { ErrorBoundary } from "@/components";
+import { LoadingSpinner } from "@/components";
 
 // Lazy load pages for better performance
 const Index = React.lazy(() => import("./pages/Index"));
@@ -24,6 +24,7 @@ const DomainSetup = React.lazy(() => import("./pages/DomainSetup"));
 const Changelog = React.lazy(() => import("./pages/Changelog"));
 const Analysis = React.lazy(() => import("./pages/Analysis"));
 const MyRank = React.lazy(() => import("./pages/MyRank"));
+const DocumentRanking = React.lazy(() => import("./pages/DocumentRanking"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Loading component for Suspense
@@ -92,6 +93,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             /> {/* Domain configuration page */}
+            <Route
+              path="/document-ranking"
+              element={
+                <ProtectedRoute requiredRole="client">
+                  <DocumentRanking />
+                </ProtectedRoute>
+              }
+            /> {/* Document ranking with RankLLM */}
             <Route
               path="/home"
               element={

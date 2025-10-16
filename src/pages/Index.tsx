@@ -1,15 +1,17 @@
 
 import { AccessibilityProvider } from '../contexts/AccessibilityContext';
-import SkipNav from '../components/SkipNav';
-import Header from '../components/Header';
-import Hero from '../components/Hero';
-import Problem from '../components/Problem';
-import Transformation from '../components/Transformation';
-import Pricing from '../components/Pricing';
-import FAQ from '../components/FAQ';
-import ContactForm from '../components/ContactForm';
-import Footer from '../components/Footer';
-import AccessibilityPanel from '../components/AccessibilityPanel';
+import { 
+  SkipNav, 
+  Header, 
+  Hero, 
+  Problem, 
+  Transformation, 
+  Pricing, 
+  FAQ, 
+  ContactForm, 
+  Footer 
+} from '@/components';
+import AccessibilityPanel from '@/components/AccessibilityPanel';
 
 /**
  * Index/Landing Page

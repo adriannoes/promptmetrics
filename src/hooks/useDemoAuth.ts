@@ -17,7 +17,6 @@ export const useDemoAuth = () => {
     const handleDemoLogin = async (event: CustomEvent) => {
       if (!mounted) return;
       
-      console.log('Demo login event received');
       const { user: demoUser, session: demoSession } = event.detail;
       
       setUser(demoUser);
@@ -107,7 +106,6 @@ export const useDemoAuth = () => {
     const handleDemoLogout = () => {
       if (!mounted) return;
       
-      console.log('Demo logout event received');
       setUser(null);
       setSession(null);
       setProfile(null);

@@ -171,7 +171,7 @@ serve(async (req) => {
       if (responseText) {
         try {
           n8nResult = JSON.parse(responseText);
-        } catch (parseError) {
+        } catch (_parseError) {
           // Log apenas em desenvolvimento
           if (Deno.env.get('ENVIRONMENT') === 'development') {
             console.log('N8N response is not JSON, treating as text:', responseText);
