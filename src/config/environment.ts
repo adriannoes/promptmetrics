@@ -40,8 +40,8 @@ export const env: EnvironmentConfig = (() => {
   
   return {
     supabase: {
-      url: vars.VITE_SUPABASE_URL || 'https://vtyrpodosmhnyendcrjf.supabase.co',
-      anonKey: vars.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0eXJwb2Rvc21obnllbmRjcmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzMDAyODMsImV4cCI6MjA2NTg3NjI4M30.wGmXMX6WTCvOFW5wkw5g0uliTuQuoW7OcNDlAgFOIgw',
+      url: vars.VITE_SUPABASE_URL || 'https://your-project.supabase.co',
+      anonKey: vars.VITE_SUPABASE_ANON_KEY || 'your-anon-key-here',
     },
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,

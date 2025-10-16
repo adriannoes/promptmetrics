@@ -135,7 +135,6 @@ export const useAnalysisData = (domain?: string) => {
   }, [domain, data, loading, fetchAnalysis]);
 
   const refetch = useCallback((targetDomain: string) => {
-    console.log('🔄 useAnalysisData: Manual refetch requested for:', targetDomain);
     setIsRefreshing(true);
     return fetchAnalysis(targetDomain).finally(() => {
       setIsRefreshing(false);
