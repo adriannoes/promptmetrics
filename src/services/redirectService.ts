@@ -8,7 +8,6 @@ export interface RedirectResult {
 }
 
 export const getPostLoginRedirect = async (profile: Profile, userRole: UserRole | null): Promise<RedirectResult> => {
-  console.log('Determining redirect for user:', profile, userRole);
 
   // Admin users go to admin dashboard
   if (userRole?.role === 'admin') {
@@ -29,7 +28,6 @@ export const getPostLoginRedirect = async (profile: Profile, userRole: UserRole 
     }
 
     if (!profile.organization_id) {
-      console.warn('Client user has no organization_id');
       return {
         path: '/domain-setup',
         reason: 'Client user without organization redirected to domain setup'
@@ -53,7 +51,6 @@ export const getPostLoginRedirect = async (profile: Profile, userRole: UserRole 
       }
 
       if (!organization) {
-        console.warn('Organization not found');
         return {
           path: '/test',
           reason: 'Organization not found, redirected to fallback'
@@ -69,7 +66,6 @@ export const getPostLoginRedirect = async (profile: Profile, userRole: UserRole 
       }
 
       if (!organization.slug) {
-        console.warn('Organization exists but has no slug');
         return {
           path: '/test',
           reason: 'Organization has no slug, redirected to fallback'
@@ -91,7 +87,6 @@ export const getPostLoginRedirect = async (profile: Profile, userRole: UserRole 
   }
 
   // Unknown role fallback
-  console.warn('Unknown user role:', userRole?.role);
   return {
     path: '/test',
     reason: 'Unknown role, redirected to fallback'

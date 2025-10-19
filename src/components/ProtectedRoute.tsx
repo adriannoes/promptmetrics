@@ -11,28 +11,6 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const { user, profile, userRole, loading } = useAuth();
 
-  // Log detalhado do estado
-  console.log('🔒 ProtectedRoute - Estado completo:', { 
-    user: user ? {
-      id: user.id,
-      email: user.email,
-      created_at: user.created_at
-    } : null,
-    profile: profile ? {
-      id: profile.id,
-      email: profile.email,
-      full_name: profile.full_name
-    } : null,
-    userRole: userRole ? {
-      role: userRole.role,
-      user_id: userRole.user_id
-    } : null,
-    loading,
-    requiredRole,
-    timestamp: new Date().toISOString()
-  });
-
-  // Debug component removed - state is properly logged to console
 
   if (loading) {
     return (
@@ -46,13 +24,11 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   }
 
   if (!user) {
-    console.log('No user found, redirecting to login');
     return <Navigate to="/login" replace />;
   }
 
   // If we have a user but no profile yet, show loading with timeout
   if (!profile) {
-    console.log('User found but no profile, showing loading');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
@@ -71,17 +47,12 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   }
 
   if (requiredRole && userRole?.role !== requiredRole) {
-    console.log('Role mismatch, checking access permissions');
-    
     // Admin can access client routes, but client cannot access admin routes
     if (requiredRole === 'client' && userRole?.role === 'admin') {
-      console.log('Admin accessing client route - access granted');
       // Allow admin to access client routes
     } else if (requiredRole === 'admin' && userRole?.role === 'client') {
-      console.log('Client trying to access admin route - redirecting to appropriate dashboard');
       return <Navigate to="/test" replace />;
     } else {
-      console.log('Role mismatch, redirecting based on user role');
       // Redirect to appropriate dashboard based on user's role
       if (userRole?.role === 'admin') {
         return <Navigate to="/admin" replace />;
@@ -90,8 +61,6 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
       }
     }
   }
-
-  console.log('Access granted to protected route');
   return <>{children}</>;
 };
 

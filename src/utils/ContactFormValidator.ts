@@ -44,7 +44,7 @@ export const validateField = (name: string, value: string, errors: ValidationErr
   const newErrors = { ...errors };
   
   switch (name) {
-    case 'name':
+    case 'name': {
       const sanitizedName = sanitizeInput(value);
       if (!sanitizedName) {
         newErrors.name = t('form.error.name.required');
@@ -56,7 +56,8 @@ export const validateField = (name: string, value: string, errors: ValidationErr
         delete newErrors.name;
       }
       break;
-    case 'email':
+    }
+    case 'email': {
       const sanitizedEmail = sanitizeInput(value);
       if (!sanitizedEmail) {
         newErrors.email = t('form.error.email.required');
@@ -66,6 +67,7 @@ export const validateField = (name: string, value: string, errors: ValidationErr
         delete newErrors.email;
       }
       break;
+    }
     case 'phone':
       if (!value.trim()) {
         newErrors.phone = t('form.error.phone.required');

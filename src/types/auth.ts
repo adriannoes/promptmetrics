@@ -1,5 +1,5 @@
 
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 
 export interface Profile {
   id: string;
@@ -19,15 +19,26 @@ export interface UserRole {
   updated_at: string;
 }
 
+export interface Organization {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthResponse {
+  error: AuthError | null;
+}
+
 export interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
   userRole: UserRole | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string, inviteCode: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signInWithGoogle: () => Promise<{ error: any }>;
-  signInWithDemo: () => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, inviteCode: string) => Promise<AuthResponse>;
+  signIn: (email: string, password: string) => Promise<AuthResponse>;
+  signInWithGoogle: () => Promise<AuthResponse>;
+  signInWithDemo: () => Promise<AuthResponse>;
   signOut: () => Promise<void>;
 }

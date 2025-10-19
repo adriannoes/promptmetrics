@@ -32,7 +32,7 @@ export const validatePasswordStrength = (password: string): PasswordStrength => 
   const hasLowerCase = /[a-z]/.test(password);
   const hasUpperCase = /[A-Z]/.test(password);
   const hasNumbers = /\d/.test(password);
-  const hasSpecialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  const hasSpecialChars = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
 
   if (hasLowerCase && hasUpperCase) score++;
   if (hasNumbers) score++;

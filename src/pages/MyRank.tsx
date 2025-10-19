@@ -7,7 +7,7 @@ import {
   LazyMyRankStrategicInsightsTab
 } from '@/components/lazy-components';
 import { useAnalysisData } from '@/hooks/useAnalysisData';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { LoadingSpinner } from '@/components';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,7 +33,6 @@ const MyRank = () => {
   // No redundant useEffect needed - useAnalysisData handles domain changes
 
   const handleDomainChange = async (newDomain: string) => {
-    console.log('🔄 MyRank: Changing domain to:', newDomain);
     setCurrentDomain(newDomain);
     localStorage.setItem('lastAnalyzedDomain', newDomain);
     const url = new URL(window.location.href);
@@ -45,7 +44,6 @@ const MyRank = () => {
       const { supabase } = await import('@/integrations/supabase/client');
       const { toast } = await import('sonner');
       
-      console.log('🚀 MyRank: Triggering analysis for new domain:', newDomain);
       const { error } = await supabase.functions.invoke('trigger-analysis', {
         body: { domain: newDomain }
       });
@@ -54,7 +52,6 @@ const MyRank = () => {
         console.error('❌ MyRank: Error triggering analysis:', error);
         toast.error(t('myrank.toast.analysisFailed'));
       } else {
-        console.log('✅ MyRank: Analysis triggered successfully for:', newDomain);
         toast.success(t('myrank.toast.analysisStarted'));
       }
     } catch (error) {
@@ -132,7 +129,6 @@ const MyRank = () => {
               )}
               <button
                 onClick={() => {
-                  console.log('🔄 MyRank: Manual refresh triggered for domain:', currentDomain);
                   refetch(currentDomain);
                 }}
                 disabled={loading || isRefreshing}

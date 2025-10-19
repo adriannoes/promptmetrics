@@ -1,20 +1,21 @@
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { AccessibilityProvider } from '../contexts/AccessibilityContext';
-import SkipNav from '../components/SkipNav';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import AccessibilityPanel from '../components/AccessibilityPanel';
+import { SkipNav } from '@/components';
+import { Header, Footer } from '@/components';
+import AccessibilityPanel from '@/components/AccessibilityPanel';
 import { useAnalysisData } from '../hooks/useAnalysisData';
 import { useOrganizationData } from '../hooks/useOrganizationData';
-import { LiveDashboardTab } from '../components/live/LiveDashboardTab';
-import { LivePromptAnalysisTab } from '../components/live/LivePromptAnalysisTab';
-import { LiveCompetitorAnalysisTab } from '../components/live/LiveCompetitorAnalysisTab';
-import { LiveStrategicInsightsTab } from '../components/live/LiveStrategicInsightsTab';
+import { 
+  LiveDashboardTab, 
+  LivePromptAnalysisTab, 
+  LiveCompetitorAnalysisTab, 
+  LiveStrategicInsightsTab 
+} from '@/components';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { BarChart3, RefreshCw, AlertCircle, CheckCircle, Clock, Download, Settings } from 'lucide-react';
+import { BarChart3, RefreshCw, AlertCircle, CheckCircle, Clock, Download, Settings, FileText } from 'lucide-react';
 
 const AnalysisContent = () => {
 
@@ -82,6 +83,16 @@ const AnalysisContent = () => {
 
                 {/* Action buttons */}
                 <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.location.href = '/document-ranking'}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Document Ranking
+                  </Button>
+
                   {analysisData && (
                     <Button
                       variant="outline"
