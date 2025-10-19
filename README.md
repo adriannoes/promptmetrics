@@ -1,9 +1,11 @@
 # PromptMetrics - AI Brand Analytics Platform
 
 [![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6.3-blue.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue.svg)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.1.7-646CFF.svg)](https://vitejs.dev/)
 [![Supabase](https://img.shields.io/badge/Supabase-2.58.0-green.svg)](https://supabase.com)
+[![Security](https://img.shields.io/badge/Security-Audited-green.svg)](#security--production-ready)
+[![License](https://img.shields.io/badge/License-Private-red.svg)](#license)
 
 ## 🌟 Overview
 
@@ -48,8 +50,8 @@ Well-organized structure for maintainability:
 
 ```bash
 # Clone repository
-git clone <repository-url>
-cd rank-me-llm
+git clone https://github.com/adriannoes/promptmetrics.git
+cd promptmetrics
 
 # Install dependencies
 npm install
@@ -58,21 +60,51 @@ npm install
 cp env/env.example .env.local
 # Edit .env.local with your Supabase credentials
 
+# Run security check
+npm run security-check
+
 # Start development server
 npm run dev
 ```
 
+### 🔧 Environment Setup
+
+1. **Copy environment template**:
+   ```bash
+   cp env/env.example .env.local
+   ```
+
+2. **Configure Supabase**:
+   - Get your project URL and anon key from [Supabase Dashboard](https://app.supabase.com)
+   - Update `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local`
+
+3. **Security validation**:
+   ```bash
+   npm run security-check  # Validates environment and security configs
+   ```
+
 ### Available Scripts
 
 ```bash
+# Development
 npm run dev              # Development server
-npm run build            # Production build
-npm run build:analyze    # Bundle analysis
 npm run preview          # Preview production build
+
+# Building
+npm run build            # Production build
+npm run build:prod       # Optimized production build
+npm run build:analyze    # Bundle analysis with visualizer
+
+# Quality & Security
 npm run lint             # Run ESLint
 npm run test:run         # Run tests
+npm run test:coverage    # Test coverage report
+npm run security-check   # Security validation
+npm run quality-check    # Full quality check (lint + test + security)
 npm run lighthouse       # Performance audit
-npm run quality-check    # Full quality check
+
+# Deployment
+npm run deploy:check     # Pre-deployment validation
 ```
 
 ### Access Application
@@ -81,12 +113,24 @@ npm run quality-check    # Full quality check
 
 ## 🛡️ Security & Production Ready
 
-### Security Features
+### 🔒 Security Features
 - ✅ **Secure Logging**: Automatic sanitization of sensitive data
 - ✅ **Rate Limiting**: Protection against spam and abuse
 - ✅ **Environment Validation**: Strict validation of required variables
 - ✅ **Audit Trail**: Complete user action monitoring
 - ✅ **Access Control**: Role-based permissions with audit logging
+- ✅ **CSP Headers**: Content Security Policy with strict defaults
+- ✅ **CORS Hardening**: Tightened CORS policies for edge functions
+- ✅ **Timing-Safe Comparison**: Secure secret comparison in edge functions
+- ✅ **Input Sanitization**: DOMPurify for HTML/SVG sanitization
+- ✅ **Credential Protection**: No secrets exposed in frontend code
+
+### 🔐 Security Best Practices
+- **Environment Variables**: All sensitive data in environment variables
+- **Gitignore Protection**: Comprehensive .gitignore prevents credential leaks
+- **Dependency Security**: Regular security audits with `npm audit`
+- **Code Splitting**: Reduces attack surface through modular architecture
+- **Type Safety**: Full TypeScript coverage prevents runtime vulnerabilities
 
 ## 🛠 Technology Stack
 
@@ -158,6 +202,31 @@ npm run quality-check    # Full quality check
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## 🔍 Security Audit
+
+### ✅ Security Status
+- **No sensitive data exposed** in repository
+- **Environment variables properly configured** with validation
+- **Dependencies audited** (4 low-severity vulnerabilities in dev dependencies only)
+- **Gitignore comprehensive** - prevents credential leaks
+- **CSP and CORS hardened** for production security
+
+### 🚨 Security Notes
+- **Service role keys** are never exposed in frontend code
+- **All secrets** must be configured via environment variables
+- **Regular security audits** recommended with `npm audit`
+- **Production deployment** requires proper environment configuration
+
+### 🔧 Known Vulnerabilities
+- **4 low-severity vulnerabilities** in development dependencies only
+- **Affected packages**: `tmp`, `inquirer`, `external-editor` (via `@lhci/cli`)
+- **Impact**: Development environment only, no production risk
+- **Fix available**: `npm audit fix --force` (may cause breaking changes)
+
 ## 📄 License
 
-This project is private and proprietary.
+This project is private and proprietary. All rights reserved.
+
+---
+
+**⚠️ Important**: This is a private repository. Do not share credentials or sensitive configuration outside authorized team members.
