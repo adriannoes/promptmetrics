@@ -1,32 +1,32 @@
 import { Suspense } from 'react';
-import LoadingSpinner from './LoadingSpinner';
+import { LoadingSpinner } from './common';
 
 // Import all components with named exports
-import { CompetitorAnalysisTab } from './demo/CompetitorAnalysisTab';
-import { DashboardTab } from './demo/DashboardTab';
-import { PromptAnalysisTab } from './demo/PromptAnalysisTab';
-import { StrategicInsightsTab } from './demo/StrategicInsightsTab';
-import { PromptCustomizeDialog } from './demo/PromptCustomizeDialog';
-import { SentimentAnalysis } from './demo/SentimentAnalysis';
-import { PromptFlashCards } from './demo/PromptFlashCards';
-import { PromptTable } from './demo/PromptTable';
+import { CompetitorAnalysisTab } from './dashboard/demo/CompetitorAnalysisTab';
+import { DashboardTab } from './dashboard/demo/DashboardTab';
+import { PromptAnalysisTab } from './dashboard/demo/PromptAnalysisTab';
+import { StrategicInsightsTab } from './dashboard/demo/StrategicInsightsTab';
+import { PromptCustomizeDialog } from './dashboard/demo/PromptCustomizeDialog';
+import { SentimentAnalysis } from './dashboard/demo/SentimentAnalysis';
+import { PromptFlashCards } from './dashboard/demo/PromptFlashCards';
+import { PromptTable } from './dashboard/demo/PromptTable';
 
 // Live components
-import { LiveCompetitorAnalysisTab } from './live/LiveCompetitorAnalysisTab';
-import { LiveDashboardTab } from './live/LiveDashboardTab';
-import { LivePromptAnalysisTab } from './live/LivePromptAnalysisTab';
-import { LiveStrategicInsightsTab } from './live/LiveStrategicInsightsTab';
+import { LiveCompetitorAnalysisTab } from './dashboard/live/LiveCompetitorAnalysisTab';
+import { LiveDashboardTab } from './dashboard/live/LiveDashboardTab';
+import { LivePromptAnalysisTab } from './dashboard/live/LivePromptAnalysisTab';
+import { LiveStrategicInsightsTab } from './dashboard/live/LiveStrategicInsightsTab';
 
 // MyRank components
-import { MyRankDashboardTab } from './myrank/MyRankDashboardTab';
-import { MyRankPromptAnalysisTab } from './myrank/MyRankPromptAnalysisTab';
-import { MyRankCompetitorAnalysisTab } from './myrank/MyRankCompetitorAnalysisTab';
-import { MyRankStrategicInsightsTab } from './myrank/MyRankStrategicInsightsTab';
+import { MyRankDashboardTab } from './dashboard/myrank/MyRankDashboardTab';
+import { MyRankPromptAnalysisTab } from './dashboard/myrank/MyRankPromptAnalysisTab';
+import { MyRankCompetitorAnalysisTab } from './dashboard/myrank/MyRankCompetitorAnalysisTab';
+import { MyRankStrategicInsightsTab } from './dashboard/myrank/MyRankStrategicInsightsTab';
 
 // Admin components - these have default exports
-import AdminUserManagement from './AdminUserManagement';
-import AdminInvitationCodes from './AdminInvitationCodes';
-import SecurityAuditLogs from './SecurityAuditLogs';
+import { AdminUserManagement } from './admin/AdminUserManagement';
+import { AdminInvitationCodes } from './admin/AdminInvitationCodes';
+import { SecurityAuditLogs } from './admin/SecurityAuditLogs';
 
 // Loading component
 const ComponentLoadingFallback = () => (

@@ -41,8 +41,8 @@ export function PricingToggle({ isMonthly, onToggle }: PricingToggleProps) {
           startVelocity: 30,
           shapes: ["circle"],
         });
-      } catch (error) {
-        console.log('Confetti not available');
+      } catch (_error) {
+        // Confetti not available, ignore error
       }
     }
   };

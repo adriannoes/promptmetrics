@@ -1,10 +1,8 @@
 
 import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
 import { AccessibilityProvider } from '../contexts/AccessibilityContext';
-import SkipNav from '../components/SkipNav';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import AccessibilityPanel from '../components/AccessibilityPanel';
+import { SkipNav, Header, Footer } from '@/components';
+import AccessibilityPanel from '@/components/AccessibilityPanel';
 
 const ChangelogContent = () => {
   const { t } = useLanguage();
