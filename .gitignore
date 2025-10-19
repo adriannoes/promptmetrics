@@ -168,3 +168,30 @@ public
 # Temporary folders
 tmp/
 temp/
+
+# Security and sensitive files
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets.json
+credentials.json
+auth.json
+
+# IDE security settings
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.idea/workspace.xml
+.idea/tasks.xml
+
+# OS security files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files that might contain sensitive data
+*.bak
+*.backup
+*.old
