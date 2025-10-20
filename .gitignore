@@ -195,3 +195,187 @@ desktop.ini
 *.bak
 *.backup
 *.old
+
+# RankLLM specific sensitive files
+rank_llm/.env
+rank_llm/.env.local
+rank_llm/.env.production
+rank_llm/config.local.*
+rank_llm/secrets/
+rank_llm/credentials/
+rank_llm/models/
+rank_llm/cache/
+rank_llm/logs/
+rank_llm/*.log
+rank_llm/*.sql
+rank_llm/*.dump
+rank_llm/*.backup
+rank_llm/*.db
+rank_llm/*.pem
+rank_llm/*.key
+rank_llm/*.crt
+rank_llm/*.p12
+rank_llm/*.pfx
+rank_llm/secrets.json
+rank_llm/credentials.json
+rank_llm/auth.json
+
+# RankLLM Service sensitive files
+rank-llm-service/.env
+rank-llm-service/.env.local
+rank-llm-service/.env.production
+rank-llm-service/config.local.*
+rank-llm-service/secrets/
+rank-llm-service/credentials/
+rank-llm-service/models/
+rank-llm-service/cache/
+rank-llm-service/logs/
+rank-llm-service/*.log
+rank-llm-service/*.sql
+rank-llm-service/*.dump
+rank-llm-service/*.backup
+rank-llm-service/*.db
+rank-llm-service/*.pem
+rank-llm-service/*.key
+rank-llm-service/*.crt
+rank-llm-service/*.p12
+rank-llm-service/*.pfx
+rank-llm-service/secrets.json
+rank-llm-service/credentials.json
+rank-llm-service/auth.json
+
+# PromptMetrics specific sensitive files
+src/config/environment.local.ts
+src/config/environment.production.ts
+src/services/auth.local.ts
+src/services/api.local.ts
+src/utils/secrets.ts
+src/utils/credentials.ts
+src/hooks/useAuth.local.ts
+src/contexts/AuthContext.local.tsx
+
+# Docker sensitive files
+docker-compose.override.yml
+docker-compose.local.yml
+docker-compose.production.yml
+.dockerignore.local
+Dockerfile.local
+Dockerfile.production
+
+# N8N workflow sensitive files
+n8n-workflows/secrets/
+n8n-workflows/credentials/
+n8n-workflows/*.env
+n8n-workflows/*.local
+n8n-workflows/config.local.*
+
+# Analysis data with sensitive information
+analysis-data/
+analysis-results/
+user-data/
+brand-data/
+competitor-data/
+sensitive-analysis/
+private-results/
+
+# API keys and tokens in any format
+**/api-keys/
+**/access-tokens/
+**/refresh-tokens/
+**/jwt-tokens/
+**/bearer-tokens/
+**/oauth-tokens/
+**/session-tokens/
+**/auth-tokens/
+
+# Database connection strings
+**/database-urls/
+**/connection-strings/
+**/db-credentials/
+**/postgres-credentials/
+**/mysql-credentials/
+**/mongodb-credentials/
+
+# Third-party service credentials
+**/openai-keys/
+**/anthropic-keys/
+**/google-keys/
+**/azure-keys/
+**/aws-credentials/
+**/supabase-keys/
+**/n8n-credentials/
+
+# Monitoring and analytics sensitive data
+**/analytics-data/
+**/monitoring-data/
+**/telemetry-data/
+**/usage-data/
+**/performance-data/
+**/error-logs/
+**/crash-reports/
+
+# User data and privacy
+**/user-profiles/
+**/personal-data/
+**/private-information/
+**/sensitive-user-data/
+**/gdpr-data/
+**/privacy-data/
+
+# Business sensitive information
+**/business-data/
+**/financial-data/
+**/revenue-data/
+**/customer-data/
+**/proprietary-data/
+**/confidential-data/
+
+# Development and testing sensitive files
+**/test-credentials/
+**/test-data/
+**/mock-secrets/
+**/fixture-secrets/
+**/staging-credentials/
+**/dev-credentials/
+
+# CI/CD sensitive files
+.github/secrets/
+.github/credentials/
+.github/workflows/secrets/
+.github/workflows/credentials/
+.gitlab-ci-secrets/
+.gitlab-ci-credentials/
+jenkins-secrets/
+jenkins-credentials/
+azure-pipelines-secrets/
+azure-pipelines-credentials/
+
+# Cloud provider sensitive files
+**/aws-credentials/
+**/azure-credentials/
+**/gcp-credentials/
+**/cloudflare-credentials/
+**/vercel-credentials/
+**/netlify-credentials/
+**/railway-credentials/
+**/render-credentials/
+
+# SSL/TLS certificates and keys
+**/ssl/
+**/tls/
+**/certificates/
+**/certs/
+**/ca-bundle/
+**/truststore/
+**/keystore/
+
+# Backup files with sensitive data
+**/*.bak
+**/*.backup
+**/*.old
+**/*.orig
+**/*.save
+**/*.swp
+**/*.swo
+**/*.tmp
+**/*.temp
