@@ -16,6 +16,8 @@
 - **Competitive Intelligence**: Understand positioning in AI-generated recommendations
 - **Real-time Analysis**: Live dashboard updates from automated AI analysis workflows
 - **Multi-LLM Comparison**: Comprehensive dashboards comparing multiple AI models
+- **Document Ranking**: Advanced reranking using state-of-the-art RankLLM models
+- **Enterprise Security**: Comprehensive audit logs, rate limiting, and access control
 
 ## 📁 Project Structure
 
@@ -28,6 +30,7 @@ Well-organized structure for maintainability:
 ├── 📁 docs/           # Documentation and guides
 ├── 📁 env/            # Environment templates
 ├── 📁 public/         # Static assets and PWA files
+├── 📁 rank-llm-service/ # RankLLM microservice (Python/FastAPI)
 ├── 📁 scripts/        # Utility scripts (security checks)
 ├── 📁 src/            # Application source code
 │   ├── components/    # React components
@@ -95,10 +98,14 @@ npm run build            # Production build
 npm run build:prod       # Optimized production build
 npm run build:analyze    # Bundle analysis with visualizer
 
+# Testing
+npm run test             # Run tests in watch mode
+npm run test:run         # Run tests once
+npm run test:coverage    # Test coverage report
+npm run test:ui          # Test UI interface
+
 # Quality & Security
 npm run lint             # Run ESLint
-npm run test:run         # Run tests
-npm run test:coverage    # Test coverage report
 npm run security-check   # Security validation
 npm run quality-check    # Full quality check (lint + test + security)
 npm run lighthouse       # Performance audit
@@ -135,17 +142,21 @@ npm run deploy:check     # Pre-deployment validation
 ## 🛠 Technology Stack
 
 ### Frontend
-- **Framework**: React 18.3.1 + TypeScript 5.6.3 + Vite 7.1.7
+- **Framework**: React 18.3.1 + TypeScript 5.9.2 + Vite 7.1.7
 - **UI**: Shadcn/ui + Radix UI + Tailwind CSS
 - **State**: React Query + Context API
 - **Charts**: Recharts
 - **Routing**: React Router v6 with lazy loading
 - **Forms**: React Hook Form + Zod validation
+- **Testing**: Vitest + Testing Library + Jest DOM
+- **Performance**: Bundle analyzer + Lighthouse CI
 
 ### Backend/Serverless
 - **Database**: Supabase PostgreSQL with RLS
 - **Auth**: Supabase Auth + Google OAuth + invite codes
 - **Edge Functions**: Supabase (Deno runtime)
+- **Microservices**: RankLLM Python/FastAPI service
+- **Containerization**: Docker + Docker Compose
 
 ### Third-party Services
 - **Workflow Automation**: n8n for AI analysis
@@ -168,6 +179,13 @@ npm run deploy:check     # Pre-deployment validation
 - English (default) + Portuguese (BR)
 - Context-based translations
 
+### 🤖 RankLLM Integration
+- **Document Reranking**: Advanced ranking using state-of-the-art LLM models
+- **Multiple Models**: MonoT5, RankZephyr, RankVicuna, DuoT5 support
+- **Microservice Architecture**: Independent Python/FastAPI service
+- **Organization Control**: Configurable analysis methods per organization
+- **Real-time Processing**: Live document ranking with performance metrics
+
 ## ⚡ Performance & Optimization
 
 ### 🚀 Code Splitting
@@ -181,17 +199,28 @@ npm run deploy:check     # Pre-deployment validation
 - Heavy components lazy loaded
 - Database queries optimized
 
+### 🧪 Quality Assurance
+- **Automated Testing**: 20+ tests with Vitest + Testing Library
+- **Code Coverage**: 100% coverage on utility functions
+- **Performance Monitoring**: Lighthouse CI with 90+ scores
+- **Accessibility Auditing**: Axe-core integration
+- **Bundle Analysis**: Visual bundle analyzer with Rollup
+
 ## 📚 Documentation
 
 ### 📖 Key Docs
 - **[DOCS.md](docs/DOCS.md)** - Complete technical documentation
 - **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Production deployment guide
 - **[N8N Workflows](docs/N8N-WORKFLOWS-README.md)** - AI analysis pipeline guide
+- **[RankLLM Integration](docs/RANKLLM-INTEGRATION.md)** - Document ranking system guide
+- **[Architecture](docs/ARCHITECTURE.md)** - Enterprise architecture patterns
+- **[Final Report](docs/FINAL-REPORT.md)** - Complete project status
 
 ### 🔗 Key Routes
 - **Landing**: `/`
 - **Demo**: `/demo` (or click "Try Demo")
 - **Analysis**: `/analysis`
+- **Document Ranking**: `/document-ranking` (RankLLM integration)
 - **Admin**: `/admin` (admin role required)
 
 ## 🤝 Contributing
@@ -210,6 +239,9 @@ npm run deploy:check     # Pre-deployment validation
 - **Dependencies audited** (4 low-severity vulnerabilities in dev dependencies only)
 - **Gitignore comprehensive** - prevents credential leaks
 - **CSP and CORS hardened** for production security
+- **Rate limiting implemented** across all endpoints
+- **Audit logging enabled** for all user actions
+- **Input sanitization** with DOMPurify
 
 ### 🚨 Security Notes
 - **Service role keys** are never exposed in frontend code
