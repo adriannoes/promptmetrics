@@ -54,11 +54,21 @@ if (isDevelopment) {
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
+// Extrair project_id da URL para criar uma chave única de storage
+const getProjectIdFromUrl = (url: string): string => {
+  try {
+    const match = url.match(/https?:\/\/([^.]+)\.supabase\.co/);
+    return match ? match[1] : 'supabase-auth-token';
+  } catch {
+    return 'supabase-auth-token';
+  }
+};
+
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-    storageKey: 'vtyrpodosmhnyendcrjf-auth-token', // Chave única para evitar conflitos
+    storageKey: `${getProjectIdFromUrl(SUPABASE_URL)}-auth-token`, // Chave única baseada na URL
   }
 });
