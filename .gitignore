@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Documentation
+# Documentation (may contain sensitive information)
 docs/
 
 # Project organization (see folder README files)
