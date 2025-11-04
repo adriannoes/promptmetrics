@@ -38,10 +38,30 @@ const validateEnvironment = () => {
 export const env: EnvironmentConfig = (() => {
   const vars = validateEnvironment();
   
+  // Em produção, falhar se as variáveis não estiverem configuradas
+  if (import.meta.env.PROD && (!vars.VITE_SUPABASE_URL || !vars.VITE_SUPABASE_ANON_KEY)) {
+    throw new Error(
+      'Missing required environment variables for production. ' +
+      'Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+    );
+  }
+  
+  // Em desenvolvimento, permitir valores padrão apenas se não estiverem configurados
+  // Mas não hardcodar credenciais reais
+  const url = vars.VITE_SUPABASE_URL;
+  const anonKey = vars.VITE_SUPABASE_ANON_KEY;
+  
+  if (!url || !anonKey) {
+    throw new Error(
+      'Missing required Supabase configuration. ' +
+      'Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.'
+    );
+  }
+  
   return {
     supabase: {
-      url: vars.VITE_SUPABASE_URL || 'https://vtyrpodosmhnyendcrjf.supabase.co',
-      anonKey: vars.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0eXJwb2Rvc21obnllbmRjcmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzMDAyODMsImV4cCI6MjA2NTg3NjI4M30.wGmXMX6WTCvOFW5wkw5g0uliTuQuoW7OcNDlAgFOIgw',
+      url,
+      anonKey,
     },
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,
