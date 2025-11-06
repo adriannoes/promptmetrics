@@ -24,11 +24,17 @@ const validateEnvironment = () => {
     .filter(([_, value]) => !value)
     .map(([key]) => key);
 
-  if (missing.length > 0 && import.meta.env.PROD) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}\n` +
-      'Please check your .env file and ensure all required variables are set.'
-    );
+  if (missing.length > 0) {
+    const errorMessage = `Missing required environment variables: ${missing.join(', ')}\n` +
+      'Please check your .env file and ensure all required variables are set.';
+    
+    if (import.meta.env.PROD) {
+      throw new Error(errorMessage);
+    } else {
+      console.error(errorMessage);
+      // In development, we still throw to prevent silent failures
+      throw new Error(errorMessage);
+    }
   }
 
   return requiredVars;
@@ -38,30 +44,17 @@ const validateEnvironment = () => {
 export const env: EnvironmentConfig = (() => {
   const vars = validateEnvironment();
   
-  // Em produção, falhar se as variáveis não estiverem configuradas
-  if (import.meta.env.PROD && (!vars.VITE_SUPABASE_URL || !vars.VITE_SUPABASE_ANON_KEY)) {
+  // Validate that we have the required values (no fallbacks for security)
+  if (!vars.VITE_SUPABASE_URL || !vars.VITE_SUPABASE_ANON_KEY) {
     throw new Error(
-      'Missing required environment variables for production. ' +
-      'Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
-    );
-  }
-  
-  // Em desenvolvimento, permitir valores padrão apenas se não estiverem configurados
-  // Mas não hardcodar credenciais reais
-  const url = vars.VITE_SUPABASE_URL;
-  const anonKey = vars.VITE_SUPABASE_ANON_KEY;
-  
-  if (!url || !anonKey) {
-    throw new Error(
-      'Missing required Supabase configuration. ' +
-      'Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.'
+      'Supabase configuration is required. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment variables.'
     );
   }
   
   return {
     supabase: {
-      url,
-      anonKey,
+      url: vars.VITE_SUPABASE_URL,
+      anonKey: vars.VITE_SUPABASE_ANON_KEY,
     },
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,
