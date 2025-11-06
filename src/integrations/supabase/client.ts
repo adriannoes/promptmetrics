@@ -2,12 +2,34 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
+import { supabase as supabaseConfig, isProduction, isDevelopment } from '@/config/environment';
+
+const SUPABASE_URL = supabaseConfig.url;
+const SUPABASE_PUBLISHABLE_KEY = supabaseConfig.anonKey;
+
+// Extract project ID from Supabase URL for dynamic storage key
+const getProjectIdFromUrl = (url: string): string => {
+  try {
+    const match = url.match(/https?:\/\/([^.]+)\.supabase\.co/);
+    return match ? match[1] : 'supabase-project';
+  } catch {
+    return 'supabase-project';
+  }
+};
+
 // Limpar qualquer sessão antiga de projetos anteriores
 const cleanOldSessions = () => {
   const keysToRemove = [];
+  const projectId = getProjectIdFromUrl(SUPABASE_URL);
+  
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && (key.includes('old-project-id') || key.includes('supabase.auth.token'))) {
+    if (key && (
+      key.includes('supabase.auth.token') ||
+      key.includes(`${projectId}-auth-token`) ||
+      // Clean up any old project IDs (generic pattern)
+      /^[a-z0-9]{20,}-auth-token$/.test(key)
+    )) {
       keysToRemove.push(key);
     }
   }
@@ -16,11 +38,6 @@ const cleanOldSessions = () => {
 
 // Executar limpeza na inicialização
 cleanOldSessions();
-
-import { supabase as supabaseConfig, isProduction, isDevelopment } from '@/config/environment';
-
-const SUPABASE_URL = supabaseConfig.url;
-const SUPABASE_PUBLISHABLE_KEY = supabaseConfig.anonKey;
 
 // Testar conectividade do projeto (apenas em desenvolvimento)
 const testConnectivity = async () => {
@@ -41,7 +58,7 @@ const testConnectivity = async () => {
     clearTimeout(timeoutId);
 
     return response.ok;
-  } catch (_error) {
+  } catch (error) {
     return false;
   }
 };
@@ -54,21 +71,15 @@ if (isDevelopment) {
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-// Extrair project_id da URL para criar uma chave única de storage
-const getProjectIdFromUrl = (url: string): string => {
-  try {
-    const match = url.match(/https?:\/\/([^.]+)\.supabase\.co/);
-    return match ? match[1] : 'supabase-auth-token';
-  } catch {
-    return 'supabase-auth-token';
-  }
-};
+// Generate dynamic storage key based on project ID
+const projectId = getProjectIdFromUrl(SUPABASE_URL);
+const storageKey = `${projectId}-auth-token`;
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-    storageKey: `${getProjectIdFromUrl(SUPABASE_URL)}-auth-token`, // Chave única baseada na URL
+    storageKey, // Dynamic key based on project URL
   }
 });
