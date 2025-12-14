@@ -181,6 +181,8 @@ private-results/
 secrets.json
 credentials.json
 auth.json
+supabase/config.local.toml
+supabase/config.toml
 
 # Backups and temporary leftovers
 *.bak
