@@ -1,6 +1,26 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { supabase } from '@/integrations/supabase/client';
 import { RankLLMRequest } from '@/types/rankllm';
+
+const supabaseUrl =
+  process.env.VITE_SUPABASE_URL ||
+  (typeof import.meta !== 'undefined' ? import.meta.env?.VITE_SUPABASE_URL : undefined);
+
+const supabaseAnonKey =
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  (typeof import.meta !== 'undefined' ? import.meta.env?.VITE_SUPABASE_ANON_KEY : undefined);
+
+const hasRealSupabaseEnv =
+  Boolean(supabaseUrl && supabaseAnonKey) &&
+  !String(supabaseUrl).includes('your-project') &&
+  !String(supabaseAnonKey).includes('test-anon-key');
+
+const describeIntegration = hasRealSupabaseEnv ? describe : describe.skip;
+let supabaseClient: typeof import('@/integrations/supabase/client').supabase | null = null;
+
+if (!hasRealSupabaseEnv) {
+  // eslint-disable-next-line no-console
+  console.warn('Supabase env missing or placeholder; skipping integration tests.');
+}
 
 // Mock data for testing
 const testDocuments = [
@@ -28,8 +48,11 @@ const testRequest: RankLLMRequest = {
   domain: 'test.com'
 };
 
-describe('RankLLM Integration Tests', () => {
+describeIntegration('RankLLM Integration Tests', () => {
   beforeAll(async () => {
+    const module = await import('@/integrations/supabase/client');
+    supabaseClient = module.supabase;
+
     // Setup test environment
     console.log('Setting up RankLLM integration tests...');
   });
@@ -41,7 +64,7 @@ describe('RankLLM Integration Tests', () => {
 
   describe('Edge Function Tests', () => {
     it('should trigger rankllm analysis successfully', async () => {
-      const { data, error } = await supabase.functions.invoke('trigger-rankllm-analysis', {
+      const { data, error } = await supabaseClient!.functions.invoke('trigger-rankllm-analysis', {
         body: testRequest
       });
 
@@ -55,7 +78,7 @@ describe('RankLLM Integration Tests', () => {
       // Wait a moment for processing
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      const { data, error } = await supabase.functions.invoke('get-rankllm-data', {
+      const { data, error } = await supabaseClient!.functions.invoke('get-rankllm-data', {
         body: { domain: 'test.com', limit: 10 }
       });
 
@@ -68,7 +91,7 @@ describe('RankLLM Integration Tests', () => {
 
   describe('Database Tests', () => {
     it('should store rankllm results in database', async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient!
         .from('rankllm_results')
         .select('*')
         .eq('domain', 'test.com')
@@ -86,7 +109,7 @@ describe('RankLLM Integration Tests', () => {
 
     it('should have proper RLS policies', async () => {
       // Test that users can only see their organization's data
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient!
         .from('rankllm_results')
         .select('*');
 
@@ -102,7 +125,7 @@ describe('RankLLM Integration Tests', () => {
       for (const model of models) {
         const request = { ...testRequest, model };
         
-        const { data, error } = await supabase.functions.invoke('trigger-rankllm-analysis', {
+        const { data, error } = await supabaseClient!.functions.invoke('trigger-rankllm-analysis', {
           body: request
         });
 
@@ -120,7 +143,7 @@ describe('RankLLM Integration Tests', () => {
         domain: 'test.com'
       };
 
-      const { data, error } = await supabase.functions.invoke('trigger-rankllm-analysis', {
+      const { data, error } = await supabaseClient!.functions.invoke('trigger-rankllm-analysis', {
         body: invalidRequest
       });
 
@@ -134,7 +157,7 @@ describe('RankLLM Integration Tests', () => {
       const originalUrl = process.env.RANKLLM_SERVICE_URL;
       process.env.RANKLLM_SERVICE_URL = 'http://invalid-url:8000';
 
-      const { data, error } = await supabase.functions.invoke('trigger-rankllm-analysis', {
+      const { data, error } = await supabaseClient!.functions.invoke('trigger-rankllm-analysis', {
         body: testRequest
       });
 
@@ -149,7 +172,7 @@ describe('RankLLM Integration Tests', () => {
     it('should complete ranking within reasonable time', async () => {
       const startTime = Date.now();
       
-      const { data, error } = await supabase.functions.invoke('trigger-rankllm-analysis', {
+      const { data, error } = await supabaseClient!.functions.invoke('trigger-rankllm-analysis', {
         body: testRequest
       });
 
