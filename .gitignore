@@ -1,205 +1,97 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Documentation (may contain sensitive information)
-docs/
-
-# Project organization (see folder README files)
-# - config/ - Configuration files (eslint, tsconfig, etc.)
-# - build/ - Build configuration (vite, tailwind, etc.)
-# - ci/ - CI/CD configuration (.github, lighthouse, etc.)
-# - env/ - Environment templates
-
-# Environment files and secrets
-.env
-.env.local
-.env.production
-.env.development
-.env.*.local
-.env.*.production
-*.env
-.envrc
-
-# Supabase secrets and configs
-supabase/.env
-supabase/.env.local
-supabase/config.local.toml
-
-# API keys and tokens
-**/secrets/
-**/credentials/
-**/keys/
-**/tokens/
-
-# Database dumps and backups
-*.sql
-*.dump
-*.backup
-*.db
-
-# Logs with sensitive data
+# Logs and runtime
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
-# IDE and editor files
-.vscode/settings.json
-.vscode/launch.json
-.vscode/tasks.json
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+lerna-debug.log*
+pids
+*.pid
+*.seed
+*.pid.lock
 
 # Temporary files
 tmp/
 temp/
 *.tmp
 *.temp
+*~
+*.swp
+*.swo
 
-# Build artifacts
+# OS files
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor and IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Builds and dependencies
+node_modules/
 dist/
+dist-ssr/
 build/
 out/
 .next/
 .nuxt/
 .cache/
 .parcel-cache/
-
-# Package manager files
-node_modules/
 .pnpm-store/
 .yarn/
 .pnp.*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
 jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
 .rpt2_cache/
 .rts2_cache_cjs/
 .rts2_cache_es/
 .rts2_cache_umd/
 
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
+# Package and tool caches
+.npm
+.eslintcache
+coverage/
+.nyc_output
+*.lcov
+.yarn-integrity
 *.tgz
 
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env.test
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
+# Storybook and similar outputs
 .out
 .storybook-out
 
-# Temporary folders
-tmp/
-temp/
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.*.local
+.env.*.production
+.env.test
+*.env
+.envrc
 
-# Security and sensitive files
-*.pem
-*.key
-*.crt
-*.p12
-*.pfx
-secrets.json
-credentials.json
-auth.json
+# Documentation exports that may hold sensitive data
+docs/
 
-# IDE security settings
-.vscode/settings.json
-.vscode/launch.json
-.vscode/tasks.json
-.idea/workspace.xml
-.idea/tasks.xml
+# Supabase local config
+supabase/.env
+supabase/.env.local
+supabase/config.local.toml
 
-# OS security files
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Backup files that might contain sensitive data
-*.bak
-*.backup
-*.old
-
-# RankLLM specific sensitive files
-rank_llm/.env
-rank_llm/.env.local
-rank_llm/.env.production
+# RankLLM local and sensitive files
+rank_llm/.env*
 rank_llm/config.local.*
 rank_llm/secrets/
 rank_llm/credentials/
@@ -220,10 +112,8 @@ rank_llm/secrets.json
 rank_llm/credentials.json
 rank_llm/auth.json
 
-# RankLLM Service sensitive files
-rank-llm-service/.env
-rank-llm-service/.env.local
-rank-llm-service/.env.production
+# RankLLM Service local and sensitive files
+rank-llm-service/.env*
 rank-llm-service/config.local.*
 rank-llm-service/secrets/
 rank-llm-service/credentials/
@@ -244,7 +134,7 @@ rank-llm-service/secrets.json
 rank-llm-service/credentials.json
 rank-llm-service/auth.json
 
-# PromptMetrics specific sensitive files
+# PromptMetrics local-only configs
 src/config/environment.local.ts
 src/config/environment.production.ts
 src/services/auth.local.ts
@@ -254,7 +144,7 @@ src/utils/credentials.ts
 src/hooks/useAuth.local.ts
 src/contexts/AuthContext.local.tsx
 
-# Docker sensitive files
+# Docker local overrides
 docker-compose.override.yml
 docker-compose.local.yml
 docker-compose.production.yml
@@ -262,14 +152,14 @@ docker-compose.production.yml
 Dockerfile.local
 Dockerfile.production
 
-# N8N workflow sensitive files
+# N8N workflows
 n8n-workflows/secrets/
 n8n-workflows/credentials/
 n8n-workflows/*.env
 n8n-workflows/*.local
 n8n-workflows/config.local.*
 
-# Analysis data with sensitive information
+# Analysis and user data exports
 analysis-data/
 analysis-results/
 user-data/
@@ -278,104 +168,28 @@ competitor-data/
 sensitive-analysis/
 private-results/
 
-# API keys and tokens in any format
-**/api-keys/
-**/access-tokens/
-**/refresh-tokens/
-**/jwt-tokens/
-**/bearer-tokens/
-**/oauth-tokens/
-**/session-tokens/
-**/auth-tokens/
+# Generic sensitive assets
+**/secrets/
+**/credentials/
+**/keys/
+**/tokens/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets.json
+credentials.json
+auth.json
 
-# Database connection strings
-**/database-urls/
-**/connection-strings/
-**/db-credentials/
-**/postgres-credentials/
-**/mysql-credentials/
-**/mongodb-credentials/
-
-# Third-party service credentials
-**/openai-keys/
-**/anthropic-keys/
-**/google-keys/
-**/azure-keys/
-**/aws-credentials/
-**/supabase-keys/
-**/n8n-credentials/
-
-# Monitoring and analytics sensitive data
-**/analytics-data/
-**/monitoring-data/
-**/telemetry-data/
-**/usage-data/
-**/performance-data/
-**/error-logs/
-**/crash-reports/
-
-# User data and privacy
-**/user-profiles/
-**/personal-data/
-**/private-information/
-**/sensitive-user-data/
-**/gdpr-data/
-**/privacy-data/
-
-# Business sensitive information
-**/business-data/
-**/financial-data/
-**/revenue-data/
-**/customer-data/
-**/proprietary-data/
-**/confidential-data/
-
-# Development and testing sensitive files
-**/test-credentials/
-**/test-data/
-**/mock-secrets/
-**/fixture-secrets/
-**/staging-credentials/
-**/dev-credentials/
-
-# CI/CD sensitive files
-.github/secrets/
-.github/credentials/
-.github/workflows/secrets/
-.github/workflows/credentials/
-.gitlab-ci-secrets/
-.gitlab-ci-credentials/
-jenkins-secrets/
-jenkins-credentials/
-azure-pipelines-secrets/
-azure-pipelines-credentials/
-
-# Cloud provider sensitive files
-**/aws-credentials/
-**/azure-credentials/
-**/gcp-credentials/
-**/cloudflare-credentials/
-**/vercel-credentials/
-**/netlify-credentials/
-**/railway-credentials/
-**/render-credentials/
-
-# SSL/TLS certificates and keys
-**/ssl/
-**/tls/
-**/certificates/
-**/certs/
-**/ca-bundle/
-**/truststore/
-**/keystore/
-
-# Backup files with sensitive data
+# Backups and temporary leftovers
+*.bak
+*.backup
+*.old
+**/*.orig
+**/*.save
 **/*.bak
 **/*.backup
 **/*.old
-**/*.orig
-**/*.save
-**/*.swp
-**/*.swo
 **/*.tmp
 **/*.temp
