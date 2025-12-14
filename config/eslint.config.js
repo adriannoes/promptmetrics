@@ -33,7 +33,8 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-explicit-any": "warn",
       "prefer-const": "error",
-      "no-console": "warn",
+      // Disallow console in production; keep warn/error only if needed
+      "no-console": ["error", { allow: ["warn", "error"] }],
     },
   }
 );
