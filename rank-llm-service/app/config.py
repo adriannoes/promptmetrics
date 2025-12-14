@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 class Config:
     """Configuration class for RankLLM service"""
@@ -59,6 +59,14 @@ class Config:
     
     # Logging
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+
+    # CORS Configuration
+    _allowed_origins_env = os.getenv("ALLOWED_ORIGINS") or os.getenv("CORS_ALLOWED_ORIGINS") or ""
+    ALLOWED_ORIGINS: List[str] = [
+        origin.strip()
+        for origin in _allowed_origins_env.split(",")
+        if origin and origin.strip()
+    ] or ["http://localhost:5173"]
     
     @classmethod
     def get_model_config(cls, model_name: str) -> Dict[str, Any]:
